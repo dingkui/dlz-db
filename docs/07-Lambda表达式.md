@@ -56,7 +56,7 @@ DB.Pojo.delete(User.class)
 #### 插入指定字段
 
 ```java
-DB.insert(user)
+DB.Pojo.insert(user)
     .insertFields(User::getName, User::getAge, User::getEmail)
     .execute();
 ```

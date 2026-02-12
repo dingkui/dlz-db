@@ -10,7 +10,7 @@
 
 | 方法 | 返回类型 | 说明 |
 |------|---------|------|
-| `query(Class<T>)` | `WrapperQuery<T>` | Bean 查询 |
+| `query(Class<T>)` | `PojoQuery<T>` | Bean 查询 |
 | `query(String tableName)` | `MakerSelect` | 表名查询 |
 | `jdbcSelect(String sql, Object... args)` | `JdbcQuery` | 原生 SQL 查询 |
 | `sqlSelect(String key)` | `SqlQuery` | 预设 SQL 查询 |
@@ -47,7 +47,7 @@
 ## 13.2 Wrapper 类
 
 
-### WrapperQuery<T> 查询方法
+### PojoQuery<T> 查询方法
 
 #### 条件方法
 
