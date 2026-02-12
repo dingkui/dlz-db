@@ -1,21 +1,46 @@
 package com.dlz.db.helper.support.dbs;
 
+import com.dlz.comm.util.StringUtils;
 import com.dlz.comm.util.ValUtil;
+import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.helper.bean.ColumnInfo;
 import com.dlz.db.helper.bean.TableInfo;
 import com.dlz.db.helper.support.SqlHelper;
+import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.dto.ResultMap;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DbOpSqlite extends SqlHelper {
 
 
     @Override
     public void createTable(String tableName, Class<?> clazz) {
-        String sql = "CREATE TABLE IF NOT EXISTS `" + tableName + "` (id VARCHAR(32) NOT NULL PRIMARY KEY)";
+        String createSql = "CREATE TABLE IF NOT EXISTS `{}` ({})";
+        final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
+            String columnName = BeanInfoHolder.getColumnName(field);
+            String column = null;
+            if (columnName.equals("")) {
+                return column;
+            }
+            column = " `" + columnName + "` " + getDbClumnType(field);
+            if (BeanInfoHolder.isColumnPk(field)) {
+                column += " PRIMARY KEY";
+            }
+            return column;
+        }).filter(column -> column != null)
+        .collect(Collectors.joining(","));
+
+//        String tableCommont = BeanInfoHolder.getTableComment(clazz);
+//        if(StringUtils.isNotEmpty(tableCommont)){
+//            tableCommont = " COMMENT '" + tableCommont + "'";
+//        }
+
+        String sql = StringUtils.formatMsg(createSql, tableName,columns);
+
         DBHolder.getDao().execute(sql);
     }
 
