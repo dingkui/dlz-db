@@ -30,7 +30,7 @@ import java.util.UUID;
 public class WrapperBuildUtil {
     public static final String MAKER_SQL_INSERT = "insert into ${tableName}(${columns}) values(${values})";
     public static final String MAKER_SQL_DELETE = "delete from ${tableName} ${where}";
-    public static final String MAKER_SQL_UPDATE = "update ${tableName} t set ${sets} ${where}";
+    public static final String MAKER_SQL_UPDATE = "update ${tableName} set ${sets} ${where}";
     public static final String MAKER_SQL_SEARCHE = "select ${columns} from ${tableName} t ${where} ${otherwhere}";
 
     private static final String MAKER_TABLENAME = "tableName";
