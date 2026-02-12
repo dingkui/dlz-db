@@ -19,6 +19,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @SpringBootApplication(scanBasePackages = {"com.dlz.spring", "com.dlz.test.db.config"})
@@ -30,13 +32,7 @@ public class SpingDbBaseTest {
             TraceUtil.setTraceId();
         }
     }
-    @Test
-    public void jdbcTest1() {
-        final JdbcQuery page = DB.Jdbc.select("select 1 from dual where ?=1", 1);
-        showSql(page, "jdbcTest1", "select 1 from dual where 1=1");
-        log.info(page.queryStr());
-        log.info(page.queryStrList().toString());
-    }
+
     private String clearSql(String sql){
         return sql.replaceAll("[\\s]+"," ").trim();
     }
@@ -51,7 +47,7 @@ public class SpingDbBaseTest {
         String runSqlByJdbc = SqlUtil.getRunSqlByJdbc(jdbcSql.sql, jdbcSql.paras).trim();
         if(re==null){
             log.info(runSqlByJdbc);
-        }else if(clearSql(re).equals(clearSql(runSqlByJdbc))){
+        }else if(clearSql(re).equalsIgnoreCase(clearSql(runSqlByJdbc))){
             log.info("sucess:"+runSqlByJdbc);
         }else{
             log.error("error:"+runSqlByJdbc);

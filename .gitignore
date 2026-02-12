@@ -7,3 +7,4 @@ caches
 *.iml
 .idea
 pom.xml.versionsBackup
+/*.sqlite3

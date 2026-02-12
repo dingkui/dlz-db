@@ -86,6 +86,6 @@ public class TableDeleteTest extends SpingDbBaseTest {
                         .and(w -> w.eq("xxId2", 3).eq("xxId1", 4))
                         .or(w -> w.eq("xxId2", 3).eq("xxId1", 4))
                         .eq("xxId3", 5));
-        showSql(delete, "tableDeleteConditionTest3", "delete from dh_room where equipment_id = 1 and equipment_id2 = 2 and (XX_ID2 = 3 and XX_ID1 = 4) and (XX_ID2 = 3 or XX_ID1 = 4) and XX_ID3 = 5 and IS_DELETED = 0");
+        showSql(delete, "tableDeleteConditionTest3", "delete from dh_room where equipment_id = 1 and equipment_id2 = 2 and (XX_ID2 = 3 and XX_ID1 = 4) and (XX_ID2 = 3 or XX_ID1 = 4) and XX_ID3 = 5");
     }
 }

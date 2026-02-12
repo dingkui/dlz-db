@@ -40,13 +40,10 @@ public class SqlSelectTest extends SpingDbBaseTest {
 
     @Test
     public void sqlSelectTest3(){
-//		ParaMap ump=new ParaMap("select 1 from dual");
-//		ump.setPage(Page.build(1, 1));
-//		cs.getMap(ump);
-        DB.Sql.select("select t.* from PTN t where t.id=${key.comm.pageSql} and t.cc=${a} and c=${b} and ccc")
+        final SqlQuery sqlQuery = DB.Sql.select("select t.* from PTN t where t.id=${key.comm.pageSql} and t.cc=${a} and c=${b} and ccc")
                 .addPara("a", "a${b}")
                 .addPara("b", "b${c}")
-                .addPara("_sql", "_sql${a}").queryOne();
-//		ump2.setPage(Page.build(1, 2,"id","asc"));
+                .addPara("_sql", "_sql${a}");
+        showSql(sqlQuery, "sqlSelectTest3", "select t.* from PTN t where t.id= _sqlab and t.cc=ab and c=b and ccc");
     }
 }

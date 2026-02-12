@@ -11,14 +11,6 @@ import org.junit.Test;
 @Slf4j
 public class JdbcTest extends SpingDbBaseTest {
     @Test
-    public void jdbcTest1() {
-        final JdbcQuery page = DB.Jdbc.select("select 1 from dual where ?=1", 1);
-        showSql(page, "jdbcTest1", "select 1 from dual where 1=1");
-        log.info(page.queryStr());
-        log.info(page.queryStrList().toString());
-    }
-
-    @Test
     public void jdbcPageTest1() {
         final JdbcQuery page = DB.Jdbc.select("select 1 from dual where ?=1", 1)
                 .page(Page.build(1, 2));

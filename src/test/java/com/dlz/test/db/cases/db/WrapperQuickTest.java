@@ -1,6 +1,9 @@
 package com.dlz.test.db.cases.db;
 
+import com.dlz.db.annotation.TableName;
 import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.helper.support.HelperScan;
+import com.dlz.db.helper.support.SqlHelper;
 import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.SysSql;
@@ -8,6 +11,8 @@ import com.dlz.test.db.entity.Yc1Record;
 import com.dlz.test.db.entity.YcRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+
+import java.util.Set;
 
 @Slf4j
 public class WrapperQuickTest extends SpingDbBaseTest{
@@ -58,14 +63,14 @@ public class WrapperQuickTest extends SpingDbBaseTest{
 
         final DataSourceProperty properties = new DataSourceProperty();
         properties.setName("test");
-        properties.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        properties.setUsername("root");
-        properties.setPassword("1234qwer");
-        properties.setUrl("jdbc:mysql://192.168.1.126:3306/test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai");
+        properties.setDriverClassName("org.sqlite.JDBC");
+        properties.setUrl("jdbc:sqlite:testdb_dynamic.sqlite3");
         DB.Dynamic.setDataSource(properties);
 
 
         DB.Dynamic.use("test",()-> {
+            final SqlHelper helper = DB.Dynamic.getSqlHelper();
+            HelperScan.initTable(SysSql.class,helper);
             DB.Pojo.getById(SysSql.class, "1");
             DB.Pojo.getById(SysSql.class, "2");
             return null;
