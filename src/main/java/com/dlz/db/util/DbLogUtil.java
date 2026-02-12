@@ -67,7 +67,8 @@ public class DbLogUtil {
                 continue;
             }
             if (traceInfo.startsWith("com.dlz.spring.") ||
-                    traceInfo.startsWith("com.dlz.comm.")
+                    traceInfo.startsWith("com.dlz.comm.")||
+                    traceInfo.startsWith("com.dlz.db.")
             ) {
                 index++;
                 if(log.isTraceEnabled()){
