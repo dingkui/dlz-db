@@ -1,6 +1,5 @@
 package com.dlz.test.db.config;
 
-import com.dlz.spring.config.DlzProperties;
 import com.dlz.db.config.DlzDbConfig;
 import com.dlz.db.config.DlzDbProperties;
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
@@ -10,6 +9,7 @@ import com.dlz.db.holder.SqlHolder;
 import com.dlz.db.modal.DB;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
+import com.dlz.spring.config.DlzProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

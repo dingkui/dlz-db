@@ -5,7 +5,7 @@ import com.dlz.comm.json.JSONList;
 import com.dlz.comm.util.VAL;
 import com.dlz.db.dao.IDlzDao;
 import com.dlz.db.holder.SqlHolder;
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -17,8 +17,6 @@ import java.util.List;
 
 @Slf4j
 public class DlzTestDao implements IDlzDao {
-
-
     @Override
     public List<ResultMap> getList(String sql, Object... args) throws DataAccessException {
         return getList(sql, null, args);

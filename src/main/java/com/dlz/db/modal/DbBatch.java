@@ -17,7 +17,6 @@ public class DbBatch {
         return false;
     }
 
-
     public boolean update(String sql, List<Object[]> valueBeans) {
         return update(sql, valueBeans, 1000);
     }

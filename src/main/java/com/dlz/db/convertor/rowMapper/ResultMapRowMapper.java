@@ -1,7 +1,7 @@
 package com.dlz.db.convertor.rowMapper;
 
 
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.JdbcUtils;

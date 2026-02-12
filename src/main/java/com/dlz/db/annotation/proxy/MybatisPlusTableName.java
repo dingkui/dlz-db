@@ -1,7 +1,6 @@
 package com.dlz.db.annotation.proxy;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class MybatisPlusTableName {

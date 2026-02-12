@@ -3,10 +3,10 @@ package com.dlz.db.modal.wrapper;
 import com.dlz.comm.fn.DlzFn;
 import com.dlz.comm.util.StringUtils;
 import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.inf.ISqlPage;
-import com.dlz.db.modal.para.AQuery;
-import com.dlz.db.modal.result.Page;
 import com.dlz.db.inf.IExecutorQuery;
+import com.dlz.db.inf.ISqlPage;
+import com.dlz.db.modal.dto.Page;
+import com.dlz.db.modal.para.AQuery;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;

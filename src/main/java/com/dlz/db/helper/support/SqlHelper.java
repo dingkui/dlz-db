@@ -12,10 +12,10 @@ import com.dlz.db.helper.wrapper.ConditionAndWrapper;
 import com.dlz.db.helper.wrapper.ConditionWrapper;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
+import com.dlz.db.modal.dto.Page;
+import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.modal.dto.Sort;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.db.modal.result.Page;
-import com.dlz.db.modal.result.ResultMap;
-import com.dlz.db.modal.result.Sort;
 
 import java.lang.reflect.Field;
 import java.util.*;

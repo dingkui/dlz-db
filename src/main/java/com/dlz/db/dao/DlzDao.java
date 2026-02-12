@@ -1,7 +1,7 @@
 package com.dlz.db.dao;
 
 import com.dlz.db.modal.DB;
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;

@@ -1,9 +1,9 @@
 package com.dlz.db.modal.para;
 
 import com.dlz.db.inf.ISqlPara;
+import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
-import com.dlz.db.modal.result.Page;
 import com.dlz.db.util.SqlUtil;
 import lombok.Getter;
 import lombok.Setter;

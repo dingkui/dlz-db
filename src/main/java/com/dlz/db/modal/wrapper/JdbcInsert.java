@@ -1,7 +1,7 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.modal.para.ParaJdbc;
 import com.dlz.db.inf.IExecutorInsert;
+import com.dlz.db.modal.para.ParaJdbc;
 import lombok.extern.slf4j.Slf4j;
 
 /**

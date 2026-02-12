@@ -5,7 +5,7 @@ import com.dlz.comm.util.ExceptionUtils;
 import com.dlz.db.config.DlzDbProperties;
 import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.modal.DB;
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;

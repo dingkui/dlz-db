@@ -4,8 +4,8 @@ import com.dlz.comm.exception.ValidateException;
 import com.dlz.comm.util.StringUtils;
 import com.dlz.comm.util.system.ConvertUtil;
 import com.dlz.db.inf.IExecutorQuery;
+import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.PojoQuery;
-import com.dlz.db.modal.result.ResultMap;
 
 /**
  * 从数据库中取得单条map类型数据：{adEnddate=2015-04-08 13:47:12.0}

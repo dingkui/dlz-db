@@ -6,13 +6,13 @@ import com.dlz.comm.json.JSONMap;
 import com.dlz.comm.util.*;
 import com.dlz.db.enums.ParaTypeEnum;
 import com.dlz.db.holder.SqlHolder;
+import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.ParaJdbc;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.db.modal.result.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.temporal.TemporalAccessor;

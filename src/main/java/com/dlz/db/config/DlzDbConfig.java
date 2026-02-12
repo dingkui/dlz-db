@@ -1,6 +1,5 @@
 package com.dlz.db.config;
 
-import com.dlz.spring.config.DlzFwConfig;
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import com.dlz.db.dao.DlzDao;
 import com.dlz.db.dao.IDlzDao;
@@ -8,10 +7,9 @@ import com.dlz.db.ds.DynamicJdbcTemplate;
 import com.dlz.db.helper.support.HelperScan;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlHolder;
-import com.dlz.db.service.ICommService;
-import com.dlz.db.service.impl.CommServiceImpl;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
+import com.dlz.spring.config.DlzFwConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,17 +47,6 @@ public class DlzDbConfig extends DlzFwConfig {
         }
         return dlzDao;
     }
-//
-//    @Bean(name = "commService")
-//    @Lazy
-//    @ConditionalOnMissingBean(name = "commService")
-//    public ICommService commService(IDlzDao dao) {
-//        CommServiceImpl commService = new CommServiceImpl(dao);
-//        if (log.isInfoEnabled()) {
-//            log.info("init commService:" + CommServiceImpl.class.getName());
-//        }
-//        return commService;
-//    }
 
     @Bean(name = "JdbcTemplate")
     @Lazy

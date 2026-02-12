@@ -1,8 +1,8 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.IExecuteDelete;
+import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.para.APojoQuery;
 
 /**

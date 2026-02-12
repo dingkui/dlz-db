@@ -2,13 +2,12 @@ package com.dlz.db.helper.support.dbs;
 
 import com.dlz.comm.util.StringUtils;
 import com.dlz.comm.util.ValUtil;
-import com.dlz.db.dao.IDlzDao;
 import com.dlz.db.helper.bean.ColumnInfo;
 import com.dlz.db.helper.bean.TableInfo;
 import com.dlz.db.helper.support.SqlHelper;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;

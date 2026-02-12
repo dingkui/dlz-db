@@ -2,8 +2,8 @@ package com.dlz.db.modal.wrapper;
 
 import com.dlz.comm.fn.DlzFn;
 import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.inf.IExecutorUDI;
+import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.util.DbConvertUtil;
 import lombok.extern.slf4j.Slf4j;
 

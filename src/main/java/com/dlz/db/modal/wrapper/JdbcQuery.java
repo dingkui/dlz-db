@@ -1,10 +1,10 @@
 package com.dlz.db.modal.wrapper;
 
+import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
 import com.dlz.db.inf.ISqlPara;
+import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.para.ParaJdbc;
-import com.dlz.db.modal.result.Page;
-import com.dlz.db.inf.IExecutorQuery;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;

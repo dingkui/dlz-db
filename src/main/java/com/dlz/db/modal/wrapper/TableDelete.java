@@ -1,7 +1,7 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.inf.IExecuteDelete;
+import com.dlz.db.modal.para.AQuery;
 
 /**
  * 构造单表的删除操作sql

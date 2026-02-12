@@ -1,8 +1,8 @@
 package com.dlz.db.inf;
 
 import com.dlz.db.holder.DBHolder;
-import com.dlz.db.modal.result.Page;
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.Page;
+import com.dlz.db.modal.dto.ResultMap;
 
 import java.util.List;
 

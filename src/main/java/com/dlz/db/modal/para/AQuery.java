@@ -1,8 +1,8 @@
 package com.dlz.db.modal.para;
 
+import com.dlz.db.inf.ICondAddByFn;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.inf.ICondAddByFn;
 
 
 /**

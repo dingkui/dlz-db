@@ -1,9 +1,9 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.inf.ISqlPage;
-import com.dlz.db.modal.para.ParaMap;
-import com.dlz.db.modal.result.Page;
 import com.dlz.db.inf.IExecutorQuery;
+import com.dlz.db.inf.ISqlPage;
+import com.dlz.db.modal.dto.Page;
+import com.dlz.db.modal.para.ParaMap;
 import lombok.extern.slf4j.Slf4j;
 
 /**

@@ -1,4 +1,4 @@
-package com.dlz.db.modal.result;
+package com.dlz.db.modal.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

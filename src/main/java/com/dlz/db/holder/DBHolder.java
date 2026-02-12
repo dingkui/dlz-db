@@ -2,14 +2,12 @@ package com.dlz.db.holder;
 
 import com.dlz.comm.util.StringUtils;
 import com.dlz.comm.util.ValUtil;
-import com.dlz.db.convertor.rowMapper.ResultMapRowMapper;
 import com.dlz.db.dao.IDlzDao;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
 import com.dlz.spring.holder.SpringHolder;
 import com.dlz.spring.redis.excutor.JedisExecutor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.function.Function;
 

@@ -3,7 +3,7 @@ package com.dlz.db.service;
 import com.dlz.comm.exception.DbException;
 import com.dlz.comm.util.system.ConvertUtil;
 import com.dlz.db.dao.IDlzDao;
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import org.springframework.jdbc.core.RowMapper;
 

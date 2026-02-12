@@ -1,4 +1,4 @@
-package com.dlz.db.modal.result;
+package com.dlz.db.modal.dto;
 
 import com.dlz.comm.fn.DlzFn;
 import com.dlz.db.holder.BeanInfoHolder;

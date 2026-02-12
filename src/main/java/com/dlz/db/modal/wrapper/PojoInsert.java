@@ -3,8 +3,8 @@ package com.dlz.db.modal.wrapper;
 import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
-import com.dlz.db.modal.para.AParaPojo;
 import com.dlz.db.inf.IExecutorInsert;
+import com.dlz.db.modal.para.AParaPojo;
 
 import java.lang.reflect.Field;
 import java.util.List;

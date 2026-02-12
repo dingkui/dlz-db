@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.db;
 
 import com.dlz.db.modal.DB;
+import com.dlz.db.modal.dto.Order;
+import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.SqlQuery;
-import com.dlz.db.modal.result.Order;
-import com.dlz.db.modal.result.Page;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

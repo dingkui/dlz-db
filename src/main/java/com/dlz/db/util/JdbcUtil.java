@@ -1,6 +1,6 @@
 package com.dlz.db.util;
 
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 
 import java.io.IOException;
 import java.io.InputStream;

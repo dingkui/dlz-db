@@ -3,10 +3,10 @@ package com.dlz.db.inf;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlHolder;
-import com.dlz.db.modal.wrapper.TableDelete;
-import com.dlz.db.modal.wrapper.TableUpdate;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.PojoUpdate;
+import com.dlz.db.modal.wrapper.TableDelete;
+import com.dlz.db.modal.wrapper.TableUpdate;
 
 /**
  * 删除执行器=执行器+查询构造器

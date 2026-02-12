@@ -4,7 +4,7 @@ import com.dlz.comm.util.ValUtil;
 import com.dlz.db.convertor.clumnname.ColumnNameCamel;
 import com.dlz.db.convertor.clumnname.IColumnNameConvertor;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
-import com.dlz.db.modal.result.ResultMap;
+import com.dlz.db.modal.dto.ResultMap;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,7 +1,7 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.modal.result.Order;
-import com.dlz.db.modal.result.Page;
+import com.dlz.db.modal.dto.Order;
+import com.dlz.db.modal.dto.Page;
 
 import java.util.Arrays;
 import java.util.List;
