@@ -83,6 +83,8 @@ public class DataSourceConfig {
             dbType = DbTypeEnum.SQLITE;
         } else if (lowerCase.indexOf(":sqlserver") > -1) {
             dbType = DbTypeEnum.MSSQL;
+        } else if (lowerCase.indexOf(":h2") > -1) {
+            dbType = DbTypeEnum.H2;
         } else {
             throw new SystemException("未识别的数据库类型:" + property.getUrl());
         }
