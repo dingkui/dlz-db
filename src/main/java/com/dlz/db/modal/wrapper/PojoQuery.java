@@ -1,8 +1,10 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.comm.fn.DlzFn;
+import com.dlz.db.convertor.clumnname.IConvertorToFieldName;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
+import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
@@ -97,6 +99,25 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>,T, TableQuery> impleme
     public PojoQuery<T> page(Page page) {
         getPm().setPage(page);
         return this;
+    }
+
+    public T queryBean(IConvertorToFieldName convertor) {
+        if(convertor != null){
+            SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        }
+        return DBHolder.doDb(s->s.getBean(this, true),convertor != null);
+    }
+    public List<T> queryBeanList(IConvertorToFieldName convertor) {
+        if(convertor != null){
+            SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        }
+        return DBHolder.doDb(s->s.getBeanList(this),convertor != null);
+    }
+    public Page<T> queryBeanPage(IConvertorToFieldName convertor) {
+        if(convertor != null){
+            SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        }
+        return DBHolder.doDb(s->s.getPage(this, this.getBeanClass()),convertor != null);
     }
 
     public T queryBean() {

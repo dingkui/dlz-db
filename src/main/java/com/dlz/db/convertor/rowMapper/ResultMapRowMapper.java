@@ -36,7 +36,7 @@ public class ResultMapRowMapper implements RowMapper<ResultMap> {
 	 * @see java.sql.ResultSetMetaData#getColumnName
 	 */
 	public String toFieldName(String columnName) {
-		return DbConvertUtil.columnMapper.toFieldName(columnName);
+		return DbConvertUtil.toFieldName(columnName);
 	}
 
 

@@ -14,5 +14,5 @@ public class SysSql {
     private String sqlValue;
     private String name;
     private String sqlRole;
-    private String isDeleted;
+    private Integer isDeleted;
 }

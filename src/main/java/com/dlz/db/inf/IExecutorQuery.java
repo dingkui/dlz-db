@@ -1,6 +1,8 @@
 package com.dlz.db.inf;
 
+import com.dlz.db.convertor.clumnname.IConvertorToFieldName;
 import com.dlz.db.holder.DBHolder;
+import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
 
@@ -13,6 +15,24 @@ public interface IExecutorQuery extends ISqlPara {
     Page<?> getPage();
 
     void setPage(Page<?> page);
+    default ResultMap queryOne(IConvertorToFieldName convertor) {
+        if(convertor != null){
+            SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        }
+        return DBHolder.doDb(s->s.getMap(this),convertor != null);
+    }
+    default List<ResultMap> queryList(IConvertorToFieldName convertor) {
+        if(convertor != null){
+            SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        }
+        return DBHolder.doDb(s->s.getMapList(this),convertor != null);
+    }
+    default Page<ResultMap> queryPage(IConvertorToFieldName convertor) {
+        if(convertor != null){
+            SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        }
+        return DBHolder.doDb(s->s.getPage(this),convertor != null);
+    }
     default ResultMap queryOne() {
         return DBHolder.doDb(s->s.getMap(this));
     }

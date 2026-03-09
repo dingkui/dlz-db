@@ -3,6 +3,7 @@ package com.dlz.db.inf;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlHolder;
+import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.modal.wrapper.TableDelete;
@@ -16,8 +17,12 @@ public interface IExecuteDelete<T extends IExecuteDelete>
     String getTableName();
     default int execute() {
         final String logicDeleteField = SqlHolder.properties.getLogicDeleteField();
-        if(!BeanInfoHolder.isColumnExists(getTableName(), logicDeleteField)){
-            return DBHolder.doDb(s -> s.execute(this));
+        if(!SqlRunThreadHolder.isLogicDelete() || !BeanInfoHolder.isColumnExists(getTableName(), logicDeleteField)){
+            try {
+                return DBHolder.doDb(s -> s.execute(this));
+            }finally {
+                SqlRunThreadHolder.removeLogicDeleteSetting();
+            }
         }
         final TableUpdate update = new TableUpdate(getTableName())
                 .set(logicDeleteField, 1)
@@ -31,8 +36,8 @@ public interface IExecuteDelete<T extends IExecuteDelete>
         return DBHolder.doDb(s -> s.execute(update));
     }
 
-//    default T setPhysicallyDelete(boolean physicallyDelete) {
-//        this.getTableName() ;
-//        return me();
-//    }
+    default T setLogicDelete(boolean physicallyDelete) {
+        SqlRunThreadHolder.setLogicDelete(physicallyDelete);
+        return me();
+    }
 }

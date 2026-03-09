@@ -10,6 +10,7 @@ import com.dlz.db.helper.support.SnowFlake;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlHolder;
+import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.util.DbConvertUtil;
@@ -74,7 +75,7 @@ public class WrapperBuildUtil {
           */
     public static void buildWhere(AQuery maker) {
         final String logicDeleteField = SqlHolder.properties.getLogicDeleteField();
-        if (BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)) {
+        if (SqlRunThreadHolder.isLogicDelete() && BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)) {
             if (!maker.where().isContainCondition(logicDeleteField)) {
                 maker.where().eq(logicDeleteField, 0);
             }

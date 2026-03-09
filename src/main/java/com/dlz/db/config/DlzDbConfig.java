@@ -33,7 +33,7 @@ public class DlzDbConfig extends DlzFwConfig {
         SqlHolder.init(properties);
         DbLogUtil.init(properties);
         final DlzDao dlzDao = new DlzDao(jdbc);
-        DbConvertUtil.tableCloumnMapper = new TableColumnMapper(dlzDao);
+        DbConvertUtil.defaultTableCloumnMapper = new TableColumnMapper(dlzDao);
         if (log.isInfoEnabled()) {
             log.info("init dlzDao:" + DlzDao.class.getName());
             log.info("init tableCloumnMapper:" + TableColumnMapper.class.getName());

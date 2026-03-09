@@ -4,6 +4,7 @@ import com.dlz.comm.util.ValUtil;
 import com.dlz.db.convertor.clumnname.ColumnNameCamel;
 import com.dlz.db.convertor.clumnname.IColumnNameConvertor;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
+import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.dto.ResultMap;
 
 import java.util.List;
@@ -16,72 +17,72 @@ import java.util.stream.Collectors;
  *
  */
 public class DbConvertUtil {
-	/**
-	 * 数据库字段信息及内容转换
-	 */
-	public static ITableColumnMapper tableCloumnMapper = null;
+    /**
+     * 数据库字段信息及内容转换
+     */
+    public static ITableColumnMapper defaultTableCloumnMapper = null;
 
-	/**
-	 * 数据库字段名转换器
-	 */
-	public static IColumnNameConvertor columnMapper = new ColumnNameCamel();
-	/**
-	 * 将值转换成数据库字段对应的数据类型
-	 * @param tableName
-	 * @param clumnName
-	 * @param value
-	 * @author dk 2018-09-28
-	 */
-	public static Object getVal4Db(String tableName,String clumnName,Object value) {
-		return tableCloumnMapper==null?value:tableCloumnMapper.converObj4Db(tableName, clumnName, value);
-	}
+    /**
+     * 数据库字段名转换器
+     */
+    public static IColumnNameConvertor defaultColumnMapper = new ColumnNameCamel();
+    /**
+     * 将值转换成数据库字段对应的数据类型
+     * @param tableName
+     * @param clumnName
+     * @param value
+     * @author dk 2018-09-28
+     */
+    public static Object getVal4Db(String tableName,String clumnName,Object value) {
+        final ITableColumnMapper tableColumnMapper = SqlRunThreadHolder.getTableColumnMapper(defaultTableCloumnMapper);
+        return tableColumnMapper==null?value:tableColumnMapper.converObj4Db(tableName, clumnName, value);
+    }
 
-	public static <T> List<T> getColumnList(List<ResultMap> r, Class<T> classs) {
-		return r.stream().map((m) -> classs == null ? (T) m : DbConvertUtil.getFistColumn(m, classs)).collect(Collectors.toList());
-	}
-	/**
-	 * 从Map里取得字符串
-	 * @param m
-	 * @author dk 2015-04-09
-	 */
-	public static Object getFistColumn(ResultMap m){
-		if(m==null){
-			return null;
-		}
-		for(String a: m.keySet()){
-			if("ROWNUM_".equals(a)||"rownum".equals(a)){
-				continue;
-			}
-			return m.get(a);
-		}
-		return null;
-	}
-	/**
-	 * 从Map里取得字符串
-	 * @param m
-	 * @author dk 2015-04-09
-	 */
-	public static <T> T getFistColumn(ResultMap m, Class<T> classs){
-		return ValUtil.toObj(getFistColumn(m), classs);
-	}
+    public static <T> List<T> getColumnList(List<ResultMap> r, Class<T> classs) {
+        return r.stream().map((m) -> classs == null ? (T) m : DbConvertUtil.getFistColumn(m, classs)).collect(Collectors.toList());
+    }
+    /**
+     * 从Map里取得字符串
+     * @param m
+     * @author dk 2015-04-09
+     */
+    public static Object getFistColumn(ResultMap m){
+        if(m==null){
+            return null;
+        }
+        for(String a: m.keySet()){
+            if("ROWNUM_".equals(a)||"rownum".equals(a)){
+                continue;
+            }
+            return m.get(a);
+        }
+        return null;
+    }
+    /**
+     * 从Map里取得字符串
+     * @param m
+     * @author dk 2015-04-09
+     */
+    public static <T> T getFistColumn(ResultMap m, Class<T> classs){
+        return ValUtil.toObj(getFistColumn(m), classs);
+    }
 
-	/**
-	 * 数据库字段名转换成bean字段名,一般都是下划线转驼峰
-	 * @param dbKey
-	 */
-	public static String toFieldName(String dbKey) {
-		return columnMapper.toFieldName(dbKey);
-	}
-	public static String toDbColumnName(String beanKey) {
-		return columnMapper.toDbColumnName(beanKey);
-	}
+    /**
+     * 数据库字段名转换成bean字段名,一般都是下划线转驼峰
+     * @param dbKey
+     */
+    public static String toFieldName(String dbKey) {
+        return SqlRunThreadHolder.getConvertorToFieldName(defaultColumnMapper).toFieldName(dbKey);
+    }
+    public static String toDbColumnName(String beanKey) {
+        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey);
+    }
 
-	/**
-	 * bean字段名转换成数据库字段名,一般是驼峰转下划线
-	 * @param beanKey
-	 */
-	public static String toDbColumnNames(String beanKey) {
-		return columnMapper.toDbColumnName(beanKey.replaceAll("\\s+", " "));
-	}
-
+    /**
+     * bean字段名转换成数据库字段名,一般是驼峰转下划线
+     * @param beanKey
+     */
+    public static String toDbColumnNames(String beanKey) {
+        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey.replaceAll("\\s+", " "));
+    }
 }
