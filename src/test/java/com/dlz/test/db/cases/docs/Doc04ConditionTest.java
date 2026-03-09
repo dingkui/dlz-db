@@ -299,7 +299,7 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
                 .in(User::getId, "1,2,3,4,5")
                 .ni(User::getStatus, Arrays.asList(0, -1))
                 .bt(User::getAge, 18, 60)
-                .in(User::getDeptId, "sql:SELECT id FROM dept WHERE type = 'tech'")
+                .in(User::getDeptId, "sql:SELECT id FROM DEPARTMENT WHERE type = 'tech'")
                 .queryList();
         //条件sql: where ID in (1,2,3,4,5) and STATUS not in (0,-1) and AGE between 18 and 60 and DEPT_ID in (SELECT id FROM dept WHERE type = 'tech')
     }

@@ -13,6 +13,7 @@ public class User {
     private Integer age;
     private Date createTime;
     private String sex;
+    private String flag;
     private String score;
     private String deptId;
     private String level;

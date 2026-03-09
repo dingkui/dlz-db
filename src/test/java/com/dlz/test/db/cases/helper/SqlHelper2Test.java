@@ -7,22 +7,7 @@ import org.junit.Test;
 
 
 public class SqlHelper2Test extends SpingDbBaseTest {
-    @Test
-    public void landaTest1() {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-//        dataSource.setUrl("jdbc:mysql://192.168.1.126:3306/elec?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true");
-//        dataSource.setUsername("root");
-//        dataSource.setPassword("1234qwer");
-//
-//        SqlHolder.init(new DlzDbProperties());
-//        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-//        DlzDao dao = new DlzDao(jdbcTemplate);
-//        DbOpMysql dbOpMysql = new DbOpMysql(dao);
 
-        TableInfo sys_test = DB.Dynamic.getSqlHelper().getTableInfo("sys_code");
-        System.out.println(sys_test);
-    }
     @Test
     public void lamdaTest2() {
 //        DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -36,7 +21,7 @@ public class SqlHelper2Test extends SpingDbBaseTest {
 //        DlzDao dao = new DlzDao(jdbcTemplate);
 //        DbOpMysql dbOpMysql = new DbOpMysql(dao);
 
-        TableInfo sys_test = DB.Dynamic.getSqlHelper().getTableInfo("elec_graph");
+        TableInfo sys_test = DB.Dynamic.getSqlHelper().getTableInfo("user");
         System.out.println(sys_test);
     }
 }

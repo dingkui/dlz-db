@@ -4,6 +4,7 @@ import com.dlz.comm.util.ValUtil;
 import com.dlz.comm.util.encry.TraceUtil;
 import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.modal.DB;
+import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
 import com.dlz.db.modal.para.AParaPojo;
@@ -26,6 +27,10 @@ import java.io.File;
 @SpringBootApplication(scanBasePackages = {"com.dlz.spring", "com.dlz.test.db.config"})
 @Slf4j
 public class SpingDbBaseTest {
+    @Test
+    public void db() {
+
+    }
     @Before
     public void before(){
         if(TraceUtil.getTraceid()==null){

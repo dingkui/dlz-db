@@ -79,7 +79,7 @@
 		测试5_1_4
 	-->
 	<sql sqlId="key.pageAndOrderTest5_1_4"><![CDATA[
-	   SELECT * FROM user WHERE and status = #{status}
+	   SELECT * FROM user WHERE status = #{status}
  	]]></sql>
  	
 	

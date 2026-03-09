@@ -78,14 +78,14 @@ public class Doc05PageAndOrderTest extends SpingDbBaseTest {
                 .queryPage();
 
         //方法2：直接写SQL
-        DB.Sql.select("SELECT * FROM user WHERE and status = #{status}")
+        DB.Sql.select("SELECT * FROM user WHERE status = #{status}")
                 .addPara("status", 1)
                 .page(Page.build(1, 10, Order.desc("id")))
                 .queryPage();
 
         // 生成 SQL：
         // select count(1) from user WHERE status = 1 （自动生成count语句）
-        // SELECT * FROM user WHERE and status = 1 order by ID desc LIMIT 0,10  （COUNT>0 时才执行）
+        // SELECT * FROM user WHERE status = 1 order by ID desc LIMIT 0,10  （COUNT>0 时才执行）
     }
 
     @Test

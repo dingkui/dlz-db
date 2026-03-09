@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 import javax.annotation.PostConstruct;
 
+
 @ConfigurationPropertiesScan
 @SpringBootApplication(scanBasePackages = {"com.dlz.spring", "com.dlz.test.db.config"})
 public class Starter {
