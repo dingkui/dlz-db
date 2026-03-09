@@ -64,11 +64,11 @@ public class DbOpSqlite extends SqlHelper {
     @Override
     public TableInfo getTableInfo(String tableName) {
         // 获取表注释
-        String sql = "SELECT table_comment FROM table_comments WHERE table_name = ?";
-        String tableComment = DBHolder.getDao().getFistColumn(sql, String.class, tableName);
+//        String sql = "SELECT table_comment FROM table_comments WHERE table_name = ?";
+//        String tableComment = DBHolder.getDao().getFistColumn(sql, String.class, tableName);
 
         // 构建查询主键的SQL语句
-        sql = "PRAGMA table_info(`" + tableName + "`)";
+        String sql = "PRAGMA table_info(`" + tableName + "`)";
         // 执行查询并获取结果
         List<ResultMap> maps = DBHolder.getDao().getList(sql);
         List<String> primaryKeys = new ArrayList<>();
@@ -98,7 +98,7 @@ public class DbOpSqlite extends SqlHelper {
 
         TableInfo tableInfo = new TableInfo();
         tableInfo.setTableName(tableName);
-        tableInfo.setTableComment(tableComment);
+//        tableInfo.setTableComment(tableComment);
         tableInfo.setColumnInfos(columnInfos);
         tableInfo.setPrimaryKeys(primaryKeys);
 
