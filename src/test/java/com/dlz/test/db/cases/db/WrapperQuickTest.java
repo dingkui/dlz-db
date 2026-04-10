@@ -1,6 +1,5 @@
 package com.dlz.test.db.cases.db;
 
-import com.dlz.db.annotation.TableName;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.helper.support.HelperScan;
 import com.dlz.db.helper.support.SqlHelper;
@@ -11,8 +10,6 @@ import com.dlz.test.db.entity.Yc1Record;
 import com.dlz.test.db.entity.YcRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-
-import java.util.Set;
 
 @Slf4j
 public class WrapperQuickTest extends SpingDbBaseTest{

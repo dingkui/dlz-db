@@ -3,14 +3,11 @@ package com.dlz.test.db.config;
 import com.dlz.comm.util.ValUtil;
 import com.dlz.comm.util.encry.TraceUtil;
 import com.dlz.comm.util.system.FieldReflections;
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
 import com.dlz.db.modal.para.AParaPojo;
 import com.dlz.db.modal.para.ParaJdbc;
 import com.dlz.db.modal.para.ParaMap;
-import com.dlz.db.modal.wrapper.JdbcQuery;
 import com.dlz.db.util.SqlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -19,8 +16,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.File;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

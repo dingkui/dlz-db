@@ -3,8 +3,6 @@ package com.dlz.test.db.entity;
 import com.dlz.db.annotation.TableName;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 @TableName("DEPARTMENT")
 public class Department {
