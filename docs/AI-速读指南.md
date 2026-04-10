@@ -21,7 +21,7 @@
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz.db</artifactId>
-    <version>6.6.1-SNAPSHOT</version>
+    <version>6.6.2-SNAPSHOT</version>
 </dependency>
 ```
 
