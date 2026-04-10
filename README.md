@@ -145,7 +145,7 @@ spring:
 ```java
 //数据库框架启动配置，注解后功能自动激活
 @Configuration
-@EnableConfigurationProperties({DlzDbProperties.class, DlzProperties.class})
+@EnableConfigurationProperties({DlzDbProperties.class})
 public class DlzDbConfigs extends DlzDbConfig {}
 @Data
 @TableName("user")  // 可选，默认使用类名转下划线。高级应用：支持自动建表，自动同步结构到数据库

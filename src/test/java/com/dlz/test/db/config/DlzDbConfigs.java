@@ -2,23 +2,9 @@ package com.dlz.test.db.config;
 
 import com.dlz.db.config.DlzDbConfig;
 import com.dlz.db.config.DlzDbProperties;
-import com.dlz.db.convertor.dbtype.TableColumnMapper;
-import com.dlz.db.dao.IDlzDao;
-import com.dlz.db.holder.DBHolder;
-import com.dlz.db.holder.SqlHolder;
-import com.dlz.db.modal.DB;
-import com.dlz.db.util.DbConvertUtil;
-import com.dlz.db.util.DbLogUtil;
-import com.dlz.spring.config.DlzProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.sql.DataSource;
 
 /**
  * @author dk
@@ -26,7 +12,7 @@ import javax.sql.DataSource;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties({DlzDbProperties.class, DlzProperties.class})
+@EnableConfigurationProperties({DlzDbProperties.class})
 public class DlzDbConfigs extends DlzDbConfig {
 
 //    @Bean(name = "dlzDao")

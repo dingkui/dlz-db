@@ -189,7 +189,7 @@ spring:
 ```java
 //数据库框架启动配置，注解后功能自动激活
 @Configuration
-@EnableConfigurationProperties({DlzDbProperties.class, DlzProperties.class})
+@EnableConfigurationProperties({DlzDbProperties.class})
 public class DlzDbConfigs extends DlzDbConfig {}
 
 @Data
