@@ -2,6 +2,7 @@ package com.dlz.db.modal.wrapper;
 
 import com.dlz.comm.exception.SystemException;
 import com.dlz.comm.util.StringUtils;
+import com.dlz.comm.util.id.UuidUtil;
 import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -223,7 +223,7 @@ public class WrapperBuildUtil {
             if (type == IdType.ASSIGN_ID) {
                 return SnowFlake.id();
             } else if (type == IdType.ASSIGN_UUID) {
-                return UUID.randomUUID().toString().replace("-", "");
+                return UuidUtil.uuid();
             } else if (type == IdType.SEQ) {
                 return DBHolder.sequence(tableName, 1l);
             } else {

@@ -1,7 +1,7 @@
 package com.dlz.test.db.config;
 
 import com.dlz.comm.util.ValUtil;
-import com.dlz.comm.util.encry.TraceUtil;
+import com.dlz.comm.util.id.TraceUtil;
 import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
