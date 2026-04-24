@@ -1,9 +1,7 @@
 package com.dlz.test.db.cases.helper;
 
 import com.dlz.comm.util.system.FieldReflections;
-import com.dlz.db.helper.wrapper.ConditionOrWrapper;
 import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.Dict;
 import org.junit.Test;
@@ -41,15 +39,5 @@ public class SqlHelperTest extends SpingDbBaseTest {
         }
         System.out.println(System.currentTimeMillis()-t);
     }
-    @Test
-    public void landaTest() {
-        ConditionOrWrapper conditionOrWrapper = new ConditionOrWrapper();
-        conditionOrWrapper.eq(Dict::getA2, "1");
-        conditionOrWrapper.eq(Dict::getA2, "2");
-    }
 
-    @Test
-    public void doTest() {
-        DB.Dynamic.getSqlHelper().findById("1", Dict.class);
-    }
 }

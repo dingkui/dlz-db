@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.db;
 
+import com.dlz.comm.exception.SystemException;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.helper.support.HelperScan;
 import com.dlz.db.helper.support.SqlHelper;
@@ -11,6 +12,9 @@ import com.dlz.test.db.entity.YcRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 @Slf4j
 public class WrapperQuickTest extends SpingDbBaseTest{
 
@@ -18,14 +22,24 @@ public class WrapperQuickTest extends SpingDbBaseTest{
     public void insertOrUpdateTest1() {
         SysSql dict = new SysSql();
         dict.setName("xx");
-        DB.Pojo.insertOrUpdate(dict);
+        try {
+            DB.Pojo.insertOrUpdate(dict);
+            fail("应该抛出 SystemException");
+        } catch (SystemException e) {
+            assertTrue(e.getMessage().contains("SysSql.id为手动输入"));
+        }
     }
 
     @Test
     public void saveTest1() {
         SysSql dict = new SysSql();
         dict.setName("xx");
-        DB.Pojo.save(dict);
+        try {
+            DB.Pojo.save(dict);
+            fail("应该抛出 SystemException");
+        } catch (SystemException e) {
+            assertTrue(e.getMessage().contains("SysSql.id为手动输入"));
+        }
     }
     @Test
     public void saveTest2() {
@@ -34,8 +48,11 @@ public class WrapperQuickTest extends SpingDbBaseTest{
         dict.setPcid("xx");
         dict.setSta(1);
         DB.Pojo.save(dict);
-
+    }
+    @Test
+    public void saveTest22() {
         YcRecord yc1Record = new Yc1Record();
+        yc1Record.setSta(1);
         DB.Pojo.insert(yc1Record).execute();
     }
     @Test
