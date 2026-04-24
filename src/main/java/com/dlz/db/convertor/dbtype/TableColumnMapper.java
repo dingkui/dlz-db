@@ -27,24 +27,30 @@ public class TableColumnMapper implements ITableColumnMapper {
 
 	private static Object cover(Integer dbClass, Object obj) {
 		switch (dbClass) {
-		case Types.SMALLINT:
-		case Types.INTEGER:
-			return ValUtil.toInt(obj);
-		case Types.DECIMAL:
-		case Types.BIGINT:
-		case Types.NUMERIC:
-			return ValUtil.toLong(obj);
-		case Types.DOUBLE:
-			return ValUtil.toDouble(obj);
-		case Types.FLOAT:
-			return ValUtil.toFloat(obj);
-		case Types.CHAR:
-		case Types.VARCHAR:
-			return ValUtil.toStr(obj);
-		case Types.DATE:
-		case Types.TIME:
-		case Types.TIMESTAMP:
-			return ValUtil.toDate(obj);
+            // 整数族：统一 Long，避免 Integer 溢出问题，也避免 BigDecimal 的 overkill
+            case Types.TINYINT:
+            case Types.SMALLINT:
+            case Types.INTEGER:
+            case Types.BIGINT:
+                return ValUtil.toLong(obj);
+
+            // 定点/高精度小数：必须 BigDecimal
+            case Types.DECIMAL:
+            case Types.NUMERIC:
+                return ValUtil.toBigDecimal(obj);
+
+            // 浮点：保持 Double，保留 Infinity/NaN 语义，也避免 PG 的精度回差
+            case Types.FLOAT:
+            case Types.REAL:
+            case Types.DOUBLE:
+                return ValUtil.toDouble(obj);
+            case Types.CHAR:
+            case Types.VARCHAR:
+                return ValUtil.toStr(obj);
+            case Types.DATE:
+            case Types.TIME:
+            case Types.TIMESTAMP:
+                return ValUtil.toDate(obj);
 		default:
 			break;
 		}
