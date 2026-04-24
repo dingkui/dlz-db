@@ -31,6 +31,7 @@ public class BeanInfoHolder {
     private static final CacheMap<Field, String> columnNameCache = new CacheMap<>();
     private static final CacheMap<String, List<Field>> tableFieldCache = new CacheMap<>();
     private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCahe = new CacheMap<>();
+    private static final CacheMap<Class<?>, Field> idFieldCache = new CacheMap<>();
 
     public static void clearAll() {
         tableColumnsInfoCahe.clear();
@@ -194,6 +195,39 @@ public class BeanInfoHolder {
             return FieldReflections.getFields(beanClass).stream()
                     .filter(field -> tableColumnsInfo.containsKey(getColumnName(field.getName())))
                     .collect(Collectors.toList());
+        });
+    }
+
+    /**
+     * （带缓存）取得 bean 的主键字段。
+     * <p>优先级：{@code @TableId} 注解 → MyBatis-Plus 的 {@code @TableId} → 名为 {@code "id"} 的字段 → null。
+     * <p>仅在 {@link #getBeanFields(Class)} 返回的表内字段中查找，避免命中 transient 字段。
+     *
+     * @param beanClass bean 类
+     * @return 主键 Field；若不存在返回 null
+     */
+    public static Field getIdField(Class<?> beanClass) {
+        return idFieldCache.getAndSet(beanClass, () -> {
+            List<Field> fields = getBeanFields(beanClass);
+            // 1) @TableId（本项目注解）
+            for (Field f : fields) {
+                if (f.getAnnotation(TableId.class) != null) {
+                    return f;
+                }
+            }
+            // 2) MyBatis-Plus @TableId（代理调用，未引入 MP 时返回空）
+            for (Field f : fields) {
+                if (StringUtils.isNotEmpty(AnnoProxys.MybatisPlusIdType.value(f))) {
+                    return f;
+                }
+            }
+            // 3) 名为 id 的字段
+            for (Field f : fields) {
+                if ("id".equals(f.getName())) {
+                    return f;
+                }
+            }
+            return null;
         });
     }
 

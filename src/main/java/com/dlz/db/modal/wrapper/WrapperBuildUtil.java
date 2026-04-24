@@ -170,53 +170,51 @@ public class WrapperBuildUtil {
         return "INSERT INTO " + dbName + " (" + StringUtils.join(",", fieldsPart) + ") VALUES (" + StringUtils.join(",", placeHolder) + ")";
     }
 
-    public static Object[] buildInsertParams(String dbName,Object object, List<Field> fields) {
+    public static Object[] buildInsertParams(Object object, List<Field> fields) {
         List<Object> params = new ArrayList<>();
         for (Field field : fields) {
             String dbClumnName = BeanInfoHolder.getColumnName(field);
             if (!dbClumnName.equals("")) {
-                Object value = FieldReflections.getValue(object, field);
-                if(value==null){
-                    value = WrapperBuildUtil.getIdValue(field, dbName);
-                }
-                params.add(value);
-            }
-        }
-        return params.toArray();
-    }
-
-    public static String buildUpdateSql(String dbName, List<Field> fields) {
-        List<String> fieldsPart = new ArrayList<String>();
-        for (Field field : fields) {
-            String dbClumnName = BeanInfoHolder.getColumnName(field);
-            if (!dbClumnName.equals("id") && !dbClumnName.equals("")) {
-                fieldsPart.add(dbClumnName + "=?");
-            }
-        }
-        return "UPDATE " + dbName + " SET " + StringUtils.join(",", fieldsPart) + " WHERE id = ?";
-    }
-
-    public static Object[] buildUpdateParams(Object object, List<Field> fields) {
-        List<Object> params = new ArrayList<Object>();
-        for (Field field : fields) {
-            String dbClumnName = BeanInfoHolder.getColumnName(field);
-            if (!dbClumnName.equals("id") && !dbClumnName.equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
         }
-        params.add(FieldReflections.getValue(object, "id", true));
         return params.toArray();
     }
 
-    public static Object getIdValue(Field field, String tableName) {
-        final TableId annotation = field.getAnnotation(TableId.class);
-        IdType type;
-        if (annotation != null) {
-            type = annotation.type();
-        }else{
-            type = AnnoProxys.MybatisPlusIdType.type(field);
+    public static String buildUpdateSql(String dbName, List<Field> fields,String idName) {
+        List<String> fieldsPart = new ArrayList<String>();
+        for (Field field : fields) {
+            String dbClumnName = BeanInfoHolder.getColumnName(field);
+            if (!dbClumnName.equals(idName) && !dbClumnName.equals("")) {
+                fieldsPart.add(dbClumnName + "=?");
+            }
         }
-        if (type==null || type == IdType.AUTO||type == IdType.INPUT) {
+        return "UPDATE " + dbName + " SET " + StringUtils.join(",", fieldsPart) + " WHERE "+idName+" = ?";
+    }
+
+    public static Object[] buildUpdateParams(Object object, List<Field> fields,String idName) {
+        List<Object> params = new ArrayList<Object>(fields.size());
+        for (Field field : fields) {
+            String dbClumnName = BeanInfoHolder.getColumnName(field);
+            if (!dbClumnName.equals(idName) && !dbClumnName.equals("")) {
+                params.add(FieldReflections.getValue(object, field));
+            }
+        }
+        params.add(FieldReflections.getValue(object, idName, true));
+        return params.toArray();
+    }
+
+    public static IdType getIdType(Field field) {
+        final TableId annotation = field.getAnnotation(TableId.class);
+        if (annotation != null) {
+            return annotation.type();
+        }
+        return AnnoProxys.MybatisPlusIdType.type(field);
+    }
+
+    public static Object getIdValue(Field field, String tableName) {
+        IdType type = getIdType( field);
+        if (type == null || type == IdType.AUTO || type == IdType.INPUT) {
             return null;
         } else {
             final String columnName = BeanInfoHolder.getColumnName(field);

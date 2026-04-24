@@ -7,9 +7,8 @@ import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.db.modal.wrapper.PojoUpdate;
-import com.dlz.db.util.DbConvertUtil;
+import com.dlz.db.util.DbEntityUtil;
 
-import java.lang.reflect.Field;
 import java.util.function.Function;
 
 public class DbPojo {
@@ -50,47 +49,38 @@ public class DbPojo {
         return insert(bean).execute();
     }
 
-    public <T> int insertOrUpdate(T obj, String idName) {
-        final Field field = FieldReflections.getField(obj, idName, false);
-        final Object id = FieldReflections.getValue(obj, field);
+    public <T> int insertOrUpdate(T obj) {
+        final Class<T> aClass = (Class<T>) obj.getClass();
+        final DbEntityUtil.IdInfo idInfo = DbEntityUtil.getIdInfo(aClass);
+        final Object id = FieldReflections.getValue(obj, idInfo.getField());
+        final String idName = idInfo.getName();
         if (StringUtils.isEmpty(id)) {
             return insert(obj).execute();
         }
-        return update(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, id).execute();
-    }
-
-    public <T> int insertOrUpdate(T obj) {
-        return insertOrUpdate(obj, "id");
+        return update(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, id).execute();
     }
 
     public <T> int updateById(T obj) {
-        return updateById(obj, "id");
-    }
-
-    public <T> int updateById(T obj, String idName) {
-        final Object id = FieldReflections.getValue(obj, DbConvertUtil.toFieldName(idName), true);
+        final Class<T> aClass = (Class<T>) obj.getClass();
+        final DbEntityUtil.IdInfo idInfo = DbEntityUtil.getIdInfo(aClass);
+        final Object id = FieldReflections.getValue(obj, idInfo.getField());
+        final String idName = idInfo.getName();
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return update((Class<T>) obj.getClass()).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, id).execute();
+        return update(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, id).execute();
     }
 
-    public <T> T getById(Class<T> c, Object id, String idName) {
+    public <T> T getById(Class<T> c, Object id) {
+        final String idName = DbEntityUtil.getIdName(c);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
         return select(c).eq(idName, id).queryBean();
     }
 
-    public <T> T getById(Class<T> c, Object id) {
-        return getById(c, id, "id");
-    }
-
     public <T> int removeByIds(Class<T> c, String ids) {
-        return removeByIds(c, ids, "id");
-    }
-
-    public <T> int removeByIds(Class<T> c, String ids, String idName) {
+        final String idName = DbEntityUtil.getIdName(c);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
