@@ -139,7 +139,7 @@ DB.saveBatch(users, 100);  // 批量
 // 更新
 DB.Pojo.update(user).eq(User::getId, id).execute();
 DB.Pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
-DB.Pojo.update(User.class).setSql("score = score + 10").eq(User::getId, id).execute();  // 表达式更新 TODO 暂不支持
+DB.Pojo.update(User.class).setSql("score = score + 10").eq(User::getId, id).execute();  // 原生 SQL 片段更新（col = expr）
 
 // 删除（根据系统配置的逻辑删除字段自动判断）
 DB.Pojo.delete(User.class).eq(User::getId, id).execute();  // 自动判断逻辑/物理删除

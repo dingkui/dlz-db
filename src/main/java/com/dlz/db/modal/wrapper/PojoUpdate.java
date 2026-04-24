@@ -46,6 +46,27 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>,T, TableUpdate> impl
 		getPm().set(setValues);
 		return this;
 	}
+	/**
+	 * 以原生 SQL 片段更新字段，形如 "col = expr"。
+	 * 内部等价于 {@code set(col, "sql:" + expr)}，复用 sql: 前缀分支。
+	 * <p>⚠️ expr 为原生 SQL，严禁拼接外部输入。
+	 * <pre>
+	 *   .setSql("score = score + 10")
+	 *   .setSql("view_count = view_count + 1")
+	 * </pre>
+	 */
+	public PojoUpdate<T> setSql(String sqlFragment) {
+		if (sqlFragment == null || sqlFragment.trim().isEmpty()) {
+			return this;
+		}
+		int eq = sqlFragment.indexOf('=');
+		if (eq <= 0) {
+			throw new IllegalArgumentException("setSql 需要 'col = expr' 形式: " + sqlFragment);
+		}
+		String col = sqlFragment.substring(0, eq).trim();
+		String expr = sqlFragment.substring(eq + 1).trim();
+		return set(col, "sql:" + expr);
+	}
 	public PojoUpdate<T> set(T bean, Function<String,Boolean> ignore) {
 		List<Field> fields = FieldReflections.getFields(bean.getClass());
 		for (Field field : fields) {
