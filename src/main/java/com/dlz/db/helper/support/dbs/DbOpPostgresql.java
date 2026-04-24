@@ -28,15 +28,6 @@ public class DbOpPostgresql extends SqlHelper {
         }
     }
 
-    /**
-     * @param currPage 从1开始
-     * @param pageSize
-          */
-    @Override
-    public String getLimitSql(long currPage, long pageSize) {
-        return " LIMIT " + pageSize + " OFFSET " + (currPage - 1) * pageSize;
-    }
-
     @Override
     public Set<String> getTableColumnNames(String tableName) {
         // 获取表所有字段

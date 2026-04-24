@@ -58,14 +58,6 @@ public class DbOpDm8 extends SqlHelper {
         DBHolder.getDao().execute(sql);
     }
 
-    /**
-     * 分页SQL（达梦8支持LIMIT OFFSET语法）
-     */
-    @Override
-    public String getLimitSql(long currPage, long pageSize) {
-        return " LIMIT " + ((currPage - 1) * pageSize) + " OFFSET " + pageSize;
-    }
-
     @Override
     public Set<String> getTableColumnNames(String tableName) {
         // 达梦系统表查询字段信息

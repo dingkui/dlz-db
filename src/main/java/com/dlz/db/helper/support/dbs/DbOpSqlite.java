@@ -45,11 +45,6 @@ public class DbOpSqlite extends SqlHelper {
     }
 
     @Override
-    public String getLimitSql(long currPage, long pageSize) {
-        return " LIMIT " + (currPage - 1) * pageSize + "," + pageSize;
-    }
-
-    @Override
     public Set<String> getTableColumnNames(String tableName) {
         // 获取表所有字段
         String sql = "PRAGMA TABLE_INFO(`" + tableName + "`)";
