@@ -8,3 +8,4 @@ caches
 .idea
 pom.xml.versionsBackup
 /*.sqlite3
+docs/blog

@@ -4,533 +4,364 @@ import com.dlz.db.enums.DbOprateEnum;
 
 import static com.dlz.db.enums.DbOprateEnum.*;
 
-public interface ICondAddByKey<T extends ICondAddByKey>  extends ICondBase<T> {
+/**
+ * 基于 <b>字符串列名</b> 的条件构造接口。
+ *
+ * <p><b>设计约定</b>：所有条件方法统一签名 <b>{@code (boolean is, String column, Object value)}</b>；
+ * 省略 {@code is} 的重载等价于 {@code is=true}；{@code is=false} 时整条条件跳过，适合动态条件。
+ *
+ * <p><b>与 {@link ICondAddByLamda} 的差异</b>：
+ * <ul>
+ *   <li>列名为手写字符串（如 {@code "user_name"}），不做类型安全校验；</li>
+ *   <li>适用于列名在运行时决定、或 Bean 中无对应属性、或拼接同表多列的场景；</li>
+ *   <li>列名大小写与数据库实际列名一致（通常为 snake_case 小写）。</li>
+ * </ul>
+ *
+ * <pre>
+ * // 动态列名场景
+ * String sortCol = userInput.getSortField();  // e.g. "create_time"
+ * .eq("status", 1).gt(sortCol, someValue)
+ *
+ * // 同 {@link ICondAddByLamda} 等价
+ * .eq("user_id", 42)    // 等价于 .eq(User::getUserId, 42)
+ * </pre>
+ *
+ * <p><b>命名速查</b>：
+ * <pre>
+ *   eq / ne                     =  / <>
+ *   gt / ge / lt / le           > / >= / < / <=
+ *   lk / ll / lr / nl           LIKE '%v%' / 'v%' / '%v' / NOT LIKE
+ *   in / ni                     IN / NOT IN
+ *   bt / nb                     BETWEEN / NOT BETWEEN
+ *   isn / isnn                  IS NULL / IS NOT NULL
+ *   op                          自定义操作符（{@link DbOprateEnum}）
+ * </pre>
+ */
+public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
+
+    // ========== BETWEEN / NOT BETWEEN ==========
+
     /**
-     * 添加一个"between"条件到当前条件对象
-     * 此方法接受一个列名和两个值，用于构建"between"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value1    第一个值，用于构建范围查询的起始点
-     * @param value2    第二个值，用于构建范围查询的结束点
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column BETWEEN value1 AND value2}。
+     * <pre>.bt("age", 18, 60)   // age BETWEEN 18 AND 60</pre>
      */
-    default T bt(String clumnName, Object value1, Object value2) {
-        addChildren(bt.mk(clumnName, new Object[]{value1, value2}));
-        return me();
-    }
-    /**
-     * 添加一个"between"条件到当前条件对象
-     * 此方法接受一个列名和两个值，用于构建"between"查询条件
-     *
-     * @param is 是否添加该条件
-     * @param clumnName 列的名称
-     * @param value1    第一个值，用于构建范围查询的起始点
-     * @param value2    第二个值，用于构建范围查询的结束点
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T bt(boolean is,String clumnName, Object value1, Object value2) {
-        if(is){
-            addChildren(bt.mk(clumnName, new Object[]{value1, value2}));
-        }
-        return me();
-    }
-    /**
-     * 添加一个简化版的"between"条件到当前条件对象
-     * 此方法接受一个列名和一个单一值，用于构建"between"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于构建范围查询的值，支持形式：字符串："a1,a2",json:[a1,a2],数组，List
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T bt(String clumnName, Object value) {
-        addChildren(bt.mk(clumnName, value));
+    default T bt(String column, Object value1, Object value2) {
+        addChildren(bt.mk(column, new Object[]{value1, value2}));
         return me();
     }
 
-    /**
-     * 添加一个简化版的"between"条件到当前条件对象
-     * 此方法接受一个列名和一个单一值，用于构建"between"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于构建范围查询的值，支持形式：字符串："a1,a2",json:[a1,a2],数组，List
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T bt(boolean is,String clumnName, Object value) {
-        if(is){
-            addChildren(bt.mk(clumnName, value));
-        }
-        return me();
-    }
-
-    /**
-     * 添加一个简化版的"not between"条件到当前条件对象
-     * 此方法接受一个列名和一个单一值，用于构建"not between"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于构建范围查询的值，支持形式：字符串："a1,a2",json:[a1,a2],数组，List
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T nb(String clumnName, Object value) {
-        addChildren(nb.mk(clumnName, value));
-        return me();
-    }
-
-    /**
-     * 添加一个简化版的"not between"条件到当前条件对象
-     * 此方法接受一个列名和一个单一值，用于构建"not between"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于构建范围查询的值，支持形式：字符串："a1,a2",json:[a1,a2],数组，List
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T nb(boolean is,String clumnName, Object value) {
-        if(is){
-            addChildren(nb.mk(clumnName, value));
-        }
-        return me();
-    }
-
-    /**
-     * 添加一个"not between"条件到当前条件对象
-     * 此方法接受一个列名和两个值，用于构建"not between"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value1    第一个值，用于构建范围查询的起始点
-     * @param value2    第二个值，用于构建范围查询的结束点
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T nb(String clumnName, Object value1, Object value2) {
-        addChildren(nb.mk(clumnName, new Object[]{value1, value2}));
-        return me();
-    }
-
-    /**
-     * 添加一个"not between"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和两个值，用于构建"not between"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value1    第一个值，用于构建范围查询的起始点
-     * @param value2    第二个值，用于构建范围查询的结束点
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T nb(boolean is, String clumnName, Object value1, Object value2) {
+    /** 动态条件版 {@link #bt(String, Object, Object)}。 */
+    default T bt(boolean is, String column, Object value1, Object value2) {
         if (is) {
-            addChildren(nb.mk(clumnName, new Object[]{value1, value2}));
+            addChildren(bt.mk(column, new Object[]{value1, value2}));
         }
-        return me();
-    }
-    /**
-     * 添加一个"equal"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"equal"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T eq(String clumnName, Object value) {
-        addChildren(eq.mk(clumnName, value));
         return me();
     }
 
     /**
-     * 添加一个"equal"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"equal"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
+     * 单值形式的 BETWEEN。{@code value} 支持多种形式：
+     * <ul>
+     *   <li>字符串："a1,a2"（逗号分隔）</li>
+     *   <li>JSON：[a1,a2]</li>
+     *   <li>数组：{@code new Object[]{a1, a2}}</li>
+     *   <li>{@link java.util.List}：{@code Arrays.asList(a1, a2)}</li>
+     * </ul>
+     * <pre>
+     * .bt("create_time", "2024-01-01,2024-12-31")
+     * .bt("age", Arrays.asList(18, 60))
+     * </pre>
      */
-    default T eq(boolean is, String clumnName, Object value) {
+    default T bt(String column, Object value) {
+        addChildren(bt.mk(column, value));
+        return me();
+    }
+
+    /** 动态条件版 {@link #bt(String, Object)}。 */
+    default T bt(boolean is, String column, Object value) {
         if (is) {
-            addChildren(eq.mk(clumnName, value));
+            addChildren(bt.mk(column, value));
         }
         return me();
     }
 
-    /**
-     * 添加一个"is not null"条件到当前条件对象
-     * 此方法接受一个列名，用于构建"is not null"查询条件
-     *
-     * @param clumnName 列的名称
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T isnn(String clumnName) {
-        addChildren(isnn.mk(clumnName, null));
+    /** {@code column NOT BETWEEN value1 AND value2}。 */
+    default T nb(String column, Object value1, Object value2) {
+        addChildren(nb.mk(column, new Object[]{value1, value2}));
         return me();
     }
 
-    /**
-     * 添加一个"is not null"条件到当前条件对象
-     * 此方法接受一个布尔值判断和列名，用于构建"is not null"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T isnn(boolean is, String clumnName) {
+    /** 动态条件版 {@link #nb(String, Object, Object)}。 */
+    default T nb(boolean is, String column, Object value1, Object value2) {
         if (is) {
-            addChildren(isnn.mk(clumnName, null));
+            addChildren(nb.mk(column, new Object[]{value1, value2}));
         }
         return me();
     }
 
-    /**
-     * 添加一个"is null"条件到当前条件对象
-     * 此方法接受一个列名，用于构建"is null"查询条件
-     *
-     * @param clumnName 列的名称
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T isn(String clumnName) {
-        addChildren(isn.mk(clumnName, null));
+    /** 单值形式的 NOT BETWEEN，{@code value} 格式同 {@link #bt(String, Object)}。 */
+    default T nb(String column, Object value) {
+        addChildren(nb.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"is null"条件到当前条件对象
-     * 此方法接受一个布尔值判断和列名，用于构建"is null"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T isn(boolean is, String clumnName) {
+    /** 动态条件版 {@link #nb(String, Object)}。 */
+    default T nb(boolean is, String column, Object value) {
         if (is) {
-            addChildren(isn.mk(clumnName, null));
+            addChildren(nb.mk(column, value));
         }
         return me();
     }
 
+    // ========== IS NULL / IS NOT NULL ==========
+
     /**
-     * 添加一个"less than"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"less than"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column IS NOT NULL}。
+     * <pre>.isnn("email")   // email IS NOT NULL</pre>
      */
-    default T lt(String clumnName, Object value) {
-        addChildren(lt.mk(clumnName, value));
+    default T isnn(String column) {
+        addChildren(isnn.mk(column, null));
         return me();
     }
 
-    /**
-     * 添加一个"less than"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"less than"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T lt(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #isnn(String)}。 */
+    default T isnn(boolean is, String column) {
         if (is) {
-            addChildren(lt.mk(clumnName, value));
+            addChildren(isnn.mk(column, null));
         }
         return me();
     }
 
     /**
-     * 添加一个"not like"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"not like"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，通常包含通配符
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column IS NULL}。
+     * <pre>.isn("delete_time")   // delete_time IS NULL</pre>
      */
-    default T nl(String clumnName, Object value) {
-        addChildren(nl.mk(clumnName, value));
+    default T isn(String column) {
+        addChildren(isn.mk(column, null));
         return me();
     }
 
-    /**
-     * 添加一个"not like"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"not like"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，通常包含通配符
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T nl(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #isn(String)}。 */
+    default T isn(boolean is, String column) {
         if (is) {
-            addChildren(nl.mk(clumnName, value));
+            addChildren(isn.mk(column, null));
         }
         return me();
     }
 
+    // ========== EQ / NE ==========
+
     /**
-     * 添加一个"like right"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"like"查询条件，值的左侧包含通配符
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，右侧通常不包含通配符
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column = value}。
+     * <pre>.eq("status", 1)   // status = 1</pre>
      */
-    default T lr(String clumnName, Object value) {
-        addChildren(lr.mk(clumnName, value));
+    default T eq(String column, Object value) {
+        addChildren(eq.mk(column, value));
         return me();
     }
 
     /**
-     * 添加一个"like right"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"like right"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，右侧通常不包含通配符
-     * @return 返回当前条件对象，支持链式调用
+     * 动态条件版 {@link #eq(String, Object)}。动态条件首选写法。
+     * <pre>.eq(name != null, "name", name)</pre>
      */
-    default T lr(boolean is, String clumnName, Object value) {
+    default T eq(boolean is, String column, Object value) {
         if (is) {
-            addChildren(lr.mk(clumnName, value));
+            addChildren(eq.mk(column, value));
         }
         return me();
     }
 
-    /**
-     * 添加一个"like left"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"like"查询条件，值的右侧包含通配符
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，左侧通常不包含通配符
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T ll(String clumnName, Object value) {
-        addChildren(ll.mk(clumnName, value));
+    /** {@code column <> value}。 */
+    default T ne(String column, Object value) {
+        addChildren(ne.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"like left"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"like left"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，左侧通常不包含通配符
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T ll(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #ne(String, Object)}。 */
+    default T ne(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ll.mk(clumnName, value));
+            addChildren(ne.mk(column, value));
         }
         return me();
     }
 
-    /**
-     * 添加一个"like"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"like"查询条件，通常用于字符串匹配
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，通常包含通配符
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T lk(String clumnName, Object value) {
-        addChildren(lk.mk(clumnName, value));
+    // ========== 大小比较 ==========
+
+    /** {@code column > value}。 */
+    default T gt(String column, Object value) {
+        addChildren(gt.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"like"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"like"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，通常包含通配符
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T lk(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #gt(String, Object)}。 */
+    default T gt(boolean is, String column, Object value) {
         if (is) {
-            addChildren(lk.mk(clumnName, value));
+            addChildren(gt.mk(column, value));
         }
         return me();
     }
 
-    /**
-     * 添加一个"not in"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"in"查询条件，值通常是一个集合
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，可以是数组或集合或逗号分隔的字符串
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T ni(String clumnName, Object value) {
-        addChildren(ni.mk(clumnName, value));
+    /** {@code column >= value}。 */
+    default T ge(String column, Object value) {
+        addChildren(ge.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"not in"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"not in"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，可以是数组或集合或逗号分隔的字符串
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T ni(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #ge(String, Object)}。 */
+    default T ge(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ni.mk(clumnName, value));
+            addChildren(ge.mk(column, value));
         }
         return me();
     }
 
-    /**
-     * 添加一个"in"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"in"查询条件，值通常是一个集合
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，可以是数组或集合或逗号分隔的字符串
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T in(String clumnName, Object value) {
-        addChildren(in.mk(clumnName, value));
+    /** {@code column < value}。 */
+    default T lt(String column, Object value) {
+        addChildren(lt.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"in"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"in"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值，可以是数组或集合或逗号分隔的字符串
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T in(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #lt(String, Object)}。 */
+    default T lt(boolean is, String column, Object value) {
         if (is) {
-            addChildren(in.mk(clumnName, value));
+            addChildren(lt.mk(column, value));
         }
         return me();
     }
 
-    /**
-     * 添加一个"not equal"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"not equal"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T ne(String clumnName, Object value) {
-        addChildren(ne.mk(clumnName, value));
+    /** {@code column <= value}。 */
+    default T le(String column, Object value) {
+        addChildren(le.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"not equal"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"not equal"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T ne(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #le(String, Object)}。 */
+    default T le(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ne.mk(clumnName, value));
+            addChildren(le.mk(column, value));
         }
         return me();
     }
 
+    // ========== LIKE 系列 ==========
+
     /**
-     * 添加一个"greater than or equal to"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"greater than or equal to"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column LIKE '%value%'}（双侧模糊）。
+     * <pre>.lk("name", "张")   // name LIKE '%张%'</pre>
      */
-    default T ge(String clumnName, Object value) {
-        addChildren(ge.mk(clumnName, value));
+    default T lk(String column, Object value) {
+        addChildren(lk.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"greater than or equal to"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"greater than or equal to"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T ge(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #lk(String, Object)}。 */
+    default T lk(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ge.mk(clumnName, value));
+            addChildren(lk.mk(column, value));
         }
         return me();
     }
 
     /**
-     * 添加一个"greater than"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"greater than"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column LIKE 'value%'}（右模糊，通常可命中前缀索引）。
+     * <pre>.ll("name", "张")   // name LIKE '张%'</pre>
      */
-    default T gt(String clumnName, Object value) {
-        addChildren(gt.mk(clumnName, value));
+    default T ll(String column, Object value) {
+        addChildren(ll.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"greater than"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"greater than"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T gt(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #ll(String, Object)}。 */
+    default T ll(boolean is, String column, Object value) {
         if (is) {
-            addChildren(gt.mk(clumnName, value));
+            addChildren(ll.mk(column, value));
         }
         return me();
     }
 
     /**
-     * 添加一个"less than or equal to"条件到当前条件对象
-     * 此方法接受一个列名和一个值，用于构建"less than or equal to"查询条件
-     *
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column LIKE '%value'}（左模糊，通常无法命中索引）。
+     * <pre>.lr("email", "@qq.com")</pre>
      */
-    default T le(String clumnName, Object value) {
-        addChildren(le.mk(clumnName, value));
+    default T lr(String column, Object value) {
+        addChildren(lr.mk(column, value));
         return me();
     }
 
-    /**
-     * 添加一个"less than or equal to"条件到当前条件对象
-     * 此方法接受一个布尔值判断、列名和值，用于构建"less than or equal to"查询条件，仅在is为true时添加条件
-     *
-     * @param is        是否添加该条件
-     * @param clumnName 列的名称
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
-     */
-    default T le(boolean is, String clumnName, Object value) {
+    /** 动态条件版 {@link #lr(String, Object)}。 */
+    default T lr(boolean is, String column, Object value) {
         if (is) {
-            addChildren(le.mk(clumnName, value));
+            addChildren(lr.mk(column, value));
         }
         return me();
     }
+
+    /** {@code column NOT LIKE '%value%'}。 */
+    default T nl(String column, Object value) {
+        addChildren(nl.mk(column, value));
+        return me();
+    }
+
+    /** 动态条件版 {@link #nl(String, Object)}。 */
+    default T nl(boolean is, String column, Object value) {
+        if (is) {
+            addChildren(nl.mk(column, value));
+        }
+        return me();
+    }
+
+    // ========== IN / NOT IN ==========
+
     /**
-     * 添加一个自定义条件
-     *
-     * @param clumnName 列的名称
-     * @param op 自定义
-     * @param value     用于比较的值
-     * @return 返回当前条件对象，支持链式调用
+     * {@code column IN (...)}。{@code value} 可为：
+     * <ul>
+     *   <li>数组 / {@link java.util.Collection}</li>
+     *   <li>逗号分隔字符串 {@code "1,2,3"}</li>
+     *   <li>以 {@code "sql:"} 开头的子查询片段 {@code "sql:SELECT id FROM ..."}</li>
+     * </ul>
+     * <b>不可传单值</b>（传单值不会按 {@code col = value} 处理，行为未定义）。
+     * <pre>
+     * .in("id", "1,2,3")
+     * .in("id", Arrays.asList(1, 2, 3))
+     * .in("id", "sql:SELECT user_id FROM vip WHERE level > 5")
+     * </pre>
      */
-    default T op(String clumnName, DbOprateEnum op, Object value) {
-        addChildren(op.mk(clumnName, value));
+    default T in(String column, Object value) {
+        addChildren(in.mk(column, value));
+        return me();
+    }
+
+    /** 动态条件版 {@link #in(String, Object)}。 */
+    default T in(boolean is, String column, Object value) {
+        if (is) {
+            addChildren(in.mk(column, value));
+        }
+        return me();
+    }
+
+    /** {@code column NOT IN (...)}，{@code value} 格式同 {@link #in(String, Object)}。 */
+    default T ni(String column, Object value) {
+        addChildren(ni.mk(column, value));
+        return me();
+    }
+
+    /** 动态条件版 {@link #ni(String, Object)}。 */
+    default T ni(boolean is, String column, Object value) {
+        if (is) {
+            addChildren(ni.mk(column, value));
+        }
+        return me();
+    }
+
+    // ========== 自定义操作符 ==========
+
+    /**
+     * 以自定义操作符添加条件。适用于上述枚举未覆盖的场景。
+     * <pre>.op("name", DbOprateEnum.eq, "admin")</pre>
+     *
+     * @param op 操作符枚举；实际调用 {@code op.mk(column, value)}，语义由枚举决定。
+     */
+    default T op(String column, DbOprateEnum op, Object value) {
+        addChildren(op.mk(column, value));
         return me();
     }
 }

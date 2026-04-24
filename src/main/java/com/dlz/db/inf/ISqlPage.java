@@ -7,34 +7,46 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 翻页参数构造器
+ * 分页与排序构造器。<br>
+ * 同一个 {@link Page} 对象承载页号、页大小、排序列表，多次调用会合并到同一 Page 上。
  *
- * @param <T>
+ * <pre>
+ * .page(1, 20)                         // 第1页，每页20条
+ * .orderByDesc("create_time")          // 排序
+ * .page(1, 20, Order.desc("id"))       // 一次性指定分页 + 排序
+ * </pre>
+ *
+ * @param <T> 链式返回类型
  */
 public interface ISqlPage<T extends ISqlPage>{
+    /** 当前绑定的分页对象（可能为 null）。 */
     Page getPage();
 
+    /** 直接用一个已有 {@link Page} 对象覆盖当前分页设置。 */
     T page(Page page);
 
+    /** 追加升序排序列。 */
     default T orderByAsc(String... column) {
         return sort(Order.ascs(column));
     }
 
+    /** 追加降序排序列。 */
     default T orderByDesc(String... column) {
         return sort(Order.descs(column));
     }
 
+    /** 等同于 {@link #page(long, long, List)}，参数透传。 */
     default T page(int pageIndex, int size, Order... orders) {
         return page(pageIndex, size, Arrays.asList(orders));
     }
 
     /**
-     * 分页
+     * 设置分页与排序。
      *
-     * @param current 页号，从1开始
-     * @param size    每页大小 最大10000,0则默认每页20条
-     * @param orders
-          */
+     * @param current 页号，从 1 开始；{@code <=0} 时不修改当前页号
+     * @param size    每页大小，最大 10000；{@code <=0} 则保持原值（默认 20）
+     * @param orders  追加到排序列表末尾的排序规则
+     */
     default T page(long current, long size, List<Order> orders) {
         Page pmPage = getPage();
         if (pmPage == null) {
@@ -49,13 +61,7 @@ public interface ISqlPage<T extends ISqlPage>{
         }
         return page(pmPage);
     }
-    /**
-     * 分页
-     *
-     * @param current 页号，从1开始
-     * @param size    每页大小 最大10000,0则默认每页20条
-     * @param orders
-          */
+    /** 可变参数版本的 {@link #page(long, long, List)}。 */
     default T page(long current, long size, Order... orders) {
         Page pmPage = getPage();
         if (pmPage == null) {
@@ -71,10 +77,12 @@ public interface ISqlPage<T extends ISqlPage>{
         return page(pmPage);
     }
 
+    /** 仅追加排序，不改分页。 */
     default T sort(Order... orders) {
         return sort(Arrays.asList(orders));
     }
 
+    /** 仅追加排序，不改分页。 */
     default T sort(List<Order> orders) {
         return page(0, 0, orders);
     }
