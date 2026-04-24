@@ -44,6 +44,10 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara {
         tableName= BeanInfoHolder.getTableName(beanClass);
         fields= BeanInfoHolder.getBeanFields(beanClass);
     }
+    /** 当前构造器持有的 bean（从 Class 构造时为 null）。 */
+    public T getBean() {
+        return bean;
+    }
 
     public String getTableName() {
         return tableName;

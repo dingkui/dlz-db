@@ -43,7 +43,7 @@ public class WrapperBuildUtil {
     /**
      * 生成查询条件sql
      *
-          */
+     */
     public static void buildSql(AParaTable maker) {
         maker.getSqlItem().setSqlKey(maker.getSql());
         maker.addPara(MAKER_TABLENAME, maker.getTableName());
@@ -64,7 +64,7 @@ public class WrapperBuildUtil {
     /**
      * 生成查询条件sql
      *
-          */
+     */
     public static void buildWhereColumns(TableQuery maker) {
         maker.addPara(MAKER_COLUMS, maker.columns);
     }
@@ -72,7 +72,7 @@ public class WrapperBuildUtil {
     /**
      * 生成查询条件sql
      *
-          */
+     */
     public static void buildWhere(AQuery maker) {
         final String logicDeleteField = SqlHolder.properties.getLogicDeleteField();
         if (SqlRunThreadHolder.isLogicDelete() && BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)) {
@@ -90,11 +90,11 @@ public class WrapperBuildUtil {
     /**
      * 生成掺入sql
      *
-          */
+     */
     public static void buildInsertSql(TableInsert maker) {
         StringBuilder sbColumns = new StringBuilder();
         StringBuilder sbValues = new StringBuilder();
-        if(maker.insertValues.isEmpty()){
+        if (maker.insertValues.isEmpty()) {
             throw new SystemException("插入字段信息未设置");
         }
         maker.insertValues.entrySet().forEach(e -> {
@@ -127,10 +127,10 @@ public class WrapperBuildUtil {
     /**
      * 生成更新信息
      *
-          */
+     */
     public static void buildUpdateSql(TableUpdate maker) {
         StringBuilder sbSets = new StringBuilder();
-        if(maker.updateSets.isEmpty()){
+        if (maker.updateSets.isEmpty()) {
             throw new SystemException("更新字段信息未设置");
         }
         maker.updateSets.entrySet().forEach(e -> {
@@ -226,6 +226,24 @@ public class WrapperBuildUtil {
                 return DBHolder.sequence(tableName, 1l);
             } else {
                 throw new SystemException(columnName + " idType is " + type + " but null");
+            }
+        }
+    }
+
+    public static void fillAutoId(String dbName,Field idField, IdType idType ,Object obj) {
+        if (idType != null) {
+            Object idValue = FieldReflections.getValue(obj, idField);
+            if(idValue == null){
+                if (idType == IdType.INPUT) {
+                    throw new SystemException(obj.getClass().getSimpleName()+"."+idField.getName()+"为手动输入,不能为空");
+                }
+                if(idType != IdType.AUTO){
+                    idValue = WrapperBuildUtil.getIdValue(idField, dbName);
+                    if(idValue == null){
+                        throw new SystemException(obj.getClass().getSimpleName()+"."+idField.getName()+"自动构建id失败");
+                    }
+                    FieldReflections.setValue(obj, idField, idValue);
+                }
             }
         }
     }
