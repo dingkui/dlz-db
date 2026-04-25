@@ -4,7 +4,7 @@ import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
-import com.dlz.db.inf.IExecutorInsert;
+import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.modal.para.AParaPojo;
 
 import java.lang.reflect.Field;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  *
  * @author dk
  */
-public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecutorInsert {
+public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecutorUDI {
     public static <T> PojoInsert<T> wrapper(T valueBean) {
         return new PojoInsert(valueBean);
     }
