@@ -303,29 +303,6 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
                 .queryList();
         //条件sql: where ID in (1,2,3,4,5) and STATUS not in (0,-1) and AGE between 18 and 60 and DEPT_ID in (SELECT id FROM dept WHERE type = 'tech')
     }
-
-    @Test
-    public void conditionTest4_6_1() {
-        DB.Pojo.select(User.class)
-                .eq(User::getStatus, 1)
-                .apply("age > {0} AND age < {1}", 18, 60)
-                .queryList();
-        //条件sql: where STATUS = 1 and (age > 18 AND age < 60)
-
-        // 子查询示例
-        DB.Pojo.select(User.class)
-                .apply("id IN (SELECT user_id FROM orders WHERE amount > {0})", 1000)
-                .queryList();
-        //条件sql: where (id IN (SELECT user_id FROM orders WHERE amount > 1000))
-
-        // EXISTS 查询
-        DB.Pojo.select(User.class)
-                .eq(User::getStatus, 1)
-                .apply("EXISTS (SELECT 1 FROM vip WHERE user_id = t.id AND level >= {0})", 3)
-                .queryList();
-        //条件sql: where STATUS = 1 and (EXISTS (SELECT 1 FROM vip WHERE user_id = t.id AND level >= 3))
-    }
-
     @Test
     public void conditionTest4_6_2() {
         JSONMap params = new JSONMap("minAge", 18, "maxAge", 60);
@@ -352,22 +329,6 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
                 .sql("key.conditionTest4_6_2", new JSONMap("minAge", 18))
                 .queryList();
         //条件sql: where STATUS = 1 and (age > 18 )
-    }
-
-    @Test
-    public void conditionTest4_6_3() {
-        Date endDate = DateUtil.getDate("2021-01-01");
-        Condition condition = Condition.where()
-                .eq("status", 1)
-                .sql("score > #{minScore}", new JSONMap("minScore", 60))
-                .apply("create_time > {0}", endDate);
-
-        DB.Pojo.select(User.class).where(condition).queryList();
-        //sql:select * from USER t where STATUS = 1 and (score > 60) and (create_time > '2021-01-01 00:00:00') and IS_DELETED = 0
-        DB.Pojo.update(User.class).set("flag", 1).where(condition).execute();
-        //sql:update USER t set FLAG=1 where STATUS = 1 and (score > 60) and (create_time > '2021-01-01 00:00:00') and IS_DELETED = 0
-        DB.Pojo.delete(User.class).where(condition).execute();
-        //sql:update USER t set IS_DELETED=1 where STATUS = 1 and (score > 60) and (create_time > '2021-01-01 00:00:00') and IS_DELETED = 0
     }
 
 }

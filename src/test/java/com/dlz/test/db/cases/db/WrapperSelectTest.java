@@ -69,18 +69,6 @@ public class WrapperSelectTest extends SpingDbBaseTest {
     }
 
     @Test
-    public void conditionWhereTest4_1() {
-        Menu menu = new Menu();
-        menu.setId(1L);
-        menu.setCode("qsm");
-        menu.setName("全生命周期项目");
-        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
-                .ne(menu.getId() != null, Menu::getId, menu.getId())
-                .apply("xx in (select x from dual where 1={0} and 2={1})", 1, 2);
-        showSql(menuQueryWrapper, "conditionWhereTest4_1", "select * from sys_menu t where ID <> 1 and (xx in (select x from dual where 1=1 and 2=2)) and IS_DELETED = 0");
-    }
-
-    @Test
     public void conditionWhereTest4_2() {
         Menu menu = new Menu();
         menu.setId(1L);

@@ -125,7 +125,7 @@ List<User> users = DB.Pojo.select(User.class)
 ### 🎯 特性四：自动逻辑删除
 ```java
 // 数据表中定义了 is_Deleted 字段时，自动添加逻辑删除条件
-DB.delete(User.class).eq(User::getId, 1).execute();
+DB.Pojo.delete(User.class).eq(User::getId, 1).execute();
 
 // 生成的 SQL：
 // UPDATE user set IS_DELETED =1 WHERE id = 1 AND IS_DELETED = 0

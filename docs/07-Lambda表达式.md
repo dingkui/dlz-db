@@ -32,7 +32,7 @@ DB.Pojo.select(User.class)
     .gt(User::getAge, 18)
     .like(User::getName, "张")
     .orderByDesc(User::getCreateTime)
-    .list();
+    .queryBeanList();
 ```
 
 #### 更新
@@ -83,5 +83,5 @@ DB.Pojo.select(User.class)
     .eq(User::getStatus, 1)           // Lambda
     .apply("create_time > {0}", date) // 自定义 SQL
     .sql("score >= #{min}", params)   // 命名参数
-    .list();
+    .queryBeanList();
 ```

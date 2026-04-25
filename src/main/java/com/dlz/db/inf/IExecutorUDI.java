@@ -10,7 +10,7 @@ import com.dlz.db.holder.DBHolder;
 public interface IExecutorUDI extends ISqlPara {
     /**
      * 执行构造出的 SQL，返回受影响行数。
-     * <pre>int rows = DB.Pojo(user).update().set(...).where(...).execute();</pre>
+     * <pre>int rows = DB.Pojo.update(user).set(...).where(...).execute();</pre>
      */
     default int execute() {
         return DBHolder.doDb(s -> s.execute(this));

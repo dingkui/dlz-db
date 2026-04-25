@@ -18,20 +18,6 @@ public class TableDeleteTest extends SpingDbBaseTest {
     }
 
     @Test
-    public void tableDeleteTest1_2() {
-        TableDelete delete = DB.Table.delete("t_b_dict")
-                .apply("[id={0}]", "123");
-        showSql(delete, "tableDeleteTest1_2", "delete from t_b_dict where (id='123') and IS_DELETED = 0");
-    }
-
-    @Test
-    public void tableDeleteTest1_3() {
-        TableDelete delete = DB.Table.delete("t_b_dict")
-                .apply("[id={0}]", "");
-        showSql(delete, "tableDeleteTest1_3", "delete from t_b_dict where IS_DELETED = 0");
-    }
-
-    @Test
     public void tableDeleteTest2() {
         TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1")

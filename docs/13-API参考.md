@@ -76,12 +76,13 @@
 
 | 方法 | 返回类型 | 说明 |
 |------|---------|------|
-| `one()` | `T` | 单条 Bean |
-| `oneMap()` | `ResultMap` | 单条 Map |
-| `list()` | `List<T>` | 列表 |
-| `listMap()` | `List<ResultMap>` | Map 列表 |
+| `queryBean()` | `T` | 单条 Bean |
+| `queryOne()` | `ResultMap` | 单条 Map |
+| `queryBeanList()` | `List<T>` | 列表 |
+| `queryList()` | `List<ResultMap>` | Map 列表 |
 | `count()` | `long` | 数量 |
-| `page()` | `Page<T>` | 分页结果 |
+| `queryBeanPage()` | `Page<T>` | 分页结果 |
+| `queryPage()` | `Page<ResultMap>` | 分页结果，Map 形式 |
 
 #### 其他方法
 
@@ -120,13 +121,13 @@ Condition condition = Condition.where()
     .gt("age", 18);
 
 // 应用到查询
-DB.Pojo.select("user").where(condition).list();
+DB.Table.select("user").where(condition).queryList();
 
 // 应用到更新
 DB.Table.update("user").set("flag", 1).where(condition).execute();
 
 // 应用到删除
-DB.delete("user").where(condition).execute();
+DB.Table.delete("user").where(condition).execute();
 ```
 ---
 

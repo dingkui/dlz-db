@@ -341,8 +341,8 @@ List<User> users = Arrays.asList(
     new User("李四", 30)
 );
 
-DB.saveBatch(users);           // 默认批次大小
-DB.saveBatch(users, 100);      // 每批 100 条
+DB.Batch.insert(users);           // 默认批次大小
+DB.Batch.insert(users, 100);      // 每批 100 条
 ```
 
 ### 4.3 基于表名插入
@@ -636,7 +636,7 @@ DB.Pojo.select(User.class)
 
 ```java
 // ✅ 批量插入
-DB.saveBatch(users, 100);
+DB.Batch.insert(users, 100);
 
 // ✅ 避免 N+1 查询，使用 JOIN
 String sql = """

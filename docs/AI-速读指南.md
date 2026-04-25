@@ -134,7 +134,7 @@ long count = query.count();                            // long
 // 插入
 DB.Pojo.insert(user).execute();
 Long id = DB.Pojo.insert(user).insertWithAutoKey();  // 返回主键
-DB.saveBatch(users, 100);  // 批量
+DB.Batch.insert(users, 100);  // 批量
 
 // 更新
 DB.Pojo.update(user).eq(User::getId, id).execute();
