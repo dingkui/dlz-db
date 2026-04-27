@@ -188,7 +188,7 @@ Page<User> page = DB.Pojo.select(User.class)
 
 // 插入
 DB.Pojo.insert(user);
-DB.Batch.saveBatch(users, 100);
+DB.Batch.insert(users, 100);//批量插入
 
 // 更新
 DB.Pojo.update(user).eq(User::getId, id).execute();
