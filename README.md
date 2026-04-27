@@ -1,6 +1,6 @@
 # DLZ-DB
 
-> **一个不到 1 万行代码的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
+> **一个不到 3000 行代码的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
