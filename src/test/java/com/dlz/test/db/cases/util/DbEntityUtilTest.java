@@ -15,13 +15,13 @@ public class DbEntityUtilTest extends SpingDbBaseTest {
     @Test
     public void getIdName_withTableId() {
         String idName = DbEntityUtil.getIdName(SysSql.class);
-        assertEquals("id", idName);
+        assertEquals("ID", idName);
     }
 
     @Test
     public void getIdName_noAnnotationButNamedId() {
         String idName = DbEntityUtil.getIdName(User.class);
-        assertEquals("id", idName);
+        assertEquals("ID", idName);
     }
 
     @Test(expected = SystemException.class)
@@ -35,7 +35,7 @@ public class DbEntityUtilTest extends SpingDbBaseTest {
         assertNotNull(idInfo);
         assertNotNull(idInfo.getField());
         assertEquals("id", idInfo.getField().getName());
-        assertEquals("id", idInfo.getName());
+        assertEquals("ID", idInfo.getName());
     }
 
     @Test

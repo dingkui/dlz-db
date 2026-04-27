@@ -194,13 +194,18 @@ public class WrapperBuildUtil {
 
     public static Object[] buildUpdateParams(Object object, List<Field> fields,String idName) {
         List<Object> params = new ArrayList<Object>(fields.size());
+        Field idField = null;
         for (Field field : fields) {
             String dbClumnName = BeanInfoHolder.getColumnName(field);
-            if (!dbClumnName.equals(idName) && !dbClumnName.equals("")) {
+            if(dbClumnName.equals(idName)){
+                idField = field;
+                continue;
+            }
+            if (!dbClumnName.equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
         }
-        params.add(FieldReflections.getValue(object, idName, true));
+        params.add(FieldReflections.getValue(object, idField));
         return params.toArray();
     }
 

@@ -123,7 +123,7 @@ public class DynamicDataSourceTest extends SpingDbBaseTest {
         dict.setId(99999L);
         dict.setSqlKey("tx_test");
         dict.setIsDeleted(0);
-        DB.Pojo.insert(dict).execute();
+        DB.Pojo.insert(dict);
 
         // 查询验证
         SysSql result = DB.Pojo.select(SysSql.class).eq(SysSql::getId, 99999L).queryBean();

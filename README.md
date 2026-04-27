@@ -187,8 +187,7 @@ Page<User> page = DB.Pojo.select(User.class)
         .queryBeanPage();
 
 // 插入
-DB.Pojo.insert(user).execute();
-Long id = DB.Pojo.insert(user).insertWithAutoKey();
+DB.Pojo.insert(user);
 DB.Batch.saveBatch(users, 100);
 
 // 更新

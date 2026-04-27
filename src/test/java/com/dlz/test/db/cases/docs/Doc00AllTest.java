@@ -18,7 +18,7 @@ public class Doc00AllTest extends SpingDbBaseTest {
         SysSql.setSqlKey("test");
         SysSql.setSqlValue("SELECT * FROM user WHERE and status = #{status}");
         try {
-            DB.Pojo.insert(SysSql).execute();
+            DB.Pojo.insert(SysSql);
             fail("应该抛出 SystemException");
         } catch (SystemException e) {
             assertTrue(e.getMessage().contains("SysSql.id为手动输入"));

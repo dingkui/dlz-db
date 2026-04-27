@@ -25,7 +25,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         SysSql dict = new SysSql();
         dict.setId(123L);
         dict.setSqlKey("xxx");
-        PojoInsert<SysSql> insert = DB.Pojo.insert(dict);
+        PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
         showSql(insert,"insertWrapperTest1","insert into SYS_SQL(SQL_KEY,ID) values('xxx',123)");
     }
 
@@ -37,7 +37,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         dict.setIsDeleted(0);
         DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 666L).execute();
         DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 666L).setLogicDelete(false).execute();
-        PojoInsert<SysSql> insert = DB.Pojo.insert(dict);
+        PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
         showSql(insert,"insertWrapperTest1","insert into Sys_Sql(IS_DELETED,SQL_KEY,ID) values(0,'xxx',666) ");
         insert.execute();
         final List<ResultMap> resultMaps = DB.Table.select("Sys_Sql").setAllowFullQuery(true).queryList();
@@ -50,7 +50,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
     public void insertWrapperTest2() {
         SysSql dict = new SysSql();
         dict.setSqlKey("xxx");
-        PojoInsert<SysSql> insert = DB.Pojo.insert(dict);
+        PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
         showSql(insert,"insertWrapperTest2","insert into SYS_SQL(SQL_KEY) values('xxx')");
         try {
             insert.execute();
@@ -66,7 +66,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         entity.setName("auto_backfill");
         assertNull(entity.getId());
 
-        DB.Pojo.insert(entity).execute();
+        DB.Pojo.insert(entity);
         assertNotNull("AUTO 类型 execute 后应回填生成的主键", entity.getId());
         assertTrue("回填的主键应大于 0", entity.getId() > 0);
     }
@@ -78,7 +78,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         orders.setAmount(100);
         assertNull(orders.getId());
 
-        DB.Pojo.insert(orders).execute();
+        DB.Pojo.insert(orders);
 
         assertNotNull("ASSIGN_ID 类型 execute 后应预生成并回填主键", orders.getId());
     }
@@ -96,7 +96,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         assertNull(o1.getId());
         assertNull(o2.getId());
 
-        DB.Pojo.insert(o1).batch(Arrays.asList(o1, o2), 100);
+        DB.Batch.insert(Arrays.asList(o1, o2), 100);
 
         assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o1.getId());
         assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o2.getId());
@@ -111,7 +111,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         AutoIdEntity m2 = new AutoIdEntity();
         m2.setName("batch_auto2");
 
-        DB.Pojo.insert(m1).batch(Arrays.asList(m1, m2), 100);
+        DB.Batch.insert(Arrays.asList(m1, m2), 100);
 
         assertNull("AUTO 类型 batch 后不应回填主键（驱动限制）", m1.getId());
     }

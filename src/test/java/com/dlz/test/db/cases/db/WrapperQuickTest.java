@@ -31,29 +31,29 @@ public class WrapperQuickTest extends SpingDbBaseTest{
     }
 
     @Test
-    public void saveTest1() {
+    public void insertTest1() {
         SysSql dict = new SysSql();
         dict.setName("xx");
         try {
-            DB.Pojo.save(dict);
+            DB.Pojo.insert(dict);
             fail("应该抛出 SystemException");
         } catch (SystemException e) {
             assertTrue(e.getMessage().contains("SysSql.id为手动输入"));
         }
     }
     @Test
-    public void saveTest2() {
+    public void insertTest2() {
         YcRecord dict = new Yc1Record();
         dict.setRe("xx");
         dict.setPcid("xx");
         dict.setSta(1);
-        DB.Pojo.save(dict);
+        DB.Pojo.insert(dict);
     }
     @Test
-    public void saveTest22() {
+    public void insertTest22() {
         YcRecord yc1Record = new Yc1Record();
         yc1Record.setSta(1);
-        DB.Pojo.insert(yc1Record).execute();
+        DB.Pojo.insert(yc1Record);
     }
     @Test
     public void updateByIdTest1() {
@@ -65,7 +65,7 @@ public class WrapperQuickTest extends SpingDbBaseTest{
 
     @Test
     public void removeByIds1() {
-        DB.Pojo.removeByIds(SysSql.class, "1,2,3");
+        DB.Pojo.deleteByIds(SysSql.class, "1,2,3");
     }
 
     @Test
