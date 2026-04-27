@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.db;
 
+import com.dlz.comm.exception.SystemException;
 import com.dlz.db.convertor.clumnname.ColumnNameToLower;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
@@ -51,7 +52,12 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         dict.setSqlKey("xxx");
         PojoInsert<SysSql> insert = DB.Pojo.insert(dict);
         showSql(insert,"insertWrapperTest2","insert into SYS_SQL(SQL_KEY) values('xxx')");
-        insert.execute();
+        try {
+            insert.execute();
+            fail("应该抛出 SystemException");
+        } catch (SystemException e) {
+            assertTrue(e.getMessage().contains("为手动输入,不能为空"));
+        }
     }
 
     @Test

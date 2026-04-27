@@ -11,4 +11,7 @@ public class DbSql {
     public SqlExecute executer(String sql) {
         return new SqlExecute(sql);
     }
+    public int execute(String sql) {
+        return new SqlExecute(sql).execute();
+    }
 }

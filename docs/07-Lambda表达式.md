@@ -81,7 +81,6 @@ User::getEmail     →  email_address
 // Lambda 和字符串可以混合使用
 DB.Pojo.select(User.class)
     .eq(User::getStatus, 1)           // Lambda
-    .apply("create_time > {0}", date) // 自定义 SQL
     .sql("score >= #{min}", params)   // 命名参数
     .queryBeanList();
 ```

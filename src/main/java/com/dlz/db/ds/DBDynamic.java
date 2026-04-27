@@ -1,5 +1,6 @@
 package com.dlz.db.ds;
 
+import com.dlz.comm.exception.DbException;
 import com.dlz.comm.exception.SystemException;
 import com.dlz.comm.util.StringUtils;
 import com.dlz.db.convertor.rowMapper.ResultMapRowMapper;
@@ -7,10 +8,13 @@ import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.helper.support.SqlHelper;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.datasource.ConnectionHolder;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,20 +34,79 @@ public class DBDynamic {
 
     /**
      * 使用指定数据源执行
+     * 做事务处理
      */
     public <T> T use(String name, Supplier<T> c) {
+        return use(name, false, c);
+    }
+
+    /**
+     * 使用默认数据源执行事务
+     */
+    public <T> T use(Supplier<T> c) {
+        return use(defaultName, true, c);
+    }
+
+    public <T> T use(String name, boolean isTransaction, Supplier<T> c) {
+        Connection connection = null;
+        DataSource dataSource = null;
         try {
-            if (name == null || name.isEmpty()) {
-                name = defaultName;
-            }
-            final DataSourceConfig confgig = configPool.get(name);
-            if (confgig == null) {
+            DataSourceConfig config = configPool.get(name);
+            if (config == null) {
                 throw new SystemException("数据源不存在: " + name);
             }
-            HOLDER_config.set(confgig);
-            return c.get();
+
+            if (isTransaction) {
+                // 获取事务数据源
+                dataSource = config.getDataSource();
+                connection = dataSource.getConnection();
+                connection.setAutoCommit(false);
+
+                // 绑定到 Spring 事务管理器
+                ConnectionHolder connectionHolder = new ConnectionHolder(connection);
+                TransactionSynchronizationManager.bindResource(dataSource, connectionHolder);
+            }
+            HOLDER_config.set(config);
+
+            T result = c.get();
+            if (connection != null) {
+                connection.commit();
+            }
+            return result;
+        } catch (Exception e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    log.error("连接回滚失败", e);
+                    throw new DbException("连接回滚失败", 1006,e);
+                }
+            }
+            if (e instanceof DbException) {
+                if (isTransaction) {
+                    throw new DbException("事务执行失败：" + e.getMessage(), 1006,e);
+                }
+                throw (DbException) e;
+            } else {
+                if (isTransaction) {
+                    throw new DbException("事务执行失败：" + e.getMessage(), 1003,e);
+                }
+                throw new DbException("执行失败：" + e.getMessage(), 1003,e);
+            }
         } finally {
             HOLDER_config.remove();
+            if (dataSource != null) {
+                // 解绑资源
+                TransactionSynchronizationManager.unbindResource(dataSource);
+            }
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                    connection.close();
+                } catch (Exception e) {
+                    log.error("关闭连接失败", e);
+                }
+            }
         }
     }
 
@@ -113,11 +176,11 @@ public class DBDynamic {
             v.setDataSource(dataSource);
             configPool.put(name, v);
             try {
-                if(dataSource instanceof HikariDataSource){
+                if (dataSource instanceof HikariDataSource) {
                     HikariDataSource hds = (HikariDataSource) dataSource;
                     defaultProperties.setUrl(hds.getJdbcUrl());
                     defaultProperties.setUsername(hds.getUsername());
-                }else{
+                } else {
                     Connection connection = dataSource.getConnection();
                     DatabaseMetaData metaData = connection.getMetaData();
                     defaultProperties.setDriverClassName(metaData.getDriverName());

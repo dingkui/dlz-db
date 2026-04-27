@@ -50,40 +50,40 @@ public interface ICondAndOr<T extends ICondAndOr> extends ICondBase<T> {
     default T sql(String sql, JSONMap paras) {
         return sql(true, sql, paras);
     }
-
-    /**
-     * 以自定义 SQL 片段添加一个条件。占位符采用 <b>位置式 {@code {0} {1} {2}}</b>，对应后续可变参数。
-     * <p>底层会把 {@code {n}} 转为命名占位符再复用 {@link #sql} 的模板引擎，因此中括号语法同样可用。
-     * <p><b>推荐新代码使用 {@link #sql} 命名参数形式</b>，可读性更好、不易错位。
-     *
-     * <pre>
-     * .apply("age > {0} AND age < {1}", 18, 60)
-     * .apply("EXISTS (SELECT 1 FROM vip WHERE user_id = t.id AND level >= {0})", 3)
-     * </pre>
-     *
-     * @param is    为 false 则跳过此条件
-     * @param sql   SQL 片段，占位符形如 {@code {0}, {1}}（下标对应 paras 数组位置）
-     * @param paras 位置参数数组
-     * @return 当前条件对象，支持链式调用
-     */
-    default T apply(boolean is,String sql, Object... paras) {
-        if(is){
-            // 实现思路：DbBuildEnum.apply.build 会扫描 {n} 正则，把每个 {n} 替换成 #{auto_key_n}，
-            // 再把 paras[n] 以 auto_key_n 塞入参数 map，之后走与 sql() 相同的模板处理链路。
-            Condition sqlCond = DbBuildEnum.apply.build(sql, paras);
-            if(sqlCond != null){
-                addChildren(sqlCond);
-            }
-        }
-        return me();
-    }
-
-    /**
-     * {@link #apply(boolean, String, Object...)} 的便捷重载，{@code is} 默认为 true。
-     */
-    default T apply(String sql, Object... paras) {
-        return apply(true, sql, paras);
-    }
+//
+//    /**
+//     * 以自定义 SQL 片段添加一个条件。占位符采用 <b>位置式 {@code {0} {1} {2}}</b>，对应后续可变参数。
+//     * <p>底层会把 {@code {n}} 转为命名占位符再复用 {@link #sql} 的模板引擎，因此中括号语法同样可用。
+//     * <p><b>推荐新代码使用 {@link #sql} 命名参数形式</b>，可读性更好、不易错位。
+//     *
+//     * <pre>
+//     * .apply("age > {0} AND age < {1}", 18, 60)
+//     * .apply("EXISTS (SELECT 1 FROM vip WHERE user_id = t.id AND level >= {0})", 3)
+//     * </pre>
+//     *
+//     * @param is    为 false 则跳过此条件
+//     * @param sql   SQL 片段，占位符形如 {@code {0}, {1}}（下标对应 paras 数组位置）
+//     * @param paras 位置参数数组
+//     * @return 当前条件对象，支持链式调用
+//     */
+//    default T apply(boolean is,String sql, Object... paras) {
+//        if(is){
+//            // 实现思路：DbBuildEnum.apply.build 会扫描 {n} 正则，把每个 {n} 替换成 #{auto_key_n}，
+//            // 再把 paras[n] 以 auto_key_n 塞入参数 map，之后走与 sql() 相同的模板处理链路。
+//            Condition sqlCond = DbBuildEnum.apply.build(sql, paras);
+//            if(sqlCond != null){
+//                addChildren(sqlCond);
+//            }
+//        }
+//        return me();
+//    }
+//
+//    /**
+//     * {@link #apply(boolean, String, Object...)} 的便捷重载，{@code is} 默认为 true。
+//     */
+//    default T apply(String sql, Object... paras) {
+//        return apply(true, sql, paras);
+//    }
 
     /**
      * 添加一组用 <b>AND</b> 连接的子条件，整组与外层条件用外层默认连接符（通常为 AND）拼接。
