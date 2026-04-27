@@ -1,6 +1,6 @@
 # DLZ-DB
 
-> **一个不到 3000 行代码的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
+> **一个不到 7000 行代码的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
@@ -66,7 +66,7 @@ User user = DB.Dynamic.use(dsName, () ->
 
 ---
 
-### 3. 核心代码不到 1 万行，一个下午能通读
+### 3. 核心代码不到 7000 行，2天能通读
 
 这不是"功能少"，是**"不做你不需要的事"**：
 
