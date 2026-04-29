@@ -1,12 +1,12 @@
 package com.dlz.db.enums;
 
-import com.dlz.comm.exception.SystemException;
-import com.dlz.comm.json.JSONMap;
-import com.dlz.comm.util.StringUtils;
 import com.dlz.db.holder.SqlHolder;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.util.KeyUtil;
 import com.dlz.db.util.SqlUtil;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.json.JSONMap;
+import com.dlz.kit.util.StringUtils;
 import lombok.AllArgsConstructor;
 
 import java.util.regex.Matcher;

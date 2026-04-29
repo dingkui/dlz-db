@@ -1,7 +1,7 @@
 package com.dlz.db.inf;
 
-import com.dlz.comm.inf.IChained;
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.kit.inf.IChained;
 
 /**
  * 条件构造器的最底层接口：所有条件子类必须能把一个 {@link Condition} 节点挂到自己管理的条件树上。

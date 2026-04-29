@@ -1,10 +1,10 @@
 package com.dlz.db.helper.support;
 
-import com.dlz.comm.util.StringUtils;
-import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.annotation.TableName;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.modal.DB;
+import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;

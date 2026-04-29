@@ -1,9 +1,9 @@
 package com.dlz.db.service;
 
-import com.dlz.comm.exception.DbException;
 import com.dlz.db.dao.IDlzDao;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.items.JdbcItem;
+import com.dlz.kit.exception.DbException;
 
 import java.util.function.Function;
 

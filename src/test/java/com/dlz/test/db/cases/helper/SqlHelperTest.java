@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper;
 
-import com.dlz.comm.util.system.FieldReflections;
+import com.dlz.kit.util.system.FieldReflections;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.Dict;

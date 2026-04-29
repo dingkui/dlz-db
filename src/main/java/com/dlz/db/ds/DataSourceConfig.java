@@ -1,7 +1,5 @@
 package com.dlz.db.ds;
 
-import com.dlz.comm.exception.SystemException;
-import com.dlz.comm.util.ValUtil;
 import com.dlz.db.convertor.rowMapper.MySqlColumnMapRowMapper;
 import com.dlz.db.convertor.rowMapper.OracleColumnMapRowMapper;
 import com.dlz.db.convertor.rowMapper.ResultMapRowMapper;
@@ -11,6 +9,8 @@ import com.dlz.db.helper.support.dbs.DbOpDm8;
 import com.dlz.db.helper.support.dbs.DbOpMysql;
 import com.dlz.db.helper.support.dbs.DbOpPostgresql;
 import com.dlz.db.helper.support.dbs.DbOpSqlite;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.util.ValUtil;
 import lombok.AccessLevel;
 import lombok.Setter;
 

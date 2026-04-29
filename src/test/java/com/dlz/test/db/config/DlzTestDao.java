@@ -1,8 +1,8 @@
 //package com.dlz.test.db.config;
 //
-//import com.dlz.comm.cache.CacheUtil;
-//import com.dlz.comm.json.JSONList;
-//import com.dlz.comm.util.VAL;
+//import com.dlz.kit.cache.CacheUtil;
+//import com.dlz.kit.json.JSONList;
+//import com.dlz.kit.util.VAL;
 //import com.dlz.db.dao.IDlzDao;
 //import com.dlz.db.holder.SqlHolder;
 //import com.dlz.db.modal.dto.ResultMap;

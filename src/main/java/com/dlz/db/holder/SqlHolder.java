@@ -1,11 +1,11 @@
 package com.dlz.db.holder;
 
-import com.dlz.comm.exception.DbException;
-import com.dlz.comm.util.ExceptionUtils;
 import com.dlz.db.config.DlzDbProperties;
 import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.kit.exception.DbException;
+import com.dlz.kit.util.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;

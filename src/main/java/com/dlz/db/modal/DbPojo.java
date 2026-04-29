@@ -1,13 +1,13 @@
 package com.dlz.db.modal;
 
-import com.dlz.comm.exception.SystemException;
-import com.dlz.comm.util.StringUtils;
-import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.util.DbEntityUtil;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.system.FieldReflections;
 
 import java.util.function.Function;
 

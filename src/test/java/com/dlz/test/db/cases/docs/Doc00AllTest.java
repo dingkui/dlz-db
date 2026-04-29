@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.docs;
 
-import com.dlz.comm.exception.SystemException;
+import com.dlz.kit.exception.SystemException;
 import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.SysSql;

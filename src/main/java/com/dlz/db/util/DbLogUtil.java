@@ -1,10 +1,10 @@
 package com.dlz.db.util;
 
-import com.dlz.comm.fn.DlzFn2;
-import com.dlz.comm.util.ExceptionUtils;
-import com.dlz.comm.util.StringUtils;
 import com.dlz.db.config.DlzDbProperties;
 import com.dlz.db.modal.DB;
+import com.dlz.kit.fn.DlzFn2;
+import com.dlz.kit.util.ExceptionUtils;
+import com.dlz.kit.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -67,7 +67,7 @@ public class DbLogUtil {
                 continue;
             }
             if (traceInfo.startsWith("com.dlz.spring.") ||
-                    traceInfo.startsWith("com.dlz.comm.")||
+                    traceInfo.startsWith("com.dlz.kit.")||
                     traceInfo.startsWith("com.dlz.db.")
             ) {
                 index++;

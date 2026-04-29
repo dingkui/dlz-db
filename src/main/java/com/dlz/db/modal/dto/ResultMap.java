@@ -1,6 +1,6 @@
 package com.dlz.db.modal.dto;
 
-import com.dlz.comm.json.JSONMap;
+import com.dlz.kit.json.JSONMap;
 
 import java.util.Date;
 

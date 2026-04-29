@@ -1,11 +1,11 @@
 package com.dlz.db.util;
 
-import com.dlz.comm.util.ValUtil;
 import com.dlz.db.convertor.clumnname.ColumnNameCamel;
 import com.dlz.db.convertor.clumnname.IColumnNameConvertor;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.kit.util.ValUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;

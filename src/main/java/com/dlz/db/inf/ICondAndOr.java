@@ -1,8 +1,8 @@
 package com.dlz.db.inf;
 
-import com.dlz.comm.json.JSONMap;
 import com.dlz.db.enums.DbBuildEnum;
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.kit.json.JSONMap;
 
 import java.util.function.Consumer;
 

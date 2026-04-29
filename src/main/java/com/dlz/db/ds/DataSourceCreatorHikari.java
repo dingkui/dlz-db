@@ -1,6 +1,6 @@
 package com.dlz.db.ds;
 
-import com.dlz.comm.util.ValUtil;
+import com.dlz.kit.util.ValUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 

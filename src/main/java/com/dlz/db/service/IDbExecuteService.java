@@ -1,12 +1,12 @@
 package com.dlz.db.service;
 
-import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.IExecutorInsert;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
+import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
 

@@ -1,8 +1,8 @@
 package com.dlz.db.convertor.dbtype;
 
-import com.dlz.comm.util.ValUtil;
 import com.dlz.db.dao.IDlzDao;
 import com.dlz.db.holder.BeanInfoHolder;
+import com.dlz.kit.util.ValUtil;
 import lombok.AllArgsConstructor;
 
 import java.sql.Types;

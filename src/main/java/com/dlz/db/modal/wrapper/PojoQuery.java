@@ -1,6 +1,5 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.comm.fn.DlzFn;
 import com.dlz.db.convertor.clumnname.IConvertorToFieldName;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
@@ -13,6 +12,7 @@ import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.para.APojoQuery;
+import com.dlz.kit.fn.DlzFn;
 
 import java.util.List;
 import java.util.Map;

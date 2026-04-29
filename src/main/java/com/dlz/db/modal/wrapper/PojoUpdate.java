@@ -1,7 +1,5 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.comm.fn.DlzFn;
-import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.inf.ICondAddByLamda;
@@ -9,6 +7,8 @@ import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.para.APojoQuery;
 import com.dlz.db.util.DbEntityUtil;
+import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.db;
 
-import com.dlz.comm.exception.SystemException;
+import com.dlz.kit.exception.SystemException;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.helper.support.HelperScan;
 import com.dlz.db.helper.support.SqlHelper;

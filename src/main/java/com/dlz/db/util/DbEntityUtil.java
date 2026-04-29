@@ -1,7 +1,7 @@
 package com.dlz.db.util;
 
-import com.dlz.comm.exception.SystemException;
 import com.dlz.db.holder.BeanInfoHolder;
+import com.dlz.kit.exception.SystemException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

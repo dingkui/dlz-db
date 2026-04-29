@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.db;
 
-import com.dlz.comm.exception.SystemException;
+import com.dlz.kit.exception.SystemException;
 import com.dlz.db.convertor.clumnname.ColumnNameToLower;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;

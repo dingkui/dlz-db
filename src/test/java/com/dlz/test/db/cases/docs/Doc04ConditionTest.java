@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.docs;
 
-import com.dlz.comm.json.JSONMap;
-import com.dlz.comm.util.DateUtil;
-import com.dlz.comm.util.ValUtil;
+import com.dlz.kit.json.JSONMap;
+import com.dlz.kit.util.DateUtil;
+import com.dlz.kit.util.ValUtil;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.dto.ResultMap;

@@ -1,11 +1,11 @@
 package com.dlz.db.modal.condition;
 
-import com.dlz.comm.json.JSONMap;
 import com.dlz.db.enums.DbBuildEnum;
 import com.dlz.db.inf.ICondAddByFn;
 import com.dlz.db.inf.ICondAddByKey;
 import com.dlz.db.inf.ICondAndOr;
 import com.dlz.db.modal.para.ParaMap;
+import com.dlz.kit.json.JSONMap;
 
 import java.util.ArrayList;
 import java.util.List;

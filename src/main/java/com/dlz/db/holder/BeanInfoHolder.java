@@ -1,15 +1,15 @@
 package com.dlz.db.holder;
 
-import com.dlz.comm.cache.CacheMap;
-import com.dlz.comm.fn.DlzFn;
-import com.dlz.comm.util.StringUtils;
-import com.dlz.comm.util.ValUtil;
-import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.annotation.TableField;
 import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.TableName;
 import com.dlz.db.annotation.proxy.AnnoProxys;
 import com.dlz.db.util.DbConvertUtil;
+import com.dlz.kit.cache.CacheMap;
+import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.ValUtil;
+import com.dlz.kit.util.system.FieldReflections;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;

@@ -1,10 +1,10 @@
 package com.dlz.db.service;
 
-import com.dlz.comm.util.system.ConvertUtil;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.PojoQuery;
+import com.dlz.kit.util.system.ConvertUtil;
 
 import java.util.List;
 

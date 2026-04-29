@@ -1,7 +1,7 @@
 package com.dlz.db.modal.dto;
 
-import com.dlz.comm.inf.IChained;
 import com.dlz.db.util.DbConvertUtil;
+import com.dlz.kit.inf.IChained;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

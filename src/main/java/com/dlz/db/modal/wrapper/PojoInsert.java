@@ -1,11 +1,11 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.modal.para.AParaPojo;
+import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
 import java.util.List;

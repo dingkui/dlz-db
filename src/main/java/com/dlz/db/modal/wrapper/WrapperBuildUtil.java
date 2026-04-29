@@ -1,9 +1,5 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.comm.exception.SystemException;
-import com.dlz.comm.util.StringUtils;
-import com.dlz.comm.util.id.UuidUtil;
-import com.dlz.comm.util.system.FieldReflections;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.proxy.AnnoProxys;
@@ -15,6 +11,10 @@ import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.util.DbConvertUtil;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.id.UuidUtil;
+import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;

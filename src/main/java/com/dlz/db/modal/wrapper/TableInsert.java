@@ -1,10 +1,10 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.comm.fn.DlzFn;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.IExecutorInsert;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.util.DbConvertUtil;
+import com.dlz.kit.fn.DlzFn;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;

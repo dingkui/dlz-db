@@ -1,9 +1,5 @@
 package com.dlz.db.util;
 
-import com.dlz.comm.exception.DbException;
-import com.dlz.comm.exception.SystemException;
-import com.dlz.comm.json.JSONMap;
-import com.dlz.comm.util.*;
 import com.dlz.db.enums.ParaTypeEnum;
 import com.dlz.db.holder.SqlHolder;
 import com.dlz.db.modal.dto.Page;
@@ -13,6 +9,10 @@ import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.ParaJdbc;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
+import com.dlz.kit.exception.DbException;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.json.JSONMap;
+import com.dlz.kit.util.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.temporal.TemporalAccessor;

@@ -1,7 +1,7 @@
 package com.dlz.db.inf;
 
-import com.dlz.comm.fn.DlzFn;
 import com.dlz.db.enums.DbOprateEnum;
+import com.dlz.kit.fn.DlzFn;
 
 import static com.dlz.db.enums.DbOprateEnum.*;
 
