@@ -1,13 +1,11 @@
 package com.dlz.db.dao;
 
+import com.dlz.db.core.RowMapper;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
 import com.dlz.kit.exception.DbException;
 import com.dlz.kit.fn.DlzFn2;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,10 +20,9 @@ import java.util.function.Supplier;
  * <p>
  * 2018-10-17 dk 覆盖query和execute，去掉过多的sql debug日志,添加异常时的sql日志
  */
-@Lazy
 public interface IDlzDao {
     List<ResultMap> getList(String sql, Object... args);
-    <T> List<T> getList(String sql, RowMapper<T> rowMapper, Object... args) throws DataAccessException;
+    <T> List<T> getList(String sql, RowMapper<T> rowMapper, Object... args);
 
     default ResultMap getOne(String sql, boolean checkOne, Object... args) {
         List<ResultMap> list = getList(sql, args);

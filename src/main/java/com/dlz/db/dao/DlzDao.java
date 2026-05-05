@@ -1,14 +1,13 @@
 package com.dlz.db.dao;
 
+import com.dlz.db.core.RowMapper;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -28,13 +27,15 @@ public class DlzDao implements IDlzDao {
     }
 
     @Override
-    public List<ResultMap> getList(String sql, Object... args) throws DataAccessException {
+    public List<ResultMap> getList(String sql, Object... args) {
         return getList(sql, DB.Dynamic.getRowMapper(), args);
     }
 
     @Override
-    public <T> List<T> getList(String sql, RowMapper<T> mapper, Object... args) throws DataAccessException {
-        return doDb(() -> args.length > 0 ? dao.query(sql, mapper, args) : dao.query(sql, mapper),
+    public <T> List<T> getList(String sql, RowMapper<T> mapper, Object... args) {
+        // 适配：自研 RowMapper -> Spring RowMapper（方法签名一致，方法引用即可）
+        org.springframework.jdbc.core.RowMapper<T> springMapper = mapper::mapRow;
+        return doDb(() -> args.length > 0 ? dao.query(sql, springMapper, args) : dao.query(sql, springMapper),
                 (t, r) -> DbLogUtil.generateSqlMessage(t, r, "getList", sql, args));
     }
 

@@ -1,11 +1,11 @@
 package com.dlz.db.service;
 
+import com.dlz.db.core.RowMapper;
 import com.dlz.db.dao.IDlzDao;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.exception.DbException;
 import com.dlz.kit.util.system.ConvertUtil;
-import org.springframework.jdbc.core.RowMapper;
 
 import java.math.BigDecimal;
 import java.util.List;

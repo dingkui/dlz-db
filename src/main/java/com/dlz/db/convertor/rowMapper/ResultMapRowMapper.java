@@ -1,10 +1,10 @@
 package com.dlz.db.convertor.rowMapper;
 
 
+import com.dlz.db.core.JdbcValueUtils;
+import com.dlz.db.core.RowMapper;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.JdbcUtils;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -21,7 +21,7 @@ public class ResultMapRowMapper implements RowMapper<ResultMap> {
 		int columnCount = rsmd.getColumnCount();
 		ResultMap mapOfColValues = new ResultMap();
 		for (int i = 1; i <= columnCount; i++) {
-			String key = toFieldName(JdbcUtils.lookupColumnName(rsmd, i).toLowerCase());
+			String key = toFieldName(JdbcValueUtils.lookupColumnName(rsmd, i).toLowerCase());
 			Object obj = getColumnValue(rs, i);
 			mapOfColValues.put(key, obj);
 		}
@@ -49,9 +49,9 @@ public class ResultMapRowMapper implements RowMapper<ResultMap> {
 	 * @param rs is the ResultSet holding the data
 	 * @param index is the column index
 	 * @return the Object returned
-	 * @see org.springframework.jdbc.support.JdbcUtils#getResultSetValue
+	 * @see com.dlz.db.core.JdbcValueUtils#getResultSetValue
 	 */
 	protected Object getColumnValue(ResultSet rs, int index) throws SQLException {
-		return JdbcUtils.getResultSetValue(rs, index);
+		return JdbcValueUtils.getResultSetValue(rs, index);
 	}
 }
