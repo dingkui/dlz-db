@@ -1,6 +1,6 @@
 package com.dlz.db.convertor.dbtype;
 
-import com.dlz.db.dao.IDlzDao;
+import com.dlz.db.core.SqlExecutor;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.kit.util.ValUtil;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 @AllArgsConstructor
 public class TableColumnMapper implements ITableColumnMapper {
-	final IDlzDao dao;
+	final SqlExecutor sqlExecutor;
 	@Override
 	public Object converObj4Db(String tableName, String clumnName, Object value) {
 		Map<String, Integer> map = BeanInfoHolder.getTableColumnsInfo(tableName);

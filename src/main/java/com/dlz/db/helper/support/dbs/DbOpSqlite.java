@@ -41,7 +41,7 @@ public class DbOpSqlite extends SqlHelper {
 
         String sql = StringUtils.formatMsg(createSql, tableName,columns);
 
-        DBHolder.getDao().execute(sql);
+        DBHolder.getSqlExecutor().execute(sql);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class DbOpSqlite extends SqlHelper {
         // 构建查询主键的SQL语句
         String sql = "PRAGMA table_info(`" + tableName + "`)";
         // 执行查询并获取结果
-        List<ResultMap> maps = DBHolder.getDao().getList(sql);
+        List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql);
         List<String> primaryKeys = new ArrayList<>();
 
         for (ResultMap map : maps) {
@@ -77,7 +77,7 @@ public class DbOpSqlite extends SqlHelper {
 
         // 获取字段信息
         sql = "PRAGMA TABLE_INFO(`" + tableName + "`)";
-        maps = DBHolder.getDao().getList(sql);
+        maps = DBHolder.getSqlExecutor().getList(sql);
         List<ColumnInfo> columnInfos = new ArrayList<>();
 
         for (ResultMap map : maps) {
@@ -104,22 +104,22 @@ public class DbOpSqlite extends SqlHelper {
     public List<ResultMap> getTableIndexs(String tableName) {
         // 获取表所有索引
         String sql = "PRAGMA INDEX_LIST(`" + tableName + "`)";
-        return DBHolder.getDao().getList(sql);
+        return DBHolder.getSqlExecutor().getList(sql);
     }
 
     @Override
     public void createColumn(String tableName, String name, Field field) {
         String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbClumnType(field);
-        DBHolder.getDao().execute(sql);
+        DBHolder.getSqlExecutor().execute(sql);
     }
 
     @Override
     public void updateDefaultValue(String tableName, String columnName, String value) {
         String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE `" + columnName + "` IS NULL";
-        Long count = DBHolder.getDao().getFistColumn(sql, Long.class);
+        Long count = DBHolder.getSqlExecutor().getFistColumn(sql, Long.class);
         if (count > 0) {
             sql = "UPDATE " + tableName + " SET `" + columnName + "` = ? WHERE `" + columnName + "` IS NULL";
-            DBHolder.getDao().update(sql, value);
+            DBHolder.getSqlExecutor().update(sql, value);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.dlz.db.holder;
 
-import com.dlz.db.dao.IDlzDao;
+import com.dlz.db.core.CacheExecutor;
+import com.dlz.db.core.SqlExecutor;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
 import com.dlz.kit.util.StringUtils;
@@ -16,15 +17,15 @@ import java.util.function.Function;
  */
 @Slf4j
 public class DBHolder {
-    public static IDlzDao dao;
+    public static SqlExecutor sqlExecutor;
     public static ICommService service;
-    public static JedisExecutor jedis;
+    public static CacheExecutor cacheExecutor = new com.dlz.db.core.NoOpCacheExecutor();
 
-    public static IDlzDao getDao() {
-        if (dao == null) {
-            dao = SpringHolder.getBean(IDlzDao.class);
+    public static SqlExecutor getSqlExecutor() {
+        if (sqlExecutor == null) {
+            sqlExecutor = SpringHolder.getBean(SqlExecutor.class);
         }
-        return dao;
+        return sqlExecutor;
     }
 
     public static ICommService getService() {
@@ -37,25 +38,26 @@ public class DBHolder {
         return service;
     }
 
-    public static JedisExecutor getJedis() {
-        if (jedis == null) {
-            jedis = SpringHolder.getBean(JedisExecutor.class);
-        }
-        return jedis;
+    public static void setCacheExecutor(CacheExecutor executor) {
+        DBHolder.cacheExecutor = executor;
+    }
+
+    public static CacheExecutor getCacheExecutor() {
+        return cacheExecutor;
     }
 
     public static long sequence(String tableName, long initSeq) {
         String key = "seq:" + tableName;
-        Long seq = getJedis().incrBy(key, initSeq);
+        Long seq = cacheExecutor.incrBy(key, initSeq);
         if (seq == initSeq) {
             try {
-                final String fistColumn = getDao().getFistColumn("select max(id) from " + tableName, String.class);
+                final String fistColumn = getSqlExecutor().getFistColumn("select max(id) from " + tableName, String.class);
                 if (fistColumn == null || !StringUtils.isNumber(fistColumn)) {
                     return seq;
                 }
                 seq = ValUtil.toBigDecimalZero(fistColumn).longValue() + initSeq;
                 if (seq > initSeq) {
-                    jedis.set(key, seq.toString());
+                    cacheExecutor.set(key, seq.toString());
                 }
             } catch (Exception e) {
                 log.error("", e);
@@ -85,7 +87,7 @@ public class DBHolder {
         return s.apply(getService());
     }
 
-    public static <R> R doDao(Function<IDlzDao, R> s) {
-        return s.apply(getDao());
+    public static <R> R doDao(Function<SqlExecutor, R> s) {
+        return s.apply(getSqlExecutor());
     }
 }

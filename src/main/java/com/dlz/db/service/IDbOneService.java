@@ -24,14 +24,14 @@ public interface IDbOneService extends IDbBaseService {
     }
 
     default ResultMap getMap(IExecutorQuery paraMap, boolean throwEx) {
-        return doDb(paraMap, jdbcSql -> getDao().getOne(jdbcSql.sql, throwEx, jdbcSql.paras));
+        return doDb(paraMap, jdbcSql -> getSqlExecutor().getOne(jdbcSql.sql, throwEx, jdbcSql.paras));
     }
 
     default <T> T getBean(PojoQuery<T> wrapper, boolean throwEx) {
-        return doDb(wrapper, jdbcSql -> ConvertUtil.convert(getDao().getOne(jdbcSql.sql, throwEx, jdbcSql.paras),wrapper.getBeanClass()));
+        return doDb(wrapper, jdbcSql -> ConvertUtil.convert(getSqlExecutor().getOne(jdbcSql.sql, throwEx, jdbcSql.paras),wrapper.getBeanClass()));
     }
     default <T> T getBean(IExecutorQuery paraMap, Class<T> t, boolean throwEx) {
-        return doDb(paraMap, jdbcSql -> ConvertUtil.convert(getDao().getOne(jdbcSql.sql, throwEx, jdbcSql.paras), t));
+        return doDb(paraMap, jdbcSql -> ConvertUtil.convert(getSqlExecutor().getOne(jdbcSql.sql, throwEx, jdbcSql.paras), t));
     }
 
     default <T> T getBean(IExecutorQuery paraMap, Class<T> t) {

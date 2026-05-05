@@ -27,7 +27,7 @@ public interface IDbExecuteService extends IDbBaseService{
           * @throws Exception
      */
     default Long insertWithAutoKey(IExecutorInsert paraMap) {
-        return doDb(paraMap, jdbcSql -> getDao().updateForId(jdbcSql.sql, jdbcSql.paras));
+        return doDb(paraMap, jdbcSql -> getSqlExecutor().updateForId(jdbcSql.sql, jdbcSql.paras));
     }
 
     /**
@@ -47,14 +47,14 @@ public interface IDbExecuteService extends IDbBaseService{
                 WrapperBuildUtil.fillAutoId(BeanInfoHolder.getTableName( bean.getClass()), idField, idType, bean);
             }
             if(idType == IdType.AUTO){
-                final Long newid = doDb(paraMap, jdbcSql -> getDao().updateForId(jdbcSql.sql, jdbcSql.paras));
+                final Long newid = doDb(paraMap, jdbcSql -> getSqlExecutor().updateForId(jdbcSql.sql, jdbcSql.paras));
                 if(newid != null){
                     FieldReflections.setValue(bean, idField, newid);
                 }
                 return 1;
             }
         }
-        return doDb(paraMap, jdbcSql -> getDao().update(jdbcSql.sql, jdbcSql.paras));
+        return doDb(paraMap, jdbcSql -> getSqlExecutor().update(jdbcSql.sql, jdbcSql.paras));
     }
 
 //    default <T> long insert(T bean){

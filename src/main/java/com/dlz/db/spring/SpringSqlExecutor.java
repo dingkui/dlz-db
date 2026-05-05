@@ -1,6 +1,7 @@
-package com.dlz.db.dao;
+package com.dlz.db.spring;
 
 import com.dlz.db.core.RowMapper;
+import com.dlz.db.core.SqlExecutor;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbLogUtil;
@@ -17,12 +18,16 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * {@link SqlExecutor} 的 Spring JDBC 实现。
+ * <p>基于 {@link JdbcTemplate}，继承 Spring 事务上下文（{@code @Transactional} 自然生效）。</p>
+ * <p>v7.0 起，原 {@code com.dlz.db.dao.DlzDao} 已被此类取代。</p>
+ */
 @Slf4j
-public class DlzDao implements IDlzDao {
+public class SpringSqlExecutor implements SqlExecutor {
     private final JdbcTemplate dao;
 
-
-    public DlzDao(JdbcTemplate jdbcTemplate) {
+    public SpringSqlExecutor(JdbcTemplate jdbcTemplate) {
         this.dao = jdbcTemplate;
     }
 
@@ -91,7 +96,6 @@ public class DlzDao implements IDlzDao {
 
     @Override
     public HashMap<String, Integer> getTableColumnsInfo(String tableName) {
-        // 查询表结构定义；返回表定义Map
         String sql = "select * from " + tableName + " limit 0";
         ResultSetExtractor<HashMap<String, Integer>> extractor = rs -> {
             HashMap<String, Integer> infos = new HashMap<>();

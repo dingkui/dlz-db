@@ -16,7 +16,7 @@ public class Starter implements InitializingBean {
         SpringApplication.run(Starter.class, args);
     }
     public void afterPropertiesSet() throws Exception{
-        DBHolder.getDao();
+        DBHolder.getSqlExecutor();
 //        String sql = DbInfo.getSql("key.setting.getSettings");
 //        System.out.println(sql);
     }

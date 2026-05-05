@@ -20,11 +20,11 @@ public interface IDbClumnService extends IDbBaseService {
     }
 
     default <T> List<T> getColumnList(IExecutorQuery paraMap, Class<T> tClass) {
-        return doDb(paraMap, jdbcSql -> DbConvertUtil.getColumnList(getDao().getList(jdbcSql.sql, jdbcSql.paras), tClass));
+        return doDb(paraMap, jdbcSql -> DbConvertUtil.getColumnList(getSqlExecutor().getList(jdbcSql.sql, jdbcSql.paras), tClass));
     }
 
     default <T> T getFistColumn(IExecutorQuery paraMap, Class<T> tClass) {
-        return doDb(paraMap, jdbcSql -> getDao().getFistColumn(jdbcSql.sql, tClass, jdbcSql.paras));
+        return doDb(paraMap, jdbcSql -> getSqlExecutor().getFistColumn(jdbcSql.sql, tClass, jdbcSql.paras));
     }
 
     default BigDecimal getBigDecimal(IExecutorQuery paraMap) {

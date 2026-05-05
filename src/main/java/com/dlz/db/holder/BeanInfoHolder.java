@@ -179,7 +179,7 @@ public class BeanInfoHolder {
           */
     public static HashMap<String, Integer> getTableColumnsInfo(String tableName) {
         return tableColumnsInfoCahe.getAndSet(tableName, () ->
-                DBHolder.getDao().getTableColumnsInfo(tableName)
+                DBHolder.getSqlExecutor().getTableColumnsInfo(tableName)
         );
     }
 

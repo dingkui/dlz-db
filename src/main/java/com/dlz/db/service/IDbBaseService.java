@@ -1,6 +1,6 @@
 package com.dlz.db.service;
 
-import com.dlz.db.dao.IDlzDao;
+import com.dlz.db.core.SqlExecutor;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.kit.exception.DbException;
@@ -15,7 +15,7 @@ import java.util.function.Function;
   * @throws Exception
  */
 public interface IDbBaseService {
-    IDlzDao getDao();
+    SqlExecutor getSqlExecutor();
 
     default <T> T doCnt(ISqlPara paraMap, Function<JdbcItem, T> executor) {
         try {

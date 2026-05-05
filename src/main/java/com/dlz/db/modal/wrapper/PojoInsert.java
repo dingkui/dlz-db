@@ -65,7 +65,7 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
                         return WrapperBuildUtil.buildInsertParams(v, fields);
                     })
                     .collect(Collectors.toList());
-            DBHolder.getDao().batchUpdate(sql, paramValues);
+            DBHolder.getSqlExecutor().batchUpdate(sql, paramValues);
             valueBeans = valueBeans.subList(batchSize, valueBeans.size());
         }
         return true;

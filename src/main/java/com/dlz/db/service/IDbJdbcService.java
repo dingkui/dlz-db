@@ -1,7 +1,7 @@
 package com.dlz.db.service;
 
 import com.dlz.db.core.RowMapper;
-import com.dlz.db.dao.IDlzDao;
+import com.dlz.db.core.SqlExecutor;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.exception.DbException;
@@ -20,13 +20,13 @@ import java.util.concurrent.Callable;
   * @throws Exception
  */
 public interface IDbJdbcService {
-    IDlzDao getDao();
+    SqlExecutor getSqlExecutor();
 
     default List<ResultMap> getMapList(String sql, Object... para) {
-		return doJdbc(() -> getDao().getList(sql, para));
+		return doJdbc(() -> getSqlExecutor().getList(sql, para));
     }
     default <T> List<T> getList(String sql, RowMapper<T> rowMapper, Object... para) {
-		return doJdbc(() -> getDao().getList(sql,rowMapper, para));
+		return doJdbc(() -> getSqlExecutor().getList(sql,rowMapper, para));
     }
 
 	default <T> T doJdbc(Callable<T> executor) {
@@ -40,11 +40,11 @@ public interface IDbJdbcService {
 		}
 	}
 	default <T> List<T> getColumnList(String sql, Class<T> tClass, Object... para) {
-		return doJdbc(() -> DbConvertUtil.getColumnList(getDao().getList(sql, para), tClass));
+		return doJdbc(() -> DbConvertUtil.getColumnList(getSqlExecutor().getList(sql, para), tClass));
 	}
 
 	default <T> T getFistColumn(String sql, Class<T> tClass, Object... para) {
-		return doJdbc(() -> getDao().getFistColumn(sql,tClass, para));
+		return doJdbc(() -> getSqlExecutor().getFistColumn(sql,tClass, para));
 	}
 
     /**
@@ -54,12 +54,12 @@ public interface IDbJdbcService {
      * @param para ：参数数组
      */
     default int executeSql(String sql, Object... para) {
-		return doJdbc(() -> getDao().update(sql, para));
+		return doJdbc(() -> getSqlExecutor().update(sql, para));
     }
 
 
     default ResultMap getMap(String sql, Boolean throwEx, Object... para) {
-		return doJdbc(() -> getDao().getOne(sql,throwEx, para));
+		return doJdbc(() -> getSqlExecutor().getOne(sql,throwEx, para));
     }
 
     default String getStr(String sql, Object... para) {
@@ -115,10 +115,10 @@ public interface IDbJdbcService {
     }
 
     default <T> T getBean(String sql, Class<T> t, Object... para) {
-		return doJdbc(() -> ConvertUtil.convert(getDao().getOne(sql, true,para),t));
+		return doJdbc(() -> ConvertUtil.convert(getSqlExecutor().getOne(sql, true,para),t));
     }
 
     default <T> List<T> getBeanList(String sql, Class<T> t, Object... para) {
-        return doJdbc(() ->  ConvertUtil.convertList(getDao().getList(sql, para),t));
+        return doJdbc(() ->  ConvertUtil.convertList(getSqlExecutor().getList(sql, para),t));
     }
 }

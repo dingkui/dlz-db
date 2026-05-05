@@ -40,7 +40,7 @@ public class DbBatch {
                 batchSize = valueBeans.size();
             }
             List<Object[]> paramValues = valueBeans.subList(0, batchSize);
-            DBHolder.getDao().batchUpdate(sql, paramValues);
+            DBHolder.getSqlExecutor().batchUpdate(sql, paramValues);
         }
         return true;
     }

@@ -24,10 +24,10 @@ public interface IDbListService extends IDbBaseService{
      * @return List<ResultMap>
      */
     default List<ResultMap> getMapList(IExecutorQuery paraMap) {
-        return doDb(paraMap, jdbcSql -> getDao().getList(jdbcSql.sql, jdbcSql.paras));
+        return doDb(paraMap, jdbcSql -> getSqlExecutor().getList(jdbcSql.sql, jdbcSql.paras));
     }
     default <T> List<T> getBeanList(PojoQuery<T> wrapper) {
-        return doDb(wrapper, jdbcSql -> ConvertUtil.convertList(getDao().getList(jdbcSql.sql, jdbcSql.paras),wrapper.getBeanClass()));
+        return doDb(wrapper, jdbcSql -> ConvertUtil.convertList(getSqlExecutor().getList(jdbcSql.sql, jdbcSql.paras),wrapper.getBeanClass()));
     }
 
 
@@ -39,7 +39,7 @@ public interface IDbListService extends IDbBaseService{
         return getBeanList(wrapper,wrapper.getBeanClass());
     }
     default int getCnt(IExecutorQuery paraMap) {
-        return doCnt(paraMap, jdbcSql -> getDao().getFistColumn(jdbcSql.sql, Integer.class, jdbcSql.paras));
+        return doCnt(paraMap, jdbcSql -> getSqlExecutor().getFistColumn(jdbcSql.sql, Integer.class, jdbcSql.paras));
     }
     /**
      * 取得分页数据

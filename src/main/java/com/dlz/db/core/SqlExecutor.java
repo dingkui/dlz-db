@@ -1,6 +1,5 @@
-package com.dlz.db.dao;
+package com.dlz.db.core;
 
-import com.dlz.db.core.RowMapper;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
@@ -11,22 +10,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
-
 /**
- * 数据库操作接口
+ * SQL 执行器抽象：DLZ-DB 核心对 JDBC 操作的顶层接口。
+ * <p>实现类由各 starter 提供：
+ * <ul>
+ *   <li>Spring Boot：基于 {@code JdbcTemplate}（{@code com.dlz.db.spring.SpringSqlExecutor}）</li>
+ *   <li>Solon：基于自研 {@code SimpleJdbc}（规划中）</li>
+ * </ul>
+ * </p>
+ * <p>用户通常无需直接使用，而是通过 {@code DB.Pojo} / {@code DB.Jdbc} / {@code DB.Sql} 等上层 API 访问。</p>
  *
- * @author kingapex
- * 2010-6-13上午11:05:32
- * <p>
- * 2018-10-17 dk 覆盖query和execute，去掉过多的sql debug日志,添加异常时的sql日志
+ * @author dingkui
+ * @since 7.0.0
  */
-public interface IDlzDao {
+public interface SqlExecutor {
+
     List<ResultMap> getList(String sql, Object... args);
+
     <T> List<T> getList(String sql, RowMapper<T> rowMapper, Object... args);
+
+    int update(String sql, Object... args);
+
+    Long updateForId(String sql, Object... args);
+
+    void execute(String sql, Object... args);
+
+    int[] batchUpdate(String sql, List<Object[]> batchArgs);
+
+    HashMap<String, Integer> getTableColumnsInfo(String tableName);
+
+    // ============== 默认工具方法 ==============
 
     default ResultMap getOne(String sql, boolean checkOne, Object... args) {
         List<ResultMap> list = getList(sql, args);
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             return null;
         }
         if (checkOne && list.size() > 1) {
@@ -39,12 +56,18 @@ public interface IDlzDao {
         return DbConvertUtil.getFistColumn(getOne(sql, false, args), requiredType);
     }
 
-    default <T> T doDb(Supplier<T> s, DlzFn2<Long,T,String> msg) {
+    /**
+     * 统一的 SQL 执行包装：日志、耗时、异常转换。
+     *
+     * @param s   真实执行逻辑
+     * @param msg 日志消息生成器（耗时 + 结果 -> 消息）
+     */
+    default <T> T doDb(Supplier<T> s, DlzFn2<Long, T, String> msg) {
         if (msg == null) {
             return s.get();
         }
         long t = System.currentTimeMillis();
-        T re=null;
+        T re = null;
         Exception err = null;
         try {
             re = s.get();
@@ -56,17 +79,7 @@ public interface IDlzDao {
             }
             throw new DbException("sql执行错误:", 1001);
         } finally {
-            DbLogUtil.logInfo(msg,t, re,err);
+            DbLogUtil.logInfo(msg, t, re, err);
         }
     }
-
-    int update(String sql, Object... args);
-
-    Long updateForId(String sql, Object... args);
-
-    void execute(final String sql, Object... args);
-
-    int[] batchUpdate(String sql, List<Object[]> batchArgs);
-
-    HashMap<String, Integer> getTableColumnsInfo(String tableName);
 }

@@ -1,6 +1,7 @@
 package com.dlz.db.holder;
 
 import com.dlz.db.config.DlzDbProperties;
+import com.dlz.db.core.ResourceLoader;
 import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
@@ -11,9 +12,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.*;
 import java.util.List;
@@ -37,6 +35,7 @@ public class SqlHolder {
     static final Map<String, Map<String, String>> m_dialect_sql = new ConcurrentHashMap<>(DbTypeEnum.values().length);
     private static boolean initIng = false;
     public static DlzDbProperties properties;
+    private static ResourceLoader resourceLoader = new com.dlz.db.core.NoOpResourceLoader();
     static{
         DbTypeEnum[] values = DbTypeEnum.values();
         for (int i = 0; i < values.length; i++) {
@@ -47,6 +46,10 @@ public class SqlHolder {
     public static void init(DlzDbProperties properties) {
         SqlHolder.properties = properties;
         load();
+    }
+
+    public static void setResourceLoader(ResourceLoader loader) {
+        SqlHolder.resourceLoader = loader;
     }
 
     private static void readSqlPath(File file) {
@@ -111,14 +114,13 @@ public class SqlHolder {
         }
     }
 
-    public static void loadRsources(String path) throws IOException {
-        ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
-        Resource[] rs = resourcePatternResolver.getResources("classpath*:sql/" + path + ".sql");
-        for (Resource r : rs) {
+    public static void loadRsources(String path) throws Exception {
+        InputStream[] inputStreams = resourceLoader.getResources("classpath*:sql/" + path + ".sql");
+        for (InputStream is : inputStreams) {
             if (log.isDebugEnabled()){
-                log.debug(r.getURI().toString());
+                log.debug("Loading SQL resource: " + path);
             }
-            readSqlXml(r.getInputStream());
+            readSqlXml(is);
         }
     }
 
@@ -153,7 +155,7 @@ public class SqlHolder {
             }
             try {
                 loadRsources(name);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error(ExceptionUtils.getStackTrace(e));
             }
         });
@@ -164,7 +166,7 @@ public class SqlHolder {
         if(properties.isUseDbSql()){
             String sql = clearSql(properties.getSql());
             try {
-                List<ResultMap> mapList = DBHolder.getDao().getList(sql);
+                List<ResultMap> mapList = DBHolder.getSqlExecutor().getList(sql);
                 mapList.forEach(item->addSqlSetting("key."+item.getStr("k"),item.getStr("s"),true));
             }catch (Exception e){
                 log.error(ExceptionUtils.getStackTrace(e));
