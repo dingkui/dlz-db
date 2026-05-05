@@ -8,13 +8,10 @@ import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.StringUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.datasource.ConnectionHolder;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -23,105 +20,82 @@ import java.util.function.Supplier;
 
 /**
  * 动态数据源上下文持有者
- * 使用 ThreadLocal 管理当前线程的数据源选择
+ * 使用 ThreadLocal 管理当前线程的数据源选择。
+ * <p>本类只负责数据源的注册、切换、删除，不处理事务。事务由 {@link DBTx} 提供。</p>
  */
 @Slf4j
 public class DBDynamic {
-    private final String defaultName = "default";
-    private final ThreadLocal<DataSourceConfig> HOLDER_config = new ThreadLocal<>();
+    static final String DEFAULT_NAME = "default";
+    final ThreadLocal<DataSourceConfig> HOLDER_config = new ThreadLocal<>();
 
     private final Map<String, DataSourceConfig> configPool = new ConcurrentHashMap<>();
 
     /**
-     * 使用指定数据源执行
-     * 做事务处理
+     * 切换到指定数据源执行（不开启事务）
      */
     public <T> T use(String name, Supplier<T> c) {
-        return use(name, false, c);
+        DataSourceConfig config = configPool.get(name);
+        if (config == null) {
+            throw new SystemException("数据源不存在: " + name);
+        }
+        DataSourceConfig previous = HOLDER_config.get();
+        try {
+            HOLDER_config.set(config);
+            return c.get();
+        } catch (Exception e) {
+            if (e instanceof DbException) {
+                throw (DbException) e;
+            }
+            throw new DbException("执行失败：" + e.getMessage(), 1003, e);
+        } finally {
+            if (previous == null) {
+                HOLDER_config.remove();
+            } else {
+                HOLDER_config.set(previous);
+            }
+        }
     }
 
     /**
-     * 使用默认数据源执行事务
+     * 切换到指定数据源执行（无返回值版本）
      */
-    public <T> T use(Supplier<T> c) {
-        return use(defaultName, true, c);
+    public void use(String name, Runnable r) {
+        use(name, () -> {
+            r.run();
+            return null;
+        });
     }
 
-    public <T> T use(String name, boolean isTransaction, Supplier<T> c) {
-        Connection connection = null;
-        DataSource dataSource = null;
-        try {
-            DataSourceConfig config = configPool.get(name);
-            if (config == null) {
-                throw new SystemException("数据源不存在: " + name);
-            }
-
-            if (isTransaction) {
-                // 获取事务数据源
-                dataSource = config.getDataSource();
-                connection = dataSource.getConnection();
-                connection.setAutoCommit(false);
-
-                // 绑定到 Spring 事务管理器
-                ConnectionHolder connectionHolder = new ConnectionHolder(connection);
-                TransactionSynchronizationManager.bindResource(dataSource, connectionHolder);
-            }
-            HOLDER_config.set(config);
-
-            T result = c.get();
-            if (connection != null) {
-                connection.commit();
-            }
-            return result;
-        } catch (Exception e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    log.error("连接回滚失败", e);
-                    throw new DbException("连接回滚失败", 1006,e);
-                }
-            }
-            if (e instanceof DbException) {
-                if (isTransaction) {
-                    throw new DbException("事务执行失败：" + e.getMessage(), 1006,e);
-                }
-                throw (DbException) e;
-            } else {
-                if (isTransaction) {
-                    throw new DbException("事务执行失败：" + e.getMessage(), 1003,e);
-                }
-                throw new DbException("执行失败：" + e.getMessage(), 1003,e);
-            }
-        } finally {
-            HOLDER_config.remove();
-            if (dataSource != null) {
-                // 解绑资源
-                TransactionSynchronizationManager.unbindResource(dataSource);
-            }
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                } catch (Exception e) {
-                    log.error("关闭连接失败", e);
-                }
-            }
+    /**
+     * 获取当前线程的数据源配置（包级可见，供 {@link DBTx} 使用）
+     */
+    DataSourceConfig getCurrentConfig() {
+        DataSourceConfig config = HOLDER_config.get();
+        if (config == null) {
+            config = configPool.get(DEFAULT_NAME);
         }
+        if (config == null) {
+            throw new SystemException("数据源不存在:" + DEFAULT_NAME);
+        }
+        return config;
+    }
+
+    /**
+     * 根据名称获取数据源配置（包级可见，供 {@link DBTx} 使用）
+     */
+    DataSourceConfig getConfigByName(String name) {
+        DataSourceConfig config = configPool.get(name);
+        if (config == null) {
+            throw new SystemException("数据源不存在: " + name);
+        }
+        return config;
     }
 
     /**
      * 获取当前线程的数据源配置
      */
     private DataSourceConfig getConfig() {
-        DataSourceConfig config = HOLDER_config.get();
-        if (config == null) {
-            config = configPool.get(defaultName);
-        }
-        if (config == null) {
-            throw new SystemException("数据源不存在:" + defaultName);
-        }
-        return config;
+        return getCurrentConfig();
     }
 
     /**
@@ -170,7 +144,7 @@ public class DBDynamic {
     public synchronized boolean setDefaultDataSource(DataSource dataSource) {
         if (dataSource != null) {
             final DataSourceProperty defaultProperties = new DataSourceProperty();
-            String name = defaultName;
+            String name = DEFAULT_NAME;
             defaultProperties.setName(name);
             final DataSourceConfig v = new DataSourceConfig(defaultProperties);
             v.setDataSource(dataSource);
@@ -207,7 +181,7 @@ public class DBDynamic {
         }
         String name = properties.getName();
         if (StringUtils.isEmpty(name)) {
-            name = defaultName;
+            name = DEFAULT_NAME;
         }
         if (configPool.containsKey(name)) {
             // 关闭旧的数据源
@@ -216,7 +190,7 @@ public class DBDynamic {
 
         try {
             configPool.put(name, new DataSourceConfig(properties));
-            if (name.equals(defaultName)) {
+            if (name.equals(DEFAULT_NAME)) {
                 log.warn("修改系统默认数据源: " + properties.getUrl());
             }
             // 创建新的数据源

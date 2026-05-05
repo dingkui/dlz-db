@@ -1,6 +1,7 @@
 package com.dlz.db.modal;
 
 import com.dlz.db.ds.DBDynamic;
+import com.dlz.db.ds.DBTx;
 
 public class DB {
     /**
@@ -30,7 +31,11 @@ public class DB {
      */
     public final static DbBatch Batch = new DbBatch();
     /**
-     * 动态数据源操作
+     * 动态数据源操作（仅切换数据源，不开启事务）
      */
     public final static DBDynamic Dynamic = new DBDynamic();
+    /**
+     * 事务执行器（在当前线程数据源或指定数据源上开启事务）
+     */
+    public final static DBTx Tx = new DBTx();
 }
