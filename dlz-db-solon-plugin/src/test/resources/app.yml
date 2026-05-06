@@ -1,0 +1,17 @@
+solon.app:
+  name: dlz-db-solon-test
+
+dlz:
+  db:
+    use-db-sql: false
+    sqllist:
+      - app/*
+    log:
+      show-result: false
+      show-run-sql: true
+      show-caller: true
+    helper:
+      auto-update: true
+      package-name: com.dlz.test.db.entity
+    logic-delete-field: IS_DELETED
+    table-cache-time: -1
