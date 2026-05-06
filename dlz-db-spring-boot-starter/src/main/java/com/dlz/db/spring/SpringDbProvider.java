@@ -1,6 +1,7 @@
 package com.dlz.db.spring;
 
 import com.dlz.db.core.*;
+import com.dlz.db.core.abstractor.AResourceAdapter;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
@@ -17,9 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SpringDbProvider extends ADbProvider {
 
     private final BaseDbProperties sqlConfig;
-    private final IResourceLoader resourceLoader = new SpringResourceAdapter();
-    private final IClassScanner classScanner=new SpringClassScannerAdapter();
-
+    private final IResourceLoader resourceLoader = new AResourceAdapter();
     public SpringDbProvider(BaseDbProperties sqlConfig) {
         this.sqlConfig = sqlConfig;
     }
@@ -47,11 +46,6 @@ public class SpringDbProvider extends ADbProvider {
     @Override
     public IResourceLoader getResourceLoader() {
         return resourceLoader;
-    }
-
-    @Override
-    public IClassScanner getClassScanner() {
-        return classScanner;
     }
 
     @Override

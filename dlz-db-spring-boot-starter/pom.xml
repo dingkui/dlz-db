@@ -10,10 +10,6 @@
     <version>7.0.0</version>
 	<packaging>jar</packaging>
     <description>DLZ-DB Spring Boot Starter，基于 Spring JDBC 和 @Transactional</description>
-    <properties>
-        <java.version>1.8</java.version>
-        <dlz-spring.version>6.6.4</dlz-spring.version>
-    </properties>
 	<dependencies>
         <!-- 核心模块 -->
         <dependency>
@@ -45,12 +41,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
         <!-- 测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <version>2.6.12</version>
         </dependency>
         <dependency>
             <groupId>c3p0</groupId>

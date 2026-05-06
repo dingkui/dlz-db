@@ -10,10 +10,6 @@
     <version>7.0.0</version>
 	<packaging>jar</packaging>
     <description>DLZ-DB 核心模块，零 Spring 依赖</description>
-    <properties>
-        <java.version>1.8</java.version>
-        <dlz-kit.version>6.6.4</dlz-kit.version>
-    </properties>
 	<dependencies>
         <!-- dlz-kit (无 Spring 依赖) -->
         <dependency>

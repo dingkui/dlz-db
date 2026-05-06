@@ -2,6 +2,7 @@ package com.dlz.db.core;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class BaseDbProperties {
     /**
      * sql路径配置
      **/
-    private List<String> sqllist = Arrays.asList("app/*");
+    private List<String> sqllist = new ArrayList<>(Arrays.asList("app/*"));
     /**
      * 从数据库中取得sql配置的sql
      **/

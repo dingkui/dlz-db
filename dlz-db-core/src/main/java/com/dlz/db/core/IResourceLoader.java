@@ -1,12 +1,15 @@
 package com.dlz.db.core;
 
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
 /**
- * 资源加载器接口。
- * <p>抽象资源加载逻辑，支持不同框架的资源加载实现（Spring、Solon 等）。</p>
+ * 资源加载器接口（统一资源 + 类扫描）。
+ * <p>抽象资源加载与类扫描逻辑，所有框架共用 {@link com.dlz.db.core.abstractor.AResourceAdapter}
+ * 默认实现。支持 {@code classpath*:} 模式跨 JAR 扫描。</p>
  *
- * <p>支持 classpath*: 模式扫描 JAR 包内的资源。</p>
+ * @since 7.0.0
  */
 public interface IResourceLoader {
 
@@ -27,4 +30,14 @@ public interface IResourceLoader {
      * @throws Exception 加载失败
      */
     InputStream getResource(String location) throws Exception;
+
+    /**
+     * 扫描指定包下带有指定注解的类。
+     *
+     * @param basePackage     基础包名
+     * @param annotationClass 注解类型，{@code null} 表示返回所有类
+     * @return 匹配的类集合
+     * @throws Exception 扫描失败
+     */
+    Set<Class<?>> scan(String basePackage, Class<? extends Annotation> annotationClass) throws Exception;
 }

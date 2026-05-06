@@ -16,7 +16,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 @ConfigurationPropertiesScan
 @SpringBootApplication(scanBasePackages = {"com.dlz.spring", "com.dlz.test.db.config"})
-@DependsOn("dbProvider")
 public class Starter implements InitializingBean, ApplicationListener<ContextRefreshedEvent> {
     public static void main(String[] args) {
         SpringApplication.run(Starter.class, args);

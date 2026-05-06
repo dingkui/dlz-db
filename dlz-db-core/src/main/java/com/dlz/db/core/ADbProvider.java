@@ -41,18 +41,11 @@ public abstract class ADbProvider {
     public abstract ICacheExecutor getCacheExecutor();
 
     /**
-     * 获取 ResourceLoader 实例。
+     * 获取 ResourceLoader 实例（同时承担类扫描）。
      *
      * @return ResourceLoader 实例
      */
     public abstract IResourceLoader getResourceLoader();
-
-    /**
-     * 获取 ClassScanner 实例。
-     *
-     * @return ClassScanner 实例
-     */
-    public abstract IClassScanner getClassScanner();
 
     /**
      * 获取 SqlConfig 实例。

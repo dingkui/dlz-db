@@ -1,7 +1,6 @@
 package com.dlz.db.helper.support;
 
 import com.dlz.db.annotation.TableName;
-import com.dlz.db.core.IClassScanner;
 import com.dlz.db.core.ADbProvider;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
@@ -22,7 +21,7 @@ public class HelperScan {
         }
         try {
             final SqlHelper helper = DB.Dynamic.getSqlHelper();
-            Set<Class<?>> set = DBHolder.dbProvider.getClassScanner().scan(packageName, TableName.class);
+            Set<Class<?>> set = DBHolder.dbProvider.getResourceLoader().scan(packageName, TableName.class);
             set.stream().forEach(clazz -> initTable(clazz, helper));
         } catch (Exception e) {
             log.error("扫描包失败: " + packageName, e);

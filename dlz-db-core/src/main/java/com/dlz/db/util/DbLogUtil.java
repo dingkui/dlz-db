@@ -61,7 +61,8 @@ public class DbLogUtil {
                     traceInfo.indexOf("lambda$") > -1 ||
                     traceInfo.startsWith("sun.") ||
                     traceInfo.startsWith("java.") ||
-                    traceInfo.startsWith("org.springframework.")
+                    traceInfo.startsWith("org.") ||
+                    traceInfo.startsWith("com.intellij.junit5")
             ) {
                 index++;
                 continue;
