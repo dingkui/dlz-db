@@ -1,0 +1,59 @@
+package com.dlz.db.convertor.dbtype;
+
+import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.holder.BeanInfoHolder;
+import com.dlz.kit.util.ValUtil;
+import lombok.AllArgsConstructor;
+
+import java.sql.Types;
+import java.util.Map;
+
+@AllArgsConstructor
+public class TableColumnMapper implements ITableColumnMapper {
+	final ISqlExecutor sqlExecutor;
+	@Override
+	public Object converObj4Db(String tableName, String clumnName, Object value) {
+		Map<String, Integer> map = BeanInfoHolder.getTableColumnsInfo(tableName);
+		if (map != null) {
+			Integer dbClass = map.get(clumnName.toUpperCase());
+			if(dbClass==null){
+				return value;
+			}
+			return cover(dbClass, value);
+		}
+//		final List<ResultMap> list = dao.getList("select * from information_schema.columns where table_name = '" + tableName + "'", new ResultMapRowMapper(new ColumnNameCamel()));
+		return value;
+	}
+
+	private static Object cover(Integer dbClass, Object obj) {
+		switch (dbClass) {
+            // 整数族：统一 Long，避免 Integer 溢出问题，也避免 BigDecimal 的 overkill
+            case Types.TINYINT:
+            case Types.SMALLINT:
+            case Types.INTEGER:
+            case Types.BIGINT:
+                return ValUtil.toLong(obj);
+
+            // 定点/高精度小数：必须 BigDecimal
+            case Types.DECIMAL:
+            case Types.NUMERIC:
+                return ValUtil.toBigDecimal(obj);
+
+            // 浮点：保持 Double，保留 Infinity/NaN 语义，也避免 PG 的精度回差
+            case Types.FLOAT:
+            case Types.REAL:
+            case Types.DOUBLE:
+                return ValUtil.toDouble(obj);
+            case Types.CHAR:
+            case Types.VARCHAR:
+                return ValUtil.toStr(obj);
+            case Types.DATE:
+            case Types.TIME:
+            case Types.TIMESTAMP:
+                return ValUtil.toDate(obj);
+		default:
+			break;
+		}
+		return obj;
+	}
+}
