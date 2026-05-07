@@ -59,7 +59,7 @@ public class LogicDeleteTest extends SpingDbBaseTest {
 
     @Test
     public void physical_delete() {
-        DB.Pojo.delete(User.class).setLogicDelete(false).eq(User::getName, "deleted_user").execute();
+        DB.Pojo.delete(User.class).ignoreLogicDelete(true).eq(User::getName, "deleted_user").execute();
         assertEquals(0, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "deleted_user").count());
     }
 }

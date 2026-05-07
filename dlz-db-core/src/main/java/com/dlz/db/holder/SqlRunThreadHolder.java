@@ -15,7 +15,7 @@ public class SqlRunThreadHolder {
     public static final ThreadLocal<IConvertorToFieldName> HOLDER_ConvertorToFieldName = new ThreadLocal<>();
     public static final ThreadLocal<IColumnNameConvertor> HOLDER_ColumnNameConvertor = new ThreadLocal<>();
     public static final ThreadLocal<ITableColumnMapper> HOLDER_TableColumnMapper = new ThreadLocal<>();
-    public static final ThreadLocal<Boolean> HOLDER_LogicDelete = new ThreadLocal<>();
+    public static final ThreadLocal<Boolean> HOLDER_IgnoreLogicDelete = new ThreadLocal<>();
     public static DataSourceConfig getConfig() {
         return HOLDER_config.get();
     }
@@ -73,14 +73,14 @@ public class SqlRunThreadHolder {
      * 未设置默认支持逻辑删除
      * @return
      */
-    public static Boolean isLogicDelete() {
-        final Boolean b = HOLDER_LogicDelete.get();
-        return b != Boolean.FALSE;
+    public static Boolean isIgnoreLogicDelete() {
+        final Boolean b = HOLDER_IgnoreLogicDelete.get();
+        return b == Boolean.TRUE;
     }
-    public static void setLogicDelete(Boolean physicallyDelete) {
-        HOLDER_LogicDelete.set(physicallyDelete);
+    public static void setIgnoreLogicDelete(Boolean ignoreLogicDelete) {
+        HOLDER_IgnoreLogicDelete.set(ignoreLogicDelete);
     }
     public static void removeLogicDeleteSetting() {
-        HOLDER_LogicDelete.remove();
+        HOLDER_IgnoreLogicDelete.remove();
     }
 }

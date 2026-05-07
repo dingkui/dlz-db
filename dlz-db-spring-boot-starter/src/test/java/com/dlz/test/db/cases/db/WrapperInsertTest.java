@@ -36,7 +36,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         dict.setSqlKey("xxx");
         dict.setIsDeleted(0);
         DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 666L).execute();
-        DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 666L).setLogicDelete(false).execute();
+        DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 666L).ignoreLogicDelete(true).execute();
         PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
         showSql(insert,"insertWrapperTest1","insert into Sys_Sql(IS_DELETED,SQL_KEY,ID) values(0,'xxx',666) ");
         insert.execute();

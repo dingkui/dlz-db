@@ -74,7 +74,7 @@ public class WrapperBuildUtil {
      *
      */
     public static void buildWhere(AQuery maker) {
-        if (SqlRunThreadHolder.isLogicDelete() && BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)) {
+        if (!SqlRunThreadHolder.isIgnoreLogicDelete() && BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)) {
             if (!maker.where().isContainCondition(logicDeleteField)) {
                 maker.where().eq(logicDeleteField, 0);
             }

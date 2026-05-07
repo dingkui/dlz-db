@@ -12,7 +12,7 @@ public class DbBatch {
     }
 
     public <T> boolean insert(List<T> bean, int batchSize) {
-        if (bean.isEmpty()) {
+        if (!bean.isEmpty()) {
             return PojoInsert.wrapper(bean.get(0)).batch(bean, batchSize);
         }
         return false;

@@ -83,5 +83,9 @@ public class BaseDbProperties {
          * 日志中是否显示运行sql调用处,默认关闭
          */
         private boolean showCaller = false;
+        /**
+         * 慢 SQL 阈值（毫秒）,默认0,0表示不启用
+         */
+        private long slowSqlThreshold = 0l;
     }
 }

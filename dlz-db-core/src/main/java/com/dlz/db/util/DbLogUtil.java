@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
 public class DbLogUtil {
     private final static String KEY_CALLER = "caller";
     private static boolean showCaller = false;
+    private static long slowSqlThreshold = 0;
     private static boolean showRunSql = false;
     private static boolean showResult = false;
     public static void init(BaseDbProperties properties) {
         showCaller = properties.getLog().isShowCaller();
         showRunSql = properties.getLog().isShowRunSql();
         showResult = properties.getLog().isShowResult();
+        slowSqlThreshold = properties.getLog().getSlowSqlThreshold();
     }
 
     private DbLogUtil() {
@@ -91,8 +93,7 @@ public class DbLogUtil {
         return traceInfo.replaceAll(".*\\((.*)\\)", " caller:($1)");
     }
 
-    public static <T> String generateSqlMessage(Long t, T reulst, String methodName, String sql, Object[] args) {
-        final long l = System.currentTimeMillis() - t;
+    public static <T> String generateSqlMessage(Long l, T reulst, String methodName, String sql, Object[] args) {
         final String usedDataSourceName = DB.Dynamic.getUsedDataSourceName();
         if(usedDataSourceName!=null){
             methodName = "["+usedDataSourceName+"] "+methodName;
@@ -106,8 +107,7 @@ public class DbLogUtil {
         return sqlMessage;
     }
 
-    public static String generateSqlMessage(Long t, String methodName, String sql, List<Object[]> batchArgs) {
-        final long l = System.currentTimeMillis() - t;
+    public static String generateSqlMessage(Long l, String methodName, String sql, List<Object[]> batchArgs) {
         return StringUtils.formatMsg("{} {}ms sql:{} size:{}", methodName, l, sql, batchArgs.size());
     }
 
@@ -116,12 +116,17 @@ public class DbLogUtil {
             if (showCaller) {
                 DbLogUtil.setCaller(1);
             }
+            final long l = System.currentTimeMillis() - t;
             try {
                 if (error != null) {
                     log.error(ExceptionUtils.getStackTrace(error));
                     log.error(msg.apply(t, result));
                 } else {
-                    log.info(msg.apply(t, result));
+                    if(slowSqlThreshold>0 && l>slowSqlThreshold){
+                        log.warn(msg.apply(t, result));
+                    }else{
+                        log.info(msg.apply(t, result));
+                    }
                 }
             } finally {
                 if (showCaller) {

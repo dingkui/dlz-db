@@ -12,7 +12,7 @@ import com.dlz.db.modal.wrapper.TableUpdate;
  * 删除执行器：在"查询构造器"上叠加"执行删除"能力，并内置 <b>逻辑删除</b> 支持。
  *
  * <p><b>逻辑删除规则</b>：当 Bean/表存在配置中 {@code dlz.db.logic-delete-field} 指定的列（如 {@code is_deleted}），
- * 且当前线程未调用 {@link #setLogicDelete(boolean) setLogicDelete(false)} 时，
+ * 且当前线程未调用 {@link #ignoreLogicDelete(boolean) ignoreLogicDelete(true)} 时，
  * {@link #execute()} 会将 DELETE 自动改写为 {@code UPDATE ... SET is_deleted = 1 WHERE ...}。
  *
  * <pre>
@@ -20,7 +20,7 @@ import com.dlz.db.modal.wrapper.TableUpdate;
  * DB.Table("user").delete().eq("id", 1).execute();
  *
  * // 本次强制物理删除
- * DB.Table("user").delete().setLogicDelete(false).eq("id", 1).execute();
+ * DB.Table("user").delete().ignoreLogicDelete(true).eq("id", 1).execute();
  * </pre>
  */
 public interface IExecuteDelete<T extends IExecuteDelete>
@@ -34,7 +34,7 @@ public interface IExecuteDelete<T extends IExecuteDelete>
      */
     default int execute() {
         final String logicDeleteField = DBHolder.getSqlConfig().getLogicDeleteField();
-        if(!SqlRunThreadHolder.isLogicDelete() || !BeanInfoHolder.isColumnExists(getTableName(), logicDeleteField)){
+        if(SqlRunThreadHolder.isIgnoreLogicDelete() || !BeanInfoHolder.isColumnExists(getTableName(), logicDeleteField)){
             try {
                 return DBHolder.doDb(s -> s.execute(this));
             }finally {
@@ -59,8 +59,8 @@ public interface IExecuteDelete<T extends IExecuteDelete>
      * {@code false}：强制走物理 DELETE。
      * <p>设置仅作用于<b>本线程的下一次执行</b>，execute 完毕会自动清理。
      */
-    default T setLogicDelete(boolean physicallyDelete) {
-        SqlRunThreadHolder.setLogicDelete(physicallyDelete);
+    default T ignoreLogicDelete(boolean ignoreLogicDelete) {
+        SqlRunThreadHolder.setIgnoreLogicDelete(ignoreLogicDelete);
         return me();
     }
 }
