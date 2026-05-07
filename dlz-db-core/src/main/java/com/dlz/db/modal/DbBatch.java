@@ -19,7 +19,7 @@ public class DbBatch {
     }
 
     public <T> boolean update(List<T> bean) {
-        return insert(bean, 1000);
+        return update(bean, 1000);
     }
 
     public <T> boolean update(List<T> bean, int batchSize) {
