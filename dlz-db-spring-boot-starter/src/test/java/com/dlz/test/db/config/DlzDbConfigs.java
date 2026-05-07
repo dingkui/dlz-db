@@ -1,7 +1,7 @@
 package com.dlz.test.db.config;
 
-import com.dlz.db.config.DlzDbConfig;
-import com.dlz.db.config.DlzDbProperties;
+import com.dlz.db.spring.config.DlzDbConfig;
+import com.dlz.db.spring.config.DlzDbProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

@@ -3,14 +3,9 @@ package com.dlz.test.db.solon;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.DB;
+import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.noear.solon.Solon;
 
 /**
@@ -23,7 +18,7 @@ public class SolonSmokeTest {
     @BeforeAll
     static void start() {
         // 启动 Solon 应用（会自动加载 META-INF/solon/dlz-db-solon-plugin.properties）
-        Solon.start(SolonDbTestApp.class, new String[]{});
+        Solon.start(Starter.class, new String[]{});
     }
 
     @AfterAll

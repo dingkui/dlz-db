@@ -1,5 +1,7 @@
 package com.dlz.db.helper.support.dbs;
 
+import com.dlz.db.annotation.IdType;
+import com.dlz.db.annotation.TableId;
 import com.dlz.db.helper.bean.ColumnInfo;
 import com.dlz.db.helper.bean.TableInfo;
 import com.dlz.db.helper.support.SqlHelper;
@@ -22,13 +24,16 @@ public class DbOpSqlite extends SqlHelper {
         String createSql = "CREATE TABLE IF NOT EXISTS `{}` ({})";
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
             String columnName = BeanInfoHolder.getColumnName(field);
-            String column = null;
             if (columnName.equals("")) {
-                return column;
+                return null;
             }
-            column = " `" + columnName + "` " + getDbClumnType(field);
+            String column = " `" + columnName + "` " + getDbClumnType(field);
             if (BeanInfoHolder.isColumnPk(field)) {
                 column += " PRIMARY KEY";
+                TableId tableId = field.getAnnotation(TableId.class);
+                if (tableId != null && tableId.type() == IdType.AUTO) {
+                    column += " AUTOINCREMENT";
+                }
             }
             return column;
         }).filter(column -> column != null)

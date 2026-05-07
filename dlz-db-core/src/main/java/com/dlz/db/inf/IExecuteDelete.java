@@ -2,7 +2,6 @@ package com.dlz.db.inf;
 
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
-import com.dlz.db.holder.SqlHolder;
 import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.PojoUpdate;

@@ -1,9 +1,12 @@
 package com.dlz.test.db.cases.util;
 
-import com.dlz.kit.exception.SystemException;
 import com.dlz.db.util.DbEntityUtil;
+import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.SpingDbBaseTest;
-import com.dlz.test.db.entity.*;
+import com.dlz.test.db.entity.Menu;
+import com.dlz.test.db.entity.Orders;
+import com.dlz.test.db.entity.SysSql;
+import com.dlz.test.db.entity.User;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

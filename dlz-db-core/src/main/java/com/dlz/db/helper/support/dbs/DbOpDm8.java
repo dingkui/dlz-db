@@ -1,5 +1,7 @@
 package com.dlz.db.helper.support.dbs;
 
+import com.dlz.db.annotation.IdType;
+import com.dlz.db.annotation.TableId;
 import com.dlz.db.helper.bean.ColumnInfo;
 import com.dlz.db.helper.bean.TableInfo;
 import com.dlz.db.helper.support.SqlHelper;
@@ -21,7 +23,6 @@ public class DbOpDm8 extends SqlHelper {
     @Override
     public void createTable(String tableName, Class<?> clazz) {
         // 达梦数据库表名需大写
-
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
                     String columnName = BeanInfoHolder.getColumnName(field);
                     String column = null;
@@ -29,6 +30,13 @@ public class DbOpDm8 extends SqlHelper {
                         return column;
                     }
                     column = " \"" + columnName.toUpperCase() + "\" " + getDbClumnType(field);
+                    if (BeanInfoHolder.isColumnPk(field)) {
+                        column += " PRIMARY KEY";
+                        TableId tableId = field.getAnnotation(TableId.class);
+                        if (tableId != null && tableId.type() == IdType.AUTO) {
+                            column += " IDENTITY";
+                        }
+                    }
                     return column;
                 }).filter(column -> column != null)
                 .collect(Collectors.joining(","));

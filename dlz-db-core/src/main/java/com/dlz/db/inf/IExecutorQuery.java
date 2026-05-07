@@ -80,12 +80,12 @@ public interface IExecutorQuery extends ISqlPara {
     }
 
     /** 查询列表并映射为指定 Bean 列表。 */
-    default <T> List<T> queryList(Class<T> tClass) {
+    default <T> List<T> queryBeanList(Class<T> tClass) {
         return DBHolder.doDb(s->s.getBeanList(this,tClass));
     }
 
     /** 分页查询并映射为指定 Bean 分页。 */
-    default <T> Page<T> queryPage(Class<T> tClass) {
+    default <T> Page<T> queryBeanPage(Class<T> tClass) {
         return DBHolder.doDb(s->s.getPage(this,tClass));
     }
 

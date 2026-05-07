@@ -1,10 +1,10 @@
-package com.dlz.db.spring;
+package com.dlz.db.spring.config;
 
 import com.dlz.db.core.*;
 import com.dlz.db.core.abstractor.AResourceAdapter;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
-import com.dlz.db.service.impl.CommServiceImpl;
+import com.dlz.db.spring.SpringTxExecutorAdapter;
 import com.dlz.spring.holder.SpringHolder;
 import lombok.extern.slf4j.Slf4j;
 

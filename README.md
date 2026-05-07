@@ -2,7 +2,7 @@
 
 > **一个不到 7000 行代码的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
 
 ```java
@@ -14,6 +14,18 @@ List<User> users = DB.Pojo.select(User.class)
 ```
 
 没有 Mapper 接口，没有 Service 层，没有 XML。
+
+---
+
+## 版本说明
+
+当前版本 v7.0.0（开源初始版 v6.6.4）。
+
+这个项目不是从零开始的。它大约在 **2009 年**开始积累，**2014 年**左右成型，作为公司内部的数据库操作工具包投入使用。此后十年间，累计被数十个内部项目采用，适配过各种老旧系统、各种开源框架组合、各种奇奇怪怪的版本混搭。
+
+**2024 年**，我们决定将它开源。为此做了大量重构和删减——剥离内部依赖、清理历史包袱、提炼通用能力，最终发布了第一个公开版本 **6.6.4**。
+
+所以版本号不是从 1.0 开始的——因为你看到的是一个已经跑了十几年的工具，被数十个项目验证过，而不是一个刚起步的新项目。
 
 ---
 
@@ -53,7 +65,7 @@ DLZ-DB 把两端都做成字符串：
 
 ```java
 // 运行时注册一个新数据源
-DBDynamic.addDataSource(prop);
+DB.Dynamic.setDataSource(prop);
 
 // 运行时用任意逻辑决定走哪个库
 String dsName = routeByTenant(tenantId);
@@ -76,10 +88,10 @@ User user = DB.Dynamic.use(dsName, () ->
 
 你因此得到的实际好处：
 
-- **📖 可通读**：整个框架没有黑盒，出 bug 能自己跟进源码。
-- **🔧 可定制**：想改一个行为？fork 下来一眼能看到改哪里。
-- **🐛 异常栈短**：查询异常直接告诉你 SQL 在哪，不需要穿越 10 层代理。
-- **📦 部署轻**：jar 体积小、启动快、常驻内存低，适合微服务和工具类项目。
+- **可通读**：整个框架没有黑盒，出 bug 能自己跟进源码。
+- **可定制**：想改一个行为？fork 下来一眼能看到改哪里。
+- **异常栈短**：查询异常直接告诉你 SQL 在哪，不需要穿越 10 层代理。
+- **部署轻**：jar 体积小、启动快、常驻内存低，适合微服务和工具类项目。
 
 > 运行时单次查询性能与 MyBatis 相近——数据库才是瓶颈，框架层差距可以忽略。我们不在这个维度卷。
 
@@ -88,7 +100,7 @@ User user = DB.Dynamic.use(dsName, () ->
 ### 4. 查询结果自带深度取值
 
 ```java
-ResultMap result = DB.Pojo.select("user").eq("id", 1).queryOne();
+ResultMap result = DB.Table.select("user").eq("id", 1).queryOne();
 
 result.getInt("age", 0);
 result.getStr("profile.address.city", "未知");  // profile 是 JSON 字段
@@ -121,19 +133,29 @@ DB.Dynamic.use("other_db", () -> { ... });
 
 ---
 
-## ⚡ 30 秒上手
+## 30 秒上手
 
-### 1. 引入依赖
+DLZ-DB v7 采用多模块架构，可根据运行环境选择依赖：
+
+| 模块 | 说明 | 适用场景 |
+|------|------|---------|
+| `dlz-db-core` | 核心模块，零 Spring 依赖 | 手动集成、非 Spring 项目 |
+| `dlz-db-spring-boot-starter` | Spring Boot 自动配置 | Spring Boot 项目（推荐） |
+| `dlz-db-solon-plugin` | Solon 插件 | Solon 项目 |
+
+### Spring Boot 快速开始
+
+#### 1. 引入依赖
 
 ```xml
 <dependency>
     <groupId>top.dlzio</groupId>
-    <artifactId>dlz.db</artifactId>
-    <version>${最新版本}</version>
+    <artifactId>dlz-db-spring-boot-starter</artifactId>
+    <version>7.0.0</version>
 </dependency>
 ```
 
-### 2. 配置数据源
+#### 2. 配置数据源
 
 ```yaml
 spring:
@@ -141,9 +163,17 @@ spring:
     url: jdbc:mysql://localhost:3306/test
     username: root
     password: 123456
+
+# DLZ-DB 配置（可选）
+dlz:
+  db:
+    logic-delete-field: is_deleted
+    log:
+      show-run-sql: true
+      show-caller: true
 ```
 
-### 3. 启用 DLZ-DB
+#### 3. 启用 DLZ-DB
 
 ```java
 @Configuration
@@ -151,7 +181,9 @@ spring:
 public class DlzDbConfigs extends DlzDbConfig {}
 ```
 
-### 4. 开始使用
+> 包路径：`com.dlz.db.spring.config.DlzDbConfig`、`com.dlz.db.spring.config.DlzDbProperties`
+
+#### 4. 开始使用
 
 ```java
 @Data
@@ -176,7 +208,72 @@ public class UserController {
 
 ---
 
-## 📚 常见操作速览
+### Solon 快速开始
+
+#### 1. 引入依赖
+
+```xml
+<dependency>
+    <groupId>top.dlzio</groupId>
+    <artifactId>dlz-db-solon-plugin</artifactId>
+    <version>7.0.0</version>
+</dependency>
+```
+
+#### 2. 配置
+
+```yaml
+dlz:
+  db:
+    logic-delete-field: is_deleted
+    log:
+      show-run-sql: true
+      show-caller: true
+```
+
+Solon 数据源配置（以 HikariCP 为例）：
+
+```yaml
+datasource:
+  default:
+    jdbcUrl: jdbc:mysql://localhost:3306/test
+    username: root
+    password: 123456
+    driverClassName: com.mysql.cj.jdbc.Driver
+```
+
+#### 3. 使用
+
+Solon 下 API 完全一致，`DB.Pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 接口不变：
+
+```java
+@Component
+public class UserService {
+    public User getUser(Long id) {
+        return DB.Pojo.select(User.class).eq(User::getId, id).queryBean();
+    }
+}
+```
+
+Solon 事务使用 `@Tran` 注解：
+
+```java
+@Tran
+public void transfer(Long fromId, Long toId, BigDecimal amount) {
+    DB.Pojo.update(Account.class)
+        .setSql("balance = balance - #{amount}", Params.of("amount", amount))
+        .eq(Account::getId, fromId)
+        .execute();
+    DB.Pojo.update(Account.class)
+        .setSql("balance = balance + #{amount}", Params.of("amount", amount))
+        .eq(Account::getId, toId)
+        .execute();
+}
+```
+
+---
+
+## 常见操作速览
 
 ```java
 // 查询
@@ -188,7 +285,7 @@ Page<User> page = DB.Pojo.select(User.class)
 
 // 插入
 DB.Pojo.insert(user);
-DB.Batch.insert(users, 100);//批量插入
+DB.Batch.insert(users, 100);
 
 // 更新
 DB.Pojo.update(user).eq(User::getId, id).execute();
@@ -205,7 +302,7 @@ List<User> users = DB.Sql.select("key.user.find")
 
 ---
 
-## 🧭 六个入口，职责分工清晰
+## 六个入口，职责分工清晰
 
 ```
 主操作入口（按 SQL 风格选一个）
@@ -219,24 +316,18 @@ List<User> users = DB.Sql.select("key.user.find")
 └─ DB.Dynamic  ← 数据源切换作用域
 ```
 
-六个入口覆盖四种 SQL 书写风格加两个正交维度——**不是"入口多"，是"恰好分完"**。
-
 ---
 
-## 🤖 对 AI 也友好
-
-> 不是刻意为之，是"API 简单"的副产品。
+## 对 AI 也友好
 
 - 入口收敛到 `DB.`，决策树很浅。
 - 条件方法统一 `(condition, field, value)` 三参形式，特例少。
 - 返回值有机械规则：**带 `Bean` → Bean，不带 → Map，带 `(Class)` → 指定类型**。
 - 整个使用规范可以压进 **1000 token** 以内塞给 AI（见 [docs/AI-速读指南.md](./docs/AI-速读指南.md)）。
 
-在 Cursor / Windsurf / Copilot 时代，**AI 能一次写对的框架**本身就是生产力。
-
 ---
 
-## 🤝 常见问题
+## 常见问题
 
 **Q：复杂 SQL 怎么写？**
 
@@ -270,44 +361,31 @@ DB.Pojo.select(User.class)
 
 可以。DLZ-DB 不依赖 MyBatis 体系，两者走各自的数据源和连接即可。迁移可以渐进——新模块用 DLZ-DB，老模块保持不动。
 
----
+**Q：v7 和 v6 的 API 兼容吗？**
 
-## 🎯 谁适合用？谁不适合？
-
-### ✅ 很适合
-
-- 中小型业务系统、内部工具、微服务。
-- SaaS / 多租户 / 需要运行时动态数据源的场景。
-- 想摆脱 MyBatis XML 又受不了 JPA 黑盒的团队。
-- 看重"能读懂每一行框架代码"的工程师。
-
-### ⚠️ 要谨慎
-
-- 已经深度绑定 Spring Data JPA 或 MP 生态的存量项目——迁移成本需要评估。
-- 需要 Seata 分布式事务 / ShardingSphere 分库分表等重型基础设施的场景——这些我们不造轮子。
-- 对"社区规模 = 安全感"要求很高的大型企业——DLZ-DB 还在成长期，请先小范围试用。
-
-**诚实地说：我们不是银弹，只是一把趁手的小刀。**
+`DB.Pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 等核心 API 完全兼容。但 Maven 坐标、配置类包路径有变更，详见 [迁移指南-v7](./docs/迁移指南-v7.md)。
 
 ---
 
-## 📖 文档导航
+## 文档导航
 
-- 📘 [快速开始](./docs/01-快速开始.md)
-- 📗 [开发者指南](./docs/开发者指南.md)
-- 🤖 [AI 速读](./docs/AI-速读.md)（AI 代码生成规范）
-- 🔧 [框架源码指南](./docs/19-框架源码指南.md)（框架维护与修改）
-- � [迁移指南](./docs/16-迁移指南.md)（从 MyBatis / MP 切换）
-- 📕 [框架对比](./docs/18-框架对比.md)
-- 📚 [速查文档](./docs/00-速查文档.md)
+- [快速开始](./docs/01-快速开始.md)
+- [开发者指南](./docs/开发者指南.md)
+- [AI 速读](./docs/AI-速读.md)（AI 代码生成规范）
+- [框架源码指南](./docs/19-框架源码指南.md)（框架维护与修改）
+- [迁移指南](./docs/16-迁移指南.md)（从 MyBatis / MP 切换）
+- [v7 迁移指南](./docs/迁移指南-v7.md)（从 v6 升级到 v7）
+- [Solon 集成](./docs/Solon-集成.md)
+- [框架对比](./docs/18-框架对比.md)
+- [速查文档](./docs/00-速查文档.md)
 
 分主题文档：[核心概念](./docs/02-核心概念.md) · [基础操作](./docs/03-基础操作.md) · [条件构造器](./docs/04-条件构造器.md) · [分页排序](./docs/05-分页排序.md) · [结果映射](./docs/06-结果映射.md) · [Lambda 表达式](./docs/07-Lambda表达式.md) · [预设 SQL](./docs/08-预设SQL.md) · [多数据源与事务](./docs/09-多数据源与事务.md) · [日志调试](./docs/10-日志调试.md) · [高级特性](./docs/11-高级特性.md) · [最佳实践](./docs/12-最佳实践.md) · [FAQ](./docs/14-FAQ.md)
 
 ---
 
-## 📄 License
+## License
 
-[MIT License](../LICENSE) © DLZ KIT
+[MIT License](LICENSE) © DLZ KIT
 
 ---
 

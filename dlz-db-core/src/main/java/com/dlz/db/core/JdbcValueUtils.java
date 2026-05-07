@@ -1,10 +1,6 @@
 package com.dlz.db.core;
 
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * JDBC 原始值读取工具。

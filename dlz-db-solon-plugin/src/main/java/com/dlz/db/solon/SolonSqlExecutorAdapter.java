@@ -2,19 +2,14 @@ package com.dlz.db.solon;
 
 import com.dlz.db.core.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.db.exception.DbException;
 import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.dlz.db.helper.support;
 
 import com.dlz.db.annotation.TableName;
-import com.dlz.db.core.ADbProvider;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.DB;

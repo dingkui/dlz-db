@@ -1,6 +1,7 @@
 package com.dlz.db.util;
 
 import com.dlz.db.enums.ParaTypeEnum;
+import com.dlz.db.exception.DbException;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlHolder;
 import com.dlz.db.modal.dto.Page;
@@ -10,7 +11,6 @@ import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.ParaJdbc;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.db.exception.DbException;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.kit.util.*;
@@ -409,6 +409,8 @@ public class SqlUtil {
         if (o instanceof CharSequence) {
             String valueOf = String.valueOf(o);
             o = valueOf.replaceAll("\\s*,\\s*", ",").trim().split(",");
+        } else if (o instanceof Number) {
+            return o.toString();
         } else if (o instanceof Collection) {
             o = StringUtils.listToArray((Collection<?>) o);
         } else if (!(o instanceof Object[])) {

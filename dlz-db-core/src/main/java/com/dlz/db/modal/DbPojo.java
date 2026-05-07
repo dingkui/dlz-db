@@ -9,6 +9,7 @@ import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.system.FieldReflections;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class DbPojo {
@@ -51,10 +52,6 @@ public class DbPojo {
     public <T> int insert(T bean) {
         return PojoInsert.wrapper(bean).execute();
     }
-    public <T> T insertBean(T bean) {
-        final int execute = PojoInsert.wrapper(bean).execute();
-        return bean;
-    }
     public <T> int insertOrUpdate(T obj) {
         final Class<T> aClass = (Class<T>) obj.getClass();
         final DbEntityUtil.IdInfo idInfo = DbEntityUtil.getIdInfo(aClass);
@@ -84,8 +81,22 @@ public class DbPojo {
         }
         return select(c).eq(idName, id).queryBean();
     }
+    public <T> List<T> getByIds(Class<T> c, Object id) {
+        final String idName = DbEntityUtil.getIdName(c);
+        if (StringUtils.isEmpty(id)) {
+            throw new SystemException(idName + "不能为空");
+        }
+        return select(c).in(idName, id).queryBeanList();
+    }
 
     public <T> int deleteByIds(Class<T> c, String ids) {
+        final String idName = DbEntityUtil.getIdName(c);
+        if (StringUtils.isEmpty(ids)) {
+            throw new SystemException(idName + "不能为空");
+        }
+        return delete(c).in(idName, ids).execute();
+    }
+    public <T> int deleteByIds(Class<T> c, List<?> ids) {
         final String idName = DbEntityUtil.getIdName(c);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
@@ -98,6 +109,6 @@ public class DbPojo {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return delete(c).in(idName, id).execute();
+        return delete(c).eq(idName, id).execute();
     }
 }

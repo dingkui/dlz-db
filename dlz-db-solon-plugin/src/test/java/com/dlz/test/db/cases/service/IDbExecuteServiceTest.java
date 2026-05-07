@@ -5,6 +5,8 @@ import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -14,7 +16,16 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 public class IDbExecuteServiceTest extends SpingDbBaseTest {
+    @Before
+    public void setUp() {
+        DB.Jdbc.execute("delete from Orders");
+        // DB.Jdbc.execute("CREATE TABLE Orders (id INTEGER PRIMARY KEY, user_id TEXT, amount INTEGER)");
+    }
 
+    @After
+    public void tearDown() {
+        DB.Jdbc.execute("delete from Orders");
+    }
     @Test
     public void executeAutoBackfill() {
         AutoIdEntity e = new AutoIdEntity();

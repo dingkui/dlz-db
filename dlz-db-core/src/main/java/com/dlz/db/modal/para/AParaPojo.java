@@ -1,10 +1,10 @@
 package com.dlz.db.modal.para;
 
+import com.dlz.db.exception.DbException;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
-import com.dlz.db.exception.DbException;
 import lombok.Getter;
 import lombok.Setter;
 

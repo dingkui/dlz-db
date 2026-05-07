@@ -1,4 +1,4 @@
-package com.dlz.db.ds;
+package com.dlz.db.spring.config;
 
 import com.dlz.db.modal.DB;
 import lombok.extern.slf4j.Slf4j;

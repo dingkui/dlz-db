@@ -1,6 +1,5 @@
-package com.dlz.db.config;
+package com.dlz.db.spring.config;
 
-import com.dlz.db.core.BaseDbProperties;
 import com.dlz.db.core.BaseDbProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

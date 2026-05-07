@@ -25,7 +25,7 @@
         </encoder>
     </appender>
     <logger name="com.dlz" level="info" addtivity="false"/>
-    <logger name="com.dlz.db.util.DbLogUtil" level="trace" addtivity="false"/>
+    <logger name="com.dlz.db.util.DbLogUtil" level="info" addtivity="false"/>
 <!--    <logger name="com.dlz.db.ds.DynamicJdbcTemplate" level="warn" addtivity="false"/>-->
     <root level="warn">
         <appender-ref ref="StdoutAppender"/>

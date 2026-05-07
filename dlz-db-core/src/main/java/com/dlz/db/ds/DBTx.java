@@ -1,6 +1,5 @@
 package com.dlz.db.ds;
 
-import com.dlz.db.core.ADbProvider;
 import com.dlz.db.core.ITxExecutor;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.DB;

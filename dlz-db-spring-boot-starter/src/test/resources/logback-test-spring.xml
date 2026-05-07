@@ -88,7 +88,7 @@
 
     <logger name="com.dlz" level="debug" addtivity="false"/>
     <logger name="com.dlz.db.holder" level="warn" addtivity="false"/>
-    <logger name="com.dlz.db.ds.DynamicJdbcTemplate" level="warn" addtivity="false"/>
+    <logger name="com.dlz.db.spring.config.DynamicJdbcTemplate" level="warn" addtivity="false"/>
     <logger name="org.springframework" level="warn" addtivity="false"/>
 
     <root level="${LOG_LEVEL}">

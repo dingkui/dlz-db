@@ -1,5 +1,7 @@
 package com.dlz.db.helper.support.dbs;
 
+import com.dlz.db.annotation.IdType;
+import com.dlz.db.annotation.TableId;
 import com.dlz.db.helper.bean.ColumnInfo;
 import com.dlz.db.helper.bean.TableInfo;
 import com.dlz.db.helper.support.SqlHelper;
@@ -8,18 +10,44 @@ import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.ValUtil;
+import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class DbOpPostgresql extends SqlHelper {
     @Override
     public void createTable(String tableName, Class<?> clazz) {
-        String sql = "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" (id VARCHAR(32) NOT NULL PRIMARY KEY)";
+        final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
+            String columnName = BeanInfoHolder.getColumnName(field);
+            String column = null;
+            if (columnName.equals("")) {
+                return column;
+            }
+            column = "\"" + columnName + "\" " + getDbClumnType(field);
+            if (BeanInfoHolder.isColumnPk(field)) {
+                TableId tableId = field.getAnnotation(TableId.class);
+                if (tableId != null && tableId.type() == IdType.AUTO) {
+                    // PostgreSQL AUTO 类型使用 SERIAL
+                    Class<?> fieldType = field.getType();
+                    if (fieldType == Long.class || "long".equals(fieldType.getCanonicalName())) {
+                        column = "\"" + columnName + "\" BIGSERIAL";
+                    } else {
+                        column = "\"" + columnName + "\" SERIAL";
+                    }
+                }
+                column += " PRIMARY KEY";
+            }
+            return column;
+        }).filter(column -> column != null)
+                .collect(Collectors.joining(","));
+
+        String sql = "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" (" + columns + ")";
         DBHolder.getSqlExecutor().execute(sql);
         String clumnCommont = BeanInfoHolder.getTableComment(clazz);
         if (StringUtils.isNotEmpty(clumnCommont)) {

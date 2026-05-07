@@ -1,10 +1,10 @@
 package com.dlz.test.db.cases.db;
 
-import com.dlz.kit.exception.SystemException;
 import com.dlz.db.convertor.clumnname.ColumnNameToLower;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.PojoInsert;
+import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;

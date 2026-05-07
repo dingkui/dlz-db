@@ -1,15 +1,17 @@
-package com.dlz.db.config;
+package com.dlz.db.spring.config;
 
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
-import com.dlz.db.core.*;
-import com.dlz.db.ds.DynamicJdbcTemplate;
-import com.dlz.db.helper.support.HelperScan;
 import com.dlz.db.core.ADbProvider;
+import com.dlz.db.core.BaseDbProperties;
+import com.dlz.db.core.ICacheExecutor;
+import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.helper.support.HelperScan;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlHolder;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
-import com.dlz.db.spring.*;
+import com.dlz.db.spring.SpringCacheAdapter;
+import com.dlz.db.spring.SpringSqlExecutorAdapter;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
 import com.dlz.spring.config.DlzFwConfig;

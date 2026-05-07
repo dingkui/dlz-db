@@ -1,10 +1,10 @@
 package com.dlz.test.db.cases.db;
 
+import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DBTx;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.SpingDbBaseTest;
-import com.dlz.db.ds.DBDynamic;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;

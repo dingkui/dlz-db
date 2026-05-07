@@ -1,6 +1,5 @@
 package com.dlz.db.holder;
 
-import com.dlz.db.core.BaseDbProperties;
 import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;

@@ -1,5 +1,7 @@
 package com.dlz.db.helper.support.dbs;
 
+import com.dlz.db.annotation.IdType;
+import com.dlz.db.annotation.TableId;
 import com.dlz.db.helper.bean.ColumnInfo;
 import com.dlz.db.helper.bean.TableInfo;
 import com.dlz.db.helper.support.SqlHelper;
@@ -48,6 +50,10 @@ public class DbOpMysql extends SqlHelper {
             }
             if (BeanInfoHolder.isColumnPk(field)) {
                 column += " PRIMARY KEY";
+                TableId tableId = field.getAnnotation(TableId.class);
+                if (tableId != null && tableId.type() == IdType.AUTO) {
+                    column += " AUTO_INCREMENT";
+                }
             }
             return column;
         }).filter(column -> column != null)

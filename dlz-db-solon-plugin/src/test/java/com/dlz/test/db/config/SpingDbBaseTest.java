@@ -13,7 +13,6 @@ import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.noear.solon.Solon;
 
 /**
@@ -28,12 +27,15 @@ public class SpingDbBaseTest {
     public static void bootstrap() {
         if (Solon.app() == null) {
             Solon.start(Starter.class, new String[0]);
+            // 在这里添加其他全局初始化逻辑
+            // 例如：初始化测试数据、清理环境等
+            log.info("Solon 应用启动完成，全局初始化完毕");
         }
     }
 
-    @Test
-    public void db() {
-    }
+//    @Test
+//    public void db() {
+//    }
 
     @Before
     public void before() {
@@ -93,5 +95,10 @@ public class SpingDbBaseTest {
 
     public void showSql(AParaPojo wrapper, String fn) {
         showSql(wrapper, fn, null);
+    }
+
+    public String toSql(AParaPojo wrapper) {
+        JdbcItem jdbcSql = wrapper.jdbcSql();
+        return SqlUtil.getRunSqlByJdbc(jdbcSql.sql, jdbcSql.paras).trim();
     }
 }
