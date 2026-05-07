@@ -62,7 +62,7 @@ public class XPluginImp implements Plugin {
 
                 // 加载 SQL 资源（依赖 dbProvider.getResourceLoader()）
                 SqlHolder.init();
-                DbConvertUtil.defaultTableCloumnMapper = new TableColumnMapper(sqlExecutor);
+                DbConvertUtil.defaultTableColumnMapper = new TableColumnMapper(sqlExecutor);
                 log.info("init sqlExecutor: {}", SolonSqlExecutorAdapter.class.getName());
                 log.info("init tableCloumnMapper: {}", TableColumnMapper.class.getName());
                 SqlHolder.loadDbSql();

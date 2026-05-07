@@ -8,8 +8,6 @@ import java.util.function.Supplier;
  *
  * <p>事务传播级别：仅支持 REQUIRED（默认）</p>
  * <p>异常处理：任何异常都会触发回滚</p>
- *
- * @param <T> 返回值类型
  */
 @FunctionalInterface
 public interface ITxExecutor {

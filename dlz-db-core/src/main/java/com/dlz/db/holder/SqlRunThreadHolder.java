@@ -1,7 +1,7 @@
 package com.dlz.db.holder;
 
-import com.dlz.db.convertor.clumnname.IColumnNameConvertor;
-import com.dlz.db.convertor.clumnname.IConvertorToFieldName;
+import com.dlz.db.convertor.columnname.IColumnNameConvertor;
+import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.ds.DataSourceConfig;
 import lombok.extern.slf4j.Slf4j;

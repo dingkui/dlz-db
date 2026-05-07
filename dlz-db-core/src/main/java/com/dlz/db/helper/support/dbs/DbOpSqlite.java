@@ -27,7 +27,7 @@ public class DbOpSqlite extends SqlHelper {
             if (columnName.equals("")) {
                 return null;
             }
-            String column = " `" + columnName + "` " + getDbClumnType(field);
+            String column = " `" + columnName + "` " + getDbColumnType(field);
             if (BeanInfoHolder.isColumnPk(field)) {
                 column += " PRIMARY KEY";
                 TableId tableId = field.getAnnotation(TableId.class);
@@ -39,9 +39,9 @@ public class DbOpSqlite extends SqlHelper {
         }).filter(column -> column != null)
         .collect(Collectors.joining(","));
 
-//        String tableCommont = BeanInfoHolder.getTableComment(clazz);
-//        if(StringUtils.isNotEmpty(tableCommont)){
-//            tableCommont = " COMMENT '" + tableCommont + "'";
+//        String tableComment = BeanInfoHolder.getTableComment(clazz);
+//        if(StringUtils.isNotEmpty(tableComment)){
+//            tableComment = " COMMENT '" + tableComment + "'";
 //        }
 
         String sql = StringUtils.formatMsg(createSql, tableName,columns);
@@ -114,7 +114,7 @@ public class DbOpSqlite extends SqlHelper {
 
     @Override
     public void createColumn(String tableName, String name, Field field) {
-        String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbClumnType(field);
+        String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbColumnType(field);
         DBHolder.getSqlExecutor().execute(sql);
     }
 
@@ -134,7 +134,7 @@ public class DbOpSqlite extends SqlHelper {
     //    4.TEXT：字符串文本。
     //    5.BLOB：二进制对象。
     @Override
-    public String getDbClumnType(Field field) {
+    public String getDbColumnType(Field field) {
         Class<?> classs = field.getType();
         if (classs == String.class) {
             return "TEXT";

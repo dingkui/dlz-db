@@ -12,10 +12,10 @@ import java.util.Map;
 public class TableColumnMapper implements ITableColumnMapper {
 	final ISqlExecutor sqlExecutor;
 	@Override
-	public Object converObj4Db(String tableName, String clumnName, Object value) {
+	public Object converObj4Db(String tableName, String columnName, Object value) {
 		Map<String, Integer> map = BeanInfoHolder.getTableColumnsInfo(tableName);
 		if (map != null) {
-			Integer dbClass = map.get(clumnName.toUpperCase());
+			Integer dbClass = map.get(columnName.toUpperCase());
 			if(dbClass==null){
 				return value;
 			}

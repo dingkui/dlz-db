@@ -1,8 +1,8 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.enums.DbOprateEnum;
+import com.dlz.db.enums.DbOperateEnum;
 
-import static com.dlz.db.enums.DbOprateEnum.*;
+import static com.dlz.db.enums.DbOperateEnum.*;
 
 /**
  * 基于 <b>字符串列名</b> 的条件构造接口。
@@ -34,7 +34,7 @@ import static com.dlz.db.enums.DbOprateEnum.*;
  *   in / ni                     IN / NOT IN
  *   bt / nb                     BETWEEN / NOT BETWEEN
  *   isn / isnn                  IS NULL / IS NOT NULL
- *   op                          自定义操作符（{@link DbOprateEnum}）
+ *   op                          自定义操作符（{@link DbOperateEnum}）
  * </pre>
  */
 public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
@@ -360,7 +360,7 @@ public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
      *
      * @param op 操作符枚举；实际调用 {@code op.mk(column, value)}，语义由枚举决定。
      */
-    default T op(String column, DbOprateEnum op, Object value) {
+    default T op(String column, DbOperateEnum op, Object value) {
         addChildren(op.mk(column, value));
         return me();
     }

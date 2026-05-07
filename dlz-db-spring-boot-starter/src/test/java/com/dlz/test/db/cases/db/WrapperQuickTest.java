@@ -70,7 +70,7 @@ public class WrapperQuickTest extends SpingDbBaseTest{
 
     @Test
     public void getById1() {
-        DB.Pojo.getById(SysSql.class, "1");
+        DB.Pojo.selectById(SysSql.class, "1");
     }
     @Test
     public void getUseDbById1() {
@@ -85,15 +85,15 @@ public class WrapperQuickTest extends SpingDbBaseTest{
         DB.Dynamic.use("test",()-> {
             final SqlHelper helper = DB.Dynamic.getSqlHelper();
             HelperScan.initTable(SysSql.class,helper);
-            DB.Pojo.getById(SysSql.class, "1");
-            DB.Pojo.getById(SysSql.class, "2");
+            DB.Pojo.selectById(SysSql.class, "1");
+            DB.Pojo.selectById(SysSql.class, "2");
             return null;
         });
 
-        DB.Pojo.getById(SysSql.class, "1");
+        DB.Pojo.selectById(SysSql.class, "1");
         DB.Dynamic.use("default",()-> {
-            DB.Pojo.getById(SysSql.class, "1");
-            DB.Pojo.getById(SysSql.class, "2");
+            DB.Pojo.selectById(SysSql.class, "1");
+            DB.Pojo.selectById(SysSql.class, "2");
             return null;
         });
 

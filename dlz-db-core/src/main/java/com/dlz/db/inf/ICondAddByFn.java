@@ -1,9 +1,9 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.enums.DbOprateEnum;
+import com.dlz.db.enums.DbOperateEnum;
 import com.dlz.kit.fn.DlzFn;
 
-import static com.dlz.db.enums.DbOprateEnum.*;
+import static com.dlz.db.enums.DbOperateEnum.*;
 
 /**
  * 基于 Lambda 字段引用（{@link DlzFn}）的条件构造接口 —— <b>与具体 Bean 解绑</b> 版本。
@@ -315,7 +315,7 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
      * 以自定义操作符添加条件。适用于上述枚举未覆盖的场景。
      * <pre>.op(User::getName, DbOprateEnum.eq, "admin")</pre>
      */
-    default <T1> ME op(DlzFn<T1, ?> column, DbOprateEnum op, Object value) {
+    default <T1> ME op(DlzFn<T1, ?> column, DbOperateEnum op, Object value) {
         addChildren(op.mk(column, value));
         return me();
     }

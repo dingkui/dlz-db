@@ -32,7 +32,7 @@ public class HelperScan {
         if (table != null) {
             String tableName = BeanInfoHolder.getTableName(clazz);
             Set<String> columns = helper.getTableColumnNames(tableName);
-            if (columns.size() == 0) {
+            if (columns.isEmpty()) {
                 // 创建表
                 helper.createTable(tableName, clazz);
                 return;

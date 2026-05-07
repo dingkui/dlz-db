@@ -1,6 +1,6 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.enums.DbOprateEnum;
+import com.dlz.db.enums.DbOperateEnum;
 
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +14,7 @@ import java.util.function.Function;
  *   <li>普通 key（如 {@code "status"}）→ {@code status = value}，默认 eq；</li>
  *   <li>带前缀 key：{@code "_<op>_<column>"} → 使用指定操作符，例如
  *       {@code "_gt_age"} → {@code age > value}；{@code "_lk_name"} → {@code name LIKE ?}。
- *       可用操作符见 {@link DbOprateEnum}。</li>
+ *       可用操作符见 {@link DbOperateEnum}。</li>
  * </ul>
  *
  * <pre>
@@ -48,7 +48,7 @@ public interface ICondAuto<T extends ICondAuto> extends ICondBase<T> {
         if (req != null) {
             for (String key : req.keySet()) {
                 Object o = req.get(key);
-                DbOprateEnum oprate = DbOprateEnum.eq;
+                DbOperateEnum oprate = DbOperateEnum.eq;
                 if (key.startsWith("_")) {
                     int keyIndex = key.substring(1).indexOf("_");
                     if (keyIndex == -1) {
@@ -56,10 +56,10 @@ public interface ICondAuto<T extends ICondAuto> extends ICondBase<T> {
                     }
                     String op = key.substring(1,keyIndex+1);
                     key = key.substring(op.length() + 2);
-                    if (key.length() == 0) {
+                    if (key.isEmpty()) {
                         continue;
                     }
-                    oprate = DbOprateEnum.getDbOprateEnum(op);
+                    oprate = DbOperateEnum.getDbOperateEnum(op);
                 }
                 if(fillter!=null && !fillter.apply(key)){
                     continue;

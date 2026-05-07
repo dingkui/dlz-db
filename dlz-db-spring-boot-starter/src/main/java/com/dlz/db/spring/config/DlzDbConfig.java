@@ -52,7 +52,7 @@ public class DlzDbConfig extends DlzFwConfig {
         final BaseDbProperties properties = dbProvider.getSqlConfig();
         final SpringSqlExecutorAdapter springSqlExecutorAdapter = new SpringSqlExecutorAdapter(jdbc);
         SqlHolder.init();
-        DbConvertUtil.defaultTableCloumnMapper = new TableColumnMapper(springSqlExecutorAdapter);
+        DbConvertUtil.defaultTableColumnMapper = new TableColumnMapper(springSqlExecutorAdapter);
         if (log.isInfoEnabled()) {
             log.info("init sqlExecutor:" + SpringSqlExecutorAdapter.class.getName());
             log.info("init tableCloumnMapper:" + TableColumnMapper.class.getName());

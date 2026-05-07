@@ -12,7 +12,7 @@ public class DbBatch {
     }
 
     public <T> boolean insert(List<T> bean, int batchSize) {
-        if (bean.size() > 0) {
+        if (bean.isEmpty()) {
             return PojoInsert.wrapper(bean.get(0)).batch(bean, batchSize);
         }
         return false;
@@ -23,7 +23,7 @@ public class DbBatch {
     }
 
     public <T> boolean update(List<T> bean, int batchSize) {
-        if (bean.size() > 0) {
+        if (!bean.isEmpty()) {
             final Class<T> aClass = (Class<T>)bean.get(0).getClass();
             return PojoUpdate.wrapper(aClass).batch(bean, batchSize);
         }
@@ -35,7 +35,7 @@ public class DbBatch {
     }
 
     public boolean update(String sql, List<Object[]> valueBeans, int batchSize) {
-        for (; valueBeans.size() > 0 && batchSize > 0; valueBeans = valueBeans.subList(batchSize, valueBeans.size())) {
+        for (; !valueBeans.isEmpty() && batchSize > 0; valueBeans = valueBeans.subList(batchSize, valueBeans.size())) {
             if (batchSize > valueBeans.size()) {
                 batchSize = valueBeans.size();
             }

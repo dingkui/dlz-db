@@ -1,7 +1,7 @@
 package com.dlz.db.spring.config;
 
 import com.dlz.db.core.*;
-import com.dlz.db.core.abstractor.AResourceAdapter;
+import com.dlz.db.core.DlzResourceAdapter;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.spring.SpringTxExecutorAdapter;
@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SpringDbProvider extends ADbProvider {
 
     private final BaseDbProperties sqlConfig;
-    private final IResourceLoader resourceLoader = new AResourceAdapter();
     public SpringDbProvider(BaseDbProperties sqlConfig) {
         this.sqlConfig = sqlConfig;
     }
@@ -41,11 +40,6 @@ public class SpringDbProvider extends ADbProvider {
     @Override
     public ICacheExecutor getCacheExecutor() {
         return SpringHolder.getBean(ICacheExecutor.class);
-    }
-
-    @Override
-    public IResourceLoader getResourceLoader() {
-        return resourceLoader;
     }
 
     @Override

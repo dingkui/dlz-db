@@ -91,23 +91,23 @@ public class DataSourceConfig {
         return dbType;
     }
 
-    private SqlHelper helpler;
+    private SqlHelper helper;
     public SqlHelper getSqlHelper() {
-        if (helpler != null) {
-            return helpler;
+        if (helper != null) {
+            return helper;
         }
         final DbTypeEnum dbType = getDbType();
 
         if (dbType == DbTypeEnum.SQLITE) {
-            helpler = new DbOpSqlite();
+            helper = new DbOpSqlite();
         } else if (dbType == DbTypeEnum.POSTGRESQL) {
-            helpler = new DbOpPostgresql();
+            helper = new DbOpPostgresql();
         } else if (dbType == DbTypeEnum.ORACLE || dbType == DbTypeEnum.DM8) {
-            helpler = new DbOpDm8();
+            helper = new DbOpDm8();
         } else {
-            helpler = new DbOpMysql();
+            helper = new DbOpMysql();
         }
-        return helpler;
+        return helper;
     }
 
     public void close() throws Exception {

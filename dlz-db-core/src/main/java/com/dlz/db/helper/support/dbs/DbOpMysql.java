@@ -43,10 +43,10 @@ public class DbOpMysql extends SqlHelper {
             if (columnName.equals("")) {
                 return column;
             }
-            column = " `" + columnName + "` " + getDbClumnType(field);
-            String clumnCommont = BeanInfoHolder.getColumnComment(field);
-            if (StringUtils.isNotEmpty(clumnCommont)) {
-                column += " COMMENT '" + clumnCommont + "'";
+            column = " `" + columnName + "` " + getDbColumnType(field);
+            String columnComment = BeanInfoHolder.getColumnComment(field);
+            if (StringUtils.isNotEmpty(columnComment)) {
+                column += " COMMENT '" + columnComment + "'";
             }
             if (BeanInfoHolder.isColumnPk(field)) {
                 column += " PRIMARY KEY";
@@ -59,14 +59,14 @@ public class DbOpMysql extends SqlHelper {
         }).filter(column -> column != null)
                 .collect(Collectors.joining(","));
 
-        String tableCommont = BeanInfoHolder.getTableComment(clazz);
-        if (StringUtils.isNotEmpty(tableCommont)) {
-            tableCommont = " COMMENT = '" + tableCommont  + "'";
+        String tableComment = BeanInfoHolder.getTableComment(clazz);
+        if (StringUtils.isNotEmpty(tableComment)) {
+            tableComment = " COMMENT = '" + tableComment  + "'";
         }else{
-            tableCommont = "";
+            tableComment = "";
         }
 
-        String sql = StringUtils.formatMsg(createSql, tableName,columns,tableCommont);
+        String sql = StringUtils.formatMsg(createSql, tableName,columns,tableComment);
 
         DBHolder.getSqlExecutor().execute(sql);
     }
@@ -137,10 +137,10 @@ public class DbOpMysql extends SqlHelper {
 
     @Override
     public void createColumn(String tableName, String name, Field field) {
-        String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbClumnType(field);
-        String clumnCommont = BeanInfoHolder.getColumnComment(field);
-        if (StringUtils.isNotEmpty(clumnCommont)) {
-            sql += " COMMENT '" + clumnCommont + "'";
+        String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbColumnType(field);
+        String columnComment = BeanInfoHolder.getColumnComment(field);
+        if (StringUtils.isNotEmpty(columnComment)) {
+            sql += " COMMENT '" + columnComment + "'";
         }
         DBHolder.getSqlExecutor().execute(sql);
     }
@@ -156,7 +156,7 @@ public class DbOpMysql extends SqlHelper {
     }
 
     @Override
-    public String getDbClumnType(Field field) {
+    public String getDbColumnType(Field field) {
         Class<?> classs = field.getType();
         if (classs == String.class) {
             return "varchar(255)";

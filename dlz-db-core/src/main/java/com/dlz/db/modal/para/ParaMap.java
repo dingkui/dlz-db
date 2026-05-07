@@ -16,12 +16,8 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.util.Map;
 
-@SuppressWarnings("rawtypes")
 public class ParaMap<ME extends ParaMap> implements Serializable , ISqlPara, IChained<ME> {
     private static final long serialVersionUID = 8374167270612933157L;
-//    @JsonIgnore
-//    @Getter
-//    private Convert convert = new Convert();
     @Getter
     private SqlItem sqlItem = new SqlItem();
     @Getter
@@ -30,20 +26,16 @@ public class ParaMap<ME extends ParaMap> implements Serializable , ISqlPara, ICh
 
     @Getter
     private JSONMap para = new JSONMap();
-//    private void addDefualtConverter() {
-//        convert.addClassConvert(new DateConverter(DateFormatEnum.DateTimeStr));
-//    }
+
     public ParaMap() {
     }
     public ParaMap(String sqlKey) {
         sqlItem.setSqlKey(sqlKey);
-//        this.addDefualtConverter();
     }
 
     public ParaMap(String sqlKey, Page page) {
         sqlItem.setSqlKey(sqlKey);
         this.page=page;
-//        this.addDefualtConverter();
     }
 
     public ME addParas(Map<String, Object> map) {

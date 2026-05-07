@@ -45,7 +45,9 @@ public abstract class ADbProvider {
      *
      * @return ResourceLoader 实例
      */
-    public abstract IResourceLoader getResourceLoader();
+    public IResourceLoader getResourceLoader(){
+        return new DlzResourceAdapter();
+    }
 
     /**
      * 获取 SqlConfig 实例。

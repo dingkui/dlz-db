@@ -85,7 +85,7 @@ public class DbLogUtil {
 //				split[i]=split[i].substring(0,1);
 //			}
 //		}
-        if(frw_trace.size()>0){
+        if(!frw_trace.isEmpty()){
             log.trace("< {}", frw_trace.stream().collect(Collectors.joining(" < ")));
         }
         return traceInfo.replaceAll(".*\\((.*)\\)", " caller:($1)");
@@ -93,9 +93,9 @@ public class DbLogUtil {
 
     public static <T> String generateSqlMessage(Long t, T reulst, String methodName, String sql, Object[] args) {
         final long l = System.currentTimeMillis() - t;
-        final String usedDataSourseName = DB.Dynamic.getUsedDataSourceName();
-        if(usedDataSourseName!=null){
-            methodName = "["+usedDataSourseName+"] "+methodName;
+        final String usedDataSourceName = DB.Dynamic.getUsedDataSourceName();
+        if(usedDataSourceName!=null){
+            methodName = "["+usedDataSourceName+"] "+methodName;
         }
         String sqlMessage = showRunSql ?
                 StringUtils.formatMsg("{} {}ms sql:{}", methodName, l, SqlUtil.getRunSqlByJdbc(sql, args)) :

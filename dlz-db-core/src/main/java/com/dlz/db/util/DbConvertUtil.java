@@ -1,7 +1,7 @@
 package com.dlz.db.util;
 
-import com.dlz.db.convertor.clumnname.ColumnNameCamel;
-import com.dlz.db.convertor.clumnname.IColumnNameConvertor;
+import com.dlz.db.convertor.columnname.ColumnNameCamel;
+import com.dlz.db.convertor.columnname.IColumnNameConvertor;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.dto.ResultMap;
@@ -20,7 +20,7 @@ public class DbConvertUtil {
     /**
      * 数据库字段信息及内容转换
      */
-    public static ITableColumnMapper defaultTableCloumnMapper = null;
+    public static ITableColumnMapper defaultTableColumnMapper = null;
 
     /**
      * 数据库字段名转换器
@@ -29,17 +29,17 @@ public class DbConvertUtil {
     /**
      * 将值转换成数据库字段对应的数据类型
      * @param tableName
-     * @param clumnName
+     * @param columnName
      * @param value
      * @author dk 2018-09-28
      */
-    public static Object getVal4Db(String tableName,String clumnName,Object value) {
-        final ITableColumnMapper tableColumnMapper = SqlRunThreadHolder.getTableColumnMapper(defaultTableCloumnMapper);
-        return tableColumnMapper==null?value:tableColumnMapper.converObj4Db(tableName, clumnName, value);
+    public static Object getVal4Db(String tableName,String columnName,Object value) {
+        final ITableColumnMapper tableColumnMapper = SqlRunThreadHolder.getTableColumnMapper(defaultTableColumnMapper);
+        return tableColumnMapper==null?value:tableColumnMapper.converObj4Db(tableName, columnName, value);
     }
 
-    public static <T> List<T> getColumnList(List<ResultMap> r, Class<T> classs) {
-        return r.stream().map((m) -> classs == null ? (T) m : DbConvertUtil.getFistColumn(m, classs)).collect(Collectors.toList());
+    public static <T> List<T> getColumnList(List<ResultMap> r, Class<T> tClass) {
+        return r.stream().map((m) -> tClass == null ? (T) m : DbConvertUtil.getFistColumn(m, tClass)).collect(Collectors.toList());
     }
     /**
      * 从Map里取得字符串
@@ -63,8 +63,8 @@ public class DbConvertUtil {
      * @param m
      * @author dk 2015-04-09
      */
-    public static <T> T getFistColumn(ResultMap m, Class<T> classs){
-        return ValUtil.toObj(getFistColumn(m), classs);
+    public static <T> T getFistColumn(ResultMap m, Class<T> clazz){
+        return ValUtil.toObj(getFistColumn(m), clazz);
     }
 
     /**

@@ -29,7 +29,7 @@ public class DbOpDm8 extends SqlHelper {
                     if (columnName.equals("")) {
                         return column;
                     }
-                    column = " \"" + columnName.toUpperCase() + "\" " + getDbClumnType(field);
+                    column = " \"" + columnName.toUpperCase() + "\" " + getDbColumnType(field);
                     if (BeanInfoHolder.isColumnPk(field)) {
                         column += " PRIMARY KEY";
                         TableId tableId = field.getAnnotation(TableId.class);
@@ -48,18 +48,18 @@ public class DbOpDm8 extends SqlHelper {
             sql += "; COMMENT ON TABLE \"" + tableName.toUpperCase() + "\" IS '" + tableComment + "'";
         }
 
-        final String columnsCommont = FieldReflections.getFields(clazz).stream().map(field -> {
+        final String columnsComment = FieldReflections.getFields(clazz).stream().map(field -> {
                     String columnName = BeanInfoHolder.getColumnName(field);
-                    String clumnCommont = BeanInfoHolder.getColumnComment(field);
+                    String columnComment = BeanInfoHolder.getColumnComment(field);
                     String column = null;
-                    if (columnName.equals("") && StringUtils.isEmpty(clumnCommont)) {
+                    if (columnName.equals("") && StringUtils.isEmpty(columnComment)) {
                         return column;
                     }
-                    return "COMMENT ON COLUMN \"" + tableName.toUpperCase() + "\".\"" + columnName.toUpperCase() + "\" IS '" + clumnCommont + "'";
+                    return "COMMENT ON COLUMN \"" + tableName.toUpperCase() + "\".\"" + columnName.toUpperCase() + "\" IS '" + columnComment + "'";
                 }).filter(column -> column != null)
                 .collect(Collectors.joining(";"));
-        if (StringUtils.isNotEmpty(columnsCommont)) {
-            sql += ";"+columnsCommont;
+        if (StringUtils.isNotEmpty(columnsComment)) {
+            sql += ";"+columnsComment;
         }
 
 
@@ -134,7 +134,7 @@ public class DbOpDm8 extends SqlHelper {
 
     @Override
     public void createColumn(String tableName, String name, Field field) {
-        String sql = "ALTER TABLE \"" + tableName.toUpperCase() + "\" ADD \"" + name.toUpperCase() + "\" " + getDbClumnType(field);
+        String sql = "ALTER TABLE \"" + tableName.toUpperCase() + "\" ADD \"" + name.toUpperCase() + "\" " + getDbColumnType(field);
         String columnComment = BeanInfoHolder.getColumnComment(field);
         if (StringUtils.isNotEmpty(columnComment)) {
             sql += "; COMMENT ON COLUMN \"" + tableName.toUpperCase() + "\".\"" + name.toUpperCase() + "\" IS '" + columnComment + "'";
@@ -149,7 +149,7 @@ public class DbOpDm8 extends SqlHelper {
     }
 
     @Override
-    public String getDbClumnType(Field field) {
+    public String getDbColumnType(Field field) {
         Class<?> clazz = field.getType();
         if (clazz == String.class) {
             return "varchar(255)"; // 达梦推荐使用VARCHAR2

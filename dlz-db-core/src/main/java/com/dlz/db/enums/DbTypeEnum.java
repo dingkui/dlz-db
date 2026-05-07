@@ -8,7 +8,7 @@ public enum DbTypeEnum {
     DM8("_dm8"),
     SQLITE("_sqlite"),
     MSSQL("_sqlserver");
-    private String end;
+    private final String end;
 
     DbTypeEnum(String end) {
         this.end = end;

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition>, ICondAddByFn<Condition> {
     boolean isMake = false;
-    String runsql;
+    String runSql;
     JSONMap paras = new JSONMap();
     List<Condition> children = new ArrayList<>();
     private DbBuildEnum builder;
@@ -37,8 +37,8 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
                 pm.addParas(paras);
                 return;
             }
-            if (children.size() == 0) {
-                runsql = "";
+            if (children.isEmpty()) {
+                runSql = "";
 //                runsql = runsql.replace("sql", "false");
                 return;
             }
@@ -51,7 +51,7 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
             if (children.size() > 1 && builder != DbBuildEnum.where) {
                 sub = "(" + sub + ")";
             }
-            runsql = builder.buildSql(sub);
+            runSql = builder.buildSql(sub);
             return;
         }
         pm.addParas(paras);
@@ -66,18 +66,18 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
         condition.paras.putAll( paras);
         condition.children.addAll(children);
         condition.isMake = false;
-        condition.runsql = "";
+        condition.runSql = "";
         return condition;
     }
 
     public String getRunsql(ParaMap pm) {
         make(pm);
-        return runsql;
+        return runSql;
     }
 
-    public Condition setRunsql(String runsql) {
+    public Condition setRunSql(String runSql) {
         isMake = false;
-        this.runsql = runsql;
+        this.runSql = runSql;
         return this;
     }
 
@@ -107,6 +107,6 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
     }
 
     public boolean isContainCondition(String column){
-        return children.stream().anyMatch(item->item.runsql.startsWith(column+" "));
+        return children.stream().anyMatch(item->item.runSql.startsWith(column+" "));
     }
 }

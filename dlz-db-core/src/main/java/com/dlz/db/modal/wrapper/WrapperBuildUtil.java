@@ -2,7 +2,7 @@ package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
-import com.dlz.db.annotation.proxy.AnnoProxys;
+import com.dlz.db.annotation.proxy.AnnoProxies;
 import com.dlz.db.helper.support.SnowFlake;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
@@ -31,10 +31,10 @@ public class WrapperBuildUtil {
     public static final String MAKER_SQL_INSERT = "insert into ${tableName}(${columns}) values(${values})";
     public static final String MAKER_SQL_DELETE = "delete from ${tableName} ${where}";
     public static final String MAKER_SQL_UPDATE = "update ${tableName} set ${sets} ${where}";
-    public static final String MAKER_SQL_SEARCHE = "select ${columns} from ${tableName} t ${where} ${otherwhere}";
+    public static final String MAKER_SQL_SEARCH = "select ${columns} from ${tableName} t ${where} ${otherwhere}";
 
-    private static final String MAKER_TABLENAME = "tableName";
-    private static final String MAKER_COLUMS = "columns";
+    private static final String MAKER_TABLE_NAME = "tableName";
+    private static final String MAKER_COLUMNS = "columns";
     private static final String MAKER_VALUES = "values";
     private static final String MAKER_STR_SETS = "sets";
     private static final String MAKER_WHERE = "where";
@@ -46,7 +46,7 @@ public class WrapperBuildUtil {
      */
     public static void buildSql(AParaTable maker) {
         maker.getSqlItem().setSqlKey(maker.getSql());
-        maker.addPara(MAKER_TABLENAME, maker.getTableName());
+        maker.addPara(MAKER_TABLE_NAME, maker.getTableName());
         if (maker instanceof AQuery) {
             buildWhere((AQuery) maker);
         }
@@ -66,7 +66,7 @@ public class WrapperBuildUtil {
      *
      */
     public static void buildWhereColumns(TableQuery maker) {
-        maker.addPara(MAKER_COLUMS, maker.columns);
+        maker.addPara(MAKER_COLUMNS, maker.columns);
     }
 
     /**
@@ -99,28 +99,21 @@ public class WrapperBuildUtil {
         maker.insertValues.entrySet().forEach(e -> {
             String paraName = e.getKey();
             Object value = e.getValue();
-            String clumnName = paraName.replaceAll("`", "");
+            String columnName = paraName.replaceAll("`", "");
 
             if (sbColumns.length() > 0) {
                 sbColumns.append(',');
                 sbValues.append(',');
             }
             sbColumns.append(paraName);
-            if (value instanceof String) {
-                String v = ((String) value);
-                if (v.startsWith("sql:")) {
-                    sbValues.append(DbConvertUtil.toDbColumnName(v.substring(4)));
-                    return;
-                }
-            }
-            sbValues.append("#{").append(clumnName).append("}");
+            if (appendSql(sbValues, value, columnName)) return;
             if (value == null)
                 value = "";
-            maker.addPara(clumnName, DbConvertUtil.getVal4Db(maker.getTableName(), clumnName, value));
+            maker.addPara(columnName, DbConvertUtil.getVal4Db(maker.getTableName(), columnName, value));
         });
-        maker.addPara(MAKER_COLUMS, sbColumns.toString());
+        maker.addPara(MAKER_COLUMNS, sbColumns.toString());
         maker.addPara(MAKER_VALUES, sbValues.toString());
-        maker.addPara(MAKER_TABLENAME, maker.getTableName());
+        maker.addPara(MAKER_TABLE_NAME, maker.getTableName());
     }
 
     /**
@@ -135,24 +128,29 @@ public class WrapperBuildUtil {
         maker.updateSets.entrySet().forEach(e -> {
             String paraName = e.getKey();
             Object value = e.getValue();
-            String clumnName = paraName.replaceAll("`", "");
+            String columnName = paraName.replaceAll("`", "");
 
             if (sbSets.length() > 0) {
                 sbSets.append(",");
             }
             sbSets.append(paraName);
             sbSets.append('=');
-            if (value instanceof String) {
-                String v = ((String) value);
-                if (v.startsWith("sql:")) {
-                    sbSets.append(DbConvertUtil.toDbColumnName(v.substring(4)));
-                    return;
-                }
-            }
-            sbSets.append("#{").append(clumnName).append("}");
-            maker.addPara(clumnName, DbConvertUtil.getVal4Db(maker.getTableName(), clumnName, value));
+            if (appendSql(sbSets, value, columnName)) return;
+            maker.addPara(columnName, DbConvertUtil.getVal4Db(maker.getTableName(), columnName, value));
         });
         maker.addPara(MAKER_STR_SETS, sbSets.toString());
+    }
+
+    private static boolean appendSql(StringBuilder sbSets, Object value, String columnName) {
+        if (value instanceof String) {
+            String v = ((String) value);
+            if (v.startsWith("sql:")) {
+                sbSets.append(DbConvertUtil.toDbColumnName(v.substring(4)));
+                return true;
+            }
+        }
+        sbSets.append("#{").append(columnName).append("}");
+        return false;
     }
 
 
@@ -160,9 +158,9 @@ public class WrapperBuildUtil {
         List<String> fieldsPart = new ArrayList<>();
         List<String> placeHolder = new ArrayList<>();
         for (Field field : fields) {
-            String dbClumnName = BeanInfoHolder.getColumnName(field);
-            if (!dbClumnName.equals("")) {
-                fieldsPart.add(dbClumnName);
+            String dbColumnName = BeanInfoHolder.getColumnName(field);
+            if (!dbColumnName.equals("")) {
+                fieldsPart.add(dbColumnName);
                 placeHolder.add("?");
             }
         }
@@ -172,8 +170,8 @@ public class WrapperBuildUtil {
     public static Object[] buildInsertParams(Object object, List<Field> fields) {
         List<Object> params = new ArrayList<>();
         for (Field field : fields) {
-            String dbClumnName = BeanInfoHolder.getColumnName(field);
-            if (!dbClumnName.equals("")) {
+            String dbColumnName = BeanInfoHolder.getColumnName(field);
+            if (!dbColumnName.equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
         }
@@ -183,9 +181,9 @@ public class WrapperBuildUtil {
     public static String buildUpdateSql(String dbName, List<Field> fields,String idName) {
         List<String> fieldsPart = new ArrayList<String>();
         for (Field field : fields) {
-            String dbClumnName = BeanInfoHolder.getColumnName(field);
-            if (!dbClumnName.equals(idName) && !dbClumnName.equals("")) {
-                fieldsPart.add(dbClumnName + "=?");
+            String dbColumnName = BeanInfoHolder.getColumnName(field);
+            if (!dbColumnName.equals(idName) && !dbColumnName.equals("")) {
+                fieldsPart.add(dbColumnName + "=?");
             }
         }
         return "UPDATE " + dbName + " SET " + StringUtils.join(",", fieldsPart) + " WHERE "+idName+" = ?";
@@ -195,12 +193,12 @@ public class WrapperBuildUtil {
         List<Object> params = new ArrayList<Object>(fields.size());
         Field idField = null;
         for (Field field : fields) {
-            String dbClumnName = BeanInfoHolder.getColumnName(field);
-            if(dbClumnName.equals(idName)){
+            String dbColumnName = BeanInfoHolder.getColumnName(field);
+            if(dbColumnName.equals(idName)){
                 idField = field;
                 continue;
             }
-            if (!dbClumnName.equals("")) {
+            if (!dbColumnName.equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
         }
@@ -213,7 +211,7 @@ public class WrapperBuildUtil {
         if (annotation != null) {
             return annotation.type();
         }
-        return AnnoProxys.MybatisPlusIdType.type(field);
+        return AnnoProxies.MybatisPlusIdType.type(field);
     }
 
     public static Object getIdValue(Field field, String tableName) {

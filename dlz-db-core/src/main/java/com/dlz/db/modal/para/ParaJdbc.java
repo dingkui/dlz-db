@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class ParaJdbc implements Serializable , ISqlPara{
     private static final long serialVersionUID = 8374167270612933157L;
     @Getter
-    private SqlItem sqlItem = new SqlItem();
+    private final SqlItem sqlItem = new SqlItem();
     @Getter
     @Setter
     private Page<?> page;

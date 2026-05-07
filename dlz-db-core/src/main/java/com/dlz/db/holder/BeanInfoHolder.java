@@ -3,7 +3,7 @@ package com.dlz.db.holder;
 import com.dlz.db.annotation.TableField;
 import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.TableName;
-import com.dlz.db.annotation.proxy.AnnoProxys;
+import com.dlz.db.annotation.proxy.AnnoProxies;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.cache.CacheMap;
 import com.dlz.kit.fn.DlzFn;
@@ -30,11 +30,11 @@ public class BeanInfoHolder {
     private static final CacheMap<Class<?>, String> tableNameCache = new CacheMap<>();
     private static final CacheMap<Field, String> columnNameCache = new CacheMap<>();
     private static final CacheMap<String, List<Field>> tableFieldCache = new CacheMap<>();
-    private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCahe = new CacheMap<>();
+    private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCache = new CacheMap<>();
     private static final CacheMap<Class<?>, Field> idFieldCache = new CacheMap<>();
 
     public static void clearAll() {
-        tableColumnsInfoCahe.clear();
+        tableColumnsInfoCache.clear();
     }
 
     /**
@@ -51,7 +51,7 @@ public class BeanInfoHolder {
             if (annotation != null ) {
                 columnName =  annotation.value();
             }else{
-                columnName = AnnoProxys.MybatisPlusIdType.value(field);
+                columnName = AnnoProxies.MybatisPlusIdType.value(field);
             }
 
             if(StringUtils.isEmpty(columnName)){
@@ -69,8 +69,8 @@ public class BeanInfoHolder {
                         columnName =  name.value();
                     }
                 }else{
-                    if (ValUtil.toBoolean(AnnoProxys.MybatisPlusTableField.exist(field),true)) {
-                        columnName = AnnoProxys.MybatisPlusTableField.value(field);
+                    if (ValUtil.toBoolean(AnnoProxies.MybatisPlusTableField.exist(field),true)) {
+                        columnName = AnnoProxies.MybatisPlusTableField.value(field);
                     }
                 }
             }
@@ -160,7 +160,7 @@ public class BeanInfoHolder {
             if (name != null) {
                 tName = name.value();
             }else{
-                tName = AnnoProxys.MybatisPlusTableName.value(clazz);
+                tName = AnnoProxies.MybatisPlusTableName.value(clazz);
             }
 
             if (StringUtils.isEmpty(tName)) {
@@ -178,7 +178,7 @@ public class BeanInfoHolder {
      * @param tableName
           */
     public static HashMap<String, Integer> getTableColumnsInfo(String tableName) {
-        return tableColumnsInfoCahe.getAndSet(tableName, () ->
+        return tableColumnsInfoCache.getAndSet(tableName, () ->
                 DBHolder.getSqlExecutor().getTableColumnsInfo(tableName)
         );
     }
@@ -217,7 +217,7 @@ public class BeanInfoHolder {
             }
             // 2) MyBatis-Plus @TableId（代理调用，未引入 MP 时返回空）
             for (Field f : fields) {
-                if (StringUtils.isNotEmpty(AnnoProxys.MybatisPlusIdType.value(f))) {
+                if (StringUtils.isNotEmpty(AnnoProxies.MybatisPlusIdType.value(f))) {
                     return f;
                 }
             }
@@ -232,7 +232,7 @@ public class BeanInfoHolder {
     }
 
     /**
-     * 根据lamda 表达式取得数据库字段名
+     * 根据 lambda 表达式取得数据库字段名
      *
      * @param column
      * @param <T>

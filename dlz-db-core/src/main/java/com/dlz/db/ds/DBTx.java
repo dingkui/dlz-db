@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 /**
  * 事务执行器。
- * <p>基于 {@link TxExecutor} 接口抽象事务执行逻辑，支持不同框架的事务实现（Spring、Solon 等）。</p>
+ * <p>基于 {@link ITxExecutor} 接口抽象事务执行逻辑，支持不同框架的事务实现（Spring、Solon 等）。</p>
  *
  * <p>典型用法：</p>
  * <pre>

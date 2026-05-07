@@ -1,5 +1,6 @@
 package com.dlz.db.holder;
 
+import com.dlz.db.core.DlzResourceAdapter;
 import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
@@ -106,8 +107,8 @@ public class SqlHolder {
         }
     }
 
-    public static void loadRsources(String path) throws Exception {
-        InputStream[] inputStreams = DBHolder.dbProvider.getResourceLoader().getResources("classpath*:sql/" + path + ".sql");
+    public static void loadResources(String path) throws Exception {
+        InputStream[] inputStreams =  new DlzResourceAdapter().getResources("classpath*:sql/" + path + ".sql");
         for (InputStream is : inputStreams) {
             if (log.isDebugEnabled()){
                 log.debug("Loading SQL resource: " + path);
@@ -133,8 +134,8 @@ public class SqlHolder {
         initIng = true;
 
         try {
-            loadRsources("framework/*");
-            loadRsources("sys/*");
+            loadResources("framework/*");
+            loadResources("sys/*");
         }catch (Exception e){
             log.error(ExceptionUtils.getStackTrace(e));
         }
@@ -146,7 +147,7 @@ public class SqlHolder {
                 return;
             }
             try {
-                loadRsources(name);
+                loadResources(name);
             } catch (Exception e) {
                 log.error(ExceptionUtils.getStackTrace(e));
             }

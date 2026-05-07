@@ -113,7 +113,7 @@ public class JdbcUtil {
 	
 	public static void buildLabelNamesAndTypes(ResultSetMetaData rsmd, String[] labelNames, int[] types) throws SQLException {
 		for (int i=1; i<labelNames.length; i++) {
-//			labelNames[i] = CovertUtil.clumn2Str(rsmd.getColumnLabel(i));
+//			labelNames[i] = CovertUtil.column2Str(rsmd.getColumnLabel(i));
 			labelNames[i] = rsmd.getColumnLabel(i);
 			types[i] = rsmd.getColumnType(i);
 		}

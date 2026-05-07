@@ -6,7 +6,7 @@ import java.util.Set;
 
 /**
  * 资源加载器接口（统一资源 + 类扫描）。
- * <p>抽象资源加载与类扫描逻辑，所有框架共用 {@link com.dlz.db.core.abstractor.AResourceAdapter}
+ * <p>抽象资源加载与类扫描逻辑，所有框架共用 {@link DlzResourceAdapter}
  * 默认实现。支持 {@code classpath*:} 模式跨 JAR 扫描。</p>
  *
  * @since 7.0.0

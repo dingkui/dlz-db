@@ -29,7 +29,7 @@ public class DbOpPostgresql extends SqlHelper {
             if (columnName.equals("")) {
                 return column;
             }
-            column = "\"" + columnName + "\" " + getDbClumnType(field);
+            column = "\"" + columnName + "\" " + getDbColumnType(field);
             if (BeanInfoHolder.isColumnPk(field)) {
                 TableId tableId = field.getAnnotation(TableId.class);
                 if (tableId != null && tableId.type() == IdType.AUTO) {
@@ -49,9 +49,9 @@ public class DbOpPostgresql extends SqlHelper {
 
         String sql = "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" (" + columns + ")";
         DBHolder.getSqlExecutor().execute(sql);
-        String clumnCommont = BeanInfoHolder.getTableComment(clazz);
-        if (StringUtils.isNotEmpty(clumnCommont)) {
-            sql = "COMMENT ON TABLE \"public\".\"" + tableName + "\" IS '" + clumnCommont + "'";
+        String columnComment = BeanInfoHolder.getTableComment(clazz);
+        if (StringUtils.isNotEmpty(columnComment)) {
+            sql = "COMMENT ON TABLE \"public\".\"" + tableName + "\" IS '" + columnComment + "'";
             DBHolder.getSqlExecutor().execute(sql);
         }
     }
@@ -138,11 +138,11 @@ public class DbOpPostgresql extends SqlHelper {
 
     @Override
     public void createColumn(String tableName, String name, Field field) {
-        String sql = "ALTER TABLE public." + tableName + " ADD COLUMN " + name + " " + getDbClumnType(field);
+        String sql = "ALTER TABLE public." + tableName + " ADD COLUMN " + name + " " + getDbColumnType(field);
         DBHolder.getSqlExecutor().execute(sql);
-        String clumnCommont = BeanInfoHolder.getColumnComment(field);
-        if (StringUtils.isNotEmpty(clumnCommont)) {
-            sql = "COMMENT ON COLUMN " + tableName + "." + name + " IS '" + clumnCommont + "'";
+        String columnComment = BeanInfoHolder.getColumnComment(field);
+        if (StringUtils.isNotEmpty(columnComment)) {
+            sql = "COMMENT ON COLUMN " + tableName + "." + name + " IS '" + columnComment + "'";
             DBHolder.getSqlExecutor().execute(sql);
         }
     }
@@ -158,7 +158,7 @@ public class DbOpPostgresql extends SqlHelper {
     }
 
     @Override
-    public String getDbClumnType(Field field) {
+    public String getDbColumnType(Field field) {
         Class<?> classs = field.getType();
         if (classs == String.class) {
             return "varchar(255)";

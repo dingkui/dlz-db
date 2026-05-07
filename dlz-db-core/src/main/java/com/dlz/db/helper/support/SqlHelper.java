@@ -53,5 +53,5 @@ public abstract class SqlHelper {
      * 根据属性取得数据库字段属性
      * @param field
           */
-    public abstract String getDbClumnType(Field field);
+    public abstract String getDbColumnType(Field field);
 }

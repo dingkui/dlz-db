@@ -23,7 +23,7 @@ public enum DbBuildEnum {
     where("where #s");//自定义sql,
     private final String _sql;
 
-    private static Pattern PATTERN_INDEX = Pattern.compile("\\{(\\d+)\\}");
+    private static final Pattern PATTERN_INDEX = Pattern.compile("\\{(\\d+)\\}");
 
     public Condition build(String sql, JSONMap paras) {
         switch (this) {
@@ -38,7 +38,7 @@ public enum DbBuildEnum {
                 sql = SqlUtil.getConditionStr(sql, paras);
                 sql = SqlUtil.replaceSql(sql, paras, 0);
                 Condition condition = new Condition(this);
-                condition.setRunsql(buildSql(sql));
+                condition.setRunSql(buildSql(sql));
                 if (paras != null && !paras.isEmpty()) {
                     condition.addParas(paras);
                 }
@@ -75,7 +75,7 @@ public enum DbBuildEnum {
                 sql = sql.replaceAll("\\$\\.", "\\\\\\$\\\\\\.");
                 sql = SqlUtil.getConditionStr(sql, paraM);
                 sql = SqlUtil.replaceSql(sql, paraM, 0);
-                condition.setRunsql(buildSql(sql));
+                condition.setRunSql(buildSql(sql));
                 if (!paraM.isEmpty()) {
                     condition.addParas(paraM);
                 }
@@ -91,12 +91,12 @@ public enum DbBuildEnum {
             case or:
             case muOr:
             case muAnd:
-                return new Condition(this).setRunsql(_sql);
+                return new Condition(this).setRunSql(_sql);
         }
         throw new SystemException("匹配符有误：" + this);
     }
     public String buildSql(String sql) {
-        if (sql.length() == 0) {
+        if (sql.isEmpty()) {
             return "";
         }
         return _sql.replace("#s", sql);

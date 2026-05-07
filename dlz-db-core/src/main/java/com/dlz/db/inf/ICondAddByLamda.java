@@ -1,9 +1,9 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.enums.DbOprateEnum;
+import com.dlz.db.enums.DbOperateEnum;
 import com.dlz.kit.fn.DlzFn;
 
-import static com.dlz.db.enums.DbOprateEnum.*;
+import static com.dlz.db.enums.DbOperateEnum.*;
 
 /**
  * 基于 Lambda 字段引用（{@link DlzFn}）的条件构造接口。
@@ -32,7 +32,7 @@ import static com.dlz.db.enums.DbOprateEnum.*;
  *   in / ni                     IN / NOT IN
  *   bt / nb                     BETWEEN / NOT BETWEEN
  *   isn / isnn                  IS NULL / IS NOT NULL
- *   op                          自定义操作符（{@link DbOprateEnum}）
+ *   op                          自定义操作符（{@link DbOperateEnum}）
  * </pre>
  *
  * @param <ME> 链式返回类型（子类自身，便于 fluent 风格）
@@ -360,7 +360,7 @@ public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBas
      * @param op 操作符枚举；<b>注意</b>：实际使用的是此枚举自身的 {@code mk(column, value)}，
      *           参数 {@code column}/{@code value} 的含义与该枚举语义一致。
      */
-    default ME op(DlzFn<T, ?> column, DbOprateEnum op, Object value) {
+    default ME op(DlzFn<T, ?> column, DbOperateEnum op, Object value) {
         addChildren(op.mk(column, value));
         return me();
     }

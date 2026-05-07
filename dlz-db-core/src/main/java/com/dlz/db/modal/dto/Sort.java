@@ -29,7 +29,7 @@ public class Sort<T extends Sort> implements Serializable, IChained<T> {
     }
     @JsonIgnore
     public String getSortSql() {
-        if(orders ==null|| orders.size()==0){
+        if(orders ==null|| orders.isEmpty()){
             return null;
         }
         return " order by "+orders.stream()
@@ -52,7 +52,7 @@ public class Sort<T extends Sort> implements Serializable, IChained<T> {
 
     public T addOrder(List<Order> items) {
         List<Order> collect = items.stream().filter(o -> o.getColumn() != null).collect(Collectors.toList());
-        if(collect.size()>0){
+        if(!collect.isEmpty()){
             this.orders.addAll(collect);
         }
         return me();

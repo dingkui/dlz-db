@@ -74,14 +74,14 @@ public class DbPojo {
         return update(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, id).execute();
     }
 
-    public <T> T getById(Class<T> c, Object id) {
+    public <T> T selectById(Class<T> c, Object id) {
         final String idName = DbEntityUtil.getIdName(c);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
         return select(c).eq(idName, id).queryBean();
     }
-    public <T> List<T> getByIds(Class<T> c, Object id) {
+    public <T> List<T> selectByIds(Class<T> c, Object id) {
         final String idName = DbEntityUtil.getIdName(c);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");

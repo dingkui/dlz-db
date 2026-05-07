@@ -52,7 +52,7 @@ public class SqlUtil {
     /**
      * 是否数字
      */
-    private static Pattern PATTERN_ISNUM = Pattern.compile("^-?\\d+(\\.\\d+)?$");
+    private static Pattern PATTERN_IS_NUM = Pattern.compile("^-?\\d+(\\.\\d+)?$");
 
     /**
      * 转换mybatisSQl为jdbcSql
@@ -389,7 +389,7 @@ public class SqlUtil {
         try {
             switch (pte) {
                 case Blob:
-                    return value.getBytes(DBHolder.getSqlConfig().getBlob_charsetname());
+                    return value.getBytes(DBHolder.getSqlConfig().getBlob_charset());
                 case Date:
                     return ValUtil.toDate(value);
                 default:
@@ -423,7 +423,7 @@ public class SqlUtil {
                 continue;
             }
             String valueOf = String.valueOf(o2[i]);
-            if (!PATTERN_ISNUM.matcher(valueOf).find()) {
+            if (!PATTERN_IS_NUM.matcher(valueOf).find()) {
                 isNum = false;
                 if (valueOf.startsWith("'") && valueOf.endsWith("'")) {
                     valueOf = valueOf.substring(1, valueOf.length() - 1);

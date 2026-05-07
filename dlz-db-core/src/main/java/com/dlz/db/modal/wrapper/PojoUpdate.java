@@ -101,7 +101,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
     }
 
     public boolean batch(List<T> valueBeans, int batchSize) {
-        if (valueBeans.size() == 0) {
+        if (valueBeans.isEmpty()) {
             return true;
         }
         final Class<T> beanClass = getBeanClass();
@@ -109,7 +109,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         final DbEntityUtil.IdInfo idInfo = DbEntityUtil.getIdInfo(beanClass);
         final List<Field> fields = BeanInfoHolder.getBeanFields(getBeanClass());
         String sql = WrapperBuildUtil.buildUpdateSql(dbName, fields, idInfo.getName());
-        while (valueBeans.size() > 0 && batchSize > 0) {
+        while (!valueBeans.isEmpty() && batchSize > 0) {
             if (batchSize > valueBeans.size()) {
                 batchSize = valueBeans.size();
             }

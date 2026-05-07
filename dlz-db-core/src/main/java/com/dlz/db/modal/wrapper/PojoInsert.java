@@ -41,7 +41,7 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
     }
 
     public boolean batch(List<T> valueBeans, int batchSize) {
-        if (valueBeans.size() == 0) {
+        if (valueBeans.isEmpty()) {
             return true;
         }
         final Class<T> beanClass = getBeanClass();
@@ -54,7 +54,7 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
                 .filter(field -> idType != IdType.AUTO || idField != field)
                 .collect(Collectors.toList());
         String sql = WrapperBuildUtil.buildInsertSql(dbName, fields);
-        while (valueBeans.size() > 0 && batchSize > 0) {
+        while (!valueBeans.isEmpty() && batchSize > 0) {
             if (batchSize > valueBeans.size()) {
                 batchSize = valueBeans.size();
             }

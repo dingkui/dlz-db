@@ -1,8 +1,7 @@
 package com.dlz.db.solon;
 
 import com.dlz.db.core.*;
-import com.dlz.db.core.abstractor.ACacheAdapter;
-import com.dlz.db.core.abstractor.AResourceAdapter;
+import com.dlz.db.core.DlzResourceAdapter;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +16,6 @@ import org.noear.solon.Solon;
 public class SolonDbProvider extends ADbProvider {
 
     private final BaseDbProperties sqlConfig;
-    private final IResourceLoader resourceLoader = new AResourceAdapter();
-    private final ICacheExecutor noOpCache = new ACacheAdapter() {};
 
     public SolonDbProvider(BaseDbProperties sqlConfig) {
         this.sqlConfig = sqlConfig;
@@ -41,13 +38,7 @@ public class SolonDbProvider extends ADbProvider {
 
     @Override
     public ICacheExecutor getCacheExecutor() {
-        ICacheExecutor cache = Solon.context().getBean(ICacheExecutor.class);
-        return cache != null ? cache : noOpCache;
-    }
-
-    @Override
-    public IResourceLoader getResourceLoader() {
-        return resourceLoader;
+        return Solon.context().getBean(ICacheExecutor.class);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class BaseDbProperties {
     /**
      * 数据库中blob类型编码
      */
-    private String blob_charsetname = "GBK";
+    private String blob_charset = "GBK";
     /**
      * sql路径配置
      **/

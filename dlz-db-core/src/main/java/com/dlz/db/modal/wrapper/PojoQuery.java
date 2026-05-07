@@ -1,6 +1,6 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.convertor.clumnname.IConvertorToFieldName;
+import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlRunThreadHolder;
@@ -65,7 +65,7 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>,T, TableQuery> impleme
     /**
      * 自动根据map的键值对添加查询条件
      *
-     * @param req {key:列名，value:值} key值为列名 可带$前缀，如$eq_key:表示 key=key DbOprateEnum=eq
+     * @param req {key:列名，value:值} key值为列名 可带$前缀，如$eq_key:表示 key=key DbOperateEnum=eq
      *                             value值为值
      * @return 返回当前条件对象，支持链式调用
      */

@@ -43,7 +43,7 @@ public class TableQuery extends AQuery<TableQuery> implements ISqlPage<TableQuer
 
     @Override
     public String getSql() {
-        return WrapperBuildUtil.MAKER_SQL_SEARCHE;
+        return WrapperBuildUtil.MAKER_SQL_SEARCH;
     }
 
     @Override
