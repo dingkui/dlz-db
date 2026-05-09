@@ -12,7 +12,7 @@ import org.junit.Test;
  * 单元测试支撑类<br>
  * @author dk
  */
-public class WrapperUpdateTest extends SpingDbBaseTest {
+public class WrapperUpdateTest extends SpringIntegrationTest {
 	@Test
 	public void dbSqlTest3() {
 		Role role = new Role();

@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class WrapperBuildUtilTest extends SpingDbBaseTest {
+public class WrapperBuildUtilTest extends SpringIntegrationTest {
 
     @Test
     public void getIdType_withExplicitInput() {

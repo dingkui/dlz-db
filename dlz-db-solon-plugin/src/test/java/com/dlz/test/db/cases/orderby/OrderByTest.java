@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  * 排序专题测试
  * 覆盖链式排序、Page 内排序
  */
-public class OrderByTest extends SpingDbBaseTest {
+public class OrderByTest extends SpringIntegrationTest {
 
     @Before
     public void setUp() {

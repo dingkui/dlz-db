@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 
 import static org.junit.Assert.*;
 
-public class BeanInfoHolderTest extends SpingDbBaseTest {
+public class BeanInfoHolderTest extends SpringIntegrationTest {
 
     @Test
     public void getIdField_withExplicitTableId() {

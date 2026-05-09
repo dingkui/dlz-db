@@ -13,7 +13,7 @@ import static org.junit.Assert.fail;
  * 事务专题测试
  * 覆盖提交/回滚/嵌套/返回值
  */
-public class TransactionTest extends SpingDbBaseTest {
+public class TransactionTest extends SpringIntegrationTest {
 
     @Before
     public void setUp() {

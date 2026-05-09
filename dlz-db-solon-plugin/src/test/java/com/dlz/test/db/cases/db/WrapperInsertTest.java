@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @Slf4j
-public class WrapperInsertTest extends SpingDbBaseTest {
+public class WrapperInsertTest extends SpringIntegrationTest {
 
     @Test
     public void insertWrapperTest1() {

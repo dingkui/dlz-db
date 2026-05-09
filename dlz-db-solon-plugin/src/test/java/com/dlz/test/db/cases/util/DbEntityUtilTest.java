@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DbEntityUtilTest extends SpingDbBaseTest {
+public class DbEntityUtilTest extends SpringIntegrationTest {
 
     @Test
     public void getIdName_withTableId() {

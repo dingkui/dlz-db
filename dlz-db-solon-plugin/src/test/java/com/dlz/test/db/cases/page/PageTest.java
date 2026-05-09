@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  * 分页专题测试
  * 覆盖 Jdbc/Pojo/Sql 的分页查询
  */
-public class PageTest extends SpingDbBaseTest {
+public class PageTest extends SpringIntegrationTest {
 
     @Before
     public void setUp() {

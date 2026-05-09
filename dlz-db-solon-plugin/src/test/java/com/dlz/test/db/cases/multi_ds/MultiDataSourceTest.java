@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNull;
  * 多数据源专题测试
  * 覆盖动态数据源切换
  */
-public class MultiDataSourceTest extends SpingDbBaseTest {
+public class MultiDataSourceTest extends SpringIntegrationTest {
 
     @Before
     public void setUp() {

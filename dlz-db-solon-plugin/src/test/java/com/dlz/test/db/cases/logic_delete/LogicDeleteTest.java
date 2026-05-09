@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * 逻辑删除专题测试
  * 覆盖软删除/恢复/查询过滤
  */
-public class LogicDeleteTest extends SpingDbBaseTest {
+public class LogicDeleteTest extends SpringIntegrationTest {
 
     @Before
     public void setUp() {

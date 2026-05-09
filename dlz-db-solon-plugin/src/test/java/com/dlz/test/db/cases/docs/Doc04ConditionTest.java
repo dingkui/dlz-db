@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class Doc04ConditionTest extends SpingDbBaseTest {
+public class Doc04ConditionTest extends SpringIntegrationTest {
     @Test
     public void conditionTest4_1_1() {
         DB.Pojo.select(User.class)

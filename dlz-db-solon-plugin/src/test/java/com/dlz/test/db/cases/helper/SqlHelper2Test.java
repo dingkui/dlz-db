@@ -6,7 +6,7 @@ import com.dlz.test.db.config.SpingDbBaseTest;
 import org.junit.Test;
 
 
-public class SqlHelper2Test extends SpingDbBaseTest {
+public class SqlHelper2Test extends SpringIntegrationTest {
 
     @Test
     public void lamdaTest2() {

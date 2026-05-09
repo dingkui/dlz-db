@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * 条件构造专题测试
  * 覆盖 eq/ne/gt/like/in/or/and/nest 等条件构造
  */
-public class ConditionTest extends SpingDbBaseTest {
+public class ConditionTest extends SpringIntegrationTest {
 
     @Before
     public void setUp() {

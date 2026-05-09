@@ -8,7 +8,7 @@ import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.Dict;
 import org.junit.Test;
 
-public class TableDeleteTest extends SpingDbBaseTest {
+public class TableDeleteTest extends SpringIntegrationTest {
     @Test
     public void tableDeleteTest1() {
         TableDelete delete = DB.Table.delete("t_b_dict")

@@ -10,7 +10,7 @@ import java.sql.Types;
 
 import static org.junit.Assert.*;
 
-public class TableColumnMapperTest extends SpingDbBaseTest {
+public class TableColumnMapperTest extends SpringIntegrationTest {
 
     private static Object invokeCover(Integer dbClass, Object value) throws Exception {
         Method method = TableColumnMapper.class.getDeclaredMethod("cover", Integer.class, Object.class);

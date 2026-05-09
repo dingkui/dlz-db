@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Slf4j
-public class WrapperQuickTest extends SpingDbBaseTest{
+public class WrapperQuickTest extends SpringIntegrationTest{
 
     @Test
     public void insertOrUpdateTest1() {
