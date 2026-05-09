@@ -4,6 +4,7 @@ import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.DB;
 import com.dlz.test.db.Starter;
+import com.dlz.test.db.config.SpingDbBaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.noear.solon.Solon;
@@ -13,18 +14,7 @@ import org.noear.solon.Solon;
  */
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SolonSmokeTest {
-
-    @BeforeAll
-    static void start() {
-        // 启动 Solon 应用（会自动加载 META-INF/solon/dlz-db-solon-plugin.properties）
-        Solon.start(Starter.class, new String[]{});
-    }
-
-    @AfterAll
-    static void stop() {
-        Solon.stopBlock(true, 0);
-    }
+public class SolonSmokeTest extends SpingDbBaseTest {
 
     @Test
     @Order(1)

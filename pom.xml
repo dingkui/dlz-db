@@ -3,13 +3,13 @@
     <parent>
         <groupId>top.dlzio</groupId>
         <artifactId>dlz.parent</artifactId>
-        <version>6.6.3.2</version>
+        <version>6.6.3.3</version>
     </parent>
     <name>dlz-db</name>
 	<artifactId>dlz-db</artifactId>
     <version>7.0.0</version>
 	<packaging>pom</packaging>
-    <description>DLZ-DB v7.0: 多模块数据库框架，支持 Spring Boot 和 Solon</description>
+    <description>DLZ-DB v7.0: 多模块数据库框架，支持 Spring 和 Solon</description>
     <properties>
         <java.version>1.8</java.version>
         <dlz-spring.version>6.6.4</dlz-spring.version>
@@ -17,7 +17,8 @@
         
         <!-- 代码质量工具版本 -->
         <jacoco.version>0.8.11</jacoco.version>
-        <spotbugs.version>4.8.3</spotbugs.version>
+        <spotbugs.version>4.8.6</spotbugs.version>
+        <spotbugs.maven.version>4.8.6.6</spotbugs.maven.version>
         <findsecbugs.version>1.12.0</findsecbugs.version>
         <checkstyle.version>10.12.7</checkstyle.version>
         <pmd.version>3.21.2</pmd.version>
@@ -31,14 +32,63 @@
         <module>dlz-db-spring-boot-starter</module>
         <module>dlz-db-solon-plugin</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.9.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.9.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     
     <build>
         <plugins>
+            <!-- Maven Surefire 插件 - 覆盖父 POM 的 skip=true 配置 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <skip>false</skip>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
             <!-- JaCoCo 测试覆盖率 -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/reports/jacoco</outputDirectory>
+                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -59,6 +109,9 @@
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/reports/jacoco-aggregate</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -67,13 +120,14 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>${spotbugs.version}</version>
+                <version>${spotbugs.maven.version}</version>
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
                     <xmlOutput>true</xmlOutput>
                     <htmlOutput>true</htmlOutput>
                     <failOnError>false</failOnError>
+                    <outputDirectory>${project.build.directory}/reports/spotbugs</outputDirectory>
                     <plugins>
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
@@ -101,6 +155,7 @@
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
                     <violationSeverity>warning</violationSeverity>
+                    <outputFile>${project.build.directory}/reports/checkstyle/checkstyle-result.xml</outputFile>
                 </configuration>
             </plugin>
 
@@ -113,6 +168,20 @@
                     <failOnViolation>false</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
                     <targetJdk>1.8</targetJdk>
+                    <outputDirectory>${project.build.directory}/reports/pmd</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- OWASP Dependency-Check 依赖安全扫描 -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>9.0.9</version>
+                <configuration>
+                    <format>ALL</format>
+                    <outputDirectory>${project.build.directory}/reports</outputDirectory>
+                    <failBuildOnCVSS>7</failBuildOnCVSS>
+                    <suppressionFile>reports/dependency-check-suppressions.xml</suppressionFile>
                 </configuration>
             </plugin>
         </plugins>

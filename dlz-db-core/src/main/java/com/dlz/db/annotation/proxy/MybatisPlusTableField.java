@@ -27,7 +27,21 @@ public class MybatisPlusTableField {
     }
 
     public String value(Field field){
-        return MybatisPlusTableName.getValueFromAnno(field == null, idTypeAnnotation, field.isAnnotationPresent(idTypeAnnotation), field.getAnnotation(idTypeAnnotation), valueMethod);
+        if (field == null||idTypeAnnotation==null){
+            return null;
+        }
+        if (field.isAnnotationPresent(idTypeAnnotation)) {
+            Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
+            try {
+                String value = (String) valueMethod.invoke(mpAnnotation);
+                if (!value.isEmpty()) {
+                    return value;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
     }
 
 

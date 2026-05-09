@@ -9,6 +9,7 @@ import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.noear.solon.Solon;
 
 /**
@@ -19,7 +20,7 @@ import org.noear.solon.Solon;
 @Slf4j
 public class SpingDbBaseTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() {
         if (Solon.app() == null) {
             Solon.start(Starter.class, new String[0]);
