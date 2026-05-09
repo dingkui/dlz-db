@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  * <p>使用 SQLite 文件数据库验证事务，因为 SQLite 支持 BEGIN/COMMIT/ROLLBACK。</p>
  */
 @Slf4j
-public class DynamicAndTxTest extends SpringIntegrationTest {
+public class DynamicAndTxTest extends SpingDbBaseTest {
 
     private static final String TEST_DS_NAME = "tx_test_ds";
     private static final String DB_FILE = "./test/tx_test.sqlite3";

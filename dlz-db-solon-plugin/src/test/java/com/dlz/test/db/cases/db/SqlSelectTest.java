@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 @Slf4j
-public class SqlSelectTest extends SpringIntegrationTest {
+public class SqlSelectTest extends SpingDbBaseTest {
     @Test
     public void sqlSelectTest1() {
         String sql = "key.sqlTest.sqlUtil";

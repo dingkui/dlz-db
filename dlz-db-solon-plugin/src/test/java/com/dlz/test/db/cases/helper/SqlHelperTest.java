@@ -6,7 +6,7 @@ import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.Dict;
 import org.junit.Test;
 
-public class SqlHelperTest extends SpringIntegrationTest {
+public class SqlHelperTest extends SpingDbBaseTest {
     @Test
     public void landaTest1() {
         long t=System.currentTimeMillis();

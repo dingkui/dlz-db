@@ -11,7 +11,7 @@ import org.junit.Test;
  * 单元测试支撑类<br>
  * @author dk
  */
-public class TableUpdateTest extends SpringIntegrationTest {
+public class TableUpdateTest extends SpingDbBaseTest {
 	@Test
 	public void UpdateParaMapTest(){
 		TableUpdate where = DB.Table.update("Sys_Sql")

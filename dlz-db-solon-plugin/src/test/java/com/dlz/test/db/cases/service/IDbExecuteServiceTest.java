@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * 回归测试：验证 IDbExecuteService 精简后核心方法仍可用
  */
 @Slf4j
-public class IDbExecuteServiceTest extends SpringIntegrationTest {
+public class IDbExecuteServiceTest extends SpingDbBaseTest {
     @Before
     public void setUp() {
         DB.Jdbc.execute("delete from Orders");

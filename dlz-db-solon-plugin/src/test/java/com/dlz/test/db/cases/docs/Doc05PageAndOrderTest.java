@@ -7,7 +7,7 @@ import com.dlz.test.db.config.SpingDbBaseTest;
 import com.dlz.test.db.entity.User;
 import org.junit.Test;
 
-public class Doc05PageAndOrderTest extends SpringIntegrationTest {
+public class Doc05PageAndOrderTest extends SpingDbBaseTest {
     @Test
     public void pageAndOrderTest5_1_1() {
         // 基础分页

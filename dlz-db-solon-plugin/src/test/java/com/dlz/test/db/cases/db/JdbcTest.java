@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 @Slf4j
-public class JdbcTest extends SpringIntegrationTest {
+public class JdbcTest extends SpingDbBaseTest {
     @Test
     public void jdbcPageTest1() {
         final JdbcQuery page = DB.Jdbc.select("select 1 from dual where ?=1", 1)

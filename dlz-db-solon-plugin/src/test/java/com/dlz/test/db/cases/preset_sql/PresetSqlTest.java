@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
  * 预设 SQL 专题测试
  * 覆盖 SQL 参数化查询（#{param}）
  */
-public class PresetSqlTest extends SpringIntegrationTest {
+public class PresetSqlTest extends SpingDbBaseTest {
 
     @Before
     public void setUp() {

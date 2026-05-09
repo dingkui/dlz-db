@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * 主键策略专题测试
  * 覆盖 AUTO/ASSIGN_ID/INPUT 三种主键策略
  */
-public class IdStrategyTest extends SpringIntegrationTest {
+public class IdStrategyTest extends SpingDbBaseTest {
 
     @Before
     public void setUp() {

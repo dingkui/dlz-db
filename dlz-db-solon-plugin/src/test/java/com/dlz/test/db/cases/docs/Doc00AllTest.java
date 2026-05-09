@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class Doc00AllTest extends SpringIntegrationTest {
+public class Doc00AllTest extends SpingDbBaseTest {
     @Before
     public void addSql() {
         SysSql SysSql = new SysSql();

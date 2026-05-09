@@ -14,7 +14,7 @@ import org.noear.solon.Solon;
  */
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SolonSmokeTest extends SpringIntegrationTest {
+public class SolonSmokeTest extends SpingDbBaseTest {
 
     @Test
     @Order(1)

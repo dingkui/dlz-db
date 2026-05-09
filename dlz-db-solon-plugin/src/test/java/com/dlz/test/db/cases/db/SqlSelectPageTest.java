@@ -6,7 +6,7 @@ import com.dlz.db.modal.dto.Page;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import org.junit.Test;
 
-public class SqlSelectPageTest extends SpringIntegrationTest {
+public class SqlSelectPageTest extends SpingDbBaseTest {
     @Test
     public void PageTest() {
         DB.Sql.select("select t.* from Goods t where t.goods_id=310")

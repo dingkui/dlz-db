@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * 批量操作专题测试
  * 覆盖批量插入/更新
  */
-public class BatchTest extends SpringIntegrationTest {
+public class BatchTest extends SpingDbBaseTest {
 
     @Before
     public void setUp() {

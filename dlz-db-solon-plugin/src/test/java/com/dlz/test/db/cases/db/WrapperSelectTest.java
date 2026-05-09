@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 @Slf4j
-public class WrapperSelectTest extends SpringIntegrationTest {
+public class WrapperSelectTest extends SpingDbBaseTest {
     @Test
     public void conditionWhereTest3_2() {
         Menu menu = new Menu();
