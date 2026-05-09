@@ -2,13 +2,15 @@
 
 > **一个不到 7000 行代码的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
+[![Build Status](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 
 ```java
 List<User> users = DB.Pojo.select(User.class)
         .eq(User::getStatus, 1)
-        .lk(User::getName, "张")
+        .like(User::getName, "张")
         .orderByDesc(User::getCreateTime)
         .queryBeanList();
 ```
@@ -120,7 +122,7 @@ DLZ-DB 整个框架的审美是一致的：**用显式的 lambda 和链式，对
 .eq(name != null, "name", name)
 
 // 嵌套逻辑：lambda 就地表达
-.or(o -> o.lk(User::getName, "关键词").lk(User::getAddress, "关键词"))
+.or(o -> o.like(User::getName, "关键词").like(User::getAddress, "关键词"))
 
 // 数据源作用域：lambda 包起来
 DB.Dynamic.use("other_db", () -> { ... });
@@ -323,7 +325,7 @@ List<User> users = DB.Sql.select("key.user.find")
 - 入口收敛到 `DB.`，决策树很浅。
 - 条件方法统一 `(condition, field, value)` 三参形式，特例少。
 - 返回值有机械规则：**带 `Bean` → Bean，不带 → Map，带 `(Class)` → 指定类型**。
-- 整个使用规范可以压进 **1000 token** 以内塞给 AI（见 [docs/第05章-AI辅助/5.1-AI速读-SpringBoot.md](./docs/第05章-AI辅助/5.1-AI速读-SpringBoot.md)）。
+- 整个使用规范可以压进 **1000 token** 以内塞给 AI（见 [docs/第05章-AI辅助/5.1-AI速读.md](./docs/第05章-AI辅助/5.1-AI速读.md)）。
 
 ---
 
@@ -402,19 +404,22 @@ DB.Pojo.select(User.class)
 - [6.3 框架源码指南](./docs/第06章-迁移与升级/6.3-框架源码指南.md)
 
 ### 其他
-- [5.1 AI 速读 - Spring Boot](./docs/第05章-AI辅助/5.1-AI速读-SpringBoot.md)（AI 代码生成规范）
-- [5.2 AI 速读 - Solon](./docs/第05章-AI辅助/5.2-AI速读-Solon.md)
+- [5.1 AI 速读](./docs/第05章-AI辅助/5.1-AI速读.md)（AI 代码生成规范）
+- [5.1 AI Quick Reference (English)](./docs/Chapter05-AI/5.1-AI-Quick-Reference.md)（English AI Quick Reference）
 - [7.1 最佳实践](./docs/第07章-最佳实践/7.1-最佳实践.md)
+
+### English Documentation
+- [README (English)](./README_EN.md)
 
 ---
 
 ## License
 
-[MIT License](LICENSE) © DLZ KIT
+[Apache License 2.0](LICENSE) © DLZ KIT
 
 ---
 
-<div align="center">
+<div>
 **简单的事情简单做，复杂的事情也能简单做。**
 如果觉得有帮助，请点个 ⭐ Star 支持一下！
 </div>

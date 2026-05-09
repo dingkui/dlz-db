@@ -1,7 +1,6 @@
 package com.dlz.db.solon;
 
 import com.dlz.db.core.*;
-import com.dlz.db.core.DlzResourceAdapter;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import lombok.extern.slf4j.Slf4j;

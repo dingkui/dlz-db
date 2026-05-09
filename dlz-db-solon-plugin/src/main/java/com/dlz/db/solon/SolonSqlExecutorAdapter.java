@@ -72,8 +72,9 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
                     if (keys.next()) {
                         return keys.getLong(1);
                     }
-                } catch (java.sql.SQLFeatureNotSupportedException ignore) {
+                } catch (SQLFeatureNotSupportedException ignore) {
                     // 驱动不支持（如部分版本的 SQLite），走兜底
+                    log.warn("无自动增长主键");
                 }
                 // 2. SQLite 等兜底：按方言查最后插入 ID
                 Long id = queryLastInsertIdByDialect(conn);
