@@ -32,27 +32,27 @@ public class SqlUtil {
     /**
      * 参数匹配符：如  ?
      */
-    private static Pattern PATTERN_PARA = Pattern.compile("\\?");
+    private static final Pattern PATTERN_PARA = Pattern.compile("\\?");
     /**
      * 替换内容匹配符：如  ${bb}
      */
-    private static Pattern PATTERN_REPLACE = Pattern.compile("\\$\\{(\\w[\\.\\w]*)\\}");
+    private static final Pattern PATTERN_REPLACE = Pattern.compile("\\$\\{(\\w[\\.\\w]*)\\}");
     /**
      * 预处理匹配符：如   #{aa}
      */
-    private static Pattern PATTERN_PREPARE = Pattern.compile("#\\{(\\w+[\\.\\w]*)\\}");
+    private static final Pattern PATTERN_PREPARE = Pattern.compile("#\\{(\\w+[\\.\\w]*)\\}");
     /**
      * 条件判断符号（只用作条件判断，不做输出）：如   ^#{cc}
      */
-    private static Pattern PATTERN_NONE = Pattern.compile("\\^#\\{(\\w[\\.\\w]*)\\}");
+    private static final Pattern PATTERN_NONE = Pattern.compile("\\^#\\{(\\w[\\.\\w]*)\\}");
     /**
      * 条件语句匹配 ：如   [xxx #{aa} ${bb} ^#{cc}]
      */
-    private static Pattern PATTERN_CONDITION = Pattern.compile("\\[([^\\^][^\\[\\]]*)\\]");
+    private static final Pattern PATTERN_CONDITION = Pattern.compile("\\[([^\\^][^\\[\\]]*)\\]");
     /**
      * 是否数字
      */
-    private static Pattern PATTERN_IS_NUM = Pattern.compile("^-?\\d+(\\.\\d+)?$");
+    private static final Pattern PATTERN_IS_NUM = Pattern.compile("^-?\\d+(\\.\\d+)?$");
 
     /**
      * 转换mybatisSQl为jdbcSql
@@ -68,8 +68,8 @@ public class SqlUtil {
      * @author dk 2015-04-09
      */
     private static JdbcItem dealToJdbcSql(String sqlRun, JSONMap para) {
-        List<Object> paraList = new ArrayList<Object>();
-        StringBuffer sb = new StringBuffer();
+        List<Object> paraList = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
         int beginIndex = 0;
         Matcher mat = PATTERN_PREPARE.matcher(sqlRun);
         while (mat.find()) {
@@ -98,7 +98,7 @@ public class SqlUtil {
         if(jdbcSql == null){
             throw new DbException("jdbcSql不应该为空", 1002);
         }
-        StringBuffer sbRunSql = new StringBuffer();
+        StringBuilder sbRunSql = new StringBuilder();
         int beginIndex = 0;
         Matcher mat = PATTERN_PARA.matcher(jdbcSql);
         int index=0;
@@ -302,7 +302,7 @@ public class SqlUtil {
         }
         Matcher mat = PATTERN_REPLACE.matcher(sql);
         int start = 0;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (mat.find()) {
             String key = mat.group(1);
             Object o = JacksonUtil.at(m, key);
@@ -337,7 +337,7 @@ public class SqlUtil {
     public static String getConditionStr(String sql, Map<String, Object> m) {
         Matcher mat = PATTERN_CONDITION.matcher(sql);
         int start = 0;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (mat.find()) {
             String conditionInfo = mat.group(1);
             boolean append = false;

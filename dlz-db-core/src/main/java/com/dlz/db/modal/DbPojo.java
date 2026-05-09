@@ -52,6 +52,15 @@ public class DbPojo {
     public <T> int insert(T bean) {
         return PojoInsert.wrapper(bean).execute();
     }
+    public <T> boolean insertBatch(List<T> bean, int batchSize) {
+        if (!bean.isEmpty()) {
+            return PojoInsert.wrapper(bean.get(0)).batch(bean, batchSize);
+        }
+        return false;
+    }
+    public <T> boolean insertBatch(List<T> bean) {
+        return insertBatch(bean, 1000);
+    }
     public <T> int insertOrUpdate(T obj) {
         final Class<T> aClass = (Class<T>) obj.getClass();
         final DbEntityUtil.IdInfo idInfo = DbEntityUtil.getIdInfo(aClass);

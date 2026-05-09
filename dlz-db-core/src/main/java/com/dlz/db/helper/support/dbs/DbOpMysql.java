@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,7 +57,7 @@ public class DbOpMysql extends SqlHelper {
                 }
             }
             return column;
-        }).filter(column -> column != null)
+        }).filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
 
         String tableComment = BeanInfoHolder.getTableComment(clazz);
@@ -143,16 +144,6 @@ public class DbOpMysql extends SqlHelper {
             sql += " COMMENT '" + columnComment + "'";
         }
         DBHolder.getSqlExecutor().execute(sql);
-    }
-
-    @Override
-    public void updateDefaultValue(String tableName, String columnName, String value) {
-        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE `" + columnName + "` IS NULL";
-        Long count = DBHolder.getSqlExecutor().getFistColumn(sql, Long.class);
-        if (count > 0) {
-            sql = "UPDATE " + tableName + " SET `" + columnName + "` = ? WHERE `" + columnName + "` IS NULL";
-            DBHolder.getSqlExecutor().update(sql, value);
-        }
     }
 
     @Override

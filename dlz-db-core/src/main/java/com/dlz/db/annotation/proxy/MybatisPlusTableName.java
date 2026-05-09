@@ -21,11 +21,15 @@ public class MybatisPlusTableName {
     }
 
     public String value(Class<?> field){
-        if (field == null||idTypeAnnotation==null){
+        return getValueFromAnno(field == null, idTypeAnnotation, field.isAnnotationPresent(idTypeAnnotation), field.getAnnotation(idTypeAnnotation), valueMethod);
+    }
+
+    protected static String getValueFromAnno(boolean b, Class<Annotation> idTypeAnnotation, boolean annotationPresent, Annotation annotation, Method valueMethod) {
+        if (b || idTypeAnnotation ==null){
             return null;
         }
-        if (field.isAnnotationPresent(idTypeAnnotation)) {
-            Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
+        if (annotationPresent) {
+            Annotation mpAnnotation = annotation;
             try {
                 String value = (String) valueMethod.invoke(mpAnnotation);
                 if (!value.isEmpty()) {

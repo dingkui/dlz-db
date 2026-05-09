@@ -18,7 +18,7 @@ public class ParaJdbc implements Serializable , ISqlPara{
     @Setter
     private Page<?> page;
     @Getter
-    private Object[] paras;
+    private final Object[] paras;
     public ParaJdbc(String sql,Object[] paras) {
         sqlItem.setSqlDeal(sql);
         this.paras = paras;

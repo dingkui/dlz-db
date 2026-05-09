@@ -63,18 +63,7 @@ public interface ISqlPage<T extends ISqlPage>{
     }
     /** 可变参数版本的 {@link #page(long, long, List)}。 */
     default T page(long current, long size, Order... orders) {
-        Page pmPage = getPage();
-        if (pmPage == null) {
-            pmPage = Page.build();
-        }
-        pmPage.addOrder(orders);
-        if (size > 0) {
-            pmPage.setSize(size);
-        }
-        if (current > 0) {
-            pmPage.setCurrent(current);
-        }
-        return page(pmPage);
+        return page(current,size,Arrays.asList(orders));
     }
 
     /** 仅追加排序，不改分页。 */

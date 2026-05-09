@@ -123,7 +123,7 @@ public interface ICondAndOr<T extends ICondAndOr> extends ICondBase<T> {
      * <pre>
      * // 最常见用法：A AND (B OR C)
      * .eq(User::getStatus, 1)
-     * .or(o -> o.lk(User::getName, kw).lk(User::getMobile, kw))
+     * .or(o -> o.like(User::getName, kw).like(User::getMobile, kw))
      * // SQL: status = 1 AND (name LIKE ? OR mobile LIKE ?)
      *
      * // 并列多个 or 组：(A OR B) AND (C OR D)

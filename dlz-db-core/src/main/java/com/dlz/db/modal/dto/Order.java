@@ -54,12 +54,16 @@ public class Order implements Serializable {
     public static Order[] ascs(String... columns) {
         return Arrays.stream(columns).map(Order::asc).toArray(Order[]::new);
     }
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
     public static <T> Order[] ascs(DlzFn<T, ?>... columns) {
         return Arrays.stream(columns).map(Order::asc).toArray(Order[]::new);
     }
     public static Order[] descs(String... columns) {
         return Arrays.stream(columns).map(Order::desc).toArray(Order[]::new);
     }
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
     public static <T1> Order[] descs(DlzFn<T1, ?>... columns) {
         return Arrays.stream(columns).map(Order::desc).toArray(Order[]::new);
     }

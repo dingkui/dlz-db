@@ -18,17 +18,14 @@ public class DBHolder {
     public static ISqlExecutor sqlExecutor;
     private static ICommService service;
     private static ICacheExecutor cacheExecutor;
-    private static ITxExecutor txExecutor;
     private static BaseDbProperties properties;
     public static ADbProvider dbProvider;
 
     public static ISqlExecutor getSqlExecutor() {
-        if (sqlExecutor == null) {
-            if (dbProvider != null) {
-                sqlExecutor = dbProvider.getSqlExecutor();
-            }
+        if (sqlExecutor == null && dbProvider != null) {
+            sqlExecutor = dbProvider.getSqlExecutor();
         }
-        if(sqlExecutor==null){
+        if (sqlExecutor == null) {
             throw new SystemException("sqlExecutor is null");
         }
         return sqlExecutor;
@@ -39,7 +36,7 @@ public class DBHolder {
             if (dbProvider != null) {
                 service = dbProvider.getService();
             }
-            if(service==null){
+            if (service == null) {
                 throw new SystemException("service is null");
             }
             if (log.isInfoEnabled()) {
@@ -51,10 +48,8 @@ public class DBHolder {
     }
 
     public static ICacheExecutor getCacheExecutor() {
-        if (cacheExecutor == null) {
-            if (dbProvider != null) {
-                cacheExecutor = dbProvider.getCacheExecutor();
-            }
+        if (cacheExecutor == null && dbProvider != null) {
+            cacheExecutor = dbProvider.getCacheExecutor();
         }
         return cacheExecutor;
     }
@@ -67,11 +62,10 @@ public class DBHolder {
     public static void setDbProvider(ADbProvider provider) {
         DBHolder.dbProvider = provider;
     }
+
     public static BaseDbProperties getSqlConfig() {
-        if (properties == null) {
-            if (dbProvider != null) {
-                properties = dbProvider.getSqlConfig();
-            }
+        if (properties == null && dbProvider != null) {
+            properties = dbProvider.getSqlConfig();
         }
         return properties;
     }
@@ -101,11 +95,11 @@ public class DBHolder {
         return s.apply(getService());
     }
 
-    public static <R> R doDb(Function<ICommService, R> s,boolean clearMappers) {
-        if(clearMappers){
+    public static <R> R doDb(Function<ICommService, R> s, boolean clearMappers) {
+        if (clearMappers) {
             try {
                 return s.apply(getService());
-            }finally {
+            } finally {
                 SqlRunThreadHolder.removeColumnNameConvertor();
                 SqlRunThreadHolder.removeConvertorToFieldName();
                 SqlRunThreadHolder.removeTableColumnMapper();

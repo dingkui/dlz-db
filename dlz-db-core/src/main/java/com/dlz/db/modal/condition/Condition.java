@@ -99,7 +99,7 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
     }
 
     public void addChildren(Condition child) {
-        if(child.children.size()>0){
+        if(!child.children.isEmpty()){
             children.addAll(child.children);
         }else{
             children.add(child);

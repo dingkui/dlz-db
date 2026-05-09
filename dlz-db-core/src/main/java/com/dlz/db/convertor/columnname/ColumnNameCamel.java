@@ -12,7 +12,7 @@ public class ColumnNameCamel implements IColumnNameConvertor {
 			return "";
 		}
 
-		if(dbKey.indexOf("_")==-1){
+		if(!dbKey.contains("_")){
 			boolean isAllLowerCase = true;
 			for (char c : dbKey.toCharArray()) {
 				if (!Character.isLowerCase(c) && !Character.isDigit(c)) {
@@ -47,7 +47,7 @@ public class ColumnNameCamel implements IColumnNameConvertor {
 		if(beanKey==null){
 			return null;
 		}
-		if(beanKey.indexOf("_")>-1){
+		if(beanKey.contains("_")){
 			return beanKey;
 		}
 		//是否全部大写

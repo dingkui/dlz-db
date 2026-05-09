@@ -56,10 +56,8 @@ public class BeanInfoHolder {
 
             if(StringUtils.isEmpty(columnName)){
                 TableField name = field.getAnnotation(TableField.class);
-                if (name != null) {
-                    if (name.exist()) {
-                        columnName =  name.value();
-                    }
+                if (name != null && name.exist()) {
+                    columnName =  name.value();
                 }
             }
             if(StringUtils.isEmpty(columnName)){

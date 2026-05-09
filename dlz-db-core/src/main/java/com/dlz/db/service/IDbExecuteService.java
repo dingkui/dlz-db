@@ -56,48 +56,4 @@ public interface IDbExecuteService extends IDbBaseService{
         }
         return doDb(paraMap, jdbcSql -> getSqlExecutor().update(jdbcSql.sql, jdbcSql.paras));
     }
-
-//    default <T> long insert(T bean){
-//        return execute(PojoInsert.wrapper(bean));
-//    }
-//
-//    default <T> long insertWithAutoKey(T bean){
-//        final Long newid = insertWithAutoKey(PojoInsert.wrapper(bean));
-//        if(newid != null){
-//            FieldReflections.setValue(bean, "id", newid);
-//        }
-//        return newid;
-//    }
-//
-//    default <T> long delete(T bean){
-//        return delete(PojoDelete.wrapper(bean));
-//    }
-//
-//    default <T> int updateByIdOrInsert(T bean){
-//        Object id = FieldReflections.getValue(bean, "id",false);
-//        if(StringUtils.isEmpty(id)){
-//            execute(PojoInsert.wrapper(bean));
-//            return 1;
-//        }
-//        return execute(PojoUpdate.wrapper((Class<T>)bean.getClass()).eq("id",id).set(bean));
-//    }
-//    default <T> int updateById(T bean){
-//        Object id = FieldReflections.getValue(bean, "id",false);
-//        if(StringUtils.isEmpty(id)){
-//            throw new ValidateException("id不能为空");
-//        }
-//        return execute(PojoUpdate.wrapper((Class<T>)bean.getClass()).eq("id",id).set(bean));
-//    }
-//    default <T> int deleteById(String id,Class<T> clazz){
-//        if(StringUtils.isEmpty(id)){
-//            throw new ValidateException("id不能为空");
-//        }
-//        return execute(PojoDelete.wrapper(clazz).eq("id",id));
-//    }
-//    default <T> int deleteByIds(String id,Class<T> clazz){
-//        if(StringUtils.isEmpty(id)){
-//            throw new ValidateException("id不能为空");
-//        }
-//        return execute(PojoDelete.wrapper(clazz).in("id",id));
-//    }
 }

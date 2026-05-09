@@ -44,7 +44,7 @@ public class DbOpPostgresql extends SqlHelper {
                 column += " PRIMARY KEY";
             }
             return column;
-        }).filter(column -> column != null)
+        }).filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
 
         String sql = "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" (" + columns + ")";
@@ -62,9 +62,7 @@ public class DbOpPostgresql extends SqlHelper {
         String sql = "SELECT column_name as name FROM information_schema.columns WHERE table_schema='public' AND table_name='" + tableName.toLowerCase() + "'";
         List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql);
         Set<String> re = new HashSet();
-        maps.forEach(item -> {
-            re.add(ValUtil.toStr(item.get("name"), "").toUpperCase());
-        });
+        maps.forEach(item -> re.add(ValUtil.toStr(item.get("name"), "").toUpperCase()));
         return re;
     }
 
@@ -147,15 +145,6 @@ public class DbOpPostgresql extends SqlHelper {
         }
     }
 
-    @Override
-    public void updateDefaultValue(String tableName, String columnName, String value) {
-        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE `" + columnName + "` IS NULL";
-        Long count = DBHolder.getSqlExecutor().getFistColumn(sql, Long.class);
-        if (count > 0) {
-            sql = "UPDATE " + tableName + " SET `" + columnName + "` = ? WHERE `" + columnName + "` IS NULL";
-            DBHolder.getSqlExecutor().update(sql, value);
-        }
-    }
 
     @Override
     public String getDbColumnType(Field field) {

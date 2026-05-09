@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 
 @AllArgsConstructor
 public enum DbOperateEnum {
-    isn("#n is null"),//为空
-    isnn("#n is not null"),//不为空
+    isNull("#n is null"),//为空
+    isNotNull("#n is not null"),//不为空
     eq("#n = #{#k}"),
     lt("#n < #{#k}"),//小于
     le("#n <= #{#k}"),//小于等于
@@ -23,20 +23,20 @@ public enum DbOperateEnum {
     ge("#n >= #{#k}"),//大于等于
     ne("#n <> #{#k}"),//不等于
     in("#n in (${#k})"),
-    ni("#n not in (${#k})"),
-    lk("#n like #{#k}"),//like:%xxx%
-    ll("#n like #{#k}"),//左like:xxx%
-    lr("#n like #{#k}"),//右like：%xxx
-    nl("#n not like #{#k}"),//不like
-    bt("#n between #{#k1} and #{#k2}"),//BETWEEN 值1 AND 值2
-    nb("#n not between #{#k1} and #{#k2}");//BETWEEN 值1 AND 值2
+    notIn("#n not in (${#k})"),
+    like("#n like #{#k}"),//like:%xxx%
+    likeLeft("#n like #{#k}"),//左like:xxx%
+    likeRight("#n like #{#k}"),//右like：%xxx
+    notLike("#n not like #{#k}"),//不like
+    between("#n between #{#k1} and #{#k2}"),//BETWEEN 值1 AND 值2
+    notBetween("#n not between #{#k1} and #{#k2}");//BETWEEN 值1 AND 值2
     public final String _sql;
     private final static Pattern patternKey = Pattern.compile("#k");
     private final static Pattern patternColumnName = Pattern.compile("#n");
 
     private String mkSql(String dbn, String key) {
         final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbColumnNames(dbn));
-        return key==null?dbnSql: patternKey.matcher(dbnSql).replaceAll(key);
+        return key == null ? dbnSql : patternKey.matcher(dbnSql).replaceAll(key);
     }
 
     private Condition paraZero(String dbn) {
@@ -46,7 +46,7 @@ public enum DbOperateEnum {
     }
 
     private Condition paraOne(String dbn, Object value) {
-        String key = KeyUtil.getKeyName(this + "_" );
+        String key = KeyUtil.getKeyName(this + "_");
         Condition condition = new Condition();
         condition.addPara(key, value);
         condition.setRunSql(mkSql(dbn, key));
@@ -54,7 +54,7 @@ public enum DbOperateEnum {
     }
 
     private Condition paraTwo(String dbn, Object value) {
-        String key =  KeyUtil.getKeyName(this + "_" );
+        String key = KeyUtil.getKeyName(this + "_");
         Object[] array = ValUtil.toArray(value);
         if (array.length < 2) {
             throw new SystemException("参数有误，需要有2个值：" + this);
@@ -69,11 +69,11 @@ public enum DbOperateEnum {
     }
 
     private Condition paraIn(String dbn, Object value) {
-        String key =  KeyUtil.getKeyName(this + "_" );
+        String key = KeyUtil.getKeyName(this + "_");
         Condition condition = new Condition();
         condition.setRunSql(mkSql(dbn, key));
         if (value instanceof String) {
-            String v = ((String) value);
+            String v = (String) value;
             if (v.startsWith("sql:")) {
                 condition.addPara(key, v.substring(4));
                 return condition;
@@ -84,19 +84,19 @@ public enum DbOperateEnum {
     }
 
 
-    public <T> Condition mk(DlzFn<T,?> dbn, Object value) {
+    public <T> Condition mk(DlzFn<T, ?> dbn, Object value) {
         return mk(BeanInfoHolder.fnName(dbn), value);
     }
 
     public Condition mk(String dbn, Object value) {
         switch (this) {
-            case lk:
-            case nl:
+            case like:
+            case notLike:
                 return paraOne(dbn, "%" + value + "%");
-            case ll:
-                return paraOne(dbn, value + "%");
-            case lr:
+            case likeLeft:
                 return paraOne(dbn, "%" + value);
+            case likeRight:
+                return paraOne(dbn, value + "%");
             case eq:
             case ne:
             case gt:
@@ -104,14 +104,14 @@ public enum DbOperateEnum {
             case lt:
             case le:
                 return paraOne(dbn, value);
-            case bt:
-            case nb:
+            case between:
+            case notBetween:
                 return paraTwo(dbn, value);
-            case isn:
-            case isnn:
+            case isNull:
+            case isNotNull:
                 return paraZero(dbn);
             case in:
-            case ni:
+            case notIn:
                 return paraIn(dbn, value);
             default:
                 throw new SystemException("匹配符有误：" + this);

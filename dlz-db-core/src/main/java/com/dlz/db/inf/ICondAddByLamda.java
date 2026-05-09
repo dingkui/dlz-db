@@ -28,10 +28,10 @@ import static com.dlz.db.enums.DbOperateEnum.*;
  * <pre>
  *   eq / ne                     =  / <>
  *   gt / ge / lt / le           > / >= / < / <=
- *   lk / ll / lr / nl           LIKE '%v%' / 'v%' / '%v' / NOT LIKE
- *   in / ni                     IN / NOT IN
- *   bt / nb                     BETWEEN / NOT BETWEEN
- *   isn / isnn                  IS NULL / IS NOT NULL
+ *   like / likeLeft / likeRight / notLike           LIKE '%v%' / 'v%' / '%v' / NOT LIKE
+ *   in / notIn                     IN / NOT IN
+ *   between / notBetween                     BETWEEN / NOT BETWEEN
+ *   isNull / isNotNull                  IS NULL / IS NOT NULL
  *   op                          自定义操作符（{@link DbOperateEnum}）
  * </pre>
  *
@@ -44,70 +44,70 @@ public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBas
 
     /**
      * {@code BETWEEN value1 AND value2}。
-     * <pre>.bt(User::getAge, 18, 60)   // age BETWEEN 18 AND 60</pre>
+     * <pre>.between(User::getAge, 18, 60)   // age BETWEEN 18 AND 60</pre>
      */
-    default ME bt(DlzFn<T, ?> column, Object value1, Object value2) {
-        addChildren(bt.mk(column, new Object[]{value1, value2}));
+    default ME between(DlzFn<T, ?> column, Object value1, Object value2) {
+        addChildren(between.mk(column, new Object[]{value1, value2}));
         return me();
     }
 
     /**
-     * 动态条件版 {@link #bt(DlzFn, Object, Object)}，{@code is=false} 时整条跳过。
-     * <pre>.bt(min != null &amp;&amp; max != null, User::getAge, min, max)</pre>
+     * 动态条件版 {@link #between(DlzFn, Object, Object)}，{@code is=false} 时整条跳过。
+     * <pre>.between(min != null &amp;&amp; max != null, User::getAge, min, max)</pre>
      */
-    default ME bt(boolean is, DlzFn<T, ?> column, Object value1, Object value2) {
+    default ME between(boolean is, DlzFn<T, ?> column, Object value1, Object value2) {
         if (is) {
-            addChildren(bt.mk(column, new Object[]{value1, value2}));
+            addChildren(between.mk(column, new Object[]{value1, value2}));
         }
         return me();
     }
 
     /**
      * 单值形式的 BETWEEN，{@code value} 可为：{@code "v1,v2"} 字符串 / {@code [v1,v2]} JSON / 数组 / List。
-     * <pre>.bt(User::getAge, "18,60")</pre>
+     * <pre>.between(User::getAge, "18,60")</pre>
      */
-    default ME bt(DlzFn<T, ?> column, Object value) {
-        addChildren(bt.mk(column, value));
+    default ME between(DlzFn<T, ?> column, Object value) {
+        addChildren(between.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #bt(DlzFn, Object)}，{@code is=false} 时整条跳过。 */
-    default ME bt(boolean is, DlzFn<T, ?> column, Object value) {
+    /** 动态条件版 {@link #between(DlzFn, Object)}，{@code is=false} 时整条跳过。 */
+    default ME between(boolean is, DlzFn<T, ?> column, Object value) {
         if (is) {
-            addChildren(bt.mk(column, value));
+            addChildren(between.mk(column, value));
         }
         return me();
     }
 
     /**
      * {@code NOT BETWEEN value1 AND value2}。
-     * <pre>.nb(User::getAge, 18, 60)</pre>
+     * <pre>.notBetween(User::getAge, 18, 60)</pre>
      */
-    default ME nb(DlzFn<T, ?> column, Object value1, Object value2) {
-        addChildren(nb.mk(column, new Object[]{value1, value2}));
+    default ME notBetween(DlzFn<T, ?> column, Object value1, Object value2) {
+        addChildren(notBetween.mk(column, new Object[]{value1, value2}));
         return me();
     }
 
-    /** 动态条件版 {@link #nb(DlzFn, Object, Object)}。 */
-    default ME nb(boolean is, DlzFn<T, ?> column, Object value1, Object value2) {
+    /** 动态条件版 {@link #notBetween(DlzFn, Object, Object)}。 */
+    default ME notBetween(boolean is, DlzFn<T, ?> column, Object value1, Object value2) {
         if (is) {
-            addChildren(nb.mk(column, new Object[]{value1, value2}));
+            addChildren(notBetween.mk(column, new Object[]{value1, value2}));
         }
         return me();
     }
 
     /**
-     * 单值形式的 NOT BETWEEN，{@code value} 格式同 {@link #bt(DlzFn, Object)}。
+     * 单值形式的 NOT BETWEEN，{@code value} 格式同 {@link #between(DlzFn, Object)}。
      */
-    default ME nb(DlzFn<T, ?> column, Object value) {
-        addChildren(nb.mk(column, value));
+    default ME notBetween(DlzFn<T, ?> column, Object value) {
+        addChildren(notBetween.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #nb(DlzFn, Object)}。 */
-    default ME nb(boolean is, DlzFn<T, ?> column, Object value) {
+    /** 动态条件版 {@link #notBetween(DlzFn, Object)}。 */
+    default ME notBetween(boolean is, DlzFn<T, ?> column, Object value) {
         if (is) {
-            addChildren(nb.mk(column, value));
+            addChildren(notBetween.mk(column, value));
         }
         return me();
     }
@@ -116,34 +116,34 @@ public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBas
 
     /**
      * {@code IS NOT NULL}。
-     * <pre>.isnn(User::getEmail)   // email IS NOT NULL</pre>
+     * <pre>.isNotNull(User::getEmail)   // email IS NOT NULL</pre>
      */
-    default ME isnn(DlzFn<T, ?> column) {
-        addChildren(isnn.mk(column, null));
+    default ME isNotNull(DlzFn<T, ?> column) {
+        addChildren(isNotNull.mk(column, null));
         return me();
     }
 
-    /** 动态条件版 {@link #isnn(DlzFn)}。 */
-    default ME isnn(boolean is, DlzFn<T, ?> column) {
+    /** 动态条件版 {@link #isNotNull(DlzFn)}。 */
+    default ME isNotNull(boolean is, DlzFn<T, ?> column) {
         if (is) {
-            addChildren(isnn.mk(column, null));
+            addChildren(isNotNull.mk(column, null));
         }
         return me();
     }
 
     /**
      * {@code IS NULL}。
-     * <pre>.isn(User::getDeleteTime)   // delete_time IS NULL</pre>
+     * <pre>.isNull(User::getDeleteTime)   // delete_time IS NULL</pre>
      */
-    default ME isn(DlzFn<T, ?> column) {
-        addChildren(isn.mk(column, null));
+    default ME isNull(DlzFn<T, ?> column) {
+        addChildren(isNull.mk(column, null));
         return me();
     }
 
-    /** 动态条件版 {@link #isn(DlzFn)}。 */
-    default ME isn(boolean is, DlzFn<T, ?> column) {
+    /** 动态条件版 {@link #isNull(DlzFn)}。 */
+    default ME isNull(boolean is, DlzFn<T, ?> column) {
         if (is) {
-            addChildren(isn.mk(column, null));
+            addChildren(isNull.mk(column, null));
         }
         return me();
     }
@@ -249,51 +249,51 @@ public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBas
 
     /**
      * {@code column LIKE '%value%'}（双侧模糊）。
-     * <pre>.lk(User::getName, "张")   // name LIKE '%张%'</pre>
+     * <pre>.like(User::getName, "张")   // name LIKE '%张%'</pre>
      */
-    default ME lk(DlzFn<T, ?> column, Object value) {
-        addChildren(lk.mk(column, value));
+    default ME like(DlzFn<T, ?> column, Object value) {
+        addChildren(like.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #lk(DlzFn, Object)}。 */
-    default ME lk(boolean is, DlzFn<T, ?> column, Object value) {
+    /** 动态条件版 {@link #like(DlzFn, Object)}。 */
+    default ME like(boolean is, DlzFn<T, ?> column, Object value) {
         if (is) {
-            addChildren(lk.mk(column, value));
+            addChildren(like.mk(column, value));
         }
         return me();
     }
 
     /**
      * {@code column LIKE 'value%'}（右模糊，通常可命中前缀索引）。
-     * <pre>.ll(User::getName, "张")   // name LIKE '张%'</pre>
+     * <pre>.likeLeft(User::getName, "张")   // name LIKE '张%'</pre>
      */
-    default ME ll(DlzFn<T, ?> column, Object value) {
-        addChildren(ll.mk(column, value));
+    default ME likeLeft(DlzFn<T, ?> column, Object value) {
+        addChildren(likeLeft.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #ll(DlzFn, Object)}。 */
-    default ME ll(boolean is, DlzFn<T, ?> column, Object value) {
+    /** 动态条件版 {@link #likeLeft(DlzFn, Object)}。 */
+    default ME likeLeft(boolean is, DlzFn<T, ?> column, Object value) {
         if (is) {
-            addChildren(ll.mk(column, value));
+            addChildren(likeLeft.mk(column, value));
         }
         return me();
     }
 
     /**
      * {@code column LIKE '%value'}（左模糊，通常无法命中索引）。
-     * <pre>.lr(User::getEmail, "@qq.com")</pre>
+     * <pre>.likeRight(User::getEmail, "@qq.com")</pre>
      */
-    default ME lr(DlzFn<T, ?> column, Object value) {
-        addChildren(lr.mk(column, value));
+    default ME likeRight(DlzFn<T, ?> column, Object value) {
+        addChildren(likeRight.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #lr(DlzFn, Object)}。 */
-    default ME lr(boolean is, DlzFn<T, ?> column, Object value) {
+    /** 动态条件版 {@link #likeRight(DlzFn, Object)}。 */
+    default ME likeRight(boolean is, DlzFn<T, ?> column, Object value) {
         if (is) {
-            addChildren(lr.mk(column, value));
+            addChildren(likeRight.mk(column, value));
         }
         return me();
     }
@@ -301,15 +301,15 @@ public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBas
     /**
      * {@code column NOT LIKE '%value%'}。
      */
-    default ME nl(DlzFn<T, ?> column, Object value) {
-        addChildren(nl.mk(column, value));
+    default ME notLike(DlzFn<T, ?> column, Object value) {
+        addChildren(notLike.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #nl(DlzFn, Object)}。 */
-    default ME nl(boolean is, DlzFn<T, ?> column, Object value) {
+    /** 动态条件版 {@link #notLike(DlzFn, Object)}。 */
+    default ME notLike(boolean is, DlzFn<T, ?> column, Object value) {
         if (is) {
-            addChildren(nl.mk(column, value));
+            addChildren(notLike.mk(column, value));
         }
         return me();
     }
@@ -338,15 +338,15 @@ public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBas
     }
 
     /** {@code column NOT IN (...)}，{@code value} 格式同 {@link #in(DlzFn, Object)}。 */
-    default ME ni(DlzFn<T, ?> column, Object value) {
-        addChildren(ni.mk(column, value));
+    default ME notIn(DlzFn<T, ?> column, Object value) {
+        addChildren(notIn.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #ni(DlzFn, Object)}。 */
-    default ME ni(boolean is, DlzFn<T, ?> column, Object value) {
+    /** 动态条件版 {@link #notIn(DlzFn, Object)}。 */
+    default ME notIn(boolean is, DlzFn<T, ?> column, Object value) {
         if (is) {
-            addChildren(ni.mk(column, value));
+            addChildren(notIn.mk(column, value));
         }
         return me();
     }

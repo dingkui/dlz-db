@@ -59,34 +59,31 @@ public class DbLogUtil {
             }
             traceInfo = trace[index].toString();
 
-            if (traceInfo.indexOf("CGLIB$") > -1 ||
-                    traceInfo.indexOf("lambda$") > -1 ||
+            // 检查是否应该跳过
+            boolean shouldSkip = traceInfo.contains("CGLIB$") ||
+                    traceInfo.contains("lambda$") ||
                     traceInfo.startsWith("sun.") ||
                     traceInfo.startsWith("java.") ||
                     traceInfo.startsWith("org.") ||
-                    traceInfo.startsWith("com.intellij.junit5")
-            ) {
+                    traceInfo.startsWith("com.intellij.junit5");
+
+            // 检查是否是框架代码
+            boolean isFrameworkCode = traceInfo.startsWith("com.dlz.spring.") ||
+                    traceInfo.startsWith("com.dlz.kit.") ||
+                    traceInfo.startsWith("com.dlz.db.");
+
+            if (shouldSkip) {
                 index++;
-                continue;
-            }
-            if (traceInfo.startsWith("com.dlz.spring.") ||
-                    traceInfo.startsWith("com.dlz.kit.")||
-                    traceInfo.startsWith("com.dlz.db.")
-            ) {
+            } else if (isFrameworkCode) {
                 index++;
-                if(log.isTraceEnabled()){
+                if (log.isTraceEnabled()) {
                     frw_trace.add(traceInfo.replaceAll(".*\\((.*)\\)", "$1").replaceAll("\\.java", ""));
                 }
-                continue;
+            } else {
+                // 找到目标，退出循环
+                break;
             }
-            break;
         }
-//		String[] split = traceInfo.split("\\.");
-//		if(split.length>3){
-//			for (int i = 0; i < split.length-3 ; i++) {
-//				split[i]=split[i].substring(0,1);
-//			}
-//		}
         if(!frw_trace.isEmpty()){
             log.trace("< {}", frw_trace.stream().collect(Collectors.joining(" < ")));
         }
@@ -120,12 +117,12 @@ public class DbLogUtil {
             try {
                 if (error != null) {
                     log.error(ExceptionUtils.getStackTrace(error));
-                    log.error(msg.apply(t, result));
+                    log.error(msg.apply(l, result));
                 } else {
                     if(slowSqlThreshold>0 && l>slowSqlThreshold){
-                        log.warn(msg.apply(t, result));
+                        log.warn(msg.apply(l, result));
                     }else{
-                        log.info(msg.apply(t, result));
+                        log.info(msg.apply(l, result));
                     }
                 }
             } finally {

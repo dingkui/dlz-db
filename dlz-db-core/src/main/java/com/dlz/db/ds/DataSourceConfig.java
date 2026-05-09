@@ -70,20 +70,20 @@ public class DataSourceConfig {
             return dbType;
         }
         final String lowerCase = property.getUrl().toLowerCase();
-        if (lowerCase.indexOf(":mysql") > -1
-                || lowerCase.indexOf(":mariadb") > -1) {
+        if (lowerCase.contains(":mysql")
+                || lowerCase.contains(":mariadb")) {
             dbType = DbTypeEnum.MYSQL;
-        } else if (lowerCase.indexOf(":postgresql") > -1) {
+        } else if (lowerCase.contains(":postgresql")) {
             dbType = DbTypeEnum.POSTGRESQL;
-        } else if (lowerCase.indexOf(":oracle") > -1) {
+        } else if (lowerCase.contains(":oracle")) {
             dbType = DbTypeEnum.ORACLE;
-        } else if (lowerCase.indexOf(":dm") > -1) {
+        } else if (lowerCase.contains(":dm")) {
             dbType = DbTypeEnum.DM8;
-        } else if (lowerCase.indexOf(":sqlite") > -1) {
+        } else if (lowerCase.contains(":sqlite")) {
             dbType = DbTypeEnum.SQLITE;
-        } else if (lowerCase.indexOf(":sqlserver") > -1) {
+        } else if (lowerCase.contains(":sqlserver")) {
             dbType = DbTypeEnum.MSSQL;
-        } else if (lowerCase.indexOf(":h2") > -1) {
+        } else if (lowerCase.contains(":h2")) {
             dbType = DbTypeEnum.H2;
         } else {
             throw new SystemException("未识别的数据库类型:" + property.getUrl());

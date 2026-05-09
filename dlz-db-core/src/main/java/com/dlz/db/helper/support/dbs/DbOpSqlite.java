@@ -36,7 +36,7 @@ public class DbOpSqlite extends SqlHelper {
                 }
             }
             return column;
-        }).filter(column -> column != null)
+        }).filter(Objects::nonNull)
         .collect(Collectors.joining(","));
 
 //        String tableComment = BeanInfoHolder.getTableComment(clazz);
@@ -55,9 +55,7 @@ public class DbOpSqlite extends SqlHelper {
         String sql = "PRAGMA TABLE_INFO(`" + tableName + "`)";
         List<ResultMap> maps = DBHolder.doDao(w->w.getList(sql));
         Set<String> re = new HashSet();
-        maps.forEach(item -> {
-            re.add(ValUtil.toStr(item.get("name"), "").toUpperCase());
-        });
+        maps.forEach(item -> re.add(ValUtil.toStr(item.get("name"), "").toUpperCase()));
         return re;
     }
 
@@ -116,16 +114,6 @@ public class DbOpSqlite extends SqlHelper {
     public void createColumn(String tableName, String name, Field field) {
         String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbColumnType(field);
         DBHolder.getSqlExecutor().execute(sql);
-    }
-
-    @Override
-    public void updateDefaultValue(String tableName, String columnName, String value) {
-        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE `" + columnName + "` IS NULL";
-        Long count = DBHolder.getSqlExecutor().getFistColumn(sql, Long.class);
-        if (count > 0) {
-            sql = "UPDATE " + tableName + " SET `" + columnName + "` = ? WHERE `" + columnName + "` IS NULL";
-            DBHolder.getSqlExecutor().update(sql, value);
-        }
     }
 
     //    1.NULL：空值。

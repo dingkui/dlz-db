@@ -54,7 +54,7 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>,T, TableQuery> impleme
         }
         return this;
     }
-
+    @SuppressWarnings("unchecked")
     public PojoQuery<T> columns(DlzFn<T, ?>... columns) {
         if (columns.length > 0) {
             getPm().columns(columns);
@@ -129,11 +129,12 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>,T, TableQuery> impleme
     public Page<T> queryBeanPage() {
         return DBHolder.doDb(s -> s.getPage(this, this.getBeanClass()));
     }
-
+    @SuppressWarnings("unchecked")
     public PojoQuery<T> orderByAsc(DlzFn<T, ?>... column) {
         return sort(Order.ascs(column));
     }
 
+    @SuppressWarnings("unchecked")
     public PojoQuery<T> orderByDesc(DlzFn<T, ?>... column) {
         return sort(Order.descs(column));
     }

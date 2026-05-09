@@ -37,8 +37,8 @@ public class PojoDelete<T> extends APojoQuery<PojoDelete<T>,T, TableDelete> impl
     public PojoDelete<T> me() {
         return this;
     }
-//
-//    public int deletePhysical(){
-//        return this.ignoreLogicDelete(true).execute();
-//    }
+
+    public int deletePhysical(){
+        return this.ignoreLogicDelete(true).execute();
+    }
 }

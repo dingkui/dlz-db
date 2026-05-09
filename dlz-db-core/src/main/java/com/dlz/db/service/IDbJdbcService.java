@@ -28,12 +28,7 @@ public interface IDbJdbcService {
     }
     default <T> List<T> getList(String sql, IRowMapper<T> rowMapper, Object... para) {
         return doJdbc(() -> {
-            List<T> list = DBHolder.getSqlExecutor().getList(sql, new IRowMapper<T>() {
-                @Override
-                public T mapRow(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
-                    return rowMapper.mapRow(rs, rowNum);
-                }
-            }, para);
+            List<T> list = DBHolder.getSqlExecutor().getList(sql, rowMapper::mapRow, para);
             return list;
         });
     }

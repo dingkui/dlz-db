@@ -1,6 +1,7 @@
 package com.dlz.db.helper.support;
 
 import com.dlz.db.helper.bean.TableInfo;
+import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.dto.ResultMap;
 
 import java.lang.reflect.Field;
@@ -47,7 +48,14 @@ public abstract class SqlHelper {
      * @param columnName
      * @param value
      */
-    public abstract void updateDefaultValue(String tableName, String columnName, String value);
+    public void updateDefaultValue(String tableName, String columnName, String value){
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE `" + columnName + "` IS NULL";
+        Long count = DBHolder.getSqlExecutor().getFistColumn(sql, Long.class);
+        if (count > 0) {
+            sql = "UPDATE " + tableName + " SET `" + columnName + "` = ? WHERE `" + columnName + "` IS NULL";
+            DBHolder.getSqlExecutor().update(sql, value);
+        }
+    }
 
     /**
      * 根据属性取得数据库字段属性

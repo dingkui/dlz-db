@@ -35,8 +35,8 @@ public class SqlHolder {
     private static boolean initIng = false;
     static{
         DbTypeEnum[] values = DbTypeEnum.values();
-        for (int i = 0; i < values.length; i++) {
-            m_dialect_sql.put(values[i].getEnd(), new ConcurrentHashMap<>());
+        for (DbTypeEnum value : values) {
+            m_dialect_sql.put(value.getEnd(), new ConcurrentHashMap<>());
         }
     }
 
@@ -171,7 +171,7 @@ public class SqlHolder {
 
     public static void reLoad() {
         m_comm_sql.clear();
-        m_dialect_sql.values().forEach(item->item.clear());
+        m_dialect_sql.values().forEach(Map::clear);
         load();
         loadDbSql();
     }
@@ -179,7 +179,7 @@ public class SqlHolder {
         return sqlStr.replaceAll("--.*", "").replaceAll("[\\s]+", " ");
     }
 
-    private static Pattern sqlRegex = Pattern.compile("[\\s]*(?i)(select|update|delete|insert).*");
+    private static final Pattern sqlRegex = Pattern.compile("[\\s]*(?i)(select|update|delete|insert).*");
     public static String getSql(String key) {
         if (key == null) {
             throw new DbException("输入的sql为空！", 1002);

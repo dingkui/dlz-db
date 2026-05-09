@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class DbOpDm8 extends SqlHelper {
                         }
                     }
                     return column;
-                }).filter(column -> column != null)
+                }).filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
 
         String sql = StringUtils.formatMsg("CREATE TABLE \"{}\" ({});", tableName,columns);
@@ -56,7 +57,7 @@ public class DbOpDm8 extends SqlHelper {
                         return column;
                     }
                     return "COMMENT ON COLUMN \"" + tableName.toUpperCase() + "\".\"" + columnName.toUpperCase() + "\" IS '" + columnComment + "'";
-                }).filter(column -> column != null)
+                }).filter(Objects::nonNull)
                 .collect(Collectors.joining(";"));
         if (StringUtils.isNotEmpty(columnsComment)) {
             sql += ";"+columnsComment;
@@ -143,12 +144,6 @@ public class DbOpDm8 extends SqlHelper {
     }
 
     @Override
-    public void updateDefaultValue(String tableName, String columnName, String value) {
-        String sql = "UPDATE \"" + tableName.toUpperCase() + "\" SET \"" + columnName.toUpperCase() + "\" = ? WHERE \"" + columnName.toUpperCase() + "\" IS NULL";
-        DBHolder.getSqlExecutor().update(sql, value);
-    }
-
-    @Override
     public String getDbColumnType(Field field) {
         Class<?> clazz = field.getType();
         if (clazz == String.class) {
@@ -169,7 +164,7 @@ public class DbOpDm8 extends SqlHelper {
 
     private Class<?> getJavaType(String columnType) {
         columnType = columnType.toLowerCase();
-        if (columnType.indexOf("char") > -1 || columnType.startsWith("clob") || columnType.startsWith("text")) {
+        if (columnType.contains("char") || columnType.startsWith("clob") || columnType.startsWith("text")) {
             return String.class;
         } else if (columnType.startsWith("int")) {
             return Integer.class;

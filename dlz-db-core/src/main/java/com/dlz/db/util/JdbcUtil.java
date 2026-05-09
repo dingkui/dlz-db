@@ -14,15 +14,15 @@ import java.util.List;
  */
 public class JdbcUtil {
 
-	public static ResultSet getResultSet(Connection connection,String sql,Object[] paras) throws SQLException {
+	public static ResultSet getResultSet(Connection connection, String sql, Object[] paras) throws SQLException {
         PreparedStatement pst=connection.prepareStatement(sql);
         if(paras!=null){
         	for (int i=0, size=paras.length; i<size; i++) {
     			Object value = paras[i];
-    			if (value instanceof java.sql.Date) {
-    				pst.setDate(i + 1, (java.sql.Date)value);
-    			} else if (value instanceof java.sql.Timestamp) {
-    				pst.setTimestamp(i + 1, (java.sql.Timestamp)value);
+    			if (value instanceof Date) {
+    				pst.setDate(i + 1, (Date)value);
+    			} else if (value instanceof Timestamp) {
+    				pst.setTimestamp(i + 1, (Timestamp)value);
     			} else {
     				pst.setObject(i + 1, value);
     			}
@@ -36,7 +36,7 @@ public class JdbcUtil {
 	 * @throws SQLException
 	 */
 	public static List<ResultMap> buildResultMapList(ResultSet rs) throws SQLException{
-		List<ResultMap> result = new ArrayList<ResultMap>();
+		List<ResultMap> result = new ArrayList<>();
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnCount = rsmd.getColumnCount();
 		String[] labelNames = new String[columnCount + 1];
@@ -47,7 +47,7 @@ public class JdbcUtil {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * from jFinal
 	 * @param rs
@@ -69,8 +69,8 @@ public class JdbcUtil {
 		}
 		return ar;
 	}
-	
-	
+
+
 	/**
 	 * from springJdbc
 	 * @param rs
@@ -103,8 +103,9 @@ public class JdbcUtil {
 				obj = rs.getDate(index);
 			}
 		}
-		else if (obj != null && obj instanceof java.sql.Date) {
-			if ("java.sql.Timestamp".equals(rs.getMetaData().getColumnClassName(index))) {
+		else if (obj != null && obj instanceof Date) {
+            final String columnClassName = rs.getMetaData().getColumnClassName(index);
+            if ("java.sql.Timestamp".equals(columnClassName)) {
 				obj = rs.getTimestamp(index);
 			}
 		}

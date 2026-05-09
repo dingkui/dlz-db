@@ -57,7 +57,7 @@ public enum DbBuildEnum {
 
                 Matcher mat = PATTERN_INDEX.matcher(sql);
                 int start = 0;
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 while (mat.find()) {
                     String index = mat.group(1);
                     sb.append(sql, start, mat.start());

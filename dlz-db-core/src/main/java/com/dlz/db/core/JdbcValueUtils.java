@@ -60,8 +60,9 @@ public final class JdbcValueUtils {
         }
 
         // 列元数据声明为 Timestamp 但 getObject 返回 Date 的情况
-        if (obj instanceof java.sql.Date) {
-            if ("java.sql.Timestamp".equals(rs.getMetaData().getColumnClassName(index))) {
+        if (obj instanceof Date) {
+            String metaClassName = rs.getMetaData().getColumnClassName(index);
+            if ("java.sql.Timestamp".equals(metaClassName)) {
                 return rs.getTimestamp(index);
             }
         }

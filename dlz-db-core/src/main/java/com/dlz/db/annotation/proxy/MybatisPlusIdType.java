@@ -10,12 +10,13 @@ public class MybatisPlusIdType {
     private final Class<Annotation> idTypeAnnotation;
     private final Method valueMethod;
     private final Method typeMethod;
+
     protected MybatisPlusIdType() {
         Class<Annotation> idType1;
         Method valueMethodTmp;
         Method typeMethodTmp;
         try {
-            idType1 = (Class<java.lang.annotation.Annotation>) Class.forName("com.baomidou.mybatisplus.annotation.TableId");
+            idType1 = (Class<Annotation>) Class.forName("com.baomidou.mybatisplus.annotation.TableId");
             valueMethodTmp = idType1.getMethod("value");
             typeMethodTmp = idType1.getMethod("type");
         } catch (Exception ex) {
@@ -28,12 +29,12 @@ public class MybatisPlusIdType {
         typeMethod = typeMethodTmp;
     }
 
-    public String value(Field field){
-        if (field == null||idTypeAnnotation==null){
+    public String value(Field field) {
+        if (field == null || idTypeAnnotation == null) {
             return null;
         }
         if (field.isAnnotationPresent(idTypeAnnotation)) {
-            java.lang.annotation.Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
+            Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
             try {
                 String value = (String) valueMethod.invoke(mpAnnotation);
                 if (!value.isEmpty()) {
@@ -46,15 +47,15 @@ public class MybatisPlusIdType {
         return null;
     }
 
-    public IdType type(Field field){
-        if (field == null||idTypeAnnotation==null){
+    public IdType type(Field field) {
+        if (field == null || idTypeAnnotation == null) {
             return null;
         }
         if (field.isAnnotationPresent(idTypeAnnotation)) {
-            java.lang.annotation.Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
+            Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
             try {
                 String value = typeMethod.invoke(mpAnnotation).toString();
-                switch ( value){
+                switch (value) {
                     case "AUTO":
                         return IdType.AUTO;
                     case "INPUT":

@@ -99,7 +99,7 @@ public class Page<T> extends Sort<Page> implements Serializable {
             setCurrent(0);
             return this;
         }
-        pages = (total % size == 0 ? total / size : total / size + 1);
+        pages = total % size == 0 ? total / size : total / size + 1;
         if (pages > 0 && current > pages) {
             setCurrent(pages);
         }

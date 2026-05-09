@@ -30,10 +30,10 @@ import static com.dlz.db.enums.DbOperateEnum.*;
  * <pre>
  *   eq / ne                     =  / <>
  *   gt / ge / lt / le           > / >= / < / <=
- *   lk / ll / lr / nl           LIKE '%v%' / 'v%' / '%v' / NOT LIKE
- *   in / ni                     IN / NOT IN
- *   bt / nb                     BETWEEN / NOT BETWEEN
- *   isn / isnn                  IS NULL / IS NOT NULL
+ *   like / likeLeft / likeRight / notLike           LIKE '%v%' / 'v%' / '%v' / NOT LIKE
+ *   in / notIn                     IN / NOT IN
+ *   between / notBetween                     BETWEEN / NOT BETWEEN
+ *   isNull / isNotNull                  IS NULL / IS NOT NULL
  *   op                          自定义操作符（{@link DbOperateEnum}）
  * </pre>
  */
@@ -43,17 +43,17 @@ public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
 
     /**
      * {@code column BETWEEN value1 AND value2}。
-     * <pre>.bt("age", 18, 60)   // age BETWEEN 18 AND 60</pre>
+     * <pre>.between("age", 18, 60)   // age BETWEEN 18 AND 60</pre>
      */
-    default T bt(String column, Object value1, Object value2) {
-        addChildren(bt.mk(column, new Object[]{value1, value2}));
+    default T between(String column, Object value1, Object value2) {
+        addChildren(between.mk(column, new Object[]{value1, value2}));
         return me();
     }
 
-    /** 动态条件版 {@link #bt(String, Object, Object)}。 */
-    default T bt(boolean is, String column, Object value1, Object value2) {
+    /** 动态条件版 {@link #between(String, Object, Object)}。 */
+    default T between(boolean is, String column, Object value1, Object value2) {
         if (is) {
-            addChildren(bt.mk(column, new Object[]{value1, value2}));
+            addChildren(between.mk(column, new Object[]{value1, value2}));
         }
         return me();
     }
@@ -67,47 +67,47 @@ public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
      *   <li>{@link java.util.List}：{@code Arrays.asList(a1, a2)}</li>
      * </ul>
      * <pre>
-     * .bt("create_time", "2024-01-01,2024-12-31")
-     * .bt("age", Arrays.asList(18, 60))
+     * .between("create_time", "2024-01-01,2024-12-31")
+     * .between("age", Arrays.asList(18, 60))
      * </pre>
      */
-    default T bt(String column, Object value) {
-        addChildren(bt.mk(column, value));
+    default T between(String column, Object value) {
+        addChildren(between.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #bt(String, Object)}。 */
-    default T bt(boolean is, String column, Object value) {
+    /** 动态条件版 {@link #between(String, Object)}。 */
+    default T between(boolean is, String column, Object value) {
         if (is) {
-            addChildren(bt.mk(column, value));
+            addChildren(between.mk(column, value));
         }
         return me();
     }
 
     /** {@code column NOT BETWEEN value1 AND value2}。 */
-    default T nb(String column, Object value1, Object value2) {
-        addChildren(nb.mk(column, new Object[]{value1, value2}));
+    default T notBetween(String column, Object value1, Object value2) {
+        addChildren(notBetween.mk(column, new Object[]{value1, value2}));
         return me();
     }
 
-    /** 动态条件版 {@link #nb(String, Object, Object)}。 */
-    default T nb(boolean is, String column, Object value1, Object value2) {
+    /** 动态条件版 {@link #notBetween(String, Object, Object)}。 */
+    default T notBetween(boolean is, String column, Object value1, Object value2) {
         if (is) {
-            addChildren(nb.mk(column, new Object[]{value1, value2}));
+            addChildren(notBetween.mk(column, new Object[]{value1, value2}));
         }
         return me();
     }
 
-    /** 单值形式的 NOT BETWEEN，{@code value} 格式同 {@link #bt(String, Object)}。 */
-    default T nb(String column, Object value) {
-        addChildren(nb.mk(column, value));
+    /** 单值形式的 NOT BETWEEN，{@code value} 格式同 {@link #between(String, Object)}。 */
+    default T notBetween(String column, Object value) {
+        addChildren(notBetween.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #nb(String, Object)}。 */
-    default T nb(boolean is, String column, Object value) {
+    /** 动态条件版 {@link #notBetween(String, Object)}。 */
+    default T notBetween(boolean is, String column, Object value) {
         if (is) {
-            addChildren(nb.mk(column, value));
+            addChildren(notBetween.mk(column, value));
         }
         return me();
     }
@@ -116,34 +116,34 @@ public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
 
     /**
      * {@code column IS NOT NULL}。
-     * <pre>.isnn("email")   // email IS NOT NULL</pre>
+     * <pre>.isNotNull("email")   // email IS NOT NULL</pre>
      */
-    default T isnn(String column) {
-        addChildren(isnn.mk(column, null));
+    default T isNotNull(String column) {
+        addChildren(isNotNull.mk(column, null));
         return me();
     }
 
-    /** 动态条件版 {@link #isnn(String)}。 */
-    default T isnn(boolean is, String column) {
+    /** 动态条件版 {@link #isNotNull(String)}。 */
+    default T isNotNull(boolean is, String column) {
         if (is) {
-            addChildren(isnn.mk(column, null));
+            addChildren(isNotNull.mk(column, null));
         }
         return me();
     }
 
     /**
      * {@code column IS NULL}。
-     * <pre>.isn("delete_time")   // delete_time IS NULL</pre>
+     * <pre>.isNull("delete_time")   // delete_time IS NULL</pre>
      */
-    default T isn(String column) {
-        addChildren(isn.mk(column, null));
+    default T isNull(String column) {
+        addChildren(isNull.mk(column, null));
         return me();
     }
 
-    /** 动态条件版 {@link #isn(String)}。 */
-    default T isn(boolean is, String column) {
+    /** 动态条件版 {@link #isNull(String)}。 */
+    default T isNull(boolean is, String column) {
         if (is) {
-            addChildren(isn.mk(column, null));
+            addChildren(isNull.mk(column, null));
         }
         return me();
     }
@@ -246,65 +246,65 @@ public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
 
     /**
      * {@code column LIKE '%value%'}（双侧模糊）。
-     * <pre>.lk("name", "张")   // name LIKE '%张%'</pre>
+     * <pre>.like("name", "张")   // name LIKE '%张%'</pre>
      */
-    default T lk(String column, Object value) {
-        addChildren(lk.mk(column, value));
+    default T like(String column, Object value) {
+        addChildren(like.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #lk(String, Object)}。 */
-    default T lk(boolean is, String column, Object value) {
+    /** 动态条件版 {@link #like(String, Object)}。 */
+    default T like(boolean is, String column, Object value) {
         if (is) {
-            addChildren(lk.mk(column, value));
+            addChildren(like.mk(column, value));
         }
         return me();
     }
 
     /**
      * {@code column LIKE 'value%'}（右模糊，通常可命中前缀索引）。
-     * <pre>.ll("name", "张")   // name LIKE '张%'</pre>
+     * <pre>.likeLeft("name", "张")   // name LIKE '张%'</pre>
      */
-    default T ll(String column, Object value) {
-        addChildren(ll.mk(column, value));
+    default T likeLeft(String column, Object value) {
+        addChildren(likeLeft.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #ll(String, Object)}。 */
-    default T ll(boolean is, String column, Object value) {
+    /** 动态条件版 {@link #likeLeft(String, Object)}。 */
+    default T likeLeft(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ll.mk(column, value));
+            addChildren(likeLeft.mk(column, value));
         }
         return me();
     }
 
     /**
      * {@code column LIKE '%value'}（左模糊，通常无法命中索引）。
-     * <pre>.lr("email", "@qq.com")</pre>
+     * <pre>.likeRight("email", "@qq.com")</pre>
      */
-    default T lr(String column, Object value) {
-        addChildren(lr.mk(column, value));
+    default T likeRight(String column, Object value) {
+        addChildren(likeRight.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #lr(String, Object)}。 */
-    default T lr(boolean is, String column, Object value) {
+    /** 动态条件版 {@link #likeRight(String, Object)}。 */
+    default T likeRight(boolean is, String column, Object value) {
         if (is) {
-            addChildren(lr.mk(column, value));
+            addChildren(likeRight.mk(column, value));
         }
         return me();
     }
 
     /** {@code column NOT LIKE '%value%'}。 */
-    default T nl(String column, Object value) {
-        addChildren(nl.mk(column, value));
+    default T notLike(String column, Object value) {
+        addChildren(notLike.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #nl(String, Object)}。 */
-    default T nl(boolean is, String column, Object value) {
+    /** 动态条件版 {@link #notLike(String, Object)}。 */
+    default T notLike(boolean is, String column, Object value) {
         if (is) {
-            addChildren(nl.mk(column, value));
+            addChildren(notLike.mk(column, value));
         }
         return me();
     }
@@ -339,15 +339,15 @@ public interface ICondAddByKey<T extends ICondAddByKey> extends ICondBase<T> {
     }
 
     /** {@code column NOT IN (...)}，{@code value} 格式同 {@link #in(String, Object)}。 */
-    default T ni(String column, Object value) {
-        addChildren(ni.mk(column, value));
+    default T notIn(String column, Object value) {
+        addChildren(notIn.mk(column, value));
         return me();
     }
 
-    /** 动态条件版 {@link #ni(String, Object)}。 */
-    default T ni(boolean is, String column, Object value) {
+    /** 动态条件版 {@link #notIn(String, Object)}。 */
+    default T notIn(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ni.mk(column, value));
+            addChildren(notIn.mk(column, value));
         }
         return me();
     }

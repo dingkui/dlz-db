@@ -19,13 +19,13 @@ import java.util.Map;
 public class ParaMap<ME extends ParaMap> implements Serializable , ISqlPara, IChained<ME> {
     private static final long serialVersionUID = 8374167270612933157L;
     @Getter
-    private SqlItem sqlItem = new SqlItem();
+    private final SqlItem sqlItem = new SqlItem();
     @Getter
     @Setter
     private Page page;
 
     @Getter
-    private JSONMap para = new JSONMap();
+    private final JSONMap para = new JSONMap();
 
     public ParaMap() {
     }

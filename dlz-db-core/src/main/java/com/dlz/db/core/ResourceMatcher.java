@@ -127,8 +127,8 @@ public class ResourceMatcher {
         // 拆分基础路径与模式部分
         int wildcardIdx = firstWildcardIndex(path);
         int slashIdx = path.lastIndexOf('/', wildcardIdx);
-        String basePath = (slashIdx >= 0) ? path.substring(0, slashIdx + 1) : "";
-        String pattern = (slashIdx >= 0) ? path.substring(slashIdx + 1) : path;
+        String basePath = slashIdx >= 0 ? path.substring(0, slashIdx + 1) : "";
+        String pattern = slashIdx >= 0 ? path.substring(slashIdx + 1) : path;
         Pattern regex = wildcardToRegex(pattern);
 
         List<URL> result = new ArrayList<>();

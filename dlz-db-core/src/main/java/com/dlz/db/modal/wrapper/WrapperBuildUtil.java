@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -74,10 +75,11 @@ public class WrapperBuildUtil {
      *
      */
     public static void buildWhere(AQuery maker) {
-        if (!SqlRunThreadHolder.isIgnoreLogicDelete() && BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)) {
-            if (!maker.where().isContainCondition(logicDeleteField)) {
-                maker.where().eq(logicDeleteField, 0);
-            }
+        if (!SqlRunThreadHolder.isIgnoreLogicDelete()
+                && BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)
+                && !maker.where().isContainCondition(logicDeleteField)
+        ) {
+            maker.where().eq(logicDeleteField, 0);
         }
         String where = maker.where().getRunsql(maker);
         if (!maker.isAllowFullQuery() && StringUtils.isEmpty(where)) {
@@ -96,9 +98,9 @@ public class WrapperBuildUtil {
         if (maker.insertValues.isEmpty()) {
             throw new SystemException("插入字段信息未设置");
         }
-        maker.insertValues.entrySet().forEach(e -> {
-            String paraName = e.getKey();
-            Object value = e.getValue();
+        for (Map.Entry<String, Object> entry : maker.insertValues.entrySet()) {
+            String paraName = entry.getKey();
+            Object value = entry.getValue();
             String columnName = paraName.replaceAll("`", "");
 
             if (sbColumns.length() > 0) {
@@ -106,11 +108,11 @@ public class WrapperBuildUtil {
                 sbValues.append(',');
             }
             sbColumns.append(paraName);
-            if (appendSql(sbValues, value, columnName)) return;
+            if (appendSql(sbValues, value, columnName)) continue;
             if (value == null)
                 value = "";
             maker.addPara(columnName, DbConvertUtil.getVal4Db(maker.getTableName(), columnName, value));
-        });
+        }
         maker.addPara(MAKER_COLUMNS, sbColumns.toString());
         maker.addPara(MAKER_VALUES, sbValues.toString());
         maker.addPara(MAKER_TABLE_NAME, maker.getTableName());
@@ -125,9 +127,9 @@ public class WrapperBuildUtil {
         if (maker.updateSets.isEmpty()) {
             throw new SystemException("更新字段信息未设置");
         }
-        maker.updateSets.entrySet().forEach(e -> {
-            String paraName = e.getKey();
-            Object value = e.getValue();
+        for (Map.Entry<String, Object> entry : maker.updateSets.entrySet()) {
+            String paraName = entry.getKey();
+            Object value = entry.getValue();
             String columnName = paraName.replaceAll("`", "");
 
             if (sbSets.length() > 0) {
@@ -135,15 +137,15 @@ public class WrapperBuildUtil {
             }
             sbSets.append(paraName);
             sbSets.append('=');
-            if (appendSql(sbSets, value, columnName)) return;
+            if (appendSql(sbSets, value, columnName)) continue;
             maker.addPara(columnName, DbConvertUtil.getVal4Db(maker.getTableName(), columnName, value));
-        });
+        }
         maker.addPara(MAKER_STR_SETS, sbSets.toString());
     }
 
     private static boolean appendSql(StringBuilder sbSets, Object value, String columnName) {
         if (value instanceof String) {
-            String v = ((String) value);
+            String v = (String) value;
             if (v.startsWith("sql:")) {
                 sbSets.append(DbConvertUtil.toDbColumnName(v.substring(4)));
                 return true;
@@ -178,23 +180,23 @@ public class WrapperBuildUtil {
         return params.toArray();
     }
 
-    public static String buildUpdateSql(String dbName, List<Field> fields,String idName) {
-        List<String> fieldsPart = new ArrayList<String>();
+    public static String buildUpdateSql(String dbName, List<Field> fields, String idName) {
+        List<String> fieldsPart = new ArrayList<>();
         for (Field field : fields) {
             String dbColumnName = BeanInfoHolder.getColumnName(field);
             if (!dbColumnName.equals(idName) && !dbColumnName.equals("")) {
                 fieldsPart.add(dbColumnName + "=?");
             }
         }
-        return "UPDATE " + dbName + " SET " + StringUtils.join(",", fieldsPart) + " WHERE "+idName+" = ?";
+        return "UPDATE " + dbName + " SET " + StringUtils.join(",", fieldsPart) + " WHERE " + idName + " = ?";
     }
 
-    public static Object[] buildUpdateParams(Object object, List<Field> fields,String idName) {
-        List<Object> params = new ArrayList<Object>(fields.size());
+    public static Object[] buildUpdateParams(Object object, List<Field> fields, String idName) {
+        List<Object> params = new ArrayList<>(fields.size());
         Field idField = null;
         for (Field field : fields) {
             String dbColumnName = BeanInfoHolder.getColumnName(field);
-            if(dbColumnName.equals(idName)){
+            if (dbColumnName.equals(idName)) {
                 idField = field;
                 continue;
             }
@@ -215,7 +217,7 @@ public class WrapperBuildUtil {
     }
 
     public static Object getIdValue(Field field, String tableName) {
-        IdType type = getIdType( field);
+        IdType type = getIdType(field);
         if (type == null || type == IdType.AUTO || type == IdType.INPUT) {
             return null;
         } else {
@@ -232,17 +234,17 @@ public class WrapperBuildUtil {
         }
     }
 
-    public static void fillAutoId(String dbName,Field idField, IdType idType ,Object obj) {
+    public static void fillAutoId(String dbName, Field idField, IdType idType, Object obj) {
         if (idType != null) {
             Object idValue = FieldReflections.getValue(obj, idField);
-            if(idValue == null){
+            if (idValue == null) {
                 if (idType == IdType.INPUT) {
-                    throw new SystemException(obj.getClass().getSimpleName()+"."+idField.getName()+"为手动输入,不能为空");
+                    throw new SystemException(obj.getClass().getSimpleName() + "." + idField.getName() + "为手动输入,不能为空");
                 }
-                if(idType != IdType.AUTO){
+                if (idType != IdType.AUTO) {
                     idValue = WrapperBuildUtil.getIdValue(idField, dbName);
-                    if(idValue == null){
-                        throw new SystemException(obj.getClass().getSimpleName()+"."+idField.getName()+"自动构建id失败");
+                    if (idValue == null) {
+                        throw new SystemException(obj.getClass().getSimpleName() + "." + idField.getName() + "自动构建id失败");
                     }
                     FieldReflections.setValue(obj, idField, idValue);
                 }
