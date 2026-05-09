@@ -20,8 +20,6 @@ public class Starter implements InitializingBean, ApplicationListener<ContextRef
     public void afterPropertiesSet() throws Exception{
         // afterPropertiesSet 执行时，依赖的 Bean 已经初始化
         DBHolder.getSqlExecutor();
-//        String sql = DbInfo.getSql("key.setting.getSettings");
-//        System.out.println(sql);
     }
 
     @Override

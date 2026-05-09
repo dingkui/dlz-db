@@ -28,21 +28,21 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
                 .le(User::getRetryCount, 3)       // retry_count <= 3
 
                 // 空值检查
-                .isn(User::getDeleteTime)         // delete_time IS NULL
-                .isnn(User::getEmail)             // email IS NOT NULL
+                .isNull(User::getDeleteTime)         // delete_time IS NULL
+                .isNotNull(User::getEmail)             // email IS NOT NULL
 
                 // 范围查询
                 .in(User::getId, Arrays.asList(1, 2, 3, 4, 5))      // id IN (1,2,3,4,5)
                 .in(User::getId, "1,2,3,4,5")      // id IN (1,2,3,4,5)
-                .ni(User::getName, "admin,root")  // name NOT IN ('admin','root')
-                .ni(User::getName, Arrays.asList("admin", "root"))  // name NOT IN ('admin','root')
-                .bt(User::getScore, 20, 30)     // score BETWEEN 20 AND 20
+                .notIn(User::getName, "admin,root")  // name NOT IN ('admin','root')
+                .notIn(User::getName, Arrays.asList("admin", "root"))  // name NOT IN ('admin','root')
+                .between(User::getScore, 20, 30)     // score BETWEEN 20 AND 20
 
                 // 模糊查询
-                .lk(User::getName, "张")          // name LIKE '%张%' (模糊匹配)
-                .ll(User::getPhone, "138")        // phone LIKE '138%' (左模糊匹配)
-                .lr(User::getAddress, "北京")      // address LIKE '%北京' (右模糊匹配)
-                .nl(User::getDescription, "测试")// description NOT LIKE '%测试%' (非模糊匹配)
+                .like(User::getName, "张")          // name LIKE '%张%' (模糊匹配)
+                .likeLeft(User::getPhone, "138")        // phone LIKE '138%' (左模糊匹配)
+                .likeRight(User::getAddress, "北京")      // address LIKE '%北京' (右模糊匹配)
+                .notLike(User::getDescription, "测试")// description NOT LIKE '%测试%' (非模糊匹配)
 
                 .queryList();
     }
@@ -51,13 +51,13 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
     public void conditionTest4_1_2() {
         //驼峰参数，自动转下划线
         final List<User> users = DB.Pojo.select(User.class)
-                .isn("deleteTime")  // delete_time IS NULL
+                .isNull("deleteTime")  // delete_time IS NULL
                 .queryBeanList();
         //条件sql: where DELETE_TIME is null
 
         //下划线字段
         final List<ResultMap> users2 = DB.Pojo.select(User.class)
-                .isn("delete_time") // delete_time IS NULL
+                .isNull("delete_time") // delete_time IS NULL
                 .queryList();
         //条件sql: where DELETE_TIME is null
     }
@@ -65,13 +65,13 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
     public void conditionTest4_1_2_1() {
         //驼峰参数，自动转下划线
         DB.Table.select("user")
-                .isn("deleteTime")  // delete_time IS NULL
+                .isNull("deleteTime")  // delete_time IS NULL
                 .queryList();
         //条件sql: where DELETE_TIME is null
 
         //下划线字段
         DB.Table.select("user")
-                .isn("delete_time") // delete_time IS NULL
+                .isNull("delete_time") // delete_time IS NULL
                 .queryList();
         //条件sql: where DELETE_TIME is null
     }
@@ -80,14 +80,14 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
     public void conditionTest4_1_3() {
         String name = "test";        // 可能为 null
         DB.Pojo.select(User.class)
-                .lk(!ValUtil.isEmpty(name), User::getName, name)  // name LIKE ?
+                .like(!ValUtil.isEmpty(name), User::getName, name)  // name LIKE ?
                 .queryList();
         //条件sql: where NAME like '%test%'
 
         //条件不成立时，条件不输出
         name = "";
         DB.Pojo.select(User.class)
-                .lk(!ValUtil.isEmpty(name), User::getName, name)  // 条件不输出
+                .like(!ValUtil.isEmpty(name), User::getName, name)  // 条件不输出
                 .queryList();
         //sql:select * from USER t where IS_DELETED = 0
     }
@@ -98,7 +98,7 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
         PojoQuery<User> query = DB.Pojo.select(User.class);
         // 根据不同参数动态添加条件
         if (!ValUtil.isEmpty(name)) {
-            query.lk(User::getName, name); // name LIKE ?
+            query.like(User::getName, name); // name LIKE ?
         }
         List<User> users = query.queryBeanList();
         //条件sql: where NAME like '%test%'
@@ -109,7 +109,7 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
         DB.Pojo.select(User.class)
                 .eq(User::getStatus, 1)
                 .gt(User::getAge, 18)
-                .lk(User::getName, "张")
+                .like(User::getName, "张")
                 .queryList();
         // 条件sql： WHERE status = 1 AND age > 18 AND name LIKE '%张%'
     }
@@ -184,10 +184,10 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
     @Test
     public void conditionTest4_4_1() {
         DB.Pojo.select(User.class)
-                .lk(User::getName, "张")// 名字包含"张"
-                .lr(User::getEmail, "@gmail.com")// 邮箱以 @gmail.com 结尾
-                .ll(User::getPhone, "138")// 手机号以 138 开头
-                .nl(User::getAddress, "测试")// 地址不包含"测试"
+                .like(User::getName, "张")// 名字包含"张"
+                .likeRight(User::getEmail, "@gmail.com")// 邮箱以 @gmail.com 结尾
+                .likeLeft(User::getPhone, "138")// 手机号以 138 开头
+                .notLike(User::getAddress, "测试")// 地址不包含"测试"
                 .queryList();
         // 生成 SQL：
         // WHERE name LIKE '%张%'
@@ -200,13 +200,13 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
     public void conditionTest4_4_2() {
         String keyword = "x";
         DB.Pojo.select(User.class)
-                .lk(!ValUtil.isEmpty(keyword), User::getName, keyword)// keyword 不为空时才添加 LIKE 条件
+                .like(!ValUtil.isEmpty(keyword), User::getName, keyword)// keyword 不为空时才添加 LIKE 条件
                 .queryList();
         //sql:select * from USER t where NAME like '%x%' and IS_DELETED = 0
 
         keyword = null;
         DB.Pojo.select(User.class)
-                .lk(!ValUtil.isEmpty(keyword), User::getName, keyword)// keyword 为空时不添加 LIKE 条件
+                .like(!ValUtil.isEmpty(keyword), User::getName, keyword)// keyword 为空时不添加 LIKE 条件
                 .queryList();
         //sql:select * from USER t where IS_DELETED = 0
     }
@@ -254,42 +254,42 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
     @Test
     public void conditionTest4_5_3() {
         DB.Pojo.select(User.class)
-                .ni(User::getStatus, Arrays.asList(0, -1))
+                .notIn(User::getStatus, Arrays.asList(0, -1))
                 .queryList();
     }
 
     @Test
     public void conditionTest4_5_4() {
-        DB.Pojo.select(User.class).bt(User::getAge, 18, 30).queryList();
+        DB.Pojo.select(User.class).between(User::getAge, 18, 30).queryList();
         //条件sql: where AGE between 18 and 30
 
-        DB.Pojo.select(User.class).bt(User::getAge, Arrays.asList(18, 30)).queryList();
+        DB.Pojo.select(User.class).between(User::getAge, Arrays.asList(18, 30)).queryList();
         //条件sql: where AGE between 18 and 30
 
-        DB.Pojo.select(User.class).bt(User::getAge, Arrays.asList(18, 30)).queryList();
+        DB.Pojo.select(User.class).between(User::getAge, Arrays.asList(18, 30)).queryList();
         //条件sql: where AGE between 18 and 30
 
-        DB.Pojo.select(User.class).bt(User::getAge, new Integer[]{18, 30}).queryList();
+        DB.Pojo.select(User.class).between(User::getAge, new Integer[]{18, 30}).queryList();
         //条件sql: where AGE between 18 and 30
 
-        DB.Pojo.select(User.class).bt(User::getAge, "18", "30").queryList();
+        DB.Pojo.select(User.class).between(User::getAge, "18", "30").queryList();
         //条件sql: where AGE between '18' and '30'
 
-        DB.Pojo.select(User.class).bt(User::getAge, "18,30").queryList();
+        DB.Pojo.select(User.class).between(User::getAge, "18,30").queryList();
         //条件sql: where AGE between '18' and '30'
 
-        DB.Pojo.select(User.class).bt(User::getAge, new String[]{"18", "30"}).queryList();
+        DB.Pojo.select(User.class).between(User::getAge, new String[]{"18", "30"}).queryList();
         //条件sql: where AGE between '18' and '30'
 
         Date startDate = DateUtil.getDate("2020-01-01");
         Date endDate = DateUtil.getDate("2021-01-01");
-        DB.Pojo.select(User.class).bt(User::getCreateTime, startDate, endDate).queryList();
+        DB.Pojo.select(User.class).between(User::getCreateTime, startDate, endDate).queryList();
         //条件sql: where CREATE_TIME between '2020-01-01 00:00:00' and '2021-01-01 00:00:00'
     }
 
     @Test
     public void conditionTest4_5_5() {
-        DB.Pojo.select(User.class).nb(User::getScore, 0, 60).queryList();
+        DB.Pojo.select(User.class).notBetween(User::getScore, 0, 60).queryList();
         //条件sql: where SCORE not between 0 and 60
     }
 
@@ -297,8 +297,8 @@ public class Doc04ConditionTest extends SpingDbBaseTest {
     public void conditionTest4_5_6() {
         DB.Pojo.select(User.class)
                 .in(User::getId, "1,2,3,4,5")
-                .ni(User::getStatus, Arrays.asList(0, -1))
-                .bt(User::getAge, 18, 60)
+                .notIn(User::getStatus, Arrays.asList(0, -1))
+                .between(User::getAge, 18, 60)
                 .in(User::getDeptId, "sql:SELECT id FROM DEPARTMENT WHERE type = 'tech'")
                 .queryList();
         //条件sql: where ID in (1,2,3,4,5) and STATUS not in (0,-1) and AGE between 18 and 60 and DEPT_ID in (SELECT id FROM dept WHERE type = 'tech')

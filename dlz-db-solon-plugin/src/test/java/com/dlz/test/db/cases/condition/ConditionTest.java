@@ -61,22 +61,22 @@ public class ConditionTest extends SpingDbBaseTest {
 
     @Test
     public void pojo_lk() {
-        assertEquals(2, DB.Pojo.select(User.class).lk(User::getName, "a").queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).like(User::getName, "a").queryBeanList().size());
     }
 
     @Test
     public void pojo_ll() {
-        assertEquals(1, DB.Pojo.select(User.class).ll(User::getName, "a").queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).likeLeft(User::getName, "e").queryBeanList().size());
     }
 
     @Test
     public void pojo_lr() {
-        assertEquals(2, DB.Pojo.select(User.class).lr(User::getName, "e").queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).likeRight(User::getName, "a").queryBeanList().size());
     }
 
     @Test
     public void pojo_nl() {
-        assertEquals(1, DB.Pojo.select(User.class).nl(User::getName, "a").queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).notLike(User::getName, "a").queryBeanList().size());
     }
 
     @Test
@@ -86,17 +86,17 @@ public class ConditionTest extends SpingDbBaseTest {
 
     @Test
     public void pojo_ni() {
-        assertEquals(1, DB.Pojo.select(User.class).ni(User::getAge, "25, 30").queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).notIn(User::getAge, "25, 30").queryBeanList().size());
     }
 
     @Test
     public void pojo_bt() {
-        assertEquals(2, DB.Pojo.select(User.class).bt(User::getAge, 25, 30).queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).between(User::getAge, 25, 30).queryBeanList().size());
     }
 
     @Test
     public void pojo_nb() {
-        assertEquals(1, DB.Pojo.select(User.class).nb(User::getAge, 25, 30).queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).notBetween(User::getAge, 25, 30).queryBeanList().size());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class ConditionTest extends SpingDbBaseTest {
 
     @Test
     public void table_lk() {
-        assertEquals(2, DB.Table.select("user").lk("name", "a").queryList().size());
+        assertEquals(2, DB.Table.select("user").like("name", "a").queryList().size());
     }
 
     @Test

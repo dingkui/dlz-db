@@ -90,9 +90,7 @@ public class DynamicAndTxTest extends SpingDbBaseTest {
             assertEquals(TEST_DS_NAME, DB.Dynamic.getUsedDataSourceName());
 
             // 内层切换到 default
-            DB.Dynamic.use("default", () -> {
-                assertEquals("default", DB.Dynamic.getUsedDataSourceName());
-            });
+            DB.Dynamic.use("default", () -> assertEquals("default", DB.Dynamic.getUsedDataSourceName()));
 
             // 退出内层后应恢复到 TEST_DS_NAME
             assertEquals(TEST_DS_NAME, DB.Dynamic.getUsedDataSourceName());
@@ -156,11 +154,9 @@ public class DynamicAndTxTest extends SpingDbBaseTest {
     @Test
     public void testTxRun_inDynamicUse_useCurrentDataSource() {
         // 在 Dynamic.use 切换后调用 Tx.run()，应在切换后的数据源上开事务
-        DB.Dynamic.use(TEST_DS_NAME, () -> {
-            DB.Tx.run(() -> {
-                DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 400, "nested_tx");
-            });
-        });
+        DB.Dynamic.use(TEST_DS_NAME, () -> DB.Tx.run(() -> {
+            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 400, "nested_tx");
+        }));
 
         int count = DB.Dynamic.use(TEST_DS_NAME, () ->
             DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 400).count()

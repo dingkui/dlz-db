@@ -20,10 +20,4 @@ public class SqlSelectPageTest extends SpingDbBaseTest {
                 .page(Page.build(1, 2, Order.asc("id"), Order.desc("xx2")))
                 .addPara("goodsId", 123).queryOne();
     }
-
-    @Test
-    public void SeqTest2() {
-//        System.out.println(DBHolder.sequence("sys_sql_copy1", 1));
-//        System.out.println(DBHolder.sequence("sys_sql", 1));
-    }
 }

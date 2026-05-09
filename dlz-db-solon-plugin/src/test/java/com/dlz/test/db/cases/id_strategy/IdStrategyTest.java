@@ -52,13 +52,6 @@ public class IdStrategyTest extends SpingDbBaseTest {
         assertTrue(u.getId() > 0);
     }
 
-//    @Test
-//    public void jdbc_insertForId() {
-//        Long id = DB.Jdbc.insertForId("INSERT INTO test_auto_id(name) VALUES(?)", "jdbc_auto");
-//        assertNotNull(id);
-//        assertTrue(id > 0);
-//    }
-
     @Test
     public void batch_autoNotBackfill() {
         AutoIdEntity m1 = new AutoIdEntity();

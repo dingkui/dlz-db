@@ -21,9 +21,4 @@ public class SqlSelectPageTest extends SpingDbBaseTest {
                 .addPara("goodsId", 123).queryOne();
     }
 
-    @Test
-    public void SeqTest2() {
-//        System.out.println(DBHolder.sequence("sys_sql_copy1", 1));
-//        System.out.println(DBHolder.sequence("sys_sql", 1));
-    }
 }
