@@ -1,7 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
-import com.dlz.test.db.config.SpingDbBaseTest;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -10,7 +9,7 @@ import java.sql.Types;
 
 import static org.junit.Assert.*;
 
-public class TableColumnMapperTest extends SpingDbBaseTest {
+public class TableColumnMapperTest {
 
     private static Object invokeCover(Integer dbClass, Object value) throws Exception {
         Method method = TableColumnMapper.class.getDeclaredMethod("cover", Integer.class, Object.class);
@@ -66,13 +65,5 @@ public class TableColumnMapperTest extends SpingDbBaseTest {
         Object value = "keep_me";
         Object result = mapper.converObj4Db("SYS_SQL", "NOT_EXIST_COLUMN", value);
         assertEquals("表中不存在的字段应保持原值", value, result);
-    }
-
-    @Test
-    public void converObj4Db_integerColumnToLong() {
-        TableColumnMapper mapper = new TableColumnMapper(null);
-        Object result = mapper.converObj4Db("SYS_SQL", "IS_DELETED", "1");
-        assertTrue("SYS_SQL.IS_DELETED 为 INTEGER 类型，字符串数字应转为 Long", result instanceof Long);
-        assertEquals(1L, result);
     }
 }

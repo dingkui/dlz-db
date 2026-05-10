@@ -6,24 +6,17 @@ import com.dlz.db.modal.para.AParaPojo;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.util.id.TraceUtil;
+import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@SpringBootApplication(scanBasePackages = {"com.dlz.spring", "com.dlz.test.db.config"})
+@SpringBootTest(classes = Starter.class)
 @Slf4j
-public class SpingDbBaseTest {
-    @Test
-    public void db() {
-        log.info("SpringBoot 启动完成，全局初始化完毕");
-    }
+public abstract class SpingDbBaseTest {
     @Before
     public void before(){
         if(TraceUtil.getTraceid()==null){
