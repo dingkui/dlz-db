@@ -30,9 +30,58 @@
     <modules>
         <module>dlz-db-core</module>
         <module>dlz-db-spring-boot-starter</module>
+        <module>spring-test-demo</module>
         <module>dlz-db-solon-plugin</module>
     </modules>
     <dependencies>
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>tomcat-jdbc</artifactId>
+                    <groupId>org.apache.tomcat</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>logback-classic</artifactId>
+                    <groupId>ch.qos.logback</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>2.6.12</version>
+        </dependency>
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -73,7 +122,18 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
                 <configuration>
+                    <!-- 不跳过测试 -->
                     <skip>false</skip>
+                    <skipTests>false</skipTests>
+                    
+                    <!-- 复用 JVM，避免每个测试类都重新初始化 Spring -->
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    
+                    <!-- 保留 JaCoCo 的 argLine 参数 -->
+                    <argLine>@{argLine} -Xmx1024m</argLine>
+                    
+                    <!-- 包含的测试 -->
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
