@@ -27,7 +27,7 @@ public class MybatisPlusTableField {
     }
 
     public String value(Field field){
-        if (field == null||idTypeAnnotation==null){
+        if (field == null || idTypeAnnotation==null){
             return null;
         }
         if (field.isAnnotationPresent(idTypeAnnotation)) {

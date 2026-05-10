@@ -386,6 +386,9 @@ public class SqlUtil {
           * @author dk 2015-04-09
      */
     public static Object coverString2Object(String value, ParaTypeEnum pte) {
+        if(pte == null){
+            return value;
+        }
         try {
             switch (pte) {
                 case Blob:

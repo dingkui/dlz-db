@@ -190,6 +190,10 @@ public class BeanInfoHolder {
         String tableName = getTableName(beanClass);
         return tableFieldCache.getAndSet(tableName, () -> {
             HashMap<String, Integer> tableColumnsInfo = getTableColumnsInfo(tableName);
+            if(tableColumnsInfo == null){
+                log.warn("get tableColumnsInfo fail："+tableName);
+                return null;
+            }
             return FieldReflections.getFields(beanClass).stream()
                     .filter(field -> tableColumnsInfo.containsKey(getColumnName(field.getName())))
                     .collect(Collectors.toList());
@@ -207,6 +211,9 @@ public class BeanInfoHolder {
     public static Field getIdField(Class<?> beanClass) {
         return idFieldCache.getAndSet(beanClass, () -> {
             List<Field> fields = getBeanFields(beanClass);
+            if(fields == null){
+                return null;
+            }
             // 1) @TableId（本项目注解）
             for (Field f : fields) {
                 if (f.getAnnotation(TableId.class) != null) {
