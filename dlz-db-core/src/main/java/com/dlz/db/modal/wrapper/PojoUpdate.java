@@ -7,6 +7,7 @@ import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.para.APojoQuery;
 import com.dlz.db.util.DbEntityUtil;
+import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.util.system.FieldReflections;
 
@@ -65,7 +66,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         }
         int eq = sqlFragment.indexOf('=');
         if (eq <= 0) {
-            throw new IllegalArgumentException("setSql 需要 'col = expr' 形式: " + sqlFragment);
+            throw new ValidateException("setSql 需要 'col = expr' 形式: " + sqlFragment);
         }
         String col = sqlFragment.substring(0, eq).trim();
         String expr = sqlFragment.substring(eq + 1).trim();

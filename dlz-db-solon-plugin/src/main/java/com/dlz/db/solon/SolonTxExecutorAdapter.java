@@ -3,6 +3,7 @@ package com.dlz.db.solon;
 import com.dlz.db.core.ITxExecutor;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.exception.DbException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -30,6 +31,7 @@ public class SolonTxExecutorAdapter implements ITxExecutor {
 
     private final DataSourceConfig config;
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "DataSourceConfig由容器注入，视为不可变")
     public SolonTxExecutorAdapter(DataSourceConfig config) {
         this.config = config;
     }

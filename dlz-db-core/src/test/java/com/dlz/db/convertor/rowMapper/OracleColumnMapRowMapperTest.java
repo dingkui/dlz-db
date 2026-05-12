@@ -1,13 +1,11 @@
 package com.dlz.db.convertor.rowMapper;
 
-import com.dlz.db.modal.dto.ResultMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * OracleColumnMapRowMapper 测试类

@@ -149,23 +149,31 @@ public class DBDynamic {
             final DataSourceConfig v = new DataSourceConfig(defaultProperties);
             v.setDataSource(dataSource);
             configPool.put(name, v);
+            Connection connection = null;
             try {
                 if (dataSource instanceof HikariDataSource) {
                     HikariDataSource hds = (HikariDataSource) dataSource;
                     defaultProperties.setUrl(hds.getJdbcUrl());
                     defaultProperties.setUsername(hds.getUsername());
                 } else {
-                    Connection connection = dataSource.getConnection();
+                    connection = dataSource.getConnection();
                     DatabaseMetaData metaData = connection.getMetaData();
                     defaultProperties.setDriverClassName(metaData.getDriverName());
                     defaultProperties.setUrl(metaData.getURL());
                     defaultProperties.setUsername(metaData.getUserName());
                     defaultProperties.setDbProductName(metaData.getDatabaseProductName());// 如 "MySQL", "Oracle", "PostgreSQL"
-                    connection.close();
                 }
             } catch (Exception e) {
-                log.error("获取数据库类型失败: " + name, e);
+                log.error("获取数据库类型失败: {}", name, e);
                 // 忽略错误
+            } finally {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (Exception e) {
+                        log.warn("关闭连接失败", e);
+                    }
+                }
             }
             return true;
         }
@@ -191,7 +199,7 @@ public class DBDynamic {
         try {
             configPool.put(name, new DataSourceConfig(properties));
             if (name.equals(DEFAULT_NAME)) {
-                log.warn("修改系统默认数据源: " + properties.getUrl());
+                log.warn("修改系统默认数据源: {}", properties.getUrl());
             }
             // 创建新的数据源
             return true;

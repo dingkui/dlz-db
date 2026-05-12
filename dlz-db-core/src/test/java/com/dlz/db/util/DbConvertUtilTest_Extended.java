@@ -3,7 +3,6 @@ package com.dlz.db.util;
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
 import com.dlz.db.convertor.columnname.ColumnNameToLower;
 import com.dlz.db.convertor.columnname.ColumnNameToUper;
-import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.modal.dto.ResultMap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

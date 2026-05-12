@@ -16,7 +16,13 @@ public class MybatisPlusTableField {
             idType1 = (Class<Annotation>) Class.forName("com.baomidou.mybatisplus.annotation.TableField");
             valueMethodTmp = idType1.getMethod("value");
             existMethodTmp = idType1.getMethod("exist");
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException ex) {
+            // MyBatis-Plus 未引入，设为 null
+            idType1 = null;
+            valueMethodTmp = null;
+            existMethodTmp = null;
+        } catch (NoSuchMethodException ex) {
+            // 方法不存在
             idType1 = null;
             valueMethodTmp = null;
             existMethodTmp = null;
@@ -37,7 +43,7 @@ public class MybatisPlusTableField {
                 if (!value.isEmpty()) {
                     return value;
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
                 return null;
             }
         }
@@ -45,18 +51,22 @@ public class MybatisPlusTableField {
     }
 
 
-    public Boolean exist(Field field){
-        if (field == null||idTypeAnnotation==null){
-            return null;
+    public Boolean exist(Field field) {
+        if (field == null || idTypeAnnotation == null) {
+            return Boolean.TRUE;
         }
         if (field.isAnnotationPresent(idTypeAnnotation)) {
             Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
             try {
-                return (boolean) existMethod.invoke(mpAnnotation);
-            } catch (Exception e) {
-                return null;
+                Object result = existMethod.invoke(mpAnnotation);
+                if (result instanceof Boolean) {
+                    return (Boolean) result;
+                }
+                return Boolean.TRUE;
+            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+                return Boolean.TRUE;
             }
         }
-        return null;
+        return Boolean.TRUE;
     }
 }

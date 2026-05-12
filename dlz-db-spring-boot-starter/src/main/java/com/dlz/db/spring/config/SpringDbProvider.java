@@ -5,6 +5,7 @@ import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.spring.SpringTxExecutorAdapter;
 import com.dlz.spring.holder.SpringHolder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SpringDbProvider extends ADbProvider {
 
     private final BaseDbProperties sqlConfig;
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "配置属性对象由Spring容器注入，视为不可变")
     public SpringDbProvider(BaseDbProperties sqlConfig) {
         this.sqlConfig = sqlConfig;
     }
@@ -42,6 +44,7 @@ public class SpringDbProvider extends ADbProvider {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "配置属性对象视为不可变")
     public BaseDbProperties getSqlConfig() {
         return sqlConfig;
     }

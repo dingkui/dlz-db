@@ -3,11 +3,9 @@ package com.dlz.test.db.solon;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.Starter;
 import com.dlz.test.db.config.SpingDbBaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-import org.noear.solon.Solon;
 
 /**
  * Solon 插件冒烟测试：验证插件能正确启动并完成基本 CRUD + 事务。

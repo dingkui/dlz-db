@@ -19,7 +19,13 @@ public class MybatisPlusIdType {
             idType1 = (Class<Annotation>) Class.forName("com.baomidou.mybatisplus.annotation.TableId");
             valueMethodTmp = idType1.getMethod("value");
             typeMethodTmp = idType1.getMethod("type");
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException ex) {
+            // MyBatis-Plus 未引入，设为 null
+            idType1 = null;
+            valueMethodTmp = null;
+            typeMethodTmp = null;
+        } catch (NoSuchMethodException ex) {
+            // 方法不存在
             idType1 = null;
             valueMethodTmp = null;
             typeMethodTmp = null;
@@ -40,7 +46,7 @@ public class MybatisPlusIdType {
                 if (!value.isEmpty()) {
                     return value;
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
                 return null;
             }
         }
@@ -67,7 +73,7 @@ public class MybatisPlusIdType {
                     case "ASSIGN_UUID":
                         return IdType.ASSIGN_UUID;
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
                 return null;
             }
         }

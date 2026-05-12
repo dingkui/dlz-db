@@ -6,6 +6,7 @@ import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.KeyUtil;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.util.ValUtil;
 import lombok.AllArgsConstructor;
@@ -33,8 +34,12 @@ public enum DbOperateEnum {
     public final String _sql;
     private final static Pattern patternKey = Pattern.compile("#k");
     private final static Pattern patternColumnName = Pattern.compile("#n");
+    private final static Pattern COLUMN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
 
     private String mkSql(String dbn, String key) {
+        if (dbn == null || !COLUMN_NAME_PATTERN.matcher(dbn).matches()) {
+            throw new ValidateException("非法列名: " + dbn);
+        }
         final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbColumnNames(dbn));
         return key == null ? dbnSql : patternKey.matcher(dbnSql).replaceAll(key);
     }

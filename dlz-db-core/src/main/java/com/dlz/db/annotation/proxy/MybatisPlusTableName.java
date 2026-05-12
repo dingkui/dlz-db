@@ -12,7 +12,12 @@ public class MybatisPlusTableName {
         try {
             idType1 = (Class<Annotation>) Class.forName("com.baomidou.mybatisplus.annotation.TableName");
             valueMethodTmp = idType1.getMethod("value");
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException ex) {
+            // MyBatis-Plus 未引入，设为 null
+            idType1 = null;
+            valueMethodTmp = null;
+        } catch (NoSuchMethodException ex) {
+            // 方法不存在
             idType1 = null;
             valueMethodTmp = null;
         }
@@ -31,7 +36,7 @@ public class MybatisPlusTableName {
                 if (!value.isEmpty()) {
                     return value;
                 }
-            } catch (Exception e) {
+            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
                 return null;
             }
         }

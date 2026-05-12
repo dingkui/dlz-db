@@ -1,14 +1,9 @@
 package com.dlz.db.convertor.dbtype;
 
-import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.holder.BeanInfoHolder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * TableColumnMapper 测试类

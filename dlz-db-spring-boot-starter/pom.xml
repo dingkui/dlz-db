@@ -84,6 +84,13 @@
             <version>1.2.12</version>
             <scope>test</scope>
         </dependency>
+        <!-- SpotBugs annotations for @SuppressFBWarnings -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.8.6</version>
+            <optional>true</optional>
+        </dependency>
 	</dependencies>
     
     <build>

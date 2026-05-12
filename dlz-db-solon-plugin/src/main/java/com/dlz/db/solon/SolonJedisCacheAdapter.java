@@ -1,6 +1,7 @@
 package com.dlz.db.solon;
 
 import com.dlz.db.core.ICacheExecutor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import redis.clients.jedis.JedisPool;
 
 /**
@@ -14,6 +15,7 @@ public class SolonJedisCacheAdapter implements ICacheExecutor {
 
     private final JedisPool jedisPool;
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "JedisPool由容器注入，视为外部管理资源")
     public SolonJedisCacheAdapter(JedisPool jedisPool) {
         this.jedisPool = jedisPool;
     }

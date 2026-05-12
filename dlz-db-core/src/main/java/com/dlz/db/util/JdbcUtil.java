@@ -16,19 +16,24 @@ public class JdbcUtil {
 
 	public static ResultSet getResultSet(Connection connection, String sql, Object[] paras) throws SQLException {
         PreparedStatement pst=connection.prepareStatement(sql);
-        if(paras!=null){
-        	for (int i=0, size=paras.length; i<size; i++) {
-    			Object value = paras[i];
-    			if (value instanceof Date) {
-    				pst.setDate(i + 1, (Date)value);
-    			} else if (value instanceof Timestamp) {
-    				pst.setTimestamp(i + 1, (Timestamp)value);
-    			} else {
-    				pst.setObject(i + 1, value);
-    			}
-    		}
-		}
-       return pst.executeQuery();
+        try {
+            if(paras!=null){
+            	for (int i=0, size=paras.length; i<size; i++) {
+        			Object value = paras[i];
+        			if (value instanceof Date) {
+        				pst.setDate(i + 1, (Date)value);
+        			} else if (value instanceof Timestamp) {
+        				pst.setTimestamp(i + 1, (Timestamp)value);
+        			} else {
+        				pst.setObject(i + 1, value);
+        			}
+        		}
+			}
+           return pst.executeQuery();
+        } catch (SQLException e) {
+            pst.close();
+            throw e;
+        }
     }
 	/**
 	 * from jFinal
@@ -131,7 +136,9 @@ public class JdbcUtil {
 			byte[] data = new byte[(int)blob.length()];		// byte[] data = new byte[is.available()];
 			if (data.length == 0)
 				return null;
-			is.read(data);
+			int bytesRead = is.read(data);
+			if (bytesRead == -1)
+				return null;
 			return data;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -154,7 +161,9 @@ public class JdbcUtil {
 			char[] buffer = new char[(int)clob.length()];
 			if (buffer.length == 0)
 				return null;
-			reader.read(buffer);
+			int charsRead = reader.read(buffer);
+			if (charsRead == -1)
+				return null;
 			return new String(buffer);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

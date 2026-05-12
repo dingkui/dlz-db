@@ -9,6 +9,7 @@ import com.dlz.db.util.DbConvertUtil;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * 本类覆写了spring 的RowMapper
@@ -21,7 +22,7 @@ public class ResultMapRowMapper implements IRowMapper<ResultMap> {
 		int columnCount = rsmd.getColumnCount();
 		ResultMap mapOfColValues = new ResultMap();
 		for (int i = 1; i <= columnCount; i++) {
-			String key = toFieldName(JdbcValueUtils.lookupColumnName(rsmd, i).toLowerCase());
+			String key = toFieldName(JdbcValueUtils.lookupColumnName(rsmd, i).toLowerCase(Locale.ROOT));
 			Object obj = getColumnValue(rs, i);
 			mapOfColValues.put(key, obj);
 		}

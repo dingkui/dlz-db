@@ -16,6 +16,7 @@ import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
 import com.dlz.spring.config.DlzFwConfig;
 import com.dlz.spring.redis.excutor.JedisExecutor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,7 +49,8 @@ public class DlzDbConfig extends DlzFwConfig {
     @Bean(name = "sqlExecutor")
     @Lazy
     @ConditionalOnMissingBean(name = "sqlExecutor")
-    public ISqlExecutor sqlExecutor(JdbcTemplate jdbc,ADbProvider dbProvider) {
+    @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "Spring单例配置类，实例方法初始化全局静态组件")
+    public ISqlExecutor sqlExecutor(JdbcTemplate jdbc, ADbProvider dbProvider) {
         final BaseDbProperties properties = dbProvider.getSqlConfig();
         final SpringSqlExecutorAdapter springSqlExecutorAdapter = new SpringSqlExecutorAdapter(jdbc);
         SqlHolder.init();
@@ -90,6 +92,7 @@ public class DlzDbConfig extends DlzFwConfig {
     @Bean(name = "JdbcTemplate")
     @Lazy
     @ConditionalOnMissingBean(name = "JdbcTemplate")
+    @SuppressFBWarnings(value = "NM_METHOD_NAMING_CONVENTION", justification = "Bean名称与类名一致，方法名故意匹配类名")
     public JdbcTemplate JdbcTemplate(DataSource dataSource) {
         if (log.isInfoEnabled()) {
             log.info("init JdbcTemplate:" + DynamicJdbcTemplate.class.getName());

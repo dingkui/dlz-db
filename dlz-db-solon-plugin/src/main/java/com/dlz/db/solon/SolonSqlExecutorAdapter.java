@@ -6,6 +6,8 @@ import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbLogUtil;
+import com.dlz.kit.exception.ValidateException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -13,6 +15,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * {@link ISqlExecutor} 的 Solon 实现：自研 SimpleJdbc，不依赖任何外部框架的事务管理。
@@ -30,11 +34,13 @@ import java.util.List;
 public class SolonSqlExecutorAdapter implements ISqlExecutor {
 
     @Override
+    @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
     public List<ResultMap> getList(String sql, Object... args) {
         return getList(sql, DB.Dynamic.getRowMapper(), args);
     }
 
     @Override
+    @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
     public <T> List<T> getList(String sql, IRowMapper<T> rowMapper, Object... args) {
         return doDb(() -> withConn(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -52,6 +58,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
     public int update(String sql, Object... args) {
         return doDb(() -> withConn(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -62,6 +69,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
     public Long updateForId(String sql, Object... args) {
         return doDb(() -> withConn(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -90,12 +98,13 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
      * 根据连接所属数据库的方言返回最后插入的自增 ID。
      * <p>仅作为 {@link PreparedStatement#getGeneratedKeys()} 不可用时的兜底。</p>
      */
+    @SuppressFBWarnings(value = {"SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE", "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"}, justification = "SQL字符串由方言固定常量拼接；getDatabaseProductName可能返回null")
     private Long queryLastInsertIdByDialect(Connection conn) {
         String selectLastId;
         try {
             String product = conn.getMetaData().getDatabaseProductName();
             if (product == null) return null;
-            String p = product.toLowerCase();
+            String p = product.toLowerCase(Locale.ROOT);
             if (p.contains("sqlite")) {
                 selectLastId = "SELECT last_insert_rowid()";
             } else if (p.contains("mysql") || p.contains("mariadb")) {
@@ -121,6 +130,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
     }
 
     @Override
+    @SuppressFBWarnings(value = {"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"}, justification = "框架内部SQL执行入口，有参时使用PreparedStatement绑定，无参时sql由框架生成")
     public void execute(String sql, Object... args) {
         doDb(() -> withConn(conn -> {
             if (args != null && args.length > 0) {
@@ -138,6 +148,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
     }
 
     @Override
+    @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
     public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
         return doDb(() -> withConn(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -150,8 +161,14 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
         }), (t, r) -> DbLogUtil.generateSqlMessage(t, "batchUpdate", sql, batchArgs));
     }
 
+    private static final Pattern TABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
+
     @Override
+    @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "表名已通过白名单校验")
     public HashMap<String, Integer> getTableColumnsInfo(String tableName) {
+        if (tableName == null || !TABLE_NAME_PATTERN.matcher(tableName).matches()) {
+            throw new ValidateException("非法表名: " + tableName);
+        }
         String sql = "select * from " + tableName + " where 1=0";
         return withConn(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -160,7 +177,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
                 ResultSetMetaData md = rs.getMetaData();
                 int count = md.getColumnCount();
                 for (int i = 1; i <= count; i++) {
-                    infos.put(md.getColumnLabel(i).toUpperCase(), md.getColumnType(i));
+                    infos.put(md.getColumnLabel(i).toUpperCase(Locale.ROOT), md.getColumnType(i));
                 }
                 return infos;
             }

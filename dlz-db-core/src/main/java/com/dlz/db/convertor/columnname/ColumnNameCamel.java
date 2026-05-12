@@ -26,10 +26,10 @@ public class ColumnNameCamel implements IColumnNameConvertor {
 		}
 
 
-		dbKey = dbKey.toLowerCase();
+		dbKey = dbKey.toLowerCase(Locale.ROOT);
 		Matcher mat = toCamel.matcher(dbKey);
 		while (mat.find()) {
-			dbKey = dbKey.replace("_" + mat.group(1), mat.group(1).toUpperCase());
+			dbKey = dbKey.replace("_" + mat.group(1), mat.group(1).toUpperCase(Locale.ROOT));
 		}
 		return dbKey.replaceAll("_", "");
 	}

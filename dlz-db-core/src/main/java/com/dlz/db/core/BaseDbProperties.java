@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,6 +51,62 @@ public class BaseDbProperties {
      * 日志配置
      */
     private Log log = new Log();
+
+    /**
+     * 获取 sqllist 的不可变副本，防止外部修改
+     */
+    public List<String> getSqllist() {
+        return Collections.unmodifiableList(sqllist);
+    }
+
+    /**
+     * 设置 sqllist，创建副本以防止外部修改
+     */
+    public void setSqllist(List<String> sqllist) {
+        this.sqllist = new ArrayList<>(sqllist);
+    }
+
+    /**
+     * 获取 helper 的副本，防止外部修改
+     */
+    public Helper getHelper() {
+        Helper copy = new Helper();
+        copy.setPackageName(helper.getPackageName());
+        copy.setAutoUpdate(helper.isAutoUpdate());
+        return copy;
+    }
+
+    /**
+     * 设置 helper，创建副本以防止外部修改
+     */
+    public void setHelper(Helper helper) {
+        this.helper = new Helper();
+        this.helper.setPackageName(helper.getPackageName());
+        this.helper.setAutoUpdate(helper.isAutoUpdate());
+    }
+
+    /**
+     * 获取 log 的副本，防止外部修改
+     */
+    public Log getLog() {
+        Log copy = new Log();
+        copy.setShowResult(log.isShowResult());
+        copy.setShowRunSql(log.isShowRunSql());
+        copy.setShowCaller(log.isShowCaller());
+        copy.setSlowSqlThreshold(log.getSlowSqlThreshold());
+        return copy;
+    }
+
+    /**
+     * 设置 log，创建副本以防止外部修改
+     */
+    public void setLog(Log log) {
+        this.log = new Log();
+        this.log.setShowResult(log.isShowResult());
+        this.log.setShowRunSql(log.isShowRunSql());
+        this.log.setShowCaller(log.isShowCaller());
+        this.log.setSlowSqlThreshold(log.getSlowSqlThreshold());
+    }
 
     /**
      * sqlHelper配置

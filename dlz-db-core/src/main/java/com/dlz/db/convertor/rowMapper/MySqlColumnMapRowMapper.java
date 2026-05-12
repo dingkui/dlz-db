@@ -7,6 +7,7 @@ import com.dlz.db.modal.dto.ResultMap;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Locale;
 
 public class MySqlColumnMapRowMapper extends ResultMapRowMapper{
 	@Override
@@ -15,9 +16,9 @@ public class MySqlColumnMapRowMapper extends ResultMapRowMapper{
 		int columnCount = rsmd.getColumnCount();
 		ResultMap mapOfColValues = new ResultMap();
 		for (int i = 1; i <= columnCount; i++) {
-			String key = toFieldName(JdbcValueUtils.lookupColumnName(rsmd, i).toLowerCase());
+			String key = toFieldName(JdbcValueUtils.lookupColumnName(rsmd, i).toLowerCase(Locale.ROOT));
 			Object obj;
-			String typename= rsmd.getColumnTypeName(i).toUpperCase();
+			String typename= rsmd.getColumnTypeName(i).toUpperCase(Locale.ROOT);
 			if("DECIMAL".equals(typename)){
 				obj = rs.getDouble(i);
 			}else{

@@ -81,9 +81,10 @@ public class ResourceMatcher {
         List<InputStream> streams = new ArrayList<>(urls.size());
         for (URL url : urls) {
             try {
-                streams.add(url.openStream());
+                InputStream stream = url.openStream();
+                streams.add(stream);
             } catch (IOException e) {
-                log.warn("打开资源流失败: " + url, e);
+                log.warn("打开资源流失败: {}", url.toString(), e);
             }
         }
         return streams.toArray(new InputStream[0]);
@@ -208,13 +209,24 @@ public class ResourceMatcher {
 
     private static void collectFromFile(URL rootUrl, String basePath, Pattern regex, List<URL> result) {
         try {
+            // 验证 URL 协议，防止路径遍历攻击
+            if (!"file".equals(rootUrl.getProtocol())) {
+                log.debug("非文件协议，跳过: {}", rootUrl.getProtocol());
+                return;
+            }
             File rootDir = new File(rootUrl.toURI());
+            // 验证路径是否在预期范围内
+            String canonicalPath = rootDir.getCanonicalPath();
+            if (!canonicalPath.startsWith(new File(".").getCanonicalPath())) {
+                log.warn("检测到可疑路径，跳过: {}", canonicalPath);
+                return;
+            }
             if (!rootDir.isDirectory()) {
                 return;
             }
             walkFile(rootDir, "", basePath, regex, result);
         } catch (Exception e) {
-            log.warn("扫描文件资源失败: " + rootUrl, e);
+            log.warn("扫描文件资源失败: {}", rootUrl.toString(), e);
         }
     }
 
@@ -230,7 +242,7 @@ public class ResourceMatcher {
                     try {
                         result.add(child.toURI().toURL());
                     } catch (Exception e) {
-                        log.warn("转换文件URL失败: " + child, e);
+                        log.warn("转换文件URL失败: {}", child.getPath(), e);
                     }
                 }
             }
@@ -238,9 +250,21 @@ public class ResourceMatcher {
     }
 
     private static void collectFromJar(URL rootUrl, String basePath, Pattern regex, List<URL> result) {
+        JarFile jarFile = null;
         try {
+            // 验证 URL 协议，防止 SSRF 攻击
+            String protocol = rootUrl.getProtocol();
+            if (!"jar".equals(protocol) && !"zip".equals(protocol) && !"wsjar".equals(protocol)) {
+                log.debug("不支持的 jar 协议，跳过: {}", protocol);
+                return;
+            }
+            
             URLConnection conn = rootUrl.openConnection();
-            JarFile jarFile;
+            // 禁用自动跟随重定向
+            if (conn instanceof java.net.HttpURLConnection) {
+                ((java.net.HttpURLConnection) conn).setInstanceFollowRedirects(false);
+            }
+            
             String jarBaseUrl;
             if (conn instanceof JarURLConnection) {
                 JarURLConnection jarConn = (JarURLConnection) conn;
@@ -275,7 +299,15 @@ public class ResourceMatcher {
                 }
             }
         } catch (Exception e) {
-            log.warn("扫描 jar 资源失败: " + rootUrl, e);
+            log.warn("扫描 jar 资源失败: {}", rootUrl.toString(), e);
+        } finally {
+            if (jarFile != null) {
+                try {
+                    jarFile.close();
+                } catch (IOException e) {
+                    log.warn("关闭 JarFile 失败", e);
+                }
+            }
         }
     }
 

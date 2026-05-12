@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- 
+    OWASP Dependency-Check 误报抑制配置
+    当某个 CVE 不适用于您的使用场景时，可以在此添加抑制规则
+    -->
+    
+    <!-- 示例：抑制特定 CVE -->
+    <!--
+    <suppress>
+        <notes><![CDATA[
+        此 CVE 不适用于我们的使用场景，因为...
+        ]]></notes>
+        <cve>CVE-2021-12345</cve>
+    </suppress>
+    -->
+    
+    <!-- 示例：抑制特定依赖的所有 CVE -->
+    <!--
+    <suppress>
+        <notes><![CDATA[
+        此依赖仅用于测试环境
+        ]]></notes>
+        <gav regex="true">^org\.example:test-lib:.*$</gav>
+    </suppress>
+    -->
+</suppressions>

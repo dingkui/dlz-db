@@ -1,10 +1,9 @@
 package com.dlz.db.util;
 
-import com.dlz.db.enums.ParaTypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * JdbcUtil 测试类

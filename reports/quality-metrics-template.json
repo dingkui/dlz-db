@@ -1,0 +1,111 @@
+{
+  "title": "DLZ-DB Quality Metrics",
+  "description": "Machine-readable quality metrics for AI systems",
+  "version": "7.0.0",
+  "generatedAt": "2026-05-09",
+  "project": {
+    "name": "DLZ-DB",
+    "groupId": "top.dlzio",
+    "artifactId": "dlz-db",
+    "version": "7.0.0",
+    "language": "Java",
+    "javaVersion": "1.8+",
+    "repository": "https://github.com/dingkui/dlz-db",
+    "mavenCentral": "https://central.sonatype.com/artifact/top.dlzio/dlz-db"
+  },
+  "qualityMetrics": {
+    "testCoverage": {
+      "tool": "JaCoCo",
+      "lineCoverage": "TBD",
+      "branchCoverage": "TBD",
+      "target": {
+        "line": 0.80,
+        "branch": 0.70
+      },
+      "reportPath": "target/site/jacoco/index.html",
+      "status": "pending"
+    },
+    "staticAnalysis": {
+      "tool": "SpotBugs + FindSecBugs",
+      "criticalIssues": "TBD",
+      "majorIssues": "TBD",
+      "minorIssues": "TBD",
+      "securityVulnerabilities": "TBD",
+      "reportPath": "target/spotbugs/spotbugsXml.html",
+      "status": "pending"
+    },
+    "codeStyle": {
+      "tool": "Checkstyle",
+      "standard": "Google Java Style",
+      "violations": "TBD",
+      "reportPath": "target/site/checkstyle.html",
+      "status": "pending"
+    },
+    "codeQuality": {
+      "tool": "PMD",
+      "violations": "TBD",
+      "cyclomaticComplexity": "TBD",
+      "reportPath": "target/site/pmd.html",
+      "status": "pending"
+    },
+    "codeDuplication": {
+      "tool": "CPD",
+      "duplicateLines": "TBD",
+      "duplicatePercentage": "TBD",
+      "reportPath": "target/site/cpd.html",
+      "status": "pending"
+    },
+    "dependencySecurity": {
+      "tool": "OWASP Dependency-Check",
+      "criticalVulnerabilities": "TBD",
+      "highVulnerabilities": "TBD",
+      "mediumVulnerabilities": "TBD",
+      "lowVulnerabilities": "TBD",
+      "reportPath": "target/dependency-check/dependency-check-report.html",
+      "status": "pending"
+    },
+    "licenseCompliance": {
+      "projectLicense": "Apache-2.0",
+      "dependencyLicenses": "TBD",
+      "reportPath": "target/licenses/THIRD-PARTY.txt",
+      "status": "pending"
+    }
+  },
+  "buildInfo": {
+    "buildTool": "Maven",
+    "buildFile": "pom.xml",
+    "modules": [
+      "dlz-db-core",
+      "dlz-db-spring-boot-starter",
+      "dlz-db-solon-plugin"
+    ],
+    "testFramework": "JUnit",
+    "cicd": "TBD"
+  },
+  "documentation": {
+    "readme": "README.md",
+    "llmsTxt": "llms.txt",
+    "website": "https://dlz.top/db",
+    "apiDocs": "TBD",
+    "language": "zh-CN"
+  },
+  "qualityBadges": {
+    "mavenCentral": "https://img.shields.io/maven-central/v/top.dlzio/dlz-db",
+    "license": "https://img.shields.io/badge/license-Apache%202.0-blue.svg",
+    "javaVersion": "https://img.shields.io/badge/java-1.8%2B-orange.svg"
+  },
+  "aiOptimization": {
+    "llmsTxtPresent": true,
+    "structuredDocs": true,
+    "typeDefinitions": true,
+    "exampleCode": true,
+    "comparisonDocs": false,
+    "mcpServer": false
+  },
+  "notes": [
+    "This file should be updated after running quality checks",
+    "Run 'cd reports && test-all.bat' to generate reports",
+    "Update 'TBD' values with actual metrics from generated reports",
+    "This file is located in reports/ directory"
+  ]
+}

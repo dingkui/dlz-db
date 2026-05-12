@@ -2,10 +2,6 @@ package com.dlz.db.util;
 
 import com.dlz.db.enums.ParaTypeEnum;
 import com.dlz.db.modal.dto.Page;
-import com.dlz.db.modal.items.JdbcItem;
-import com.dlz.db.modal.items.SqlItem;
-import com.dlz.db.modal.para.ParaMap;
-import com.dlz.db.modal.para.ParaJdbc;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

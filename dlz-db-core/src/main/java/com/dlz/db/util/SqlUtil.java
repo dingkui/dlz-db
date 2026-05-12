@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,14 +57,17 @@ public class SqlUtil {
 
     /**
      * 转换mybatisSQl为jdbcSql
+     *
      * @throws Exception
      * @author dk 2015-04-09
      */
     public static JdbcItem dealParmToJdbc(ParaMap paraMap) {
         return dealToJdbcSql(paraMap.getSqlItem().getSqlRun(), paraMap.getPara());
     }
+
     /**
      * 转换mybatisSQl为jdbcSql
+     *
      * @throws Exception
      * @author dk 2015-04-09
      */
@@ -83,7 +87,7 @@ public class SqlUtil {
             paraList.add(jdbcParaItem);
         }
         sb.append(sqlRun.substring(beginIndex));
-        return JdbcItem.of(sb.toString(),paraList.toArray());
+        return JdbcItem.of(sb.toString(), paraList.toArray());
     }
 
     /**
@@ -94,28 +98,28 @@ public class SqlUtil {
      * @throws Exception
      * @author dk 2015-04-09
      */
-    public static String getRunSqlByJdbc(String jdbcSql,Object[] paraList) {
-        if(jdbcSql == null){
+    public static String getRunSqlByJdbc(String jdbcSql, Object[] paraList) {
+        if (jdbcSql == null) {
             throw new DbException("jdbcSql不应该为空", 1002);
         }
         StringBuilder sbRunSql = new StringBuilder();
         int beginIndex = 0;
         Matcher mat = PATTERN_PARA.matcher(jdbcSql);
-        int index=0;
+        int index = 0;
         while (mat.find()) {
             String _startStr = jdbcSql.substring(beginIndex, mat.start());
             Object jdbcParaItem = paraList[index++];
             beginIndex = mat.end();
             sbRunSql.append(_startStr);
-            if(jdbcParaItem instanceof Number){
+            if (jdbcParaItem instanceof Number) {
                 sbRunSql.append(jdbcParaItem);
-            }else if(jdbcParaItem instanceof Date){
-                sbRunSql.append("'"+DateUtil.DATETIME.format((Date)jdbcParaItem)+"'");
-            }else if(jdbcParaItem instanceof TemporalAccessor){
-                sbRunSql.append("'"+DateUtil.DATETIME.format((TemporalAccessor)jdbcParaItem)+"'");
-            }else{
+            } else if (jdbcParaItem instanceof Date) {
+                sbRunSql.append("'" + DateUtil.DATETIME.format((Date) jdbcParaItem) + "'");
+            } else if (jdbcParaItem instanceof TemporalAccessor) {
+                sbRunSql.append("'" + DateUtil.DATETIME.format((TemporalAccessor) jdbcParaItem) + "'");
+            } else {
                 try {
-                    sbRunSql.append("'"+ValUtil.toStr(jdbcParaItem)+"'");
+                    sbRunSql.append("'" + ValUtil.toStr(jdbcParaItem) + "'");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -135,10 +139,10 @@ public class SqlUtil {
      */
     public static SqlItem dealParm(ParaMap paraMap, int dealType) {
         SqlItem sqlItem = paraMap.getSqlItem();
-        if(sqlItem.getSqlKey() == null && paraMap instanceof AParaTable){
-             WrapperBuildUtil.buildSql((AParaTable) paraMap);
+        if (sqlItem.getSqlKey() == null && paraMap instanceof AParaTable) {
+            WrapperBuildUtil.buildSql((AParaTable) paraMap);
         }
-        if (sqlItem.getSqlKey() != null){
+        if (sqlItem.getSqlKey() != null) {
             String sql = sqlItem.getSqlDeal();
             String sqlInput = sqlItem.getSqlKey();
             if (sql == null && sqlInput != null) {
@@ -155,16 +159,19 @@ public class SqlUtil {
                 case 3:
                     sqlItem.setSqlRun(SqlUtil.getPageSql(paraMap));
                     break;
+                default:
+                    throw new DbException("dealType错误: " + dealType, 1002);
             }
         }
         return sqlItem;
     }
+
     /**
      * 转换参数
      *
      * @param paraMap
      * @param dealType 1:普通sql 2:查询条数 3：翻页
-          * @throws Exception
+     * @throws Exception
      * @author dk 2015-04-09
      */
     public static JdbcItem dealJdbc(ParaJdbc paraMap, int dealType) {
@@ -172,9 +179,9 @@ public class SqlUtil {
         Object[] paras = paraMap.getParas();
         switch (dealType) {
             case 1:
-                return JdbcItem.of(sql,paras);
+                return JdbcItem.of(sql, paras);
             case 2:
-                return JdbcItem.of(SqlUtil.getCntSql(sql),paras);
+                return JdbcItem.of(SqlUtil.getCntSql(sql), paras);
             case 3:
                 return SqlUtil.getPageSql(paraMap);
         }
@@ -186,7 +193,7 @@ public class SqlUtil {
      *
      * @param para
      * @param sql
-          * @throws Exception
+     * @throws Exception
      * @author dk 2015-04-09
      */
     private static String createSqlDeal(Map<String, Object> para, String sql) {
@@ -200,12 +207,12 @@ public class SqlUtil {
     /**
      * 转换成翻页sql
      *
-          * @throws Exception
+     * @throws Exception
      */
     public static String getPageSql(ParaMap paraMap) {
         SqlItem sqlItem = paraMap.getSqlItem();
         String sqlDeal = sqlItem.getSqlDeal();
-        if(sqlDeal == null){
+        if (sqlDeal == null) {
             throw new DbException("sqlDeal不应该为空", 1002);
         }
         Page page = paraMap.getPage();
@@ -217,28 +224,29 @@ public class SqlUtil {
         paraMap.addParas(pageSql.v2);
         return pageSql.v1;
     }
+
     /**
      * 转换成翻页sql
      *
-          * @throws Exception
+     * @throws Exception
      */
     private static VAL<String, JSONMap> pageSql(String sql, Page page) {
         String _orderBy = page.getSortSql();
         Long _begin;
         Long _end;
-        Long _pageSize= page.getSize();
+        Long _pageSize = page.getSize();
 
-        if(page.getSize()==0){
+        if (page.getSize() == 0) {
             _begin = null;
             _end = null;
-        }else{
+        } else {
             //current=0表示不分页
             if (page.getCurrent() == 0) {
                 _begin = null;
                 _pageSize = null;
                 _end = null;
             } else {
-                _begin = page.getCurrent() * page.getSize()-page.getSize();
+                _begin = page.getCurrent() * page.getSize() - page.getSize();
                 _end = _begin + page.getSize();
             }
         }
@@ -249,15 +257,17 @@ public class SqlUtil {
         p.put("_pageSize", _pageSize);
         p.put("_orderBy", _orderBy);
         String sqlPage = createSqlDeal(p, "key.comm.pageSql");
-        return VAL.of(sqlPage,p);
+        return VAL.of(sqlPage, p);
     }
+
     /**
      * 转换成翻页sql
+     *
      * @throws Exception
      */
     public static JdbcItem getPageSql(ParaJdbc paraMap) {
         String sqlDeal = paraMap.getSqlItem().getSqlDeal();
-        if(sqlDeal == null){
+        if (sqlDeal == null) {
             throw new DbException("sqlDeal不应该为空", 1002);
         }
         Page page = paraMap.getPage();
@@ -272,17 +282,19 @@ public class SqlUtil {
             jdbcPara[i] = paras[i];
         }
         for (int i = 0; i < jdbcItem.paras.length; i++) {
-            jdbcPara[i+paras.length] = jdbcItem.paras[i];
+            jdbcPara[i + paras.length] = jdbcItem.paras[i];
         }
         return JdbcItem.of(jdbcItem.sql, jdbcPara);
     }
+
     /**
      * 转换成查询条数sql
+     *
      * @throws Exception
      */
     public static String getCntSql(String sql) {
-        int from = sql.toLowerCase().indexOf(" from ");
-        if(from == -1){
+        int from = sql.toLowerCase(Locale.ROOT).indexOf(" from ");
+        if (from == -1) {
             throw new DbException("sql语句无from：" + sql, 1002);
         }
         return "select count(1) from" + sql.substring(from + 5);
@@ -294,7 +306,7 @@ public class SqlUtil {
      * @param sql
      * @param m
      * @param replaceTimes
-          */
+     */
     public static String replaceSql(String sql, Map<String, Object> m, int replaceTimes) {
         int length = sql.length();
         if (length > 10000 || replaceTimes++ > 3000) {
@@ -314,7 +326,7 @@ public class SqlUtil {
                 if (o instanceof Object[] || o instanceof Collection) {
                     matStr = getSqlInStr(o);
                 } else {
-                    matStr = String.valueOf(o == null ? "" : o);
+                    matStr = String.valueOf(o);
                 }
             }
             sb.append(sql, start, mat.start());
@@ -333,7 +345,7 @@ public class SqlUtil {
      *
      * @param sql
      * @param m
-          */
+     */
     public static String getConditionStr(String sql, Map<String, Object> m) {
         Matcher mat = PATTERN_CONDITION.matcher(sql);
         int start = 0;
@@ -383,10 +395,10 @@ public class SqlUtil {
      *
      * @param value
      * @param pte
-          * @author dk 2015-04-09
+     * @author dk 2015-04-09
      */
     public static Object coverString2Object(String value, ParaTypeEnum pte) {
-        if(pte == null){
+        if (pte == null) {
             return value;
         }
         try {
@@ -399,7 +411,7 @@ public class SqlUtil {
                     return value;
             }
         } catch (Exception e) {
-            log.error(ExceptionUtils.getStackTrace(e.getMessage(),e));
+            log.error("转换参数失败: {}", e.getMessage(), e);
         }
         return value;
     }

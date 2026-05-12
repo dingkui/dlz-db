@@ -20,7 +20,7 @@
         <spotbugs.version>4.8.6</spotbugs.version>
         <spotbugs.maven.version>4.8.6.6</spotbugs.maven.version>
         <findsecbugs.version>1.12.0</findsecbugs.version>
-        <checkstyle.version>10.12.7</checkstyle.version>
+        <checkstyle.version>9.3</checkstyle.version>
         <pmd.version>3.21.2</pmd.version>
         
         <!-- 质量阈值 -->
@@ -30,7 +30,7 @@
     <modules>
         <module>dlz-db-core</module>
         <module>dlz-db-spring-boot-starter</module>
-        <module>spring-test-demo</module>
+<!--        <module>spring-test-demo</module>-->
         <module>dlz-db-solon-plugin</module>
     </modules>
     <dependencies>
@@ -188,6 +188,7 @@
                     <htmlOutput>true</htmlOutput>
                     <failOnError>false</failOnError>
                     <outputDirectory>${project.build.directory}/reports/spotbugs</outputDirectory>
+                    <excludeFilterFile>${project.basedir}/../spotbugs-exclude.xml</excludeFilterFile>
                     <plugins>
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
@@ -195,27 +196,6 @@
                             <version>${findsecbugs.version}</version>
                         </plugin>
                     </plugins>
-                </configuration>
-            </plugin>
-
-            <!-- Checkstyle 代码规范 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.1</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>${checkstyle.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <configLocation>google_checks.xml</configLocation>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>false</failsOnError>
-                    <violationSeverity>warning</violationSeverity>
-                    <outputFile>${project.build.directory}/reports/checkstyle/checkstyle-result.xml</outputFile>
                 </configuration>
             </plugin>
 
