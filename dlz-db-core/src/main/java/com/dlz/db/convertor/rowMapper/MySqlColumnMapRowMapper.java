@@ -16,7 +16,7 @@ public class MySqlColumnMapRowMapper extends ResultMapRowMapper{
 		int columnCount = rsmd.getColumnCount();
 		ResultMap mapOfColValues = new ResultMap();
 		for (int i = 1; i <= columnCount; i++) {
-			String key = toFieldName(JdbcValueUtils.lookupColumnName(rsmd, i).toLowerCase(Locale.ROOT));
+			String key = toFieldName(JdbcValueUtils.lookupColumnName(rsmd, i));
 			Object obj;
 			String typename= rsmd.getColumnTypeName(i).toUpperCase(Locale.ROOT);
 			if("DECIMAL".equals(typename)){
