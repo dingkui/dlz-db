@@ -5,6 +5,7 @@ import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.TableName;
 import com.dlz.db.annotation.proxy.AnnoProxies;
 import com.dlz.db.util.DbConvertUtil;
+import com.dlz.db.util.DbLogUtil;
 import com.dlz.kit.cache.CacheMap;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.util.StringUtils;
@@ -191,6 +192,7 @@ public class BeanInfoHolder {
         return tableFieldCache.getAndSet(tableName, () -> {
             HashMap<String, Integer> tableColumnsInfo = getTableColumnsInfo(tableName);
             if(tableColumnsInfo == null){
+                DbLogUtil.setCaller(1);
                 log.warn("get tableColumnsInfo fail："+tableName);
                 return null;
             }
