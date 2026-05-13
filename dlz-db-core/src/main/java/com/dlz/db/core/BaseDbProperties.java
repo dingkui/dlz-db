@@ -1,6 +1,7 @@
 package com.dlz.db.core;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,8 @@ import java.util.List;
  *
  * @since 7.0.0
  */
-@Data
+@Getter
+@Setter
 public class BaseDbProperties {
     /**
      * 数据库支持类
@@ -111,7 +113,8 @@ public class BaseDbProperties {
     /**
      * sqlHelper配置
      */
-    @Data
+    @Getter
+    @Setter
     public static class Helper {
         /**
          * 自动更新数据库扫码数据包
@@ -126,7 +129,8 @@ public class BaseDbProperties {
     /**
      * 日志配置
      */
-    @Data
+    @Getter
+    @Setter
     public static class Log {
         /**
          * 是否显示结果日志
