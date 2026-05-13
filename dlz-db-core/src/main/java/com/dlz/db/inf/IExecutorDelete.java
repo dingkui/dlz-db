@@ -23,7 +23,7 @@ import com.dlz.db.modal.wrapper.TableUpdate;
  * DB.Table("user").delete().ignoreLogicDelete(true).eq("id", 1).execute();
  * </pre>
  */
-public interface IExecuteDelete<ME extends IExecuteDelete>
+public interface IExecutorDelete<ME extends IExecutorDelete>
         extends IExecutorUDI, ISqlQuery<ME> {
     /** 目标表名。 */
     String getTableName();

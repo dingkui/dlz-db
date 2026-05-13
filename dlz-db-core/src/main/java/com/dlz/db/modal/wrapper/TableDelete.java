@@ -1,6 +1,6 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.inf.IExecuteDelete;
+import com.dlz.db.inf.IExecutorDelete;
 import com.dlz.db.modal.para.AQuery;
 
 /**
@@ -8,7 +8,7 @@ import com.dlz.db.modal.para.AQuery;
  * @author dingkui
  *
  */
-public class TableDelete extends AQuery<TableDelete> implements IExecuteDelete<TableDelete> {
+public class TableDelete extends AQuery<TableDelete> implements IExecutorDelete<TableDelete> {
 	private static final long serialVersionUID = 8374167270612933157L;
 	public TableDelete(String tableName){
 		super(tableName);
