@@ -4,7 +4,6 @@ package com.dlz.test.db.modal;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.modal.DbPojo;
 import com.dlz.db.modal.wrapper.PojoDelete;
-import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.kit.exception.SystemException;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;

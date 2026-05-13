@@ -1,13 +1,8 @@
 package com.dlz.test.db.modal;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.DbBatch;
-import com.dlz.db.modal.DbJdbc;
-import com.dlz.db.modal.DbPojo;
-import com.dlz.db.modal.DbSql;
-import com.dlz.db.modal.DbTable;
 import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DBTx;
+import com.dlz.db.modal.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

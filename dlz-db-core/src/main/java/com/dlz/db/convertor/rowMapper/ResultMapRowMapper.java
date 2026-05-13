@@ -9,7 +9,6 @@ import com.dlz.db.util.DbConvertUtil;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Locale;
 
 /**
  * 本类覆写了spring 的RowMapper

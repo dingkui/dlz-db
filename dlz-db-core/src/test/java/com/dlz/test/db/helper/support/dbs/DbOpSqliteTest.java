@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * DbOpSqlite 类型转换测试

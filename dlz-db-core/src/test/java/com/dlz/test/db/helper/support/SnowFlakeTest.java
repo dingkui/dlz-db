@@ -1,7 +1,6 @@
 package com.dlz.test.db.helper.support;
 
 import com.dlz.db.helper.support.SnowFlake;
-import com.dlz.kit.exception.ValidateException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

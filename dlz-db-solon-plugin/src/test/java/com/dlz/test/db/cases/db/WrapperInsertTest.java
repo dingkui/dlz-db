@@ -1,6 +1,5 @@
 package com.dlz.test.db.cases.db;
 
-import com.dlz.db.convertor.columnname.ColumnNameToLower;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.PojoInsert;

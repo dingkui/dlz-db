@@ -1,7 +1,7 @@
 package com.dlz.test.db.core;
 
-import com.dlz.db.core.DlzResourceAdapter;
 import com.dlz.db.annotation.TableName;
+import com.dlz.db.core.DlzResourceAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.InputStream;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * DlzResourceAdapter 资源适配器测试
