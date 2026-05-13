@@ -4,6 +4,7 @@ import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,6 +40,13 @@ public interface ISqlPage<T extends ISqlPage>{
     default T page(int pageIndex, int size, Order... orders) {
         return page(pageIndex, size, Arrays.asList(orders));
     }
+    /**
+     * 仅设置分页大小，不改排序。
+     * @param size 每页大小，最大 10000；{@code <=0} 则保持原值（默认 20）
+     */
+    default T limit(int size) {
+        return page(1, size, Collections.emptyList());
+    }
 
     /**
      * 设置分页与排序。
@@ -52,7 +60,9 @@ public interface ISqlPage<T extends ISqlPage>{
         if (pmPage == null) {
             pmPage = Page.build();
         }
-        pmPage.addOrder(orders);
+        if(orders!=null && !orders.isEmpty()){
+            pmPage.addOrder(orders);
+        }
         if (size > 0) {
             pmPage.setSize(size);
         }
