@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.batch;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.Orders;
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * 批量操作专题测试
  * 覆盖批量插入/更新
  */
-public class BatchTest extends SpingDbBaseTest {
+public class BatchTest extends SolonDbBaseTest {
 
     @Before
     public void setUp() {

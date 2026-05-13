@@ -2,7 +2,7 @@ package com.dlz.test.db.cases.preset_sql;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
  * 预设 SQL 专题测试
  * 覆盖 SQL 参数化查询（#{param}）
  */
-public class PresetSqlTest extends SpingDbBaseTest {
+public class PresetSqlTest extends SolonDbBaseTest {
 
     @Before
     public void setUp() {

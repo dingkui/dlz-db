@@ -5,7 +5,7 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.kit.exception.SystemException;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.SysSql;
@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @Slf4j
-public class WrapperInsertTest extends SpingDbBaseTest {
+public class WrapperInsertTest extends SolonDbBaseTest {
 
     @Test
     public void insertWrapperTest1() {
@@ -42,7 +42,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         insert.execute();
         final List<ResultMap> resultMaps = DB.Table.select("Sys_Sql").setAllowFullQuery(true).queryList();
         log.info("resultMaps:"+resultMaps);
-        final List<ResultMap> resultMaps2 = DB.Table.select("Sys_Sql").setAllowFullQuery(true).queryList(new ColumnNameToLower());
+        final List<ResultMap> resultMaps2 = DB.Table.select("Sys_Sql").setAllowFullQuery(true).convertLower().queryList();
         log.info("resultMaps:"+resultMaps2);
     }
 

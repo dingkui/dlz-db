@@ -3,7 +3,7 @@ package com.dlz.test.db.cases.util;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.SysSql;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class WrapperBuildUtilTest extends SpingDbBaseTest {
+public class WrapperBuildUtilTest extends SolonDbBaseTest {
 
     @Test
     public void getIdType_withExplicitInput() {

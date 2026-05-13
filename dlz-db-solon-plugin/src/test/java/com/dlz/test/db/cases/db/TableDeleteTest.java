@@ -4,11 +4,11 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.kit.json.JSONMap;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.Dict;
 import org.junit.Test;
 
-public class TableDeleteTest extends SpingDbBaseTest {
+public class TableDeleteTest extends SolonDbBaseTest {
     @Test
     public void tableDeleteTest1() {
         TableDelete delete = DB.Table.delete("t_b_dict")

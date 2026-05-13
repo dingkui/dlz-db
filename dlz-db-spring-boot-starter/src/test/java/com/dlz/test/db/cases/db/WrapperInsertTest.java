@@ -43,7 +43,7 @@ public class WrapperInsertTest extends SpingDbBaseTest {
         insert.execute();
         final List<ResultMap> resultMaps = DB.Table.select("Sys_Sql").setAllowFullQuery(true).queryList();
         log.info("resultMaps:"+resultMaps);
-        final List<ResultMap> resultMaps2 = DB.Table.select("Sys_Sql").setAllowFullQuery(true).queryList(new ColumnNameToLower());
+        final List<ResultMap> resultMaps2 = DB.Table.select("Sys_Sql").setAllowFullQuery(true).convertUpper().queryList();
         log.info("resultMaps:"+resultMaps2);
     }
 

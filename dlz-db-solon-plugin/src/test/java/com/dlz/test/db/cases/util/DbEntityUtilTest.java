@@ -2,7 +2,7 @@ package com.dlz.test.db.cases.util;
 
 import com.dlz.db.util.DbEntityUtil;
 import com.dlz.kit.exception.SystemException;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.Menu;
 import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.SysSql;
@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class DbEntityUtilTest extends SpingDbBaseTest {
+public class DbEntityUtilTest extends SolonDbBaseTest {
 
     @Test
     public void getIdName_withTableId() {

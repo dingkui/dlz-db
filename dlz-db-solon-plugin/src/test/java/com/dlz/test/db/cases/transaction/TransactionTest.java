@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.transaction;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static org.junit.Assert.fail;
  * 事务专题测试
  * 覆盖提交/回滚/嵌套/返回值
  */
-public class TransactionTest extends SpingDbBaseTest {
+public class TransactionTest extends SolonDbBaseTest {
 
     @Before
     public void setUp() {

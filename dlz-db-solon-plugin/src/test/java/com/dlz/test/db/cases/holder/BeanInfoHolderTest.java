@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.holder;
 
 import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.*;
 import org.junit.Test;
 
@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 
 import static org.junit.Assert.*;
 
-public class BeanInfoHolderTest extends SpingDbBaseTest {
+public class BeanInfoHolderTest extends SolonDbBaseTest {
 
     @Test
     public void getIdField_withExplicitTableId() {

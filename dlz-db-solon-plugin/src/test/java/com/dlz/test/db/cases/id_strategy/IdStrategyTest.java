@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.id_strategy;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.User;
 import org.junit.After;
@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * 主键策略专题测试
  * 覆盖 AUTO/ASSIGN_ID/INPUT 三种主键策略
  */
-public class IdStrategyTest extends SpingDbBaseTest {
+public class IdStrategyTest extends SolonDbBaseTest {
 
     @Before
     public void setUp() {

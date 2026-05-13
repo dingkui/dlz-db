@@ -8,6 +8,7 @@ import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.util.id.TraceUtil;
 import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,31 +19,37 @@ import org.springframework.test.context.junit4.SpringRunner;
 @Slf4j
 public abstract class SpingDbBaseTest {
     @Before
-    public void before(){
-        if(TraceUtil.getTraceid()==null){
-            TraceUtil.setTraceId();
-        }
+    public void before() {
+        TraceUtil.setTraceId(this.getClass().getSimpleName());
     }
 
-    private String clearSql(String sql){
-        return sql.replaceAll("\\s+"," ").trim();
+    @After
+    public void after() {
+        TraceUtil.clearTraceId();
     }
+
+    private String clearSql(String sql) {
+        return sql.replaceAll("\\s+", " ").trim();
+    }
+
     public void showSql(ISqlPara paraMap, String fn, String re) {
         JdbcItem jdbcSql = paraMap.jdbcSql();
         String runSqlByJdbc = SqlUtil.getRunSqlByJdbc(jdbcSql.sql, jdbcSql.paras).trim();
-        if(re==null){
+        if (re == null) {
             log.info(runSqlByJdbc);
-        }else if(clearSql(re).equalsIgnoreCase(clearSql(runSqlByJdbc))){
-            log.info("sucess:"+runSqlByJdbc);
-        }else{
-            log.error("error:"+runSqlByJdbc);
-            log.error("target:"+re);
+        } else if (clearSql(re).equalsIgnoreCase(clearSql(runSqlByJdbc))) {
+            log.info("sucess:" + runSqlByJdbc);
+        } else {
+            log.error("error:" + runSqlByJdbc);
+            log.error("target:" + re);
             assert false;
         }
     }
+
     public void showSql(ParaMap paraMap, String fn) {
         showSql(paraMap, fn, null);
     }
+
     public void showSql(AParaPojo wrapper, String fn) {
         showSql(wrapper, fn, null);
     }

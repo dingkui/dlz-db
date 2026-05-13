@@ -7,6 +7,7 @@ import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.util.id.TraceUtil;
 import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +19,7 @@ import org.noear.solon.Solon;
  * {@code @RunWith(SpringRunner.class) + @SpringBootTest}。</p>
  */
 @Slf4j
-public class SpingDbBaseTest {
+public class SolonDbBaseTest {
 
     @BeforeAll
     public static void bootstrap() {
@@ -32,9 +33,12 @@ public class SpingDbBaseTest {
 
     @Before
     public void before() {
-        if (TraceUtil.getTraceid() == null) {
-            TraceUtil.setTraceId();
-        }
+        TraceUtil.setTraceId(this.getClass().getSimpleName());
+    }
+
+    @After
+    public void after() {
+        TraceUtil.clearTraceId();
     }
 
     private String clearSql(String sql) {

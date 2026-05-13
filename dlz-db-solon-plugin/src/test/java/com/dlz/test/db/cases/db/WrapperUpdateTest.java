@@ -2,7 +2,7 @@ package com.dlz.test.db.cases.db;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoUpdate;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.SolonDbBaseTest;
 import com.dlz.test.db.entity.Role;
 import com.dlz.test.db.entity.SysSql;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import org.junit.Test;
  * 单元测试支撑类<br>
  * @author dk
  */
-public class WrapperUpdateTest extends SpingDbBaseTest {
+public class WrapperUpdateTest extends SolonDbBaseTest {
 	@Test
 	public void dbSqlTest3() {
 		Role role = new Role();
