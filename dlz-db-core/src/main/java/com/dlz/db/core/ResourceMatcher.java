@@ -215,12 +215,12 @@ public class ResourceMatcher {
                 return;
             }
             File rootDir = new File(rootUrl.toURI());
-            // 验证路径是否在预期范围内
-            String canonicalPath = rootDir.getCanonicalPath();
-            if (!canonicalPath.startsWith(new File(".").getCanonicalPath())) {
-                log.warn("检测到可疑路径，跳过: {}", canonicalPath);
-                return;
-            }
+//            // 验证路径是否在预期范围内
+//            String canonicalPath = rootDir.getCanonicalPath();
+//            if (!canonicalPath.startsWith(new File(".").getCanonicalPath())) {
+//                log.warn("检测到可疑路径，跳过: {}", canonicalPath);
+//                return;
+//            }
             if (!rootDir.isDirectory()) {
                 return;
             }
