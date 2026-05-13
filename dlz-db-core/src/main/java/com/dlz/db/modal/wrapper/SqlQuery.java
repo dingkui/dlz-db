@@ -1,5 +1,7 @@
 package com.dlz.db.modal.wrapper;
 
+import com.dlz.db.convertor.columnname.IConvertorToFieldName;
+import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
 import com.dlz.db.modal.dto.Page;
@@ -13,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @SuppressWarnings("rawtypes")
-public class SqlQuery extends ParaMap<SqlQuery> implements ISqlPage<SqlQuery>, IExecutorQuery {
+public class SqlQuery extends ParaMap<SqlQuery> implements ISqlPage<SqlQuery>, IExecutorQuery<SqlQuery> {
     private static final long serialVersionUID = 8374167270612933157L;
     public SqlQuery(String sql) {
         super(sql);
@@ -31,6 +33,10 @@ public class SqlQuery extends ParaMap<SqlQuery> implements ISqlPage<SqlQuery>, I
         if (page != null) {
             this.setPage(page);
         }
+        return this;
+    }
+    public SqlQuery convert(IConvertorToFieldName convertor) {
+        SqlRunThreadHolder.setConvertorToFieldName(convertor);
         return this;
     }
 }

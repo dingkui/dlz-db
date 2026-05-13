@@ -1,6 +1,8 @@
 package com.dlz.db.modal.wrapper;
 
+import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.holder.BeanInfoHolder;
+import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
 import com.dlz.db.modal.dto.Page;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @SuppressWarnings("rawtypes")
-public class TableQuery extends AQuery<TableQuery> implements ISqlPage<TableQuery>, IExecutorQuery {
+public class TableQuery extends AQuery<TableQuery> implements ISqlPage<TableQuery>, IExecutorQuery<TableQuery> {
     private static final long serialVersionUID = 8374167270612933157L;
     String columns="*";
 
@@ -56,6 +58,10 @@ public class TableQuery extends AQuery<TableQuery> implements ISqlPage<TableQuer
         if (page != null) {
             this.setPage(page);
         }
+        return this;
+    }
+    public TableQuery convert(IConvertorToFieldName convertor) {
+        SqlRunThreadHolder.setConvertorToFieldName(convertor);
         return this;
     }
 }

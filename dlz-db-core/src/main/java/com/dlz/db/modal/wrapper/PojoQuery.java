@@ -1,9 +1,7 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.holder.DBHolder;
-import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
@@ -22,11 +20,11 @@ import java.util.Map;
  *
  * @author dk
  */
-public class PojoQuery<T> extends APojoQuery<PojoQuery<T>,T, TableQuery> implements
+public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implements
         ISqlQuery<PojoQuery<T>>,
         ICondAddByLamda<PojoQuery<T>, T>,
         ISqlPage<PojoQuery<T>>,
-        IExecutorQuery {
+        IExecutorQuery<PojoQuery<T>> {
 
     public static <T> PojoQuery<T> wrapper(T conditionBean) {
         return new PojoQuery(conditionBean);
@@ -66,12 +64,12 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>,T, TableQuery> impleme
      * 自动根据map的键值对添加查询条件
      *
      * @param req {key:列名，value:值} key值为列名 可带$前缀，如$eq_key:表示 key=key DbOperateEnum=eq
-     *                             value值为值
+     *            value值为值
      * @return 返回当前条件对象，支持链式调用
      */
     public PojoQuery<T> auto(Map<String, Object> req) {
         String tableName = BeanInfoHolder.getTableName(getBeanClass());
-        return auto(req, (key)-> BeanInfoHolder.isColumnExists(tableName,key));
+        return auto(req, (key) -> BeanInfoHolder.isColumnExists(tableName, key));
     }
 
     @Override
@@ -100,35 +98,18 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>,T, TableQuery> impleme
         getPm().setPage(page);
         return this;
     }
-
-    public T queryBean(IConvertorToFieldName convertor) {
-        if(convertor != null){
-            SqlRunThreadHolder.setConvertorToFieldName(convertor);
-        }
-        return DBHolder.doDb(s->s.getBean(this, true),convertor != null);
-    }
-    public List<T> queryBeanList(IConvertorToFieldName convertor) {
-        if(convertor != null){
-            SqlRunThreadHolder.setConvertorToFieldName(convertor);
-        }
-        return DBHolder.doDb(s->s.getBeanList(this),convertor != null);
-    }
-    public Page<T> queryBeanPage(IConvertorToFieldName convertor) {
-        if(convertor != null){
-            SqlRunThreadHolder.setConvertorToFieldName(convertor);
-        }
-        return DBHolder.doDb(s->s.getPage(this, this.getBeanClass()),convertor != null);
-    }
-
     public T queryBean() {
         return DBHolder.doDb(s -> s.getBean(this, true));
     }
+
     public List<T> queryBeanList() {
         return DBHolder.doDb(s -> s.getBeanList(this));
     }
+
     public Page<T> queryBeanPage() {
         return DBHolder.doDb(s -> s.getPage(this, this.getBeanClass()));
     }
+
     @SuppressWarnings("unchecked")
     public PojoQuery<T> orderByAsc(DlzFn<T, ?>... column) {
         return sort(Order.ascs(column));

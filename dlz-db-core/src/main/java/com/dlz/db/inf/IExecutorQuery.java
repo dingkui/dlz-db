@@ -1,5 +1,7 @@
 package com.dlz.db.inf;
 
+import com.dlz.db.convertor.columnname.ColumnNameNative;
+import com.dlz.db.convertor.columnname.ColumnNameToUper;
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.holder.DBHolder;
 import com.dlz.db.holder.SqlRunThreadHolder;
@@ -22,12 +24,27 @@ import java.util.List;
  * <p>{@code IConvertorToFieldName} 参数用于本次查询临时覆盖默认"列名→属性名"转换策略
  * （例如禁用下划线转驼峰），仅作用于当前线程本次调用。
  */
-public interface IExecutorQuery extends ISqlPara {
+public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,IChained<ME>{
     /** 当前绑定的分页对象（由分页构造器设置）。 */
     Page<?> getPage();
 
     /** 由分页构造器调用，注入分页对象。业务代码通常不直接调用。 */
     void setPage(Page<?> page);
+
+    default ME convert(IConvertorToFieldName convertor) {
+        SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        return me();
+    }
+
+    default ME convertNative() {
+        SqlRunThreadHolder.setConvertorToFieldName(new ColumnNameNative());
+        return me();
+    }
+
+    default ME convertUpper() {
+        SqlRunThreadHolder.setConvertorToFieldName(new ColumnNameToUper());
+        return me();
+    }
 
     /** 查询单条，返回 {@link ResultMap}；使用指定的列名转换器。 */
     default ResultMap queryOne(IConvertorToFieldName convertor) {
