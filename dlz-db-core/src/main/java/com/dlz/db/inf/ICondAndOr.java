@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 
 /**
  * 添加and or条件
- * @param <T>
+ * @param <ME>
  */
-public interface ICondAndOr<T extends ICondAndOr> extends ICondBase<T> {
+public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
     /**
      * 以自定义 SQL 片段添加一个条件。占位符采用 <b>命名式 {@code #{key}}</b>，参数由 {@link JSONMap} 提供。
      * <p>支持 <b>中括号语法</b>：{@code [AND name LIKE #{name}]} 中若 {@code name} 为 null/空，整段自动忽略。
@@ -32,7 +32,7 @@ public interface ICondAndOr<T extends ICondAndOr> extends ICondBase<T> {
      * @param paras 命名参数，键对应 {@code #{key}} 中的 key
      * @return 当前条件对象，支持链式调用
      */
-    default T sql(boolean is, String sql, JSONMap paras) {
+    default ME sql(boolean is, String sql, JSONMap paras) {
         if(is){
             // 实现思路：交给 DbBuildEnum.sql 解析模板（处理中括号、预设 key、占位符替换），
             // 产物是一个 Condition 节点；build 可能返回 null（如 sql 为空），需过滤。
@@ -47,7 +47,7 @@ public interface ICondAndOr<T extends ICondAndOr> extends ICondBase<T> {
     /**
      * {@link #sql(boolean, String, JSONMap)} 的便捷重载，{@code is} 默认为 true。
      */
-    default T sql(String sql, JSONMap paras) {
+    default ME sql(String sql, JSONMap paras) {
         return sql(true, sql, paras);
     }
 //
@@ -104,7 +104,7 @@ public interface ICondAndOr<T extends ICondAndOr> extends ICondBase<T> {
      * @param ands 一组将被 <b>AND</b> 连接的子条件（lambda 内调用 eq/gt/or/... 等）
      * @return 当前条件对象，支持链式调用
      */
-    default T and(Consumer<Condition> ands) {
+    default ME and(Consumer<Condition> ands) {
         // 实现思路：新建一个 muAnd 容器节点挂到当前条件上，
         // 再把该容器作为参数传给 lambda，用户在 lambda 内添加的所有子条件
         // 都会被 addChildren 到此容器，最终渲染时容器内的 children 全部用 AND 拼接。
@@ -138,7 +138,7 @@ public interface ICondAndOr<T extends ICondAndOr> extends ICondBase<T> {
      * @param ors 一组将被 <b>OR</b> 连接的子条件（lambda 内调用 eq/gt/and/... 等）
      * @return 当前条件对象，支持链式调用
      */
-    default T or(Consumer<Condition> ors) {
+    default ME or(Consumer<Condition> ors) {
         // 实现思路：与 and(...) 对称，只是容器类型换成 muOr。
         // muOr 容器在渲染时把内部 children 全部用 OR 拼接；容器本身与外层（默认 AND）相接。
         // 这也是 "方法名 = 内部连接符" 这一核心设计的体现：调用处只需关心括号内的逻辑运算。

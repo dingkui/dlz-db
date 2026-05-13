@@ -5,7 +5,7 @@ import com.dlz.db.modal.para.ParaJdbc;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 构造单表的查询操作sql
+ * JDBC执行操作sql
  *
  * @author dingkui
  */

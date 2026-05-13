@@ -23,8 +23,8 @@ import com.dlz.db.modal.wrapper.TableUpdate;
  * DB.Table("user").delete().ignoreLogicDelete(true).eq("id", 1).execute();
  * </pre>
  */
-public interface IExecuteDelete<T extends IExecuteDelete>
-        extends IExecutorUDI, ISqlQuery<T> {
+public interface IExecuteDelete<ME extends IExecuteDelete>
+        extends IExecutorUDI, ISqlQuery<ME> {
     /** 目标表名。 */
     String getTableName();
 
@@ -59,7 +59,7 @@ public interface IExecuteDelete<T extends IExecuteDelete>
      * {@code false}：强制走物理 DELETE。
      * <p>设置仅作用于<b>本线程的下一次执行</b>，execute 完毕会自动清理。
      */
-    default T ignoreLogicDelete(boolean ignoreLogicDelete) {
+    default ME ignoreLogicDelete(boolean ignoreLogicDelete) {
         SqlRunThreadHolder.setIgnoreLogicDelete(ignoreLogicDelete);
         return me();
     }

@@ -25,14 +25,14 @@ import java.util.function.Function;
  * .auto(req);   // status = 1 AND age > 18 AND name LIKE '%张%'
  * </pre>
  *
- * @param <T> 链式返回类型
+ * @param <ME> 链式返回类型
  */
-public interface ICondAuto<T extends ICondAuto> extends ICondBase<T> {
+public interface ICondAuto<ME extends ICondAuto> extends ICondBase<ME> {
     /**
      * 按 Map 批量追加条件，接受所有 key。详见接口文档。
      * @param req key=列名（可带 {@code _op_} 前缀），value=值
      */
-    default T auto(Map<String, Object> req) {
+    default ME auto(Map<String, Object> req) {
         return auto(req, (Function<String, Boolean>) null);
     }
 
@@ -44,7 +44,7 @@ public interface ICondAuto<T extends ICondAuto> extends ICondBase<T> {
      * @param req     key=列名（可带 {@code _op_} 前缀），value=值
      * @param fillter 接收"去前缀后的列名"，返回 true 表示接受该条件；null 表示全部接受
      */
-    default T auto(Map<String, Object> req, Function<String,Boolean> fillter)  {
+    default ME auto(Map<String, Object> req, Function<String,Boolean> fillter)  {
         if (req != null) {
             for (String key : req.keySet()) {
                 Object o = req.get(key);
@@ -76,7 +76,7 @@ public interface ICondAuto<T extends ICondAuto> extends ICondBase<T> {
      * @param req     key=列名（可带 {@code _op_} 前缀），value=值
      * @param exclude 需排除的列名集合（匹配去前缀后的列名）
      */
-    default T auto(Map<String, Object> req, Set<String> exclude) {
+    default ME auto(Map<String, Object> req, Set<String> exclude) {
         return auto(req, (key)->exclude!=null && !exclude.contains(key));
     }
 }
