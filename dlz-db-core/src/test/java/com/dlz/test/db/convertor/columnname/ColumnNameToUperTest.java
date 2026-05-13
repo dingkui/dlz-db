@@ -1,5 +1,6 @@
-package com.dlz.db.convertor.columnname;
+package com.dlz.test.db.convertor.columnname;
 
+import com.dlz.db.convertor.columnname.ColumnNameToUper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

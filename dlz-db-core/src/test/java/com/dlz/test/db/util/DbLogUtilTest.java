@@ -1,7 +1,8 @@
-package com.dlz.db.util;
+package com.dlz.test.db.util;
 
 import com.dlz.db.core.BaseDbProperties;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.util.DbLogUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

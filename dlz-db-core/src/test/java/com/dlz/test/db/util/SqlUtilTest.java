@@ -1,7 +1,8 @@
-package com.dlz.db.util;
+package com.dlz.test.db.util;
 
 import com.dlz.db.enums.ParaTypeEnum;
 import com.dlz.db.modal.dto.Page;
+import com.dlz.db.util.SqlUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

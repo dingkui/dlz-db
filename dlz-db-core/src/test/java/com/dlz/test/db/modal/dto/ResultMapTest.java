@@ -1,11 +1,15 @@
-package com.dlz.db.modal.dto;
+package com.dlz.test.db.modal.dto;
 
+import com.dlz.db.modal.dto.ResultMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * ResultMap 测试类

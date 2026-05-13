@@ -1,5 +1,6 @@
-package com.dlz.db.util;
+package com.dlz.test.db.util;
 
+import com.dlz.db.util.DbEntityUtil;
 import com.dlz.kit.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;

@@ -1,5 +1,6 @@
-package com.dlz.db.enums;
+package com.dlz.test.db.enums;
 
+import com.dlz.db.enums.DbOperateEnum;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
 import org.junit.jupiter.api.DisplayName;

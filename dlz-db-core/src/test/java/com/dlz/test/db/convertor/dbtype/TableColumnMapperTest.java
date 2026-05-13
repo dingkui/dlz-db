@@ -1,5 +1,6 @@
-package com.dlz.db.convertor.dbtype;
+package com.dlz.test.db.convertor.dbtype;
 
+import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

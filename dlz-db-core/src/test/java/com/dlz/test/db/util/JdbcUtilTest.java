@@ -1,5 +1,6 @@
-package com.dlz.db.util;
+package com.dlz.test.db.util;
 
+import com.dlz.db.util.JdbcUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

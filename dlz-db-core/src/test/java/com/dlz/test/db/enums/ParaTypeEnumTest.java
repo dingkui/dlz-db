@@ -1,9 +1,10 @@
-package com.dlz.db.enums;
+package com.dlz.test.db.enums;
 
+import com.dlz.db.enums.ParaTypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * ParaTypeEnum 测试类

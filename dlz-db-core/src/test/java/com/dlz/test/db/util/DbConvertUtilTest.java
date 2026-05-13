@@ -1,7 +1,8 @@
-package com.dlz.db.util;
+package com.dlz.test.db.util;
 
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.util.DbConvertUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

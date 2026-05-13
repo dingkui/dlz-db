@@ -1,10 +1,11 @@
-package com.dlz.db.enums;
+package com.dlz.test.db.enums;
 
+import com.dlz.db.enums.DbTypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * DbTypeEnum 测试类
