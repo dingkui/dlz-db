@@ -92,20 +92,13 @@ public class DBHolder {
     }
 
     public static <R> R doDb(Function<ICommService, R> s) {
-        return s.apply(getService());
-    }
-
-    public static <R> R doDb(Function<ICommService, R> s, boolean clearMappers) {
-        if (clearMappers) {
-            try {
-                return s.apply(getService());
-            } finally {
-                SqlRunThreadHolder.removeColumnNameConvertor();
-                SqlRunThreadHolder.removeConvertorToFieldName();
-                SqlRunThreadHolder.removeTableColumnMapper();
-            }
+        try {
+            return s.apply(getService());
+        } finally {
+            SqlRunThreadHolder.removeColumnNameConvertor();
+            SqlRunThreadHolder.removeConvertorToFieldName();
+            SqlRunThreadHolder.removeTableColumnMapper();
         }
-        return s.apply(getService());
     }
 
     public static <R> R doDao(Function<ISqlExecutor, R> s) {

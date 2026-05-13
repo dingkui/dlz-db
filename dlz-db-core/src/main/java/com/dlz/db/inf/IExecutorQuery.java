@@ -1,6 +1,7 @@
 package com.dlz.db.inf;
 
 import com.dlz.db.convertor.columnname.ColumnNameNative;
+import com.dlz.db.convertor.columnname.ColumnNameToLower;
 import com.dlz.db.convertor.columnname.ColumnNameToUper;
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.holder.DBHolder;
@@ -32,7 +33,9 @@ public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,ICh
     void setPage(Page<?> page);
 
     default ME convert(IConvertorToFieldName convertor) {
-        SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        if(convertor != null){
+            SqlRunThreadHolder.setConvertorToFieldName(convertor);
+        }
         return me();
     }
 
@@ -46,28 +49,9 @@ public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,ICh
         return me();
     }
 
-    /** 查询单条，返回 {@link ResultMap}；使用指定的列名转换器。 */
-    default ResultMap queryOne(IConvertorToFieldName convertor) {
-        if(convertor != null){
-            SqlRunThreadHolder.setConvertorToFieldName(convertor);
-        }
-        return DBHolder.doDb(s->s.getMap(this),convertor != null);
-    }
-
-    /** 查询列表，返回 {@link ResultMap} 列表；使用指定的列名转换器。 */
-    default List<ResultMap> queryList(IConvertorToFieldName convertor) {
-        if(convertor != null){
-            SqlRunThreadHolder.setConvertorToFieldName(convertor);
-        }
-        return DBHolder.doDb(s->s.getMapList(this),convertor != null);
-    }
-
-    /** 分页查询，返回 {@link ResultMap} 分页；使用指定的列名转换器。 */
-    default Page<ResultMap> queryPage(IConvertorToFieldName convertor) {
-        if(convertor != null){
-            SqlRunThreadHolder.setConvertorToFieldName(convertor);
-        }
-        return DBHolder.doDb(s->s.getPage(this),convertor != null);
+    default ME convertLower() {
+        SqlRunThreadHolder.setConvertorToFieldName(new ColumnNameToLower());
+        return me();
     }
 
     /**
