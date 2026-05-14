@@ -2,11 +2,11 @@ package com.dlz.test.db.cases.db;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoDelete;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import org.junit.Test;
 
-public class WrapperDeleteTest extends SpingDbBaseTest {
+public class WrapperDeleteTest extends BaseDBTest {
 
     @Test
     public void deleteWrapperTest1() {

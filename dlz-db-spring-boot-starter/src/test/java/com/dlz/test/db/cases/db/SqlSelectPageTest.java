@@ -3,10 +3,10 @@ package com.dlz.test.db.cases.db;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import org.junit.Test;
 
-public class SqlSelectPageTest extends SpingDbBaseTest {
+public class SqlSelectPageTest extends BaseDBTest {
     @Test
     public void PageTest() {
         DB.Sql.select("select t.* from Goods t where t.goods_id=310")

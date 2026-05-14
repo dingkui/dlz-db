@@ -6,7 +6,7 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.kit.util.ValUtil;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  * @author dingkui
  */
 @Slf4j
-public class ExecutorQueryConvertTest extends SpingDbBaseTest {
+public class ExecutorQueryConvertTest extends BaseDBTest {
 
     @Before
     public void setUp() {

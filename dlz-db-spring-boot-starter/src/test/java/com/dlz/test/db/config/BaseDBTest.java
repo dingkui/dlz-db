@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Starter.class)
 @Slf4j
-public abstract class SpingDbBaseTest {
+public abstract class BaseDBTest {
     @Before
     public void before() {
         TraceUtil.setTraceId(this.getClass().getSimpleName());

@@ -58,7 +58,8 @@ public class WrapperBuildUtilTest {
         dict.setId(123L);
         dict.setName("test_update");
         List<Field> fields = BeanInfoHolder.getBeanFields(SysSql.class);
-        Object[] params = WrapperBuildUtil.buildUpdateParams(dict, fields, "ID");
+
+        Object[] params = WrapperBuildUtil.buildUpdateParams(dict, fields, BeanInfoHolder.getIdField(SysSql.class));
         assertTrue("参数数组长度应大于 0", params.length > 0);
         assertEquals("最后一个参数应是主键值", 123L, params[params.length - 1]);
     }

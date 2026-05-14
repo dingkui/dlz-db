@@ -3,11 +3,11 @@ package com.dlz.test.db.cases.docs;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
-import com.dlz.test.db.config.SpingDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import org.junit.Test;
 
-public class Doc05PageAndOrderTest extends SpingDbBaseTest {
+public class Doc05PageAndOrderTest extends BaseDBTest {
     @Test
     public void pageAndOrderTest5_1_1() {
         // 基础分页
