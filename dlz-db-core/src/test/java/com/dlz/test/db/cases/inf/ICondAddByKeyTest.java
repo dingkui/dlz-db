@@ -1,0 +1,392 @@
+package com.dlz.test.db.cases.inf;
+
+import com.dlz.db.enums.DbOperateEnum;
+import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.util.SqlUtil;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.exception.ValidateException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * ICondAddByKey 接口测试 - 基于字符串列名的条件构造
+ */
+@DisplayName("ICondAddByKey 字符串列名条件测试")
+class ICondAddByKeyTest {
+
+    private Condition condition;
+
+    @BeforeEach
+    void setUp() {
+        condition = Condition.where();
+    }
+
+    public String getSql(Condition result) {
+        final ParaMap pm = new ParaMap();
+        pm.getSqlItem().setSqlRun(result.getRunsql(pm));
+        final String runSql = pm.jdbcSql().toRunSql();
+        return SqlUtil.replaceSql(runSql, pm.getPara(), 1);
+    }
+
+    // ========== EQ / NE 测试 ==========
+
+    @Test
+    @DisplayName("测试 eq() - 基础相等")
+    void testEq() {
+        Condition result = condition.eq("status", 1);
+        
+        assertNotNull(result);
+        assertEquals("where STATUS = 1", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 eq() - 动态条件true")
+    void testEqDynamicTrue() {
+        Condition result = condition.eq(true, "status", 1);
+        
+        assertNotNull(result);
+        assertEquals("where STATUS = 1", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 eq() - 动态条件false")
+    void testEqDynamicFalse() {
+        Condition result = condition.eq(false, "status", 1);
+        
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 ne() - 不等于")
+    void testNe() {
+        Condition result = condition.ne("status", 0);
+        
+        assertNotNull(result);
+        assertEquals("where STATUS <> 0", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 ne() - 动态条件")
+    void testNeDynamic() {
+        Condition result = condition.ne(true, "status", 0);
+        
+        assertNotNull(result);
+        assertEquals("where STATUS <> 0", getSql(result));
+    }
+
+    // ========== 大小比较测试 ==========
+
+    @Test
+    @DisplayName("测试 gt() - 大于")
+    void testGt() {
+        Condition result = condition.gt("age", 18);
+        
+        assertNotNull(result);
+        assertEquals("where AGE > 18", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 ge() - 大于等于")
+    void testGe() {
+        Condition result = condition.ge("age", 18);
+        
+        assertNotNull(result);
+        assertEquals("where AGE >= 18", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 lt() - 小于")
+    void testLt() {
+        Condition result = condition.lt("age", 60);
+        
+        assertNotNull(result);
+        assertEquals("where AGE < 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 le() - 小于等于")
+    void testLe() {
+        Condition result = condition.le("age", 60);
+        
+        assertNotNull(result);
+        assertEquals("where AGE <= 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 gt() - 动态条件")
+    void testGtDynamic() {
+        Condition result = condition.gt(true, "age", 18);
+        
+        assertNotNull(result);
+        assertEquals("where AGE > 18", getSql(result));
+    }
+
+    // ========== LIKE 系列测试 ==========
+
+    @Test
+    @DisplayName("测试 like() - 双侧模糊")
+    void testLike() {
+        Condition result = condition.like("name", "张");
+        
+        assertNotNull(result);
+        assertEquals("where NAME like '%张%'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 likeLeft() - 右模糊")
+    void testLikeLeft() {
+        Condition result = condition.likeLeft("name", "张");
+        
+        assertNotNull(result);
+        assertEquals("where NAME like '%张'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 likeRight() - 左模糊")
+    void testLikeRight() {
+        Condition result = condition.likeRight("email", "@qq.com");
+        
+        assertNotNull(result);
+        assertEquals("where EMAIL like '@qq.com%'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notLike() - 不匹配")
+    void testNotLike() {
+        Condition result = condition.notLike("name", "测试");
+        
+        assertNotNull(result);
+        assertEquals("where NAME not like '%测试%'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 like() - 动态条件")
+    void testLikeDynamic() {
+        Condition result = condition.like(true, "name", "张");
+        
+        assertNotNull(result);
+        assertEquals("where NAME like '%张%'", getSql(result));
+    }
+
+    // ========== IN / NOT IN 测试 ==========
+
+    @Test
+    @DisplayName("测试 in() - 逗号分隔字符串")
+    void testInString() {
+        Condition result = condition.in("status", "1,2,3");
+        
+        assertNotNull(result);
+        assertEquals("where STATUS in (1,2,3)", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 in() - List集合")
+    void testInList() {
+        Condition result = condition.in("status", Arrays.asList(1, 2, 3));
+        
+        assertNotNull(result);
+        assertTrue(getSql(result).contains("STATUS in"));
+    }
+
+    @Test
+    @DisplayName("测试 in() - 动态条件")
+    void testInDynamic() {
+        Condition result = condition.in(true, "status", "1,2,3");
+        
+        assertNotNull(result);
+        assertEquals("where STATUS in (1,2,3)", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notIn() - 不在范围内")
+    void testNotIn() {
+        Condition result = condition.notIn("status", "1,2,3");
+        
+        assertNotNull(result);
+        assertEquals("where STATUS not in (1,2,3)", getSql(result));
+    }
+
+    // ========== BETWEEN / NOT BETWEEN 测试 ==========
+
+    @Test
+    @DisplayName("测试 between() - 两个参数")
+    void testBetweenTwoParams() {
+        Condition result = condition.between("age", 18, 60);
+        
+        assertNotNull(result);
+        assertEquals("where AGE between 18 and 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 between() - 单值字符串")
+    void testBetweenSingleValue() {
+        Condition result = condition.between("age", "18,60");
+        
+        assertNotNull(result);
+        assertEquals("where AGE between '18' and '60'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 between() - List")
+    void testBetweenList() {
+        Condition result = condition.between("age", Arrays.asList(18, 60));
+        
+        assertNotNull(result);
+        assertTrue(getSql(result).contains("AGE between"));
+    }
+
+    @Test
+    @DisplayName("测试 between() - 动态条件")
+    void testBetweenDynamic() {
+        Condition result = condition.between(true, "age", 18, 60);
+        
+        assertNotNull(result);
+        assertEquals("where AGE between 18 and 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notBetween() - 不在范围内")
+    void testNotBetween() {
+        Condition result = condition.notBetween("age", 18, 60);
+        
+        assertNotNull(result);
+        assertEquals("where AGE not between 18 and 60", getSql(result));
+    }
+
+    // ========== IS NULL / IS NOT NULL 测试 ==========
+
+    @Test
+    @DisplayName("测试 isNull() - 为空")
+    void testIsNull() {
+        Condition result = condition.isNull("delete_time");
+        
+        assertNotNull(result);
+        assertEquals("where delete_time is null", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 isNull() - 动态条件")
+    void testIsNullDynamic() {
+        Condition result = condition.isNull(true, "delete_time");
+        
+        assertNotNull(result);
+        assertEquals("where delete_time is null", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 isNotNull() - 不为空")
+    void testIsNotNull() {
+        Condition result = condition.isNotNull("email");
+        
+        assertNotNull(result);
+        assertEquals("where EMAIL is not null", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 isNotNull() - 动态条件")
+    void testIsNotNullDynamic() {
+        Condition result = condition.isNotNull(true, "email");
+        
+        assertNotNull(result);
+        assertEquals("where EMAIL is not null", getSql(result));
+    }
+
+    // ========== 自定义操作符测试 ==========
+
+    @Test
+    @DisplayName("测试 op() - 自定义eq操作符")
+    void testOpEq() {
+        Condition result = condition.op("status", DbOperateEnum.eq, 1);
+        
+        assertNotNull(result);
+        assertEquals("where STATUS = 1", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 op() - 自定义gt操作符")
+    void testOpGt() {
+        Condition result = condition.op("age", DbOperateEnum.gt, 18);
+        
+        assertNotNull(result);
+        assertEquals("where AGE > 18", getSql(result));
+    }
+
+    // ========== 链式调用测试 ==========
+
+    @Test
+    @DisplayName("测试链式调用 - 多条件组合")
+    void testChainedCall() {
+        Condition result = condition
+                .eq("status", 1)
+                .gt("age", 18)
+                .like("name", "张")
+                .in("role", "admin,user");
+        
+        assertNotNull(result);
+        String sql = getSql(result);
+        assertTrue(sql.contains("STATUS = 1"));
+        assertTrue(sql.contains("AGE > 18"));
+        assertTrue(sql.contains("NAME like"));
+        assertTrue(sql.contains("ROLE in"));
+    }
+
+    @Test
+    @DisplayName("测试链式调用 - 动态条件混合")
+    void testChainedWithDynamic() {
+        String name = null;
+        Integer age = 25;
+        
+        Condition result = condition
+                .eq("status", 1)
+                .eq(name != null, "name", name)
+                .gt(age != null, "age", age);
+        
+        assertNotNull(result);
+        String sql = getSql(result);
+        assertTrue(sql.contains("STATUS = 1"));
+        assertFalse(sql.contains("NAME"), "name为null应该跳过");
+        assertTrue(sql.contains("AGE > 25"));
+    }
+
+    @Test
+    @DisplayName("测试链式调用 - 复杂条件")
+    void testComplexCondition() {
+        Condition result = condition
+                .eq("tenantId", 100)
+                .and(c -> c
+                    .eq("status", 1)
+                    .or(o -> o
+                        .gt("age", 18)
+                        .isNotNull("email")
+                    )
+                );
+        
+        assertNotNull(result);
+        assertEquals("where TENANT_ID = 100 and (STATUS = 1 and (AGE > 18 or EMAIL is not null))", getSql(result));
+    }
+
+    // ========== 边界情况测试 ==========
+
+    @Test
+    @DisplayName("测试 - 空字符串列名")
+    void testEmptyColumnName() {
+        assertThrows(ValidateException.class, () -> condition.eq("", "value"));
+        // 空列名会被处理，但不一定生成有效SQL
+    }
+
+    @Test
+    @DisplayName("测试 - null值")
+    void testNullValue() {
+        Condition result = condition.eq("status", null);
+        
+        assertNotNull(result);
+        // null值会被正确处理
+    }
+}

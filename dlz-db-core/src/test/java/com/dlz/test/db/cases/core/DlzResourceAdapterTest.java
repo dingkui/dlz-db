@@ -54,7 +54,7 @@ class DlzResourceAdapterTest {
     @DisplayName("测试 scan - 扫描包下的类")
     void testScan() throws Exception {
         // 扫描当前测试类所在的包
-        Set<Class<?>> classes = adapter.scan("com.dlz.test.db.entry", null);
+        Set<Class<?>> classes = adapter.scan("com.dlz.test.db.entity", null);
         
         assertNotNull(classes);
         assertTrue(classes.size() > 0, "应该扫描到至少一个类");

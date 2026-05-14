@@ -1,6 +1,11 @@
 package com.dlz.test.db.cases.inf;
 
+import com.dlz.db.inf.ICondAddByFn;
+import com.dlz.db.inf.ICondAddByLamda;
+import com.dlz.db.inf.ICondAuto;
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.modal.para.ParaMap;
+import com.dlz.kit.json.JSONMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,15 +26,22 @@ class ConditionTest {
         condition = Condition.where();
     }
 
+    public String getSql(Condition result) {
+        final ParaMap pm = new ParaMap();
+        pm.getSqlItem().setSqlRun(result.getRunsql(pm));
+        return pm.jdbcSql().toRunSql();
+    }
+
     // ========== EQ / NE 测试 ==========
 
     @Test
     @DisplayName("测试 eq() 方法")
     void testEq() {
         Condition result = condition.eq("status", 1);
-        
+
         assertNotNull(result);
         assertSame(condition, result, "应该返回同一个对象");
+        assertEquals("where STATUS = 1", getSql(result));
     }
 
     @Test
@@ -38,6 +50,7 @@ class ConditionTest {
         Condition result = condition.eq(true, "status", 1);
         
         assertNotNull(result);
+        assertEquals("where STATUS = 1", getSql(result));
     }
 
     @Test
@@ -46,6 +59,7 @@ class ConditionTest {
         Condition result = condition.eq(false, "status", 1);
         
         assertNotNull(result);
+        assertEquals("", getSql(result));
     }
 
     @Test
@@ -54,6 +68,7 @@ class ConditionTest {
         Condition result = condition.ne("status", 0);
         
         assertNotNull(result);
+        assertEquals("where STATUS <> 0", getSql(result));
     }
 
     // ========== 大小比较测试 ==========
@@ -64,6 +79,7 @@ class ConditionTest {
         Condition result = condition.gt("age", 18);
         
         assertNotNull(result);
+        assertEquals("where AGE > 18", getSql(result));
     }
 
     @Test
@@ -72,6 +88,7 @@ class ConditionTest {
         Condition result = condition.ge("age", 18);
         
         assertNotNull(result);
+        assertEquals("where AGE >= 18", getSql(result));
     }
 
     @Test
@@ -80,6 +97,7 @@ class ConditionTest {
         Condition result = condition.lt("age", 60);
         
         assertNotNull(result);
+        assertEquals("where AGE < 60", getSql(result));
     }
 
     @Test
@@ -88,6 +106,7 @@ class ConditionTest {
         Condition result = condition.le("age", 60);
         
         assertNotNull(result);
+        assertEquals("where AGE <= 60", getSql(result));
     }
 
     // ========== LIKE 测试 ==========
@@ -96,8 +115,9 @@ class ConditionTest {
     @DisplayName("测试 like() 方法")
     void testLike() {
         Condition result = condition.like("name", "%张三%");
-        
+
         assertNotNull(result);
+        assertEquals("where NAME like '%%张三%%'", getSql(result));
     }
 
     @Test
@@ -106,6 +126,7 @@ class ConditionTest {
         Condition result = condition.likeLeft("name", "张三%");
         
         assertNotNull(result);
+        assertEquals("where NAME like '%张三%'", getSql(result));
     }
 
     @Test
@@ -114,6 +135,7 @@ class ConditionTest {
         Condition result = condition.likeRight("name", "%张三");
         
         assertNotNull(result);
+        assertEquals("where NAME like '%张三%'", getSql(result));
     }
 
     @Test
@@ -122,6 +144,7 @@ class ConditionTest {
         Condition result = condition.notLike("name", "%测试%");
         
         assertNotNull(result);
+        assertEquals("where NAME not like '%%测试%%'", getSql(result));
     }
 
     // ========== IN / NOT IN 测试 ==========
@@ -132,6 +155,7 @@ class ConditionTest {
         Condition result = condition.in("status", "1,2,3");
         
         assertNotNull(result);
+        assertEquals("where STATUS in (${in_1})", getSql(result));
     }
 
 
@@ -144,6 +168,7 @@ class ConditionTest {
         Condition result = condition.between("age", 18, 60);
         
         assertNotNull(result);
+        assertEquals("where AGE between 18 and 60", getSql(result));
     }
 
     @Test
@@ -152,6 +177,7 @@ class ConditionTest {
         Condition result = condition.between("age", "18,60");
         
         assertNotNull(result);
+        assertEquals("where AGE between '18' and '60'", getSql(result));
     }
 
     @Test
@@ -160,6 +186,7 @@ class ConditionTest {
         Condition result = condition.notBetween("age", 18, 60);
         
         assertNotNull(result);
+        assertEquals("where AGE not between 18 and 60", getSql(result));
     }
 
     // ========== IS NULL / IS NOT NULL 测试 ==========
@@ -170,6 +197,7 @@ class ConditionTest {
         Condition result = condition.isNull("delete_time");
         
         assertNotNull(result);
+        assertEquals("where delete_time is null", getSql(result));
     }
 
     @Test
@@ -178,6 +206,7 @@ class ConditionTest {
         Condition result = condition.isNotNull("email");
         
         assertNotNull(result);
+        assertEquals("where EMAIL is not null", getSql(result));
     }
 
     // ========== AND/OR 嵌套测试 ==========
@@ -188,6 +217,7 @@ class ConditionTest {
         Condition result = condition.and(c -> c.eq("status", 1).gt("age", 18));
         
         assertNotNull(result);
+        assertEquals("where (STATUS = 1 and AGE > 18)", getSql(result));
     }
 
     @Test
@@ -196,6 +226,7 @@ class ConditionTest {
         Condition result = condition.or(c -> c.eq("status", 1).eq("status", 2));
         
         assertNotNull(result);
+        assertEquals("where (STATUS = 1 or STATUS = 2)", getSql(result));
     }
 
     // ========== auto() 自动条件测试 ==========
@@ -207,10 +238,11 @@ class ConditionTest {
     @Test
     @DisplayName("测试 sql() 方法")
     void testSql() {
-        com.dlz.kit.json.JSONMap paras = new com.dlz.kit.json.JSONMap();
+        JSONMap paras = new JSONMap();
         Condition result = condition.sql("AND status = 1", paras);
         
         assertNotNull(result);
+        assertEquals("where (AND status = 1)", getSql(result));
     }
 
     // ========== 链式调用测试 ==========
@@ -221,18 +253,19 @@ class ConditionTest {
         Condition result = condition
                 .eq("status", 1)
                 .gt("age", 18)
-                .like("name", "%张%")
+                .like("name", "张")
                 .in("role", "admin,user");
         
         assertNotNull(result);
         assertSame(condition, result);
+        assertEquals("where STATUS = 1 and AGE > 18 and NAME like '%张%' and ROLE in (${in_17})", getSql(result));
     }
 
     @Test
     @DisplayName("测试链式调用 - 复杂条件")
     void testComplexCondition() {
         Condition result = condition
-                .eq("tenant_id", 100)
+                .eq("tenantId", 100)
                 .and(c -> c
                     .eq("status", 1)
                     .or(o -> o
@@ -242,6 +275,7 @@ class ConditionTest {
                 );
         
         assertNotNull(result);
+        assertEquals("where TENANT_ID = 100 and (STATUS = 1 and (AGE > 18 or EMAIL is not null))", getSql(result));
     }
 
     // ========== clone 测试 ==========
@@ -271,7 +305,7 @@ class ConditionTest {
     @Test
     @DisplayName("测试 addParas() 方法")
     void testAddParas() {
-        com.dlz.kit.json.JSONMap paras = new com.dlz.kit.json.JSONMap();
+        JSONMap paras = new JSONMap();
         paras.put("key1", "value1");
         paras.put("key2", "value2");
         

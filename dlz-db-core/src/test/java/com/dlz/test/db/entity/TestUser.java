@@ -4,9 +4,8 @@ import com.dlz.db.annotation.TableName;
 import lombok.Data;
 
 /**
- * 测试用的 User 实体类
+ * 测试用的 User 实体类 - 用于 Lambda 条件测试
  */
-
 @Data
 @TableName("Test_User")
 public class TestUser {
@@ -14,4 +13,5 @@ public class TestUser {
     private String name;
     private Integer age;
     private String email;
+    private Integer status;
 }
