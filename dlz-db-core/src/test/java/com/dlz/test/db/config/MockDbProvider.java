@@ -1,4 +1,4 @@
-package com.dlz.test.db.mock;
+package com.dlz.test.db.config;
 
 import com.dlz.db.core.*;
 import com.dlz.db.ds.DataSourceConfig;

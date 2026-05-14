@@ -3,7 +3,7 @@ package com.dlz.test.db.cases.modal;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.test.db.entry.TestUser;
+import com.dlz.test.db.entity.TestUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

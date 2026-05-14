@@ -1,4 +1,4 @@
-package com.dlz.test.db.mock;
+package com.dlz.test.db.config;
 
 import com.dlz.db.core.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;

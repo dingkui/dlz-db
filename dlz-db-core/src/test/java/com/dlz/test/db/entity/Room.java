@@ -6,13 +6,13 @@ import com.dlz.db.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("Sys_Sql")
-public class SysSql {
+@TableName("dh_room")
+public class Room {
     @TableId(value = "id",type = IdType.INPUT)
     private Long id;
-    private String sqlKey;
-    private String sqlValue;
-    private String name;
-    private String sqlRole;
-    private Integer isDeleted;
+    private String equipmentId;
+    private String equipmentId2;
+    private String xxId1;
+    private String xxId2;
+    private String xxId3;
 }

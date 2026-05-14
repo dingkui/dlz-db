@@ -1,8 +1,7 @@
-package com.dlz.test.db.mock;
+package com.dlz.test.db.config;
 
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.JdbcQuery;
-import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

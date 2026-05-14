@@ -1,7 +1,6 @@
 package com.dlz.test.db.config;
 
 import com.dlz.db.holder.DBHolder;
-import com.dlz.test.db.mock.MockDbProvider;
 import org.junit.jupiter.api.BeforeAll;
 
 /**
