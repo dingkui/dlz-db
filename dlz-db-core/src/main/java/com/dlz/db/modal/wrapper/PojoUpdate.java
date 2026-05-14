@@ -117,7 +117,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
             final List<T> ts = valueBeans.subList(0, batchSize);
 
             List<Object[]> paramValues = ts.stream()
-                    .map(v -> WrapperBuildUtil.buildUpdateParams(v, fields, idInfo.getName()))
+                    .map(v -> WrapperBuildUtil.buildUpdateParams(v, fields, idInfo.getField()))
                     .collect(Collectors.toList());
             DBHolder.getSqlExecutor().batchUpdate(sql, paramValues);
             valueBeans = valueBeans.subList(batchSize, valueBeans.size());

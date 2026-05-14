@@ -191,20 +191,18 @@ public class WrapperBuildUtil {
         return "UPDATE " + dbName + " SET " + StringUtils.join(",", fieldsPart) + " WHERE " + idName + " = ?";
     }
 
-    public static Object[] buildUpdateParams(Object object, List<Field> fields, String idName) {
+    public static Object[] buildUpdateParams(Object object, List<Field> fields, Field idField) {
+        final Object value = FieldReflections.getValue(object, idField);
+        if(value == null){
+            throw new SystemException("更新操作"+idField.getName()+"不能为空");
+        }
         List<Object> params = new ArrayList<>(fields.size());
-        Field idField = null;
         for (Field field : fields) {
-            String dbColumnName = BeanInfoHolder.getColumnName(field);
-            if (dbColumnName.equals(idName)) {
-                idField = field;
-                continue;
-            }
-            if (!dbColumnName.equals("")) {
+            if (idField != field && !BeanInfoHolder.getColumnName(field).equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
         }
-        params.add(FieldReflections.getValue(object, idField));
+        params.add(value);
         return params.toArray();
     }
 
