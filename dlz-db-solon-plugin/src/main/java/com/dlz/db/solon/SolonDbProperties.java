@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Solon 数据库配置属性。
- * <p>纯 POJO；由 {@link XPluginImp} 通过 {@code Solon.cfg().getBean("dlz.db", SolonDbProperties.class)}
+ * <p>纯 POJO；由 {@link DlzDbSolonPlugin} 通过 {@code Solon.cfg().getBean("dlz.db", SolonDbProperties.class)}
  * 从配置前缀 {@code dlz.db} 自动绑定字段。</p>
  *
  * <p>使用示例（{@code app.yml}）：</p>

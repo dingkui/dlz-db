@@ -36,7 +36,7 @@ import javax.sql.DataSource;
  * @since 7.0.0
  */
 @Slf4j
-public class XPluginImp implements Plugin {
+public class DlzDbSolonPlugin implements Plugin {
 
     @Override
     public void start(AppContext context) throws Throwable {
