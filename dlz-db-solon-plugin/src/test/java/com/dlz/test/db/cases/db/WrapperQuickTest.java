@@ -5,7 +5,7 @@ import com.dlz.db.helper.support.HelperScan;
 import com.dlz.db.helper.support.SqlHelper;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import com.dlz.test.db.entity.Yc1Record;
 import com.dlz.test.db.entity.YcRecord;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Slf4j
-public class WrapperQuickTest extends SolonDbBaseTest {
+public class WrapperQuickTest extends BaseDBTest {
 
     @Test
     public void insertOrUpdateTest1() {

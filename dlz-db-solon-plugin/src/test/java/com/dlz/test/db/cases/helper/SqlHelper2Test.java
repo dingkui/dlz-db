@@ -2,11 +2,11 @@ package com.dlz.test.db.cases.helper;
 
 import com.dlz.db.helper.bean.TableInfo;
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import org.junit.Test;
 
 
-public class SqlHelper2Test extends SolonDbBaseTest {
+public class SqlHelper2Test extends BaseDBTest {
 
     @Test
     public void lamdaTest2() {

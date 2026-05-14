@@ -4,7 +4,7 @@ import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DBTx;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  * <p>使用 SQLite 文件数据库验证事务，因为 SQLite 支持 BEGIN/COMMIT/ROLLBACK。</p>
  */
 @Slf4j
-public class DynamicAndTxTest extends SolonDbBaseTest {
+public class DynamicAndTxTest extends BaseDBTest {
 
     private static final String TEST_DS_NAME = "tx_test_ds";
     private static final String DB_FILE = "./test/tx_test.sqlite3";

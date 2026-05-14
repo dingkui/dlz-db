@@ -4,7 +4,7 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import org.junit.After;
 import org.junit.Before;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  * 分页专题测试
  * 覆盖 Jdbc/Pojo/Sql 的分页查询
  */
-public class PageTest extends SolonDbBaseTest {
+public class PageTest extends BaseDBTest {
 
     @Before
     public void setUp() {

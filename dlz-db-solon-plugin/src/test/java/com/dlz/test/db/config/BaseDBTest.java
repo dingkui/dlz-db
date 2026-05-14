@@ -19,7 +19,7 @@ import org.noear.solon.Solon;
  * {@code @RunWith(SpringRunner.class) + @SpringBootTest}。</p>
  */
 @Slf4j
-public class SolonDbBaseTest {
+public class BaseDBTest {
 
     @BeforeAll
     public static void bootstrap() {

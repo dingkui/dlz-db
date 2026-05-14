@@ -4,12 +4,12 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.SqlQuery;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 @Slf4j
-public class SqlSelectTest extends SolonDbBaseTest {
+public class SqlSelectTest extends BaseDBTest {
     @Test
     public void sqlSelectTest1() {
         String sql = "key.sqlTest.sqlUtil";

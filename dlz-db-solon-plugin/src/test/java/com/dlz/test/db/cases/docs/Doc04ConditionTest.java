@@ -7,7 +7,7 @@ import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.kit.util.DateUtil;
 import com.dlz.kit.util.ValUtil;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class Doc04ConditionTest extends SolonDbBaseTest {
+public class Doc04ConditionTest extends BaseDBTest {
     @Test
     public void conditionTest4_1_1() {
         DB.Pojo.select(User.class)

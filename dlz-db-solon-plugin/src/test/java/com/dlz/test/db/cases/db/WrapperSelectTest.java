@@ -3,7 +3,7 @@ package com.dlz.test.db.cases.db;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.kit.json.JSONMap;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Menu;
 import com.dlz.test.db.entity.Role;
 import com.dlz.test.db.entity.SysSql;
@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 @Slf4j
-public class WrapperSelectTest extends SolonDbBaseTest {
+public class WrapperSelectTest extends BaseDBTest {
     @Test
     public void conditionWhereTest3_2() {
         Menu menu = new Menu();

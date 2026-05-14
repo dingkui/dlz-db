@@ -5,7 +5,7 @@ import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @DisplayName("查询转换器测试")
-public class ExecutorQueryConvertSolonTest extends SolonDbBaseTest {
+public class ExecutorQueryConvertSolonTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {

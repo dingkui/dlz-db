@@ -2,11 +2,11 @@ package com.dlz.test.db.cases.helper;
 
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.kit.util.system.FieldReflections;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Dict;
 import org.junit.Test;
 
-public class SqlHelperTest extends SolonDbBaseTest {
+public class SqlHelperTest extends BaseDBTest {
     @Test
     public void landaTest1() {
         long t=System.currentTimeMillis();

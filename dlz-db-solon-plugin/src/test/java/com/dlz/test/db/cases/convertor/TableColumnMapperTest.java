@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -10,7 +10,7 @@ import java.sql.Types;
 
 import static org.junit.Assert.*;
 
-public class TableColumnMapperTest extends SolonDbBaseTest {
+public class TableColumnMapperTest extends BaseDBTest {
 
     private static Object invokeCover(Integer dbClass, Object value) throws Exception {
         Method method = TableColumnMapper.class.getDeclaredMethod("cover", Integer.class, Object.class);

@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.logic_delete;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * 逻辑删除专题测试
  * 覆盖软删除/恢复/查询过滤
  */
-public class LogicDeleteTest extends SolonDbBaseTest {
+public class LogicDeleteTest extends BaseDBTest {
 
     @Before
     public void setUp() {

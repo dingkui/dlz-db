@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.multi_ds;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNull;
  * 多数据源专题测试
  * 覆盖动态数据源切换
  */
-public class MultiDataSourceTest extends SolonDbBaseTest {
+public class MultiDataSourceTest extends BaseDBTest {
 
     @Before
     public void setUp() {

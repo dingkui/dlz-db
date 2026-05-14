@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.service;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * 回归测试：验证 IDbExecuteService 精简后核心方法仍可用
  */
 @Slf4j
-public class IDbExecuteServiceTest extends SolonDbBaseTest {
+public class IDbExecuteServiceTest extends BaseDBTest {
     @Before
     public void setUp() {
         DB.Jdbc.execute("delete from Orders");

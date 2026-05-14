@@ -3,7 +3,7 @@ package com.dlz.test.db.cases.util;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.SysSql;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class WrapperBuildUtilTest extends SolonDbBaseTest {
+public class WrapperBuildUtilTest extends BaseDBTest {
 
     @Test
     public void getIdType_withExplicitInput() {
@@ -60,7 +60,7 @@ public class WrapperBuildUtilTest extends SolonDbBaseTest {
         dict.setId(123L);
         dict.setName("test_update");
         List<Field> fields = BeanInfoHolder.getBeanFields(SysSql.class);
-        Object[] params = WrapperBuildUtil.buildUpdateParams(dict, fields, "ID");
+        Object[] params = WrapperBuildUtil.buildUpdateParams(dict, fields, BeanInfoHolder.getIdField(SysSql.class));
         assertTrue("参数数组长度应大于 0", params.length > 0);
         assertEquals("最后一个参数应是主键值", 123L, params[params.length - 1]);
     }

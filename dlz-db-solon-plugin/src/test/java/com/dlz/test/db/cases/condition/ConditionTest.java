@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.condition;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * 条件构造专题测试
  * 覆盖 eq/ne/gt/like/in/or/and/nest 等条件构造
  */
-public class ConditionTest extends SolonDbBaseTest {
+public class ConditionTest extends BaseDBTest {
 
     @Before
     public void setUp() {

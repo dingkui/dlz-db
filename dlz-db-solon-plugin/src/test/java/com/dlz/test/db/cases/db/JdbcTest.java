@@ -4,12 +4,12 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.JdbcQuery;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 @Slf4j
-public class JdbcTest extends SolonDbBaseTest {
+public class JdbcTest extends BaseDBTest {
     @Test
     public void jdbcPageTest1() {
         final JdbcQuery page = DB.Jdbc.select("select 1 from dual where ?=1", 1)

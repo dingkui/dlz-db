@@ -2,7 +2,7 @@ package com.dlz.test.db.cases.docs;
 
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
-import com.dlz.test.db.config.SolonDbBaseTest;
+import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import com.dlz.test.db.entity.User;
 import org.junit.Before;
@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class Doc00AllTest extends SolonDbBaseTest {
+public class Doc00AllTest extends BaseDBTest {
     @Before
     public void addSql() {
         SysSql SysSql = new SysSql();
