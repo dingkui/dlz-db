@@ -2,6 +2,7 @@ package com.dlz.test.db.mock;
 
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.JdbcQuery;
+import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 展示如何使用内存数据库进行测试
  */
 @DisplayName("MockDbProvider 使用示例")
-class MockDbProviderExampleTest extends BaseMockTest {
+class MockDbProviderExampleTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试查询列表 - queryList()")
