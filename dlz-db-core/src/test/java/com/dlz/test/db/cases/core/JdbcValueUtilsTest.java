@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.core;
 
-import com.dlz.db.core.JdbcValueUtils;
+import com.dlz.db.convertor.rowMapper.JdbcValueUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

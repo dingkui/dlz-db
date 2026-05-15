@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.holder.SqlRunThreadHolder;
+import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.modal.wrapper.TableDelete;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

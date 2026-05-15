@@ -1,6 +1,6 @@
 package com.dlz.test.db.config;
 
-import com.dlz.db.core.IRowMapper;
+import com.dlz.db.convertor.rowMapper.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.kit.json.JSONMap;
@@ -135,7 +135,7 @@ public class MockSqlExecutor implements ISqlExecutor {
     }
 
     @Override
-    public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
+    public int[] batch(String sql, List<Object[]> batchArgs) {
         int[] results = new int[batchArgs.size()];
         Arrays.fill(results, 1);
         return results;

@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper.support.dbs;
 
-import com.dlz.db.helper.support.dbs.DbOpMysql;
+import com.dlz.db.support.helper.DbOpMysql;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.modal;
 
 
-import com.dlz.db.holder.BeanInfoHolder;
+import com.dlz.db.support.PojoCache;
 import com.dlz.db.modal.DbPojo;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -32,29 +32,6 @@ class DbPojoTest extends BaseDBTest {
     @BeforeEach
     void setUp() {
         dbPojo = new DbPojo();
-
-        // 清除所有缓存，避免与其他测试类的 TestUser 冲突
-        BeanInfoHolder.clearAll();
-
-        // 为 TestUser 类预置表字段信息到缓存中
-        // 表名是 TEST_USER（根据类名转换）
-        HashMap<String, Integer> tableColumns = new HashMap<>();
-        tableColumns.put("ID", 1);      // BIGINT
-        tableColumns.put("NAME", 2);    // VARCHAR
-        tableColumns.put("AGE", 3);     // INTEGER
-        tableColumns.put("EMAIL", 4);   // VARCHAR
-
-        // CacheMap 继承自 ConcurrentHashMap，可以直接 put
-        try {
-            java.lang.reflect.Field cacheField = BeanInfoHolder.class.getDeclaredField("tableColumnsInfoCache");
-            cacheField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            java.util.concurrent.ConcurrentHashMap<String, HashMap<String, Integer>> cache =
-                    (java.util.concurrent.ConcurrentHashMap<String, HashMap<String, Integer>>) cacheField.get(null);
-            cache.put("TEST_USER", tableColumns);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to setup mock table columns", e);
-        }
     }
 
     // ========== SELECT 方法测试 ==========

@@ -1,7 +1,7 @@
 package com.dlz.test.db;
 
 import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.holder.DBHolder;
+import com.dlz.db.support.DBHolder;
 import com.dlz.test.db.config.DlzDbConfigs;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

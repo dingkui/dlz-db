@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.helper.bean;
 
-import com.dlz.db.helper.bean.ColumnInfo;
-import com.dlz.db.helper.bean.TableInfo;
+import com.dlz.db.support.bean.ColumnInfo;
+import com.dlz.db.support.bean.TableInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

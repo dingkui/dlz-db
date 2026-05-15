@@ -1,7 +1,7 @@
 package com.dlz.test.db.config;
 
-import com.dlz.db.spring.config.DlzDbConfig;
-import com.dlz.db.spring.config.DlzDbProperties;
+import com.dlz.db.spring.config.SpringDlzDbConfig;
+import com.dlz.db.spring.config.SpringDlzDbProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-@EnableConfigurationProperties({DlzDbProperties.class})
-public class DlzDbConfigs extends DlzDbConfig {
+@EnableConfigurationProperties({SpringDlzDbProperties.class})
+public class DlzDbConfigs extends SpringDlzDbConfig {
 
 }

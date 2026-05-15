@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper;
 
-import com.dlz.db.helper.bean.TableInfo;
+import com.dlz.db.support.bean.TableInfo;
 import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.Test;

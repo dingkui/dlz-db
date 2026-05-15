@@ -1,10 +1,8 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.inf.ICondAddByFn;
-import com.dlz.db.inf.ICondAddByLamda;
-import com.dlz.db.inf.ICondAuto;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.json.JSONMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +27,8 @@ class ConditionTest {
     public String getSql(Condition result) {
         final ParaMap pm = new ParaMap();
         pm.getSqlItem().setSqlRun(result.getRunsql(pm));
-        return pm.jdbcSql().toRunSql();
+        final String runSql = pm.jdbcSql().toRunSql();
+        return SqlUtil.replaceSql(runSql, pm.getPara(), 1);
     }
 
     // ========== EQ / NE 测试 ==========
@@ -155,7 +154,7 @@ class ConditionTest {
         Condition result = condition.in("status", "1,2,3");
         
         assertNotNull(result);
-        assertEquals("where STATUS in (${in_1})", getSql(result));
+        assertEquals("where STATUS in (1,2,3)", getSql(result));
     }
 
 
@@ -258,7 +257,7 @@ class ConditionTest {
         
         assertNotNull(result);
         assertSame(condition, result);
-        assertEquals("where STATUS = 1 and AGE > 18 and NAME like '%张%' and ROLE in (${in_17})", getSql(result));
+        assertEquals("where STATUS = 1 and AGE > 18 and NAME like '%张%' and ROLE in ('admin','user')", getSql(result));
     }
 
     @Test

@@ -1,8 +1,7 @@
 package com.dlz.test.db.cases.core;
 
 import com.dlz.db.annotation.TableName;
-import com.dlz.db.core.DlzResourceAdapter;
-import org.junit.jupiter.api.BeforeEach;
+import com.dlz.db.support.resouce.DlzResourceLoader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,18 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DisplayName("DlzResourceAdapter 资源适配器测试")
 class DlzResourceAdapterTest {
-
-    private DlzResourceAdapter adapter;
-
-    @BeforeEach
-    void setUp() {
-        adapter = new DlzResourceAdapter();
-    }
-
     @Test
     @DisplayName("测试 getResources - 获取多个资源")
     void testGetResources() throws Exception {
-        InputStream[] streams = adapter.getResources("classpath*:META-INF/MANIFEST.MF");
+        InputStream[] streams = DlzResourceLoader.getResourceStreams("classpath*:META-INF/MANIFEST.MF");
         
         assertNotNull(streams);
         // 关闭所有流
@@ -42,7 +33,7 @@ class DlzResourceAdapterTest {
     @Test
     @DisplayName("测试 getResource - 获取单个资源")
     void testGetResource() throws Exception {
-        InputStream stream = adapter.getResource("classpath:logback.xml");
+        InputStream stream = DlzResourceLoader.getResourceStream("classpath:logback.xml");
         
         // 可能为 null
         if (stream != null) {
@@ -54,7 +45,7 @@ class DlzResourceAdapterTest {
     @DisplayName("测试 scan - 扫描包下的类")
     void testScan() throws Exception {
         // 扫描当前测试类所在的包
-        Set<Class<?>> classes = adapter.scan("com.dlz.test.db.entity", null);
+        Set<Class<?>> classes = DlzResourceLoader.scan("com.dlz.test.db.entity", null);
         
         assertNotNull(classes);
         assertTrue(classes.size() > 0, "应该扫描到至少一个类");
@@ -64,7 +55,7 @@ class DlzResourceAdapterTest {
     @DisplayName("测试 scan - 带注解过滤")
     void testScanWithAnnotation() throws Exception {
         // 扫描带有 TableName 注解的类（可能没有）
-        Set<Class<?>> classes = adapter.scan("com.dlz.db.modal", TableName.class);
+        Set<Class<?>> classes = DlzResourceLoader.scan("com.dlz.db.modal", TableName.class);
         
         assertNotNull(classes);
         // 验证所有返回的类都有 TableName 注解
@@ -76,7 +67,7 @@ class DlzResourceAdapterTest {
     @Test
     @DisplayName("测试 scan - null 包名返回空集合")
     void testScanWithNullPackage() throws Exception {
-        Set<Class<?>> classes = adapter.scan(null, null);
+        Set<Class<?>> classes = DlzResourceLoader.scan(null, null);
         
         assertNotNull(classes);
         assertTrue(classes.isEmpty());
@@ -85,7 +76,7 @@ class DlzResourceAdapterTest {
     @Test
     @DisplayName("测试 scan - 空包名返回空集合")
     void testScanWithEmptyPackage() throws Exception {
-        Set<Class<?>> classes = adapter.scan("", null);
+        Set<Class<?>> classes = DlzResourceLoader.scan("", null);
         
         assertNotNull(classes);
         assertTrue(classes.isEmpty());
@@ -94,7 +85,7 @@ class DlzResourceAdapterTest {
     @Test
     @DisplayName("测试 scan - 不存在的包返回空集合")
     void testScanWithNonExistentPackage() throws Exception {
-        Set<Class<?>> classes = adapter.scan("com.nonexistent.package.xyz", null);
+        Set<Class<?>> classes = DlzResourceLoader.scan("com.nonexistent.package.xyz", null);
         
         assertNotNull(classes);
         assertTrue(classes.isEmpty());

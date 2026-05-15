@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.db;
 
 import com.dlz.db.ds.DataSourceProperty;
-import com.dlz.db.helper.support.HelperScan;
-import com.dlz.db.helper.support.SqlHelper;
+import com.dlz.db.support.helper.HelperScan;
+import com.dlz.db.support.helper.SqlHelper;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;

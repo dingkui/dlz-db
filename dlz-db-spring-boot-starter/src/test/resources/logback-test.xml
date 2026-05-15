@@ -15,7 +15,7 @@
     </appender>
     <logger name="com.dlz" level="info" addtivity="false"/>
     <logger name="com.dlz.db.util.DbLogUtil" level="debug" addtivity="false"/>
-    <logger name="com.dlz.db.spring.config.DynamicJdbcTemplate" level="warn" addtivity="false"/>
+    <logger name="com.dlz.db.spring.DlzDynamicJdbcTemplate" level="warn" addtivity="false"/>
     <root level="warn">
         <appender-ref ref="StdoutAppender"/>
     </root>

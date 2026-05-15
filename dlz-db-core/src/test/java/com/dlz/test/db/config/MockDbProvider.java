@@ -13,7 +13,7 @@ public class MockDbProvider extends ADbProvider {
     private final MockSqlExecutor sqlExecutor;
     private final MockCommService commService;
     private final MockCacheExecutor cacheExecutor;
-    private final BaseDbProperties sqlConfig;
+    private final DlzDbProperties sqlConfig;
 
     public MockDbProvider() {
         this.sqlExecutor = new MockSqlExecutor();
@@ -25,12 +25,12 @@ public class MockDbProvider extends ADbProvider {
         sqlExecutor.initTestData();
     }
 
-    private BaseDbProperties createDefaultConfig() {
-        BaseDbProperties config = new BaseDbProperties();
+    private DlzDbProperties createDefaultConfig() {
+        DlzDbProperties config = new DlzDbProperties();
         config.setLogicDeleteField("IS_DELETED");
         config.setTableCacheTime(-1);
         
-        BaseDbProperties.Log logConfig = new BaseDbProperties.Log();
+        DlzDbProperties.Log logConfig = new DlzDbProperties.Log();
         logConfig.setShowResult(false);
         logConfig.setShowRunSql(false);
         logConfig.setShowCaller(false);
@@ -57,12 +57,12 @@ public class MockDbProvider extends ADbProvider {
     }
 
     @Override
-    public ICacheExecutor getCacheExecutor() {
+    public IRedisExecutor getCacheExecutor() {
         return cacheExecutor;
     }
 
     @Override
-    public BaseDbProperties getSqlConfig() {
+    public DlzDbProperties getSqlConfig() {
         return sqlConfig;
     }
 }

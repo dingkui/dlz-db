@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
-import com.dlz.db.holder.SqlRunThreadHolder;
+import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;

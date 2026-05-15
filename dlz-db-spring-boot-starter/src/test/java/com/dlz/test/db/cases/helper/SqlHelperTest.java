@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper;
 
-import com.dlz.db.holder.BeanInfoHolder;
+import com.dlz.db.support.PojoCache;
 import com.dlz.kit.util.system.FieldReflections;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Dict;
@@ -31,11 +31,11 @@ public class SqlHelperTest extends BaseDBTest {
     public void landaTest3() {
         long t=System.currentTimeMillis();
         for (int i = 0; i < 1000000; i++) {
-            BeanInfoHolder.fnName(Dict::getDictStatus);
-            BeanInfoHolder.fnName(Dict::getA2);
-            BeanInfoHolder.fnName(Dict::getA6);
-            BeanInfoHolder.fnName(Dict::getA4);
-            BeanInfoHolder.fnName(Dict::getA5);
+            PojoCache.fnName(Dict::getDictStatus);
+            PojoCache.fnName(Dict::getA2);
+            PojoCache.fnName(Dict::getA6);
+            PojoCache.fnName(Dict::getA4);
+            PojoCache.fnName(Dict::getA5);
         }
         System.out.println(System.currentTimeMillis()-t);
     }

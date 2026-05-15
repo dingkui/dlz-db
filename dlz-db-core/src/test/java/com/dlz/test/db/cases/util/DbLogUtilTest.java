@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.util;
 
-import com.dlz.db.core.BaseDbProperties;
+import com.dlz.db.core.DlzDbProperties;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbLogUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -19,10 +19,10 @@ class DbLogUtilTest {
     @Test
     @DisplayName("测试 init 方法 - 初始化配置")
     void testInit() {
-        BaseDbProperties properties = new BaseDbProperties();
+        DlzDbProperties properties = new DlzDbProperties();
         
         // 设置日志配置
-        BaseDbProperties.Log log = new BaseDbProperties.Log();
+        DlzDbProperties.Log log = new DlzDbProperties.Log();
         log.setShowCaller(true);
         log.setShowRunSql(true);
         log.setShowResult(true);
@@ -37,7 +37,7 @@ class DbLogUtilTest {
     @Test
     @DisplayName("测试 init 方法 - 默认配置")
     void testInit_Default() {
-        BaseDbProperties properties = new BaseDbProperties();
+        DlzDbProperties properties = new DlzDbProperties();
         
         // 测试使用默认配置初始化
         assertDoesNotThrow(() -> DbLogUtil.init(properties));
