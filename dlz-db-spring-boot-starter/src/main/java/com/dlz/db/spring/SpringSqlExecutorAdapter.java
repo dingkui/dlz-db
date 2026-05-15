@@ -114,14 +114,24 @@ public class SpringSqlExecutorAdapter implements ISqlExecutor {
         if (tableName == null || !TABLE_NAME_PATTERN.matcher(tableName).matches()) {
             throw new ValidateException("非法表名: " + tableName);
         }
-        String sql = "select * from " + tableName + " limit 0";
+        // 使用 WHERE 1=0 而非 LIMIT 0，确保跨数据库兼容性（Oracle不支持LIMIT语法）
+        String sql = "select * from " + tableName + " where 1=0";
         ResultSetExtractor<HashMap<String, Integer>> extractor = rs -> {
             HashMap<String, Integer> infos = new HashMap<>();
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
             for (int i = 1; i < columnCount + 1; i++) {
-                String columnLabel = rsmd.getColumnLabel(i).toUpperCase(Locale.ROOT);
-                infos.put(columnLabel, rsmd.getColumnType(i));
+                // getColumnLabel 优先返回 AS 别名，无别名时返回列名
+                // toUpperCase 统一处理不同数据库的大小写差异：
+                // - Oracle: 默认返回大写
+                // - PostgreSQL: 默认返回小写
+                // - MySQL: 保持原始大小写
+                String columnLabel = rsmd.getColumnLabel(i);
+                if (columnLabel == null || columnLabel.isEmpty()) {
+                    // 兜底：如果 getColumnLabel 返回空，使用 getColumnName
+                    columnLabel = rsmd.getColumnName(i);
+                }
+                infos.put(columnLabel.toUpperCase(Locale.ROOT), rsmd.getColumnType(i));
             }
             return infos;
         };
