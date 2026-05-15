@@ -1,6 +1,6 @@
 package com.dlz.db.solon;
 
-import com.dlz.db.core.BaseDbProperties;
+import com.dlz.db.core.DlzDbProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,5 +24,5 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SolonDbProperties extends BaseDbProperties {
+public class SolonDbProperties extends DlzDbProperties {
 }

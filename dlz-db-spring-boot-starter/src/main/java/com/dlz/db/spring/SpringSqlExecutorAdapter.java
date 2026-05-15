@@ -1,6 +1,6 @@
 package com.dlz.db.spring;
 
-import com.dlz.db.core.IRowMapper;
+import com.dlz.db.convertor.rowMapper.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
@@ -101,7 +101,7 @@ public class SpringSqlExecutorAdapter implements ISqlExecutor {
 
     @Override
     @SuppressFBWarnings(value = "SQL_INJECTION_SPRING_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
-    public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
+    public int[] batch(String sql, List<Object[]> batchArgs) {
         return doDb(() -> dao.batchUpdate(sql, batchArgs),
                 (t, r) -> DbLogUtil.generateSqlMessage(t, "batchUpdate", sql, batchArgs));
     }

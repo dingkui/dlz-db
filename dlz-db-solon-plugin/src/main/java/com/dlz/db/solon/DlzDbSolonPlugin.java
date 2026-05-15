@@ -2,14 +2,14 @@ package com.dlz.db.solon;
 
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import com.dlz.db.core.ADbProvider;
-import com.dlz.db.core.ICacheExecutor;
+import com.dlz.db.core.IRedisExecutor;
 import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.helper.support.HelperScan;
-import com.dlz.db.holder.DBHolder;
-import com.dlz.db.holder.SqlHolder;
 import com.dlz.db.modal.DB;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.SqlHolder;
+import com.dlz.db.support.helper.HelperScan;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ import javax.sql.DataSource;
  *   <li>构建 {@link SolonDbProvider} 并写入 {@link DBHolder}。</li>
  *   <li>构建 {@link SolonSqlExecutorAdapter} 与 {@link CommServiceImpl}，注册到 Solon 容器。</li>
  *   <li>触发 {@link SqlHolder#init()} 与 {@link SqlHolder#loadDbSql()}，加载 SQL 资源。</li>
- *   <li>若存在 {@link JedisPool}，自动构建 {@link ICacheExecutor}。</li>
+ *   <li>若存在 {@link JedisPool}，自动构建 {@link IRedisExecutor}。</li>
  * </ol>
  *
  * @since 7.0.0
@@ -88,8 +88,8 @@ public class DlzDbSolonPlugin implements Plugin {
         // 4. 可选：JedisPool 就绪 → 注册缓存
         context.getBeanAsync(JedisPool.class, pool -> {
             try {
-                ICacheExecutor cache = new SolonJedisCacheAdapter(pool);
-                context.wrapAndPut(ICacheExecutor.class, cache);
+                IRedisExecutor cache = new SolonJedisCacheAdapter(pool);
+                context.wrapAndPut(IRedisExecutor.class, cache);
                 log.info("init cacheExecutor: {}", SolonJedisCacheAdapter.class.getName());
             } catch (Throwable e) {
                 log.warn("注册缓存执行器失败", e);

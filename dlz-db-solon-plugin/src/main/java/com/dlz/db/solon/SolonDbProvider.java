@@ -15,10 +15,10 @@ import org.noear.solon.Solon;
 @Slf4j
 public class SolonDbProvider extends ADbProvider {
 
-    private final BaseDbProperties sqlConfig;
+    private final DlzDbProperties sqlConfig;
 
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "配置属性对象由容器注入，视为不可变")
-    public SolonDbProvider(BaseDbProperties sqlConfig) {
+    public SolonDbProvider(DlzDbProperties sqlConfig) {
         this.sqlConfig = sqlConfig;
     }
 
@@ -38,13 +38,13 @@ public class SolonDbProvider extends ADbProvider {
     }
 
     @Override
-    public ICacheExecutor getCacheExecutor() {
-        return Solon.context().getBean(ICacheExecutor.class);
+    public IRedisExecutor getCacheExecutor() {
+        return Solon.context().getBean(IRedisExecutor.class);
     }
 
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "配置属性对象视为不可变")
-    public BaseDbProperties getSqlConfig() {
+    public DlzDbProperties getSqlConfig() {
         return sqlConfig;
     }
 }

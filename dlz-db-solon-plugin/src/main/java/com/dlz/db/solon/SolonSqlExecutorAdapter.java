@@ -1,6 +1,6 @@
 package com.dlz.db.solon;
 
-import com.dlz.db.core.IRowMapper;
+import com.dlz.db.convertor.rowMapper.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
@@ -149,7 +149,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
 
     @Override
     @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
-    public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
+    public int[] batch(String sql, List<Object[]> batchArgs) {
         return doDb(() -> withConn(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 for (Object[] args : batchArgs) {
@@ -158,7 +158,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
                 }
                 return ps.executeBatch();
             }
-        }), (t, r) -> DbLogUtil.generateSqlMessage(t, "batchUpdate", sql, batchArgs));
+        }), (t, r) -> DbLogUtil.generateSqlMessage(t, "batch", sql, batchArgs));
     }
 
     private static final Pattern TABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");

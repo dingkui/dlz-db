@@ -1,17 +1,17 @@
 package com.dlz.db.solon;
 
-import com.dlz.db.core.ICacheExecutor;
+import com.dlz.db.core.IRedisExecutor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import redis.clients.jedis.JedisPool;
 
 /**
  * Solon Redis 缓存执行器实现：基于原生 {@link JedisPool} 的轻量包装。
  *
- * <p>需要在 Solon 应用中注册 {@link JedisPool} Bean 后，本类作为 {@link ICacheExecutor} 自动启用。</p>
+ * <p>需要在 Solon 应用中注册 {@link JedisPool} Bean 后，本类作为 {@link IRedisExecutor} 自动启用。</p>
  *
  * @since 7.0.0
  */
-public class SolonJedisCacheAdapter implements ICacheExecutor {
+public class SolonJedisCacheAdapter implements IRedisExecutor {
 
     private final JedisPool jedisPool;
 
@@ -26,32 +26,10 @@ public class SolonJedisCacheAdapter implements ICacheExecutor {
             jedis.set(key, value);
         }
     }
-
-    @Override
-    public String get(String key) {
-        try (redis.clients.jedis.Jedis jedis = jedisPool.getResource()) {
-            return jedis.get(key);
-        }
-    }
-
-    @Override
-    public boolean del(String key) {
-        try (redis.clients.jedis.Jedis jedis = jedisPool.getResource()) {
-            return jedis.del(key) > 0;
-        }
-    }
-
     @Override
     public long incrBy(String key, long step) {
         try (redis.clients.jedis.Jedis jedis = jedisPool.getResource()) {
             return jedis.incrBy(key, step);
-        }
-    }
-
-    @Override
-    public boolean exists(String key) {
-        try (redis.clients.jedis.Jedis jedis = jedisPool.getResource()) {
-            return jedis.exists(key);
         }
     }
 }
