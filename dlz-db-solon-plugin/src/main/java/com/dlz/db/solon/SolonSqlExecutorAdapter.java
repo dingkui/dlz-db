@@ -169,6 +169,7 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
         if (tableName == null || !TABLE_NAME_PATTERN.matcher(tableName).matches()) {
             throw new ValidateException("非法表名: " + tableName);
         }
+        // 使用 WHERE 1=0 而非 LIMIT 0，确保跨数据库兼容性（Oracle不支持LIMIT语法）
         String sql = "select * from " + tableName + " where 1=0";
         return withConn(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -177,7 +178,17 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
                 ResultSetMetaData md = rs.getMetaData();
                 int count = md.getColumnCount();
                 for (int i = 1; i <= count; i++) {
-                    infos.put(md.getColumnLabel(i).toUpperCase(Locale.ROOT), md.getColumnType(i));
+                    // getColumnLabel 优先返回 AS 别名，无别名时返回列名
+                    // toUpperCase 统一处理不同数据库的大小写差异：
+                    // - Oracle: 默认返回大写
+                    // - PostgreSQL: 默认返回小写
+                    // - MySQL: 保持原始大小写
+                    String columnName = md.getColumnLabel(i);
+                    if (columnName == null || columnName.isEmpty()) {
+                        // 兜底：如果 getColumnLabel 返回空，使用 getColumnName
+                        columnName = md.getColumnName(i);
+                    }
+                    infos.put(columnName.toUpperCase(Locale.ROOT), md.getColumnType(i));
                 }
                 return infos;
             }
