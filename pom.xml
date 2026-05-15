@@ -12,7 +12,7 @@
     <description>DLZ-DB v7.0: 多模块数据库框架，支持 Spring 和 Solon</description>
     <properties>
         <java.version>1.8</java.version>
-        <dlz-spring.version>6.6.4</dlz-spring.version>
+        <dlz-spring.version>6.6.5</dlz-spring.version>
         <dlz-kit.version>6.6.5</dlz-kit.version>
         
         <!-- 代码质量工具版本 -->

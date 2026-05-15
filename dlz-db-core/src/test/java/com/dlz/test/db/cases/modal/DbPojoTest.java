@@ -198,7 +198,6 @@ class DbPojoTest extends BaseDBTest {
         TestUser user = new TestUser();
         user.setName("张三");
         // id 为 null
-
         dbPojo.insertOrUpdate(user);
     }
 

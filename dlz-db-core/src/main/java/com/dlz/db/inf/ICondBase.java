@@ -11,4 +11,5 @@ import com.dlz.db.modal.condition.Condition;
 public interface ICondBase<ME extends ICondBase> extends IChained<ME> {
     /** 把一个条件节点挂到当前条件容器上（由上层 eq/gt/and/or 等方法内部调用）。 */
     void addChildren(Condition child);
+    String getTableName();
 }

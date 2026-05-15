@@ -35,7 +35,7 @@ public class TableInsert extends AParaTable implements IExecutorInsert {
 
     public TableInsert value(String key, Object value) {
         String paraName = DbConvertUtil.toDbColumnNames(key);
-        if (!PojoCache.isColumnExists(getTableName(),paraName)) {
+        if (!PojoCache.isColumnExists(getTableName(), paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;
         }

@@ -19,7 +19,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 equals 操作符")
     void testEqOperator() {
-        Condition condition = DbOperateEnum.eq.mk("user_name", "test");
+        Condition condition = DbOperateEnum.eq.mk("user_name", "test",null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("user_name = "));
     }
@@ -27,7 +27,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 not equals 操作符")
     void testNeOperator() {
-        Condition condition = DbOperateEnum.ne.mk("user_name", "test");
+        Condition condition = DbOperateEnum.ne.mk("user_name", "test",null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("user_name <> "));
     }
@@ -35,7 +35,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 greater than 操作符")
     void testGtOperator() {
-        Condition condition = DbOperateEnum.gt.mk("age", 18);
+        Condition condition = DbOperateEnum.gt.mk("age", 18,null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("AGE > "));
     }
@@ -43,7 +43,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 less than 操作符")
     void testLtOperator() {
-        Condition condition = DbOperateEnum.lt.mk("age", 18);
+        Condition condition = DbOperateEnum.lt.mk("age", 18,null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("AGE < "));
     }
@@ -51,7 +51,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 greater than or equal 操作符")
     void testGeOperator() {
-        Condition condition = DbOperateEnum.ge.mk("age", 18);
+        Condition condition = DbOperateEnum.ge.mk("age", 18,null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("AGE >="));
     }
@@ -59,7 +59,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 less than or equal 操作符")
     void testLeOperator() {
-        Condition condition = DbOperateEnum.le.mk("age", 18);
+        Condition condition = DbOperateEnum.le.mk("age", 18,null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("AGE <= "));
     }
@@ -67,7 +67,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 in 操作符")
     void testInOperator() {
-        Condition condition = DbOperateEnum.in.mk("id", new Object[]{1, 2, 3});
+        Condition condition = DbOperateEnum.in.mk("id", new Object[]{1, 2, 3},null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("ID in ("));
     }
@@ -75,7 +75,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 not in 操作符")
     void testNotInOperator() {
-        Condition condition = DbOperateEnum.notIn.mk("id", new Object[]{1, 2, 3});
+        Condition condition = DbOperateEnum.notIn.mk("id", new Object[]{1, 2, 3},null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("ID not in ("));
     }
@@ -83,7 +83,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 like 操作符")
     void testLikeOperator() {
-        Condition condition = DbOperateEnum.like.mk("name", "test");
+        Condition condition = DbOperateEnum.like.mk("name", "test",null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("NAME like "));
         // like 应该自动添加 % 通配符
@@ -92,7 +92,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 like left 操作符")
     void testLikeLeftOperator() {
-        Condition condition = DbOperateEnum.likeLeft.mk("name", "test");
+        Condition condition = DbOperateEnum.likeLeft.mk("name", "test",null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("NAME like "));
     }
@@ -100,7 +100,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 like right 操作符")
     void testLikeRightOperator() {
-        Condition condition = DbOperateEnum.likeRight.mk("name", "test");
+        Condition condition = DbOperateEnum.likeRight.mk("name", "test",null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("NAME like "));
     }
@@ -108,7 +108,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 not like 操作符")
     void testNotLikeOperator() {
-        Condition condition = DbOperateEnum.notLike.mk("name", "test");
+        Condition condition = DbOperateEnum.notLike.mk("name", "test",null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("NAME not like "));
     }
@@ -116,7 +116,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 between 操作符")
     void testBetweenOperator() {
-        Condition condition = DbOperateEnum.between.mk("age", new Object[]{18, 60});
+        Condition condition = DbOperateEnum.between.mk("age", new Object[]{18, 60},null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("AGE between "));
     }
@@ -124,7 +124,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 not between 操作符")
     void testNotBetweenOperator() {
-        Condition condition = DbOperateEnum.notBetween.mk("age", new Object[]{18, 60});
+        Condition condition = DbOperateEnum.notBetween.mk("age", new Object[]{18, 60},null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("AGE not between "));
     }
@@ -132,7 +132,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 is null 操作符")
     void testIsNullOperator() {
-        Condition condition = DbOperateEnum.isNull.mk("name",null);
+        Condition condition = DbOperateEnum.isNull.mk("name",null,null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("NAME is null"));
     }
@@ -140,7 +140,7 @@ class DbOperateEnumTest {
     @Test
     @DisplayName("测试 is not null 操作符")
     void testIsNotNullOperator() {
-        Condition condition = DbOperateEnum.isNotNull.mk("name",null);
+        Condition condition = DbOperateEnum.isNotNull.mk("name",null,null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("NAME is not null"));
     }

@@ -1,6 +1,7 @@
 package com.dlz.db.convertor.dbtype;
 
 import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.modal.DB;
 import com.dlz.db.support.PojoCache;
 import com.dlz.kit.util.ValUtil;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,10 @@ public class TableColumnMapper implements ITableColumnMapper {
 		switch (dbClass) {
             // 整数族：统一 Long，避免 Integer 溢出问题，也避免 BigDecimal 的 overkill
             case Types.TINYINT:
+                if(obj instanceof Boolean){
+                    return (Boolean)obj ? 1 : 0;
+                }
+                return ValUtil.toInt(obj);
             case Types.SMALLINT:
             case Types.INTEGER:
             case Types.BIGINT:

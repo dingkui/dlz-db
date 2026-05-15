@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -36,6 +37,7 @@ import javax.sql.DataSource;
 public class SpringDlzDbConfig extends DlzFwConfig {
     @Bean(name = "dbProvider")
     @ConditionalOnMissingBean(name = "dbProvider")
+    @DependsOn("JdbcTemplate")
     public ADbProvider dbProvider(SpringDlzDbProperties properties) {
         ADbProvider provider = new SpringDbProvider(properties);
         DBHolder.setDbProvider(provider);

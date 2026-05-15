@@ -39,14 +39,14 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
      * <pre>.between(User::getAge, 18, 60)</pre>
      */
     default <T1> ME between(DlzFn<T1, ?> column, Object value1, Object value2) {
-        addChildren(between.mk(column, new Object[]{value1, value2}));
+        addChildren(between.mk(column, new Object[]{value1, value2}, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #between(DlzFn, Object, Object)}。 */
     default <T1> ME between(boolean is, DlzFn<T1, ?> column, Object value1, Object value2) {
         if (is) {
-            addChildren(between.mk(column, new Object[]{value1, value2}));
+            addChildren(between.mk(column, new Object[]{value1, value2}, getTableName()));
         }
         return me();
     }
@@ -56,42 +56,42 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
      * <pre>.between(User::getAge, "18,60")</pre>
      */
     default <T1> ME between(DlzFn<T1, ?> column, Object value) {
-        addChildren(between.mk(column, value));
+        addChildren(between.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #between(DlzFn, Object)}。 */
     default <T1> ME between(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(between.mk(column, value));
+            addChildren(between.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column NOT BETWEEN value1 AND value2}。 */
     default <T1> ME notBetween(DlzFn<T1, ?> column, Object value1, Object value2) {
-        addChildren(notBetween.mk(column, new Object[]{value1, value2}));
+        addChildren(notBetween.mk(column, new Object[]{value1, value2}, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notBetween(DlzFn, Object, Object)}。 */
     default <T1> ME notBetween(boolean is, DlzFn<T1, ?> column, Object value1, Object value2) {
         if (is) {
-            addChildren(notBetween.mk(column, new Object[]{value1, value2}));
+            addChildren(notBetween.mk(column, new Object[]{value1, value2}, getTableName()));
         }
         return me();
     }
 
     /** 单值形式的 NOT BETWEEN，{@code value} 格式同 {@link #between(DlzFn, Object)}。 */
     default <T1> ME notBetween(DlzFn<T1, ?> column, Object value) {
-        addChildren(notBetween.mk(column, value));
+        addChildren(notBetween.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notBetween(DlzFn, Object)}。 */
     default <T1> ME notBetween(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(notBetween.mk(column, value));
+            addChildren(notBetween.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -100,28 +100,28 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
 
     /** {@code column IS NOT NULL}。 */
     default <T1> ME isNotNull(DlzFn<T1, ?> column) {
-        addChildren(isNotNull.mk(column, null));
+        addChildren(isNotNull.mk(column, null, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #isNotNull(DlzFn)}。 */
     default <T1> ME isNotNull(boolean is, DlzFn<T1, ?> column) {
         if (is) {
-            addChildren(isNotNull.mk(column, null));
+            addChildren(isNotNull.mk(column, null, getTableName()));
         }
         return me();
     }
 
     /** {@code column IS NULL}。 */
     default <T1> ME isNull(DlzFn<T1, ?> column) {
-        addChildren(isNull.mk(column, null));
+        addChildren(isNull.mk(column, null, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #isNull(DlzFn)}。 */
     default <T1> ME isNull(boolean is, DlzFn<T1, ?> column) {
         if (is) {
-            addChildren(isNull.mk(column, null));
+            addChildren(isNull.mk(column, null, getTableName()));
         }
         return me();
     }
@@ -133,28 +133,28 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
      * <pre>.eq(User::getStatus, 1)</pre>
      */
     default <T1> ME eq(DlzFn<T1, ?> column, Object value) {
-        addChildren(eq.mk(column, value));
+        addChildren(eq.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #eq(DlzFn, Object)}。 */
     default <T1> ME eq(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(eq.mk(column, value));
+            addChildren(eq.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column <> value}。 */
     default <T1> ME ne(DlzFn<T1, ?> column, Object value) {
-        addChildren(ne.mk(column, value));
+        addChildren(ne.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #ne(DlzFn, Object)}。 */
     default <T1> ME ne(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(ne.mk(column, value));
+            addChildren(ne.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -163,56 +163,56 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
 
     /** {@code column > value}。 */
     default <T1> ME gt(DlzFn<T1, ?> column, Object value) {
-        addChildren(gt.mk(column, value));
+        addChildren(gt.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #gt(DlzFn, Object)}。 */
     default <T1> ME gt(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(gt.mk(column, value));
+            addChildren(gt.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column >= value}。 */
     default <T1> ME ge(DlzFn<T1, ?> column, Object value) {
-        addChildren(ge.mk(column, value));
+        addChildren(ge.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #ge(DlzFn, Object)}。 */
     default <T1> ME ge(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(ge.mk(column, value));
+            addChildren(ge.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column < value}。 */
     default <T1> ME lt(DlzFn<T1, ?> column, Object value) {
-        addChildren(lt.mk(column, value));
+        addChildren(lt.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #lt(DlzFn, Object)}。 */
     default <T1> ME lt(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(lt.mk(column, value));
+            addChildren(lt.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column <= value}。 */
     default <T1> ME le(DlzFn<T1, ?> column, Object value) {
-        addChildren(le.mk(column, value));
+        addChildren(le.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #le(DlzFn, Object)}。 */
     default <T1> ME le(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(le.mk(column, value));
+            addChildren(le.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -221,56 +221,56 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
 
     /** {@code column LIKE '%value%'}（双侧模糊）。 */
     default <T1> ME like(DlzFn<T1, ?> column, Object value) {
-        addChildren(like.mk(column, value));
+        addChildren(like.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #like(DlzFn, Object)}。 */
     default <T1> ME like(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(like.mk(column, value));
+            addChildren(like.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column LIKE 'value%'}（右模糊，通常可命中前缀索引）。 */
     default <T1> ME likeLeft(DlzFn<T1, ?> column, Object value) {
-        addChildren(likeLeft.mk(column, value));
+        addChildren(likeLeft.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #likeLeft(DlzFn, Object)}。 */
     default <T1> ME likeLeft(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(likeLeft.mk(column, value));
+            addChildren(likeLeft.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column LIKE '%value'}（左模糊，通常无法命中索引）。 */
     default <T1> ME likeRight(DlzFn<T1, ?> column, Object value) {
-        addChildren(likeRight.mk(column, value));
+        addChildren(likeRight.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #likeRight(DlzFn, Object)}。 */
     default <T1> ME likeRight(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(likeRight.mk(column, value));
+            addChildren(likeRight.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column NOT LIKE '%value%'}。 */
     default <T1> ME notLike(DlzFn<T1, ?> column, Object value) {
-        addChildren(notLike.mk(column, value));
+        addChildren(notLike.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notLike(DlzFn, Object)}。 */
     default <T1> ME notLike(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(notLike.mk(column, value));
+            addChildren(notLike.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -283,28 +283,28 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
      * <pre>.in(User::getId, "1,2,3")</pre>
      */
     default <T1> ME in(DlzFn<T1, ?> column, Object value) {
-        addChildren(in.mk(column, value));
+        addChildren(in.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #in(DlzFn, Object)}。 */
     default <T1> ME in(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(in.mk(column, value));
+            addChildren(in.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column NOT IN (...)}，{@code value} 格式同 {@link #in(DlzFn, Object)}。 */
     default <T1> ME notIn(DlzFn<T1, ?> column, Object value) {
-        addChildren(notIn.mk(column, value));
+        addChildren(notIn.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notIn(DlzFn, Object)}。 */
     default <T1> ME notIn(boolean is, DlzFn<T1, ?> column, Object value) {
         if (is) {
-            addChildren(notIn.mk(column, value));
+            addChildren(notIn.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -316,7 +316,7 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
      * <pre>.op(User::getName, DbOprateEnum.eq, "admin")</pre>
      */
     default <T1> ME op(DlzFn<T1, ?> column, DbOperateEnum op, Object value) {
-        addChildren(op.mk(column, value));
+        addChildren(op.mk(column, value, getTableName()));
         return me();
     }
 }

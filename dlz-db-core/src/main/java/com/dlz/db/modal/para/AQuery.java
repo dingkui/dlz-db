@@ -13,7 +13,7 @@ import com.dlz.db.modal.condition.Condition;
 public abstract class AQuery<T extends AQuery> extends AParaTable<T> implements
         ISqlQuery<T>,
         ICondAddByFn<T> {
-    private Condition whereCond = Condition.where();
+    private Condition whereCond = Condition.where(getTableName());
     private boolean allowFullQuery = false;//是否允许全表查询，默认不允许
     protected AQuery(String tableName) {
         super(tableName);

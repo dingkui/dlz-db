@@ -36,7 +36,7 @@ public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
         if(is){
             // 实现思路：交给 DbBuildEnum.sql 解析模板（处理中括号、预设 key、占位符替换），
             // 产物是一个 Condition 节点；build 可能返回 null（如 sql 为空），需过滤。
-            Condition sqlCond = DbBuildEnum.sql.build(sql, paras);
+            Condition sqlCond = DbBuildEnum.sql.build(getTableName(), sql, paras);
             if(sqlCond != null){
                 addChildren(sqlCond);
             }
@@ -109,7 +109,7 @@ public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
         // 再把该容器作为参数传给 lambda，用户在 lambda 内添加的所有子条件
         // 都会被 addChildren 到此容器，最终渲染时容器内的 children 全部用 AND 拼接。
         // 挂容器在前、执行 lambda 在后，保证 lambda 内的任何调用都作用到新容器而非外层。
-        Condition and = DbBuildEnum.muAnd.build();
+        Condition and = DbBuildEnum.muAnd.build(getTableName());
         addChildren(and);
         ands.accept(and);
         return me();
@@ -142,7 +142,7 @@ public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
         // 实现思路：与 and(...) 对称，只是容器类型换成 muOr。
         // muOr 容器在渲染时把内部 children 全部用 OR 拼接；容器本身与外层（默认 AND）相接。
         // 这也是 "方法名 = 内部连接符" 这一核心设计的体现：调用处只需关心括号内的逻辑运算。
-        Condition or = DbBuildEnum.muOr.build();
+        Condition or = DbBuildEnum.muOr.build(getTableName());
         addChildren(or);
         ors.accept(or);
         return me();

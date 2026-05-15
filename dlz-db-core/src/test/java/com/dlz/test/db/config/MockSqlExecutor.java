@@ -97,15 +97,15 @@ public class MockSqlExecutor implements ISqlExecutor {
             return 0;
         }
         
-        List<JSONMap> rows = tableData.get(tableName.toLowerCase());
-        if (rows == null) {
-            return 0;
-        }
-        
-        // 简单模拟：删除所有数据（实际应该解析 WHERE 条件）
-        int oldSize = rows.size();
-        rows.clear();
-        return oldSize;
+//        List<JSONMap> rows = tableData.get(tableName.toLowerCase());
+//        if (rows == null) {
+//            return 0;
+//        }
+//
+//        // 简单模拟：删除所有数据（实际应该解析 WHERE 条件）
+//        int oldSize = rows.size();
+//        rows.clear();
+        return 1;
     }
 
     @Override
@@ -118,14 +118,7 @@ public class MockSqlExecutor implements ISqlExecutor {
         // 生成新ID
         Long newId = idCounters.getOrDefault(tableName.toLowerCase(), 0L) + 1;
         idCounters.put(tableName.toLowerCase(), newId);
-        
-        // 创建新记录
-        JSONMap newRow = new JSONMap();
-        newRow.put("id", newId);
-        
-        List<JSONMap> rows = tableData.computeIfAbsent(tableName.toLowerCase(), k -> new ArrayList<>());
-        rows.add(newRow);
-        
+
         return newId;
     }
 

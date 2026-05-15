@@ -46,14 +46,14 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * <pre>.between("age", 18, 60)   // age BETWEEN 18 AND 60</pre>
      */
     default ME between(String column, Object value1, Object value2) {
-        addChildren(between.mk(column, new Object[]{value1, value2}));
+        addChildren(between.mk(column, new Object[]{value1, value2}, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #between(String, Object, Object)}。 */
     default ME between(boolean is, String column, Object value1, Object value2) {
         if (is) {
-            addChildren(between.mk(column, new Object[]{value1, value2}));
+            addChildren(between.mk(column, new Object[]{value1, value2}, getTableName()));
         }
         return me();
     }
@@ -72,42 +72,42 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * </pre>
      */
     default ME between(String column, Object value) {
-        addChildren(between.mk(column, value));
+        addChildren(between.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #between(String, Object)}。 */
     default ME between(boolean is, String column, Object value) {
         if (is) {
-            addChildren(between.mk(column, value));
+            addChildren(between.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column NOT BETWEEN value1 AND value2}。 */
     default ME notBetween(String column, Object value1, Object value2) {
-        addChildren(notBetween.mk(column, new Object[]{value1, value2}));
+        addChildren(notBetween.mk(column, new Object[]{value1, value2}, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notBetween(String, Object, Object)}。 */
     default ME notBetween(boolean is, String column, Object value1, Object value2) {
         if (is) {
-            addChildren(notBetween.mk(column, new Object[]{value1, value2}));
+            addChildren(notBetween.mk(column, new Object[]{value1, value2}, getTableName()));
         }
         return me();
     }
 
     /** 单值形式的 NOT BETWEEN，{@code value} 格式同 {@link #between(String, Object)}。 */
     default ME notBetween(String column, Object value) {
-        addChildren(notBetween.mk(column, value));
+        addChildren(notBetween.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notBetween(String, Object)}。 */
     default ME notBetween(boolean is, String column, Object value) {
         if (is) {
-            addChildren(notBetween.mk(column, value));
+            addChildren(notBetween.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -119,14 +119,14 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * <pre>.isNotNull("email")   // email IS NOT NULL</pre>
      */
     default ME isNotNull(String column) {
-        addChildren(isNotNull.mk(column, null));
+        addChildren(isNotNull.mk(column, null, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #isNotNull(String)}。 */
     default ME isNotNull(boolean is, String column) {
         if (is) {
-            addChildren(isNotNull.mk(column, null));
+            addChildren(isNotNull.mk(column, null, getTableName()));
         }
         return me();
     }
@@ -136,14 +136,14 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * <pre>.isNull("delete_time")   // delete_time IS NULL</pre>
      */
     default ME isNull(String column) {
-        addChildren(isNull.mk(column, null));
+        addChildren(isNull.mk(column, null, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #isNull(String)}。 */
     default ME isNull(boolean is, String column) {
         if (is) {
-            addChildren(isNull.mk(column, null));
+            addChildren(isNull.mk(column, null, getTableName()));
         }
         return me();
     }
@@ -155,7 +155,7 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * <pre>.eq("status", 1)   // status = 1</pre>
      */
     default ME eq(String column, Object value) {
-        addChildren(eq.mk(column, value));
+        addChildren(eq.mk(column, value, getTableName()));
         return me();
     }
 
@@ -165,21 +165,21 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      */
     default ME eq(boolean is, String column, Object value) {
         if (is) {
-            addChildren(eq.mk(column, value));
+            addChildren(eq.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column <> value}。 */
     default ME ne(String column, Object value) {
-        addChildren(ne.mk(column, value));
+        addChildren(ne.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #ne(String, Object)}。 */
     default ME ne(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ne.mk(column, value));
+            addChildren(ne.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -188,56 +188,56 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
 
     /** {@code column > value}。 */
     default ME gt(String column, Object value) {
-        addChildren(gt.mk(column, value));
+        addChildren(gt.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #gt(String, Object)}。 */
     default ME gt(boolean is, String column, Object value) {
         if (is) {
-            addChildren(gt.mk(column, value));
+            addChildren(gt.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column >= value}。 */
     default ME ge(String column, Object value) {
-        addChildren(ge.mk(column, value));
+        addChildren(ge.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #ge(String, Object)}。 */
     default ME ge(boolean is, String column, Object value) {
         if (is) {
-            addChildren(ge.mk(column, value));
+            addChildren(ge.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column < value}。 */
     default ME lt(String column, Object value) {
-        addChildren(lt.mk(column, value));
+        addChildren(lt.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #lt(String, Object)}。 */
     default ME lt(boolean is, String column, Object value) {
         if (is) {
-            addChildren(lt.mk(column, value));
+            addChildren(lt.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column <= value}。 */
     default ME le(String column, Object value) {
-        addChildren(le.mk(column, value));
+        addChildren(le.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #le(String, Object)}。 */
     default ME le(boolean is, String column, Object value) {
         if (is) {
-            addChildren(le.mk(column, value));
+            addChildren(le.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -249,14 +249,14 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * <pre>.like("name", "张")   // name LIKE '%张%'</pre>
      */
     default ME like(String column, Object value) {
-        addChildren(like.mk(column, value));
+        addChildren(like.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #like(String, Object)}。 */
     default ME like(boolean is, String column, Object value) {
         if (is) {
-            addChildren(like.mk(column, value));
+            addChildren(like.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -266,14 +266,14 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * <pre>.likeLeft("name", "张")   // name LIKE '张%'</pre>
      */
     default ME likeLeft(String column, Object value) {
-        addChildren(likeLeft.mk(column, value));
+        addChildren(likeLeft.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #likeLeft(String, Object)}。 */
     default ME likeLeft(boolean is, String column, Object value) {
         if (is) {
-            addChildren(likeLeft.mk(column, value));
+            addChildren(likeLeft.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -283,28 +283,28 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * <pre>.likeRight("email", "@qq.com")</pre>
      */
     default ME likeRight(String column, Object value) {
-        addChildren(likeRight.mk(column, value));
+        addChildren(likeRight.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #likeRight(String, Object)}。 */
     default ME likeRight(boolean is, String column, Object value) {
         if (is) {
-            addChildren(likeRight.mk(column, value));
+            addChildren(likeRight.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column NOT LIKE '%value%'}。 */
     default ME notLike(String column, Object value) {
-        addChildren(notLike.mk(column, value));
+        addChildren(notLike.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notLike(String, Object)}。 */
     default ME notLike(boolean is, String column, Object value) {
         if (is) {
-            addChildren(notLike.mk(column, value));
+            addChildren(notLike.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -326,28 +326,28 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * </pre>
      */
     default ME in(String column, Object value) {
-        addChildren(in.mk(column, value));
+        addChildren(in.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #in(String, Object)}。 */
     default ME in(boolean is, String column, Object value) {
         if (is) {
-            addChildren(in.mk(column, value));
+            addChildren(in.mk(column, value, getTableName()));
         }
         return me();
     }
 
     /** {@code column NOT IN (...)}，{@code value} 格式同 {@link #in(String, Object)}。 */
     default ME notIn(String column, Object value) {
-        addChildren(notIn.mk(column, value));
+        addChildren(notIn.mk(column, value, getTableName()));
         return me();
     }
 
     /** 动态条件版 {@link #notIn(String, Object)}。 */
     default ME notIn(boolean is, String column, Object value) {
         if (is) {
-            addChildren(notIn.mk(column, value));
+            addChildren(notIn.mk(column, value, getTableName()));
         }
         return me();
     }
@@ -361,7 +361,7 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
      * @param op 操作符枚举；实际调用 {@code op.mk(column, value)}，语义由枚举决定。
      */
     default ME op(String column, DbOperateEnum op, Object value) {
-        addChildren(op.mk(column, value));
+        addChildren(op.mk(column, value, getTableName()));
         return me();
     }
 }

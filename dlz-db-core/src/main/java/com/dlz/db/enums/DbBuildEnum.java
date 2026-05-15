@@ -24,19 +24,19 @@ public enum DbBuildEnum {
 
     private static final Pattern PATTERN_INDEX = Pattern.compile("\\{(\\d+)\\}");
 
-    public Condition build(String sql, JSONMap paras) {
+    public Condition build(String tableName,String sql, JSONMap paras) {
         switch (this) {
             case sql:
-                if(StringUtils.isEmpty(sql)){
+                if (StringUtils.isEmpty(sql)) {
                     return null;
                 }
-                if(sql.startsWith("key.")){
-                    sql= SqlHolder.getSql(sql);
+                if (sql.startsWith("key.")) {
+                    sql = SqlHolder.getSql(sql);
                 }
                 sql = sql.replaceAll("\\$\\.", "\\\\\\$\\\\\\.");
                 sql = SqlUtil.getConditionStr(sql, paras);
                 sql = SqlUtil.replaceSql(sql, paras, 0);
-                Condition condition = new Condition(this);
+                Condition condition = new Condition(this, tableName);
                 condition.setRunSql(buildSql(sql));
                 if (paras != null && !paras.isEmpty()) {
                     condition.addParas(paras);
@@ -45,14 +45,15 @@ public enum DbBuildEnum {
         }
         throw new SystemException("匹配符有误：" + this);
     }
-    public Condition build(String sql, Object... paras) {
+
+    public Condition build(String tableName, String sql, Object... paras) {
         switch (this) {
             case apply:
-                if(StringUtils.isEmpty(sql)){
+                if (StringUtils.isEmpty(sql)) {
                     return null;
                 }
-                Condition condition = new Condition(this);
-                JSONMap paraM=new JSONMap();
+                Condition condition = new Condition(this, tableName);
+                JSONMap paraM = new JSONMap();
 
                 Matcher mat = PATTERN_INDEX.matcher(sql);
                 int start = 0;
@@ -61,7 +62,7 @@ public enum DbBuildEnum {
                     String index = mat.group(1);
                     sb.append(sql, start, mat.start());
                     String key = KeyUtil.getKeyName("apply_");
-                    sb.append("#{"+key+"}");
+                    sb.append("#{" + key + "}");
                     paraM.put(key, paras[Integer.parseInt(index)]);
                     start = mat.end();
                 }
@@ -83,17 +84,18 @@ public enum DbBuildEnum {
         throw new SystemException("匹配符有误：" + this);
     }
 
-    public Condition build() {
+    public Condition build(String tableName) {
         switch (this) {
             case where:
             case and:
             case or:
             case muOr:
             case muAnd:
-                return new Condition(this).setRunSql(_sql);
+                return new Condition(this, tableName).setRunSql(_sql);
         }
         throw new SystemException("匹配符有误：" + this);
     }
+
     public String buildSql(String sql) {
         if (sql.isEmpty()) {
             return "";

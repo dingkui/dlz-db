@@ -17,12 +17,15 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
     JSONMap paras = new JSONMap();
     List<Condition> children = new ArrayList<>();
     private DbBuildEnum builder;
+    private final String tableName;
 
-    public Condition(DbBuildEnum builder) {
+    public Condition(DbBuildEnum builder, String tableName) {
+        this(tableName);
         this.builder = builder;
     }
 
-    public Condition() {
+    public Condition(String tableName) {
+        this.tableName = tableName;
     }
 
     private void make(ParaMap pm) {
@@ -33,7 +36,7 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
         isMake = true;
 
         if (builder != null) {
-            if (builder == DbBuildEnum.sql||builder==DbBuildEnum.apply) {
+            if (builder == DbBuildEnum.sql || builder == DbBuildEnum.apply) {
                 pm.addParas(paras);
                 return;
             }
@@ -57,13 +60,17 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
         pm.addParas(paras);
     }
 
-    public static Condition where() {
-        return DbBuildEnum.where.build();
+    public static Condition where(String tableName) {
+        return DbBuildEnum.where.build(tableName);
     }
+    public static Condition where() {
+        return DbBuildEnum.where.build(null);
+    }
+
     public Condition clone() {
-        Condition condition = new Condition();
+        Condition condition = new Condition(tableName);
         condition.builder = builder;
-        condition.paras.putAll( paras);
+        condition.paras.putAll(paras);
         condition.children.addAll(children);
         condition.isMake = false;
         condition.runSql = "";
@@ -99,14 +106,19 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
     }
 
     public void addChildren(Condition child) {
-        if(!child.children.isEmpty()){
+        if (!child.children.isEmpty()) {
             children.addAll(child.children);
-        }else{
+        } else {
             children.add(child);
         }
     }
 
-    public boolean isContainCondition(String column){
-        return children.stream().anyMatch(item->item.runSql.startsWith(column+" "));
+    @Override
+    public String getTableName() {
+        return tableName;
+    }
+
+    public boolean isContainCondition(String column) {
+        return children.stream().anyMatch(item -> item.runSql.startsWith(column + " "));
     }
 }

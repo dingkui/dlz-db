@@ -23,7 +23,7 @@ class ICondAddByLamdaTest {
 
     @BeforeEach
     void setUp() {
-        condition = Condition.where();
+        condition = Condition.where(null);
     }
 
     public String getSql(Condition result) {

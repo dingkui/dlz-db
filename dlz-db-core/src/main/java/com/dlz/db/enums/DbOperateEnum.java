@@ -33,48 +33,44 @@ public enum DbOperateEnum {
     public final String _sql;
     private final static Pattern patternKey = Pattern.compile("#k");
     private final static Pattern patternColumnName = Pattern.compile("#n");
-    private final static Pattern COLUMN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
 
     private String mkSql(String dbn, String key) {
-        if (dbn == null || !COLUMN_NAME_PATTERN.matcher(dbn).matches()) {
-            throw new ValidateException("非法列名: " + dbn);
-        }
         final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbColumnNames(dbn));
         return key == null ? dbnSql : patternKey.matcher(dbnSql).replaceAll(key);
     }
 
-    private Condition paraZero(String dbn) {
-        Condition condition = new Condition();
+    private Condition paraZero(String dbn,String tableName) {
+        Condition condition = new Condition(tableName);
         condition.setRunSql(mkSql(dbn, null));
         return condition;
     }
 
-    private Condition paraOne(String dbn, Object value) {
+    private Condition paraOne(String dbn, Object value, String tableName) {
         String key = KeyUtil.getKeyName(this + "_");
-        Condition condition = new Condition();
-        condition.addPara(key, value);
+        Condition condition = new Condition(tableName);
+        condition.addPara(key, tableName==null?value:DbConvertUtil.getVal4Db(tableName, dbn, value));
         condition.setRunSql(mkSql(dbn, key));
         return condition;
     }
 
-    private Condition paraTwo(String dbn, Object value) {
+    private Condition paraTwo(String dbn, Object value, String tableName) {
         String key = KeyUtil.getKeyName(this + "_");
         Object[] array = ValUtil.toArray(value);
         if (array.length < 2) {
             throw new SystemException("参数有误，需要有2个值：" + this);
         }
-        Condition condition = new Condition();
+        Condition condition = new Condition(tableName);
         String key1 = key + "1";
         String key2 = key + "2";
-        condition.addPara(key1, array[0]);
-        condition.addPara(key2, array[1]);
+        condition.addPara(key1, tableName==null?array[0]:DbConvertUtil.getVal4Db(tableName, dbn, array[0]));
+        condition.addPara(key2, tableName==null?array[1]:DbConvertUtil.getVal4Db(tableName, dbn, array[1]));
         condition.setRunSql(mkSql(dbn, key));
         return condition;
     }
 
-    private Condition paraIn(String dbn, Object value) {
+    private Condition paraIn(String dbn, Object value,String tableName) {
         String key = KeyUtil.getKeyName(this + "_");
-        Condition condition = new Condition();
+        Condition condition = new Condition(tableName);
         condition.setRunSql(mkSql(dbn, key));
         if (value instanceof String) {
             String v = (String) value;
@@ -88,35 +84,35 @@ public enum DbOperateEnum {
     }
 
 
-    public <T> Condition mk(DlzFn<T, ?> dbn, Object value) {
-        return mk(PojoCache.fnName(dbn), value);
+    public <T> Condition mk(DlzFn<T, ?> dbn, Object value, String tableName) {
+        return mk(PojoCache.fnName(dbn), value, tableName);
     }
 
-    public Condition mk(String dbn, Object value) {
+    public Condition mk(String dbn, Object value, String tableName) {
         switch (this) {
             case like:
             case notLike:
-                return paraOne(dbn, "%" + value + "%");
+                return paraOne(dbn, "%" + value + "%", null);
             case likeLeft:
-                return paraOne(dbn, "%" + value);
+                return paraOne(dbn, "%" + value, null);
             case likeRight:
-                return paraOne(dbn, value + "%");
+                return paraOne(dbn, value + "%", null);
             case eq:
             case ne:
             case gt:
             case ge:
             case lt:
             case le:
-                return paraOne(dbn, value);
+                return paraOne(dbn, value, tableName);
             case between:
             case notBetween:
-                return paraTwo(dbn, value);
+                return paraTwo(dbn, value, tableName);
             case isNull:
             case isNotNull:
-                return paraZero(dbn);
+                return paraZero(dbn,tableName);
             case in:
             case notIn:
-                return paraIn(dbn, value);
+                return paraIn(dbn, value,tableName);
             default:
                 throw new SystemException("匹配符有误：" + this);
         }

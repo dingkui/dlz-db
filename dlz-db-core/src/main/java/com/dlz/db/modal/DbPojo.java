@@ -9,10 +9,12 @@ import com.dlz.db.support.bean.IdInfo;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.system.FieldReflections;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.function.Function;
 
+@Slf4j
 public class DbPojo {
     public <T> PojoQuery<T> select(Class<T> re) {
         return PojoQuery.wrapper(re);
@@ -38,8 +40,8 @@ public class DbPojo {
      *
      * @param value
      * @param ignore 字段忽略规则
-     * @return
      * @param <T>
+     * @return
      */
     public <T> PojoUpdate<T> update(T value, Function<String, Boolean> ignore) {
         return PojoUpdate.wrapper((Class<T>) value.getClass()).set(value, ignore);
@@ -50,38 +52,55 @@ public class DbPojo {
     }
 
     //以下都是直接操作执行
-    public <T> int insert(T bean) {
-        return PojoInsert.wrapper(bean).execute();
+    public <T> T insert(T bean) {
+        if (PojoInsert.wrapper(bean).execute() == 1) {
+            return bean;
+        }
+        throw new SystemException("插入失败");
     }
+
     public <T> boolean insertBatch(List<T> bean, int batchSize) {
         if (!bean.isEmpty()) {
             return PojoInsert.wrapper(bean.get(0)).batch(bean, batchSize);
         }
         return false;
     }
+
     public <T> boolean insertBatch(List<T> bean) {
         return insertBatch(bean, 1000);
     }
-    public <T> int insertOrUpdate(T obj) {
+
+    public <T> T insertOrUpdate(T obj) {
         final Class<T> aClass = (Class<T>) obj.getClass();
         final IdInfo idInfo = PojoCache.getIdInfo(aClass);
-        final Object id = FieldReflections.getValue(obj, idInfo.getField());
-        final String idName = idInfo.getName();
+        if (idInfo == null) {
+            throw new SystemException("无主键信息,不支持:insertOrUpdate " + aClass.getSimpleName());
+        }
+        final Object id = idInfo.getValue(obj);
         if (StringUtils.isEmpty(id)) {
             return insert(obj);
         }
-        return update(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, id).execute();
+        return updateById(obj, id, aClass, idInfo);
     }
 
-    public <T> int updateById(T obj) {
-        final Class<T> aClass = (Class<T>) obj.getClass();
-        final IdInfo idInfo = PojoCache.getIdInfo(aClass);
-        final Object id = FieldReflections.getValue(obj, idInfo.getField());
+    private <T> T updateById(T obj, Object idValue, Class<T> aClass, IdInfo idInfo) {
         final String idName = idInfo.getName();
-        if (StringUtils.isEmpty(id)) {
+        if (StringUtils.isEmpty(idValue)) {
             throw new SystemException(idName + "不能为空");
         }
-        return update(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, id).execute();
+        final int execute = update(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, idValue).execute();
+        if (execute == 1) {
+            return obj;
+        }
+        log.warn("更新数据条数应为1,实际更新数据为:{}", execute);
+        return obj;
+    }
+
+    public <T> T updateById(T obj) {
+        final Class<T> aClass = (Class<T>) obj.getClass();
+        final IdInfo idInfo = PojoCache.getIdInfo(aClass);
+        final Object id = idInfo.getValue(obj);
+        return updateById(obj, id, aClass, idInfo);
     }
 
     public <T> T selectById(Class<T> c, Object id) {
@@ -91,6 +110,7 @@ public class DbPojo {
         }
         return select(c).eq(idName, id).queryBean();
     }
+
     public <T> List<T> selectByIds(Class<T> c, Object id) {
         final String idName = PojoCache.getIdName(c);
         if (StringUtils.isEmpty(id)) {
@@ -106,6 +126,7 @@ public class DbPojo {
         }
         return delete(c).in(idName, ids).execute();
     }
+
     public <T> int deleteByIds(Class<T> c, List<?> ids) {
         final String idName = PojoCache.getIdName(c);
         if (StringUtils.isEmpty(ids)) {

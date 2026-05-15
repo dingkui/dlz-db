@@ -54,6 +54,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>assertj-core</artifactId>
+                    <groupId>org.assertj</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>junit-jupiter</artifactId>
+                    <groupId>org.junit.jupiter</groupId>
+                </exclusion>
+            </exclusions>
             <version>2.6.12</version>
         </dependency>
         <dependency>
