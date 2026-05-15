@@ -3,7 +3,7 @@
     <parent>
         <groupId>top.dlzio</groupId>
         <artifactId>dlz.parent</artifactId>
-        <version>6.6.3.3</version>
+        <version>6.6.3.4</version>
     </parent>
     <name>dlz-db</name>
 	<artifactId>dlz-db</artifactId>
@@ -110,7 +110,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.12</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     
@@ -150,28 +149,20 @@
                     <outputDirectory>${project.build.directory}/reports/jacoco</outputDirectory>
                 </configuration>
                 <executions>
+                    <!-- 为所有子模块准备JaCoCo agent -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                    <!-- 为所有子模块生成独立报告 -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>report-aggregate</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-aggregate</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/reports/jacoco-aggregate</outputDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -226,6 +217,34 @@
             </plugin>
         </plugins>
     </build>
+    
+    <!-- JaCoCo 聚合报告 Profile -->
+    <profiles>
+        <profile>
+            <id>jacoco-aggregate</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <execution>
+                                <id>report-aggregate</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/reports/jacoco-aggregate</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
     <licenses>
         <license>

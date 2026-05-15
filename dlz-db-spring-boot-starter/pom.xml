@@ -72,18 +72,12 @@
             <scope>test</scope>
         </dependency>
         <!-- Logback: 锁定 core 与 classic 同版本，避免 mvn test 下 OptionHelper.isNotEmtpy NoSuchMethodError -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.2.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.12</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-core</artifactId>-->
+<!--            <version>1.2.12</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <!-- SpotBugs annotations for @SuppressFBWarnings -->
         <dependency>
             <groupId>com.github.spotbugs</groupId>
