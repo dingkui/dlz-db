@@ -125,9 +125,9 @@ public class DbOpSqlite extends SqlHelper {
         Class<?> classs = field.getType();
         if (classs == String.class) {
             return "TEXT";
-        } else if (classs == Integer.class || "int".equals(classs.getCanonicalName())) {
+        } else if (classs == Boolean.class || classs == Integer.class || "int".equals(classs.getCanonicalName())) {
             return "INTEGER";
-        } else if (classs == Boolean.class || "boolean".equals(classs.getCanonicalName())) {
+        } else if ("boolean".equals(classs.getCanonicalName())) {
             return "TEXT";
         } else if (classs == Long.class || "long".equals(classs.getCanonicalName())) {
             return "INTEGER";

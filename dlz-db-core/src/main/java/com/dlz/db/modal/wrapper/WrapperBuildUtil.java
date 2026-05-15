@@ -144,7 +144,7 @@ public class WrapperBuildUtil {
         if (value instanceof String) {
             String v = (String) value;
             if (v.startsWith("sql:")) {
-                sbSets.append(DbConvertUtil.toDbColumnName(v.substring(4)));
+                sbSets.append(DbConvertUtil.toDbColumnNames(v.substring(4)));
                 return true;
             }
         }

@@ -34,7 +34,11 @@ public enum DbOperateEnum {
     private final static Pattern patternKey = Pattern.compile("#k");
     private final static Pattern patternColumnName = Pattern.compile("#n");
 
+    private final static Pattern COLUMN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
     private String mkSql(String dbn, String key) {
+        if (!COLUMN_NAME_PATTERN.matcher(dbn).matches()) {
+            throw new ValidateException("非法列名: " + dbn);
+        }
         final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbColumnNames(dbn));
         return key == null ? dbnSql : patternKey.matcher(dbnSql).replaceAll(key);
     }

@@ -47,7 +47,7 @@ public class PojoCache {
      */
     public static String getColumnName(Field field) {
         return columnNameCache.getAndSet(field, () -> {
-            String columnName = null;
+            String columnName;
             String fieldName = field.getName();
             // 检查我们自己的 @TableId 注解
             final TableId annotation = field.getAnnotation(TableId.class);

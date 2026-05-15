@@ -5,11 +5,9 @@ import com.dlz.db.convertor.columnname.IColumnNameConvertor;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.SqlRunThreadHolder;
-import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.util.ValUtil;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -83,12 +81,7 @@ public class DbConvertUtil {
         return SqlRunThreadHolder.getConvertorToFieldName(defaultColumnMapper).toFieldName(dbKey);
     }
 
-    private final static Pattern COLUMN_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
     public static String toDbColumnName(String beanKey) {
-        beanKey = beanKey.replaceAll("\\s+", " ");
-        if (beanKey == null || !COLUMN_NAME_PATTERN.matcher(beanKey).matches()) {
-            throw new ValidateException("非法列名: " + beanKey);
-        }
         return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey);
     }
 
