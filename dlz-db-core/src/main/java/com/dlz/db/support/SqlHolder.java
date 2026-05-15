@@ -84,7 +84,7 @@ public class SqlHolder {
             }
         }
     }
-    private static void addSqlSetting(String sqlId,String sqlStr,boolean force){
+    public static void addSqlSetting(String sqlId,String sqlStr,boolean force){
         String sqlDB = sqlId.substring(sqlId.lastIndexOf(".")+1);
         Map<String, String> m_sqlList = m_dialect_sql.get(sqlDB);
         if(m_sqlList!=null){
