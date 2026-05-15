@@ -9,20 +9,43 @@ import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.BeforeClass;  // JUnit 4
+import org.junit.jupiter.api.BeforeAll;  // JUnit 5
 import org.noear.solon.Solon;
 
 /**
  * Solon 版测试基类（与 Spring 模块下同名 FQN，保持 case 文件源码兼容）。
- * <p>{@link BeforeClass} 启动 Solon 应用一次（幂等），等价于 Spring 的
+ * <p>同时支持 JUnit 4 和 JUnit 5：</p>
+ * <ul>
+ *   <li>JUnit 4: 使用 {@link BeforeClass}</li>
+ *   <li>JUnit 5: 使用 {@link BeforeAll}</li>
+ * </ul>
+ * <p>启动 Solon 应用一次（幂等），等价于 Spring 的
  * {@code @RunWith(SpringRunner.class) + @SpringBootTest}。</p>
  */
 @Slf4j
 public class BaseDBTest {
 
+    /**
+     * JUnit 5 初始化入口
+     */
     @BeforeAll
-    public static void bootstrap() {
+    public static void bootstrapJunit5() {
+        bootstrap();
+    }
+
+    /**
+     * JUnit 4 初始化入口
+     */
+    @BeforeClass
+    public static void bootstrapJunit4() {
+        bootstrap();
+    }
+
+    /**
+     * 统一的初始化逻辑（幂等）
+     */
+    private static void bootstrap() {
         if (Solon.app() == null) {
             Solon.start(Starter.class, new String[0]);
             // 在这里添加其他全局初始化逻辑

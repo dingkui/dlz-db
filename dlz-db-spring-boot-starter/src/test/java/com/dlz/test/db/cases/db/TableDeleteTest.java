@@ -35,6 +35,13 @@ public class TableDeleteTest extends BaseDBTest {
 //        delete.where(DbBuildEnum.where.build())
         showSql(delete, "tableDeleteTest3", "delete from t_b_dict where IS_DELETED = 0");
     }
+    @Test
+    public void tableDeleteTest31() {
+        TableDelete delete = DB.Table.delete("Test_User")
+                .addPara(Dict::getA2, "1");
+//        delete.where(DbBuildEnum.where.build())
+        showSql(delete, "tableDeleteTest3", "delete from Test_User where IS_DELETED = 0");
+    }
 
     @Test
     public void tableDeleteConditionTest1() {

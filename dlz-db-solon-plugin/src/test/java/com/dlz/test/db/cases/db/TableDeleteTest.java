@@ -14,7 +14,7 @@ public class TableDeleteTest extends BaseDBTest {
         TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1")
                 .sql("[id<#{id}]", new JSONMap("id", 123));
-        showSql(delete, "tableDeleteTest1", "delete from t_b_dict where (id<123) and IS_DELETED = 0");
+        showSql(delete, "tableDeleteTest1", "delete from t_b_dict where (id<123) and IS_DELETED = '0'");
     }
 
     @Test
@@ -33,7 +33,14 @@ public class TableDeleteTest extends BaseDBTest {
         TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1");
 //        delete.where(DbBuildEnum.where.build())
-        showSql(delete, "tableDeleteTest3", "delete from t_b_dict where IS_DELETED = 0");
+        showSql(delete, "tableDeleteTest3", "delete from t_b_dict where IS_DELETED = '0'");
+    }
+    @Test
+    public void tableDeleteTest31() {
+        TableDelete delete = DB.Table.delete("sys_menu")
+                .addPara(Dict::getA2, "1");
+//        delete.where(DbBuildEnum.where.build())
+        showSql(delete, "tableDeleteTest3", "delete from sys_menu where IS_DELETED = 0");
     }
 
     @Test
@@ -60,7 +67,7 @@ public class TableDeleteTest extends BaseDBTest {
                         .in(Dict::getA2, "'31',111,5,6")
                         .in(Dict::getA2, "1")
                         .in(Dict::getA2, "sql:select 2 from dual"));
-        showSql(delete, "tableDeleteConditionTest2", "delete from t_b_dict where (XXSS in (3,4,5,6) or XXSS in ('31','111','5','6') or XXSS in (1) or XXSS in (select 2 from dual)) and IS_DELETED = 0");
+        showSql(delete, "tableDeleteConditionTest2", "delete from t_b_dict where (XXSS in (3,4,5,6) or XXSS in ('31','111','5','6') or XXSS in (1) or XXSS in (select 2 from dual)) and IS_DELETED = '0'");
     }
 
     @Test

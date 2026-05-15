@@ -14,4 +14,5 @@ public class TestUser {
     private String name;
     private Integer age;
     private String email;
+    private Boolean isDeleted;
 }
