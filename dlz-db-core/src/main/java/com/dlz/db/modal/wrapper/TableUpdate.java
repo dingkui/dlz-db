@@ -1,8 +1,8 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.modal.para.AQuery;
+import com.dlz.db.support.PojoCache;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.fn.DlzFn;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
 
     public TableUpdate set(String paraName, Object value) {
         paraName = DbConvertUtil.toDbColumnNames(paraName);
-        if (!BeanInfoHolder.isColumnExists(getTableName(),paraName)) {
+        if (!PojoCache.isColumnExists(getTableName(),paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;
         }
@@ -36,7 +36,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
     }
 
     public <T> void set(DlzFn<T, ?> column, Object value) {
-        set(BeanInfoHolder.fnName(column), value);
+        set(PojoCache.fnName(column), value);
     }
 
     /**

@@ -1,14 +1,12 @@
 package com.dlz.db.service;
 
 import com.dlz.db.annotation.IdType;
-import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.IExecutorInsert;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.kit.util.system.FieldReflections;
-
-import java.lang.reflect.Field;
+import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.bean.IdInfo;
 
 /**
  * 从数据库中取得单条map类型数据：{adEnddate=2015-04-08 13:47:12.0}
@@ -41,17 +39,16 @@ public interface IDbExecuteService extends IDbBaseService{
         if (paraMap instanceof PojoInsert) {
             PojoInsert p = (PojoInsert) paraMap;
             Object bean = p.getBean();
-            final Field idField = BeanInfoHolder.getIdField(bean.getClass());
-            final IdType idType = idField != null ? WrapperBuildUtil.getIdType(idField) : null;
-            if(idType != null){
-                WrapperBuildUtil.fillAutoId(BeanInfoHolder.getTableName( bean.getClass()), idField, idType, bean);
-            }
-            if(idType == IdType.AUTO){
-                final Long newid = doDb(paraMap, jdbcSql -> getSqlExecutor().updateForId(jdbcSql.sql, jdbcSql.paras));
-                if(newid != null){
-                    FieldReflections.setValue(bean, idField, newid);
+            final IdInfo idField = PojoCache.getIdInfo(bean.getClass());
+            if(idField != null){
+                WrapperBuildUtil.fillAutoId(PojoCache.getTableName( bean.getClass()), idField, bean);
+                if(idField.getType() == IdType.AUTO){
+                    final Long newid = doDb(paraMap, jdbcSql -> getSqlExecutor().updateForId(jdbcSql.sql, jdbcSql.paras));
+                    if(newid != null){
+                        idField.setId(bean, newid);
+                    }
+                    return 1;
                 }
-                return 1;
             }
         }
         return doDb(paraMap, jdbcSql -> getSqlExecutor().update(jdbcSql.sql, jdbcSql.paras));

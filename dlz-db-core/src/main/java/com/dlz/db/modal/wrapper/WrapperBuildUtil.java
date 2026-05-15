@@ -1,18 +1,15 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
-import com.dlz.db.annotation.TableId;
-import com.dlz.db.annotation.proxy.AnnoProxies;
-import com.dlz.db.helper.support.SnowFlake;
-import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.holder.DBHolder;
-import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.SqlRunThreadHolder;
+import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.StringUtils;
-import com.dlz.kit.util.id.UuidUtil;
 import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
@@ -76,7 +73,7 @@ public class WrapperBuildUtil {
      */
     public static void buildWhere(AQuery maker) {
         if (!SqlRunThreadHolder.isIgnoreLogicDelete()
-                && BeanInfoHolder.isColumnExists(maker.getTableName(), logicDeleteField)
+                && PojoCache.isColumnExists(maker.getTableName(), logicDeleteField)
                 && !maker.where().isContainCondition(logicDeleteField)
         ) {
             maker.where().eq(logicDeleteField, 0);
@@ -160,7 +157,7 @@ public class WrapperBuildUtil {
         List<String> fieldsPart = new ArrayList<>();
         List<String> placeHolder = new ArrayList<>();
         for (Field field : fields) {
-            String dbColumnName = BeanInfoHolder.getColumnName(field);
+            String dbColumnName = PojoCache.getColumnName(field);
             if (!dbColumnName.equals("")) {
                 fieldsPart.add(dbColumnName);
                 placeHolder.add("?");
@@ -172,7 +169,7 @@ public class WrapperBuildUtil {
     public static Object[] buildInsertParams(Object object, List<Field> fields) {
         List<Object> params = new ArrayList<>();
         for (Field field : fields) {
-            String dbColumnName = BeanInfoHolder.getColumnName(field);
+            String dbColumnName = PojoCache.getColumnName(field);
             if (!dbColumnName.equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
@@ -183,7 +180,7 @@ public class WrapperBuildUtil {
     public static String buildUpdateSql(String dbName, List<Field> fields, String idName) {
         List<String> fieldsPart = new ArrayList<>();
         for (Field field : fields) {
-            String dbColumnName = BeanInfoHolder.getColumnName(field);
+            String dbColumnName = PojoCache.getColumnName(field);
             if (!dbColumnName.equals(idName) && !dbColumnName.equals("")) {
                 fieldsPart.add(dbColumnName + "=?");
             }
@@ -198,7 +195,7 @@ public class WrapperBuildUtil {
         }
         List<Object> params = new ArrayList<>(fields.size());
         for (Field field : fields) {
-            if (idField != field && !BeanInfoHolder.getColumnName(field).equals("")) {
+            if (idField != field && !PojoCache.getColumnName(field).equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
         }
@@ -206,46 +203,61 @@ public class WrapperBuildUtil {
         return params.toArray();
     }
 
-    public static IdType getIdType(Field field) {
-        final TableId annotation = field.getAnnotation(TableId.class);
-        if (annotation != null) {
-            return annotation.type();
+    public static void fillAutoId(String dbName, IdInfo idInfo, Object obj) {
+        final IdType idType = idInfo.getType();
+        if (idType == null){
+            return;
         }
-        return AnnoProxies.MybatisPlusIdType.type(field);
+        Object idValue = idInfo.getValue(obj);
+        if(idValue != null){
+            return;
+        }
+        if (idType == IdType.INPUT) {
+            throw new SystemException(obj.getClass().getSimpleName() + "." + idInfo.getField().getName() + "为手动输入,不能为空");
+        }
+        if (idType == IdType.AUTO) {
+            return;
+        }
+        if (idType == IdType.SEQ) {
+            idInfo.setId(obj, DBHolder.sequence(dbName, 1l));
+        }else{
+            idInfo.setId(obj, idType.mkId());
+        }
     }
-
-    public static Object getIdValue(Field field, String tableName) {
-        IdType type = getIdType(field);
-        if (type == null || type == IdType.AUTO || type == IdType.INPUT) {
-            return null;
-        } else {
-            final String columnName = BeanInfoHolder.getColumnName(field);
-            if (type == IdType.ASSIGN_ID) {
-                return SnowFlake.id();
-            } else if (type == IdType.ASSIGN_UUID) {
-                return UuidUtil.uuid();
-            } else if (type == IdType.SEQ) {
-                return DBHolder.sequence(tableName, 1l);
-            } else {
-                throw new SystemException(columnName + " idType is " + type + " but null");
+    public static void fillAutoIds(String dbName, IdInfo idInfo, List<?> obj) {
+        final IdType idType = idInfo.getType();
+        if (idType == null || idType == IdType.AUTO) {
+            return;
+        }
+        
+        // 单次遍历：收集需要生成ID的对象
+        List<Object> needIdList = new ArrayList<>();
+        for (Object o : obj) {
+            if (idInfo.getValue(o) == null) {
+                needIdList.add(o);
             }
         }
-    }
-
-    public static void fillAutoId(String dbName, Field idField, IdType idType, Object obj) {
-        if (idType != null) {
-            Object idValue = FieldReflections.getValue(obj, idField);
-            if (idValue == null) {
-                if (idType == IdType.INPUT) {
-                    throw new SystemException(obj.getClass().getSimpleName() + "." + idField.getName() + "为手动输入,不能为空");
-                }
-                if (idType != IdType.AUTO) {
-                    idValue = WrapperBuildUtil.getIdValue(idField, dbName);
-                    if (idValue == null) {
-                        throw new SystemException(obj.getClass().getSimpleName() + "." + idField.getName() + "自动构建id失败");
-                    }
-                    FieldReflections.setValue(obj, idField, idValue);
-                }
+        
+        if (needIdList.isEmpty()) {
+            return;
+        }
+        
+        int count = needIdList.size();
+        
+        if (idType == IdType.INPUT) {
+            throw new SystemException(obj.getClass().getSimpleName() + "." + idInfo.getName() + "为手动输入,不能为空");
+        }
+        
+        if (idType == IdType.SEQ) {
+            // 批量预取：只调用1次 Redis INCRBY，然后在内存中分配
+            long startSeq = DBHolder.sequence(dbName, count);
+            for (int i = 0; i < count; i++) {
+                idInfo.setId(needIdList.get(i), startSeq + i);
+            }
+        } else {
+            // UUID/Snowflake等，逐个生成
+            for (Object o : needIdList) {
+                idInfo.setId(o, idType.mkId());
             }
         }
     }

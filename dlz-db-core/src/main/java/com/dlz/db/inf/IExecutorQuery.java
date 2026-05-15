@@ -4,10 +4,10 @@ import com.dlz.db.convertor.columnname.ColumnNameNative;
 import com.dlz.db.convertor.columnname.ColumnNameToLower;
 import com.dlz.db.convertor.columnname.ColumnNameToUper;
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
-import com.dlz.db.holder.DBHolder;
-import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.SqlRunThreadHolder;
 
 import java.util.List;
 

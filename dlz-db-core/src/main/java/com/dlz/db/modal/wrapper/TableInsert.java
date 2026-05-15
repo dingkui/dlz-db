@@ -1,8 +1,8 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.IExecutorInsert;
 import com.dlz.db.modal.para.AParaTable;
+import com.dlz.db.support.PojoCache;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.fn.DlzFn;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +30,12 @@ public class TableInsert extends AParaTable implements IExecutorInsert {
     }
 
     public <T> void value(DlzFn<T, ?> column, Object value) {
-        value(BeanInfoHolder.fnName(column), value);
+        value(PojoCache.fnName(column), value);
     }
 
     public TableInsert value(String key, Object value) {
         String paraName = DbConvertUtil.toDbColumnNames(key);
-        if (!BeanInfoHolder.isColumnExists(getTableName(),paraName)) {
+        if (!PojoCache.isColumnExists(getTableName(),paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;
         }

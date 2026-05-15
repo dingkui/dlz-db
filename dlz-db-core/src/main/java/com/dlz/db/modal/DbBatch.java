@@ -1,8 +1,8 @@
 package com.dlz.db.modal;
 
-import com.dlz.db.holder.DBHolder;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoUpdate;
+import com.dlz.db.support.DBHolder;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class DbBatch {
                 batchSize = valueBeans.size();
             }
             List<Object[]> paramValues = valueBeans.subList(0, batchSize);
-            DBHolder.getSqlExecutor().batchUpdate(sql, paramValues);
+            DBHolder.getSqlExecutor().batch(sql, paramValues);
         }
         return true;
     }

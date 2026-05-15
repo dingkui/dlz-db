@@ -1,8 +1,6 @@
 package com.dlz.db.convertor.rowMapper;
 
 
-import com.dlz.db.core.IRowMapper;
-import com.dlz.db.core.JdbcValueUtils;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 
@@ -49,7 +47,7 @@ public class ResultMapRowMapper implements IRowMapper<ResultMap> {
 	 * @param rs is the ResultSet holding the data
 	 * @param index is the column index
 	 * @return the Object returned
-	 * @see com.dlz.db.core.JdbcValueUtils#getResultSetValue
+	 * @see JdbcValueUtils#getResultSetValue
 	 */
 	protected Object getColumnValue(ResultSet rs, int index) throws SQLException {
 		return JdbcValueUtils.getResultSetValue(rs, index);

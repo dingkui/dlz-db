@@ -1,12 +1,12 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
-import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.para.AQuery;
+import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class TableQuery extends AQuery<TableQuery> implements ISqlPage<TableQuer
     @SuppressWarnings("unchecked")
     public <T> TableQuery columns(DlzFn<T, ?>... columns) {
         if (columns.length > 0) {
-            this.columns = Arrays.stream(columns).map(BeanInfoHolder::fnName).collect(Collectors.joining(","));
+            this.columns = Arrays.stream(columns).map(PojoCache::fnName).collect(Collectors.joining(","));
         }
         return this;
     }

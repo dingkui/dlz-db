@@ -1,6 +1,6 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.holder.DBHolder;
+import com.dlz.db.support.DBHolder;
 
 /**
  * 增删改（Update / Delete / Insert）执行器的统一入口。

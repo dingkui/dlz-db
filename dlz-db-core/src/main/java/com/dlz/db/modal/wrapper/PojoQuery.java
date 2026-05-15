@@ -1,7 +1,5 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.holder.DBHolder;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
@@ -10,6 +8,8 @@ import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.para.APojoQuery;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.PojoCache;
 import com.dlz.kit.fn.DlzFn;
 
 import java.util.List;
@@ -68,8 +68,8 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
      * @return 返回当前条件对象，支持链式调用
      */
     public PojoQuery<T> auto(Map<String, Object> req) {
-        String tableName = BeanInfoHolder.getTableName(getBeanClass());
-        return auto(req, (key) -> BeanInfoHolder.isColumnExists(tableName, key));
+        String tableName = PojoCache.getTableName(getBeanClass());
+        return auto(req, (key) -> PojoCache.isColumnExists(tableName, key));
     }
 
     @Override

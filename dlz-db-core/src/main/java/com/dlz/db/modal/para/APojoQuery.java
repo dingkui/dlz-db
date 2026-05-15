@@ -1,9 +1,9 @@
 package com.dlz.db.modal.para;
 
-import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.support.PojoCache;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.system.FieldReflections;
 
@@ -51,7 +51,7 @@ public abstract class APojoQuery<ME extends APojoQuery, T, PM extends AQuery>
         fields.forEach(field->{
             Object value = FieldReflections.getValue(bean, field);
             if (StringUtils.isNotEmpty(value)) {
-                getPm().eq(BeanInfoHolder.getColumnName(field), value);
+                getPm().eq(PojoCache.getColumnName(field), value);
             }
         });
     }

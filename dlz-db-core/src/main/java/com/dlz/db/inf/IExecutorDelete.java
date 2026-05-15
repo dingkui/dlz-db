@@ -1,12 +1,12 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.holder.DBHolder;
-import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.db.modal.wrapper.TableUpdate;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.SqlRunThreadHolder;
 
 /**
  * 删除执行器：在"查询构造器"上叠加"执行删除"能力，并内置 <b>逻辑删除</b> 支持。
@@ -34,7 +34,7 @@ public interface IExecutorDelete<ME extends IExecutorDelete>
      */
     default int execute() {
         final String logicDeleteField = DBHolder.getSqlConfig().getLogicDeleteField();
-        if(SqlRunThreadHolder.isIgnoreLogicDelete() || !BeanInfoHolder.isColumnExists(getTableName(), logicDeleteField)){
+        if(SqlRunThreadHolder.isIgnoreLogicDelete() || !PojoCache.isColumnExists(getTableName(), logicDeleteField)){
             try {
                 return DBHolder.doDb(s -> s.execute(this));
             }finally {

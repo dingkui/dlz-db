@@ -1,5 +1,6 @@
 package com.dlz.db.core;
 
+import com.dlz.db.convertor.rowMapper.IRowMapper;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
@@ -35,7 +36,7 @@ public interface ISqlExecutor {
 
     void execute(String sql, Object... args);
 
-    int[] batchUpdate(String sql, List<Object[]> batchArgs);
+    int[] batch(String sql, List<Object[]> batchArgs);
 
     HashMap<String, Integer> getTableColumnsInfo(String tableName);
 

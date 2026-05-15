@@ -1,12 +1,12 @@
 package com.dlz.db.modal.para;
 
 import com.dlz.db.enums.ParaTypeEnum;
-import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.IChained;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
+import com.dlz.db.support.PojoCache;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.json.JSONMap;
@@ -66,7 +66,7 @@ public class ParaMap<ME extends ParaMap> implements Serializable , ISqlPara, ICh
         return (ME)me();
     }
     public <T> ME addPara(DlzFn<T, ?> column, Object value){
-        return addPara(BeanInfoHolder.fnName(column),value);
+        return addPara(PojoCache.fnName(column),value);
     }
 
     /**

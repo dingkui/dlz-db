@@ -1,5 +1,7 @@
 package com.dlz.db.annotation;
 
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.util.id.UuidUtil;
 import lombok.Getter;
 
 /**
@@ -38,5 +40,21 @@ public enum IdType {
 
     IdType(int key) {
         this.key = key;
+    }
+
+    public String mkId(){
+        if(this == IdType.AUTO || this == IdType.INPUT){
+            return null;
+        }
+    	if(this == IdType.ASSIGN_ID){
+    		return SnowFlakeUtil.id();
+    	}
+    	if(this == IdType.ASSIGN_UUID){
+    		return UuidUtil.uuid();
+    	}
+//    	if(this == IdType.SEQ){
+//            return DBHolder.sequence(tableName, initSeq);
+//    	}
+        throw new SystemException(this+"not support mkId !");
     }
 }

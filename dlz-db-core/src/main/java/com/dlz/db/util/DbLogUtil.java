@@ -1,6 +1,6 @@
 package com.dlz.db.util;
 
-import com.dlz.db.core.BaseDbProperties;
+import com.dlz.db.core.DlzDbProperties;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.util.ExceptionUtils;
@@ -19,7 +19,7 @@ public class DbLogUtil {
     private static long slowSqlThreshold = 0;
     private static boolean showRunSql = false;
     private static boolean showResult = false;
-    public static void init(BaseDbProperties properties) {
+    public static void init(DlzDbProperties properties) {
         showCaller = properties.getLog().isShowCaller();
         showRunSql = properties.getLog().isShowRunSql();
         showResult = properties.getLog().isShowResult();

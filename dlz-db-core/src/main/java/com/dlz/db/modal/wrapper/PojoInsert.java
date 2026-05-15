@@ -1,10 +1,11 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
-import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.holder.DBHolder;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.modal.para.AParaPojo;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.bean.IdInfo;
 import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
@@ -31,7 +32,7 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
         fields.forEach(field -> {
             Object value = FieldReflections.getValue(bean, field);
             if (value != null) {
-                getPm().value(BeanInfoHolder.getColumnName(field), value);
+                getPm().value(PojoCache.getColumnName(field), value);
             }
         });
     }
@@ -45,13 +46,13 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
             return true;
         }
         final Class<T> beanClass = getBeanClass();
-        String dbName = BeanInfoHolder.getTableName(beanClass);
-        final Field idField = BeanInfoHolder.getIdField(beanClass);
-        final IdType idType = idField != null ? WrapperBuildUtil.getIdType(idField) : null;
+        String dbName = PojoCache.getTableName(beanClass);
+        final IdInfo idInfo = PojoCache.getIdInfo(beanClass);
+        boolean doAutoId = idInfo != null || idInfo.getType() != IdType.AUTO;
 
-        final List<Field> fields = BeanInfoHolder.getBeanFields(beanClass)
+        final List<Field> fields = PojoCache.getBeanFields(beanClass)
                 .stream()
-                .filter(field -> idType != IdType.AUTO || idField != field)
+                .filter(field -> !doAutoId || idInfo.getField() != field)
                 .collect(Collectors.toList());
         String sql = WrapperBuildUtil.buildInsertSql(dbName, fields);
         while (!valueBeans.isEmpty() && batchSize > 0) {
@@ -59,13 +60,13 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
                 batchSize = valueBeans.size();
             }
             final List<T> ts = valueBeans.subList(0, batchSize);
+            if(doAutoId){
+                WrapperBuildUtil.fillAutoIds(dbName, idInfo, ts);
+            }
             List<Object[]> paramValues = ts.stream()
-                    .map(v -> {
-                        WrapperBuildUtil.fillAutoId(dbName, idField, idType, v);
-                        return WrapperBuildUtil.buildInsertParams(v, fields);
-                    })
+                    .map(v -> WrapperBuildUtil.buildInsertParams(v, fields))
                     .collect(Collectors.toList());
-            DBHolder.getSqlExecutor().batchUpdate(sql, paramValues);
+            DBHolder.getSqlExecutor().batch(sql, paramValues);
             valueBeans = valueBeans.subList(batchSize, valueBeans.size());
         }
         return true;

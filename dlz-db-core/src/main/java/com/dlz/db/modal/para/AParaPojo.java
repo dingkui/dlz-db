@@ -1,10 +1,10 @@
 package com.dlz.db.modal.para;
 
 import com.dlz.db.exception.DbException;
-import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
+import com.dlz.db.support.PojoCache;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,8 +32,8 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara {
             throw new DbException("bean需要为实体对象",1002);
         }
         this.bean=null;
-        tableName= BeanInfoHolder.getTableName(beanClass);
-        fields= BeanInfoHolder.getBeanFields(beanClass);
+        tableName= PojoCache.getTableName(beanClass);
+        fields= PojoCache.getBeanFields(beanClass);
     }
     public AParaPojo(T bean) {
         this.bean = bean;
@@ -41,8 +41,8 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara {
             throw new DbException("bean不能为空",1002);
         }
         this.beanClass = (Class<T>) bean.getClass();
-        tableName= BeanInfoHolder.getTableName(beanClass);
-        fields= BeanInfoHolder.getBeanFields(beanClass);
+        tableName= PojoCache.getTableName(beanClass);
+        fields= PojoCache.getBeanFields(beanClass);
     }
     /** 当前构造器持有的 bean（从 Class 构造时为 null）。 */
     public T getBean() {

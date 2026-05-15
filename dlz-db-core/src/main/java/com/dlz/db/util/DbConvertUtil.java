@@ -3,8 +3,8 @@ package com.dlz.db.util;
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
 import com.dlz.db.convertor.columnname.IColumnNameConvertor;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
-import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.kit.util.ValUtil;
 
 import java.util.List;

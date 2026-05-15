@@ -1,7 +1,7 @@
 package com.dlz.db.convertor.dbtype;
 
 import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.holder.BeanInfoHolder;
+import com.dlz.db.support.PojoCache;
 import com.dlz.kit.util.ValUtil;
 import lombok.AllArgsConstructor;
 
@@ -15,7 +15,7 @@ public class TableColumnMapper implements ITableColumnMapper {
 	final ISqlExecutor sqlExecutor;
 	@Override
 	public Object converObj4Db(String tableName, String columnName, Object value) {
-		Map<String, Integer> map = BeanInfoHolder.getTableColumnsInfo(tableName);
+		Map<String, Integer> map = PojoCache.getTableColumnsInfo(tableName);
 		if (map != null) {
 			Integer dbClass = map.get(columnName.toUpperCase(Locale.ROOT));
 			if(dbClass==null){

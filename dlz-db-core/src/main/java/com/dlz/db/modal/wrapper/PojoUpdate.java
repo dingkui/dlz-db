@@ -1,12 +1,12 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.holder.BeanInfoHolder;
-import com.dlz.db.holder.DBHolder;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.para.APojoQuery;
-import com.dlz.db.util.DbEntityUtil;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.bean.IdInfo;
 import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.util.system.FieldReflections;
@@ -78,7 +78,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         for (Field field : fields) {
             Object fieldValue = FieldReflections.getValue(bean, field);
             if (fieldValue != null) {
-                final String columnName = BeanInfoHolder.getColumnName(field);
+                final String columnName = PojoCache.getColumnName(field);
                 if (ignore != null && ignore.apply(columnName)) {
                     continue;
                 }
@@ -106,9 +106,9 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
             return true;
         }
         final Class<T> beanClass = getBeanClass();
-        String dbName = BeanInfoHolder.getTableName(beanClass);
-        final DbEntityUtil.IdInfo idInfo = DbEntityUtil.getIdInfo(beanClass);
-        final List<Field> fields = BeanInfoHolder.getBeanFields(getBeanClass());
+        String dbName = PojoCache.getTableName(beanClass);
+        final IdInfo idInfo = PojoCache.getIdInfo(beanClass);
+        final List<Field> fields = PojoCache.getBeanFields(getBeanClass());
         String sql = WrapperBuildUtil.buildUpdateSql(dbName, fields, idInfo.getName());
         while (!valueBeans.isEmpty() && batchSize > 0) {
             if (batchSize > valueBeans.size()) {
@@ -119,7 +119,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
             List<Object[]> paramValues = ts.stream()
                     .map(v -> WrapperBuildUtil.buildUpdateParams(v, fields, idInfo.getField()))
                     .collect(Collectors.toList());
-            DBHolder.getSqlExecutor().batchUpdate(sql, paramValues);
+            DBHolder.getSqlExecutor().batch(sql, paramValues);
             valueBeans = valueBeans.subList(batchSize, valueBeans.size());
         }
         return true;

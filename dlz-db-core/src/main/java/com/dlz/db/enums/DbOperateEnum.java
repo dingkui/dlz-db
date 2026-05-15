@@ -1,9 +1,8 @@
 package com.dlz.db.enums;
 
-import com.dlz.db.holder.BeanInfoHolder;
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.support.PojoCache;
 import com.dlz.db.util.DbConvertUtil;
-import com.dlz.db.util.KeyUtil;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.exception.ValidateException;
@@ -90,7 +89,7 @@ public enum DbOperateEnum {
 
 
     public <T> Condition mk(DlzFn<T, ?> dbn, Object value) {
-        return mk(BeanInfoHolder.fnName(dbn), value);
+        return mk(PojoCache.fnName(dbn), value);
     }
 
     public Condition mk(String dbn, Object value) {

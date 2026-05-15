@@ -1,5 +1,7 @@
 package com.dlz.db.modal.items;
 
+import com.dlz.db.util.SqlUtil;
+
 import java.io.Serializable;
 
 public class JdbcItem implements Serializable {
@@ -13,4 +15,10 @@ public class JdbcItem implements Serializable {
 		this.sql = sqlJdbc;
 		this.paras = sqlJdbcPara;
 	}
+    public String toString() {
+        return "sql: " + sql + " paras: " + paras;
+    }
+    public String toRunSql() {
+        return SqlUtil.getRunSqlByJdbc(sql, paras).trim();
+    }
 }

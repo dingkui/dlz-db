@@ -1,11 +1,11 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
-import com.dlz.db.holder.SqlRunThreadHolder;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.support.SqlRunThreadHolder;
 import lombok.extern.slf4j.Slf4j;
 
 /**
