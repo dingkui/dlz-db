@@ -196,7 +196,7 @@ class ConditionTest {
         Condition result = condition.isNull("delete_time");
         
         assertNotNull(result);
-        assertEquals("where delete_time is null", getSql(result));
+        assertEquals("where DELETE_TIME is null", getSql(result));
     }
 
     @Test

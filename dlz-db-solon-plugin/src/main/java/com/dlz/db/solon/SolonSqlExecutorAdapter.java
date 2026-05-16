@@ -43,7 +43,20 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
             DataSource ds = DB.Dynamic.getDataSource();
             Connection bound = SolonConnectionHolder.get(ds);
             if (bound != null) {
-                    return bound;
+                // 事务中：返回 close() 无操作的代理，避免 try-with-resources 关闭事务连接
+                return (Connection) Proxy.newProxyInstance(
+                        Connection.class.getClassLoader(),
+                        new Class<?>[]{Connection.class},
+                        (proxy, method, args) -> {
+                            if ("close".equals(method.getName()) && (args == null || args.length == 0)) {
+                                return null;
+                            }
+                            try {
+                                return method.invoke(bound, args);
+                            } catch (InvocationTargetException e) {
+                                throw e.getTargetException();
+                            }
+                        });
             }
             return ds.getConnection();
         };
@@ -212,13 +225,28 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
 
     // ============== 内部工具 ==============
 
-    /** 带连接的执行：自动复用事务连接或创建/关闭短连接。 */
+    /**
+     * 带连接的执行：自动复用事务连接或创建/关闭短连接。
+     */
     private <T> T withConn(SqlAction<T> action) {
         DataSource ds = DB.Dynamic.getDataSource();
         Connection bound = SolonConnectionHolder.get(ds);
         if (bound != null) {
             try {
-                return action.run(bound);
+//                return action.run(bound);
+                return action.run((Connection) Proxy.newProxyInstance(
+                        Connection.class.getClassLoader(),
+                        new Class<?>[]{Connection.class},
+                        (proxy, method, args) -> {
+                            if ("close".equals(method.getName()) && (args == null || args.length == 0)) {
+                                return null;
+                            }
+                            try {
+                                return method.invoke(bound, args);
+                            } catch (InvocationTargetException e) {
+                                throw e.getTargetException();
+                            }
+                        }));
             } catch (DbException e) {
                 throw e;
             } catch (Exception e) {

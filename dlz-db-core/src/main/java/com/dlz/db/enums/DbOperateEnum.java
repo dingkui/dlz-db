@@ -39,7 +39,7 @@ public enum DbOperateEnum {
         if (!COLUMN_NAME_PATTERN.matcher(dbn).matches()) {
             throw new ValidateException("非法列名: " + dbn);
         }
-        final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbColumnNames(dbn));
+        final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbColumnName(dbn));
         return key == null ? dbnSql : patternKey.matcher(dbnSql).replaceAll(key);
     }
 

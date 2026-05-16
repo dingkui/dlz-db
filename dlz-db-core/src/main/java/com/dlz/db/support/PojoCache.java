@@ -4,6 +4,7 @@ import com.dlz.db.annotation.TableField;
 import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.TableName;
 import com.dlz.db.annotation.proxy.AnnoProxies;
+import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
@@ -35,6 +36,7 @@ public class PojoCache {
     private static final CacheMap<String, List<Field>> tableFieldCache = new CacheMap<>();
     private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCache = new CacheMap<>();
     private static final CacheMap<Class<?>, IdInfo> idFieldCache = new CacheMap<>();
+    private static final CacheMap<Class<?>, Field> deletedFieldCache = new CacheMap<>();
 
     public static void clearAll() {
         tableColumnsInfoCache.clear();
@@ -276,6 +278,27 @@ public class PojoCache {
             }
             return null;
         });
+    }
+
+    public static Field getLogicDeleteInfo(Class<?> beanClass) {
+        final Field field = deletedFieldCache.computeIfAbsent(beanClass,k -> {
+            List<Field> fields = getBeanFields(beanClass);
+            if (fields == null) {
+                return null;
+            }
+            // 1) @TableId（本项目注解）
+            final String logicDeleteField = WrapperBuildUtil.logicDeleteField;
+            if (logicDeleteField == null) {
+                return null;
+            }
+            for (Field f : fields) {
+                if (logicDeleteField.equalsIgnoreCase(getColumnName(f))) {
+                    return f;
+                }
+            }
+            return null;
+        });
+        return field;
     }
 
     /**

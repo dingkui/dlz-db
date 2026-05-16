@@ -21,7 +21,7 @@ class DbOperateEnumTest {
     void testEqOperator() {
         Condition condition = DbOperateEnum.eq.mk("user_name", "test",null);
         assertNotNull(condition);
-        assertTrue(condition.getRunsql(new ParaMap()).contains("user_name = "));
+        assertTrue(condition.getRunsql(new ParaMap()).contains("USER_NAME = "));
     }
 
     @Test
@@ -29,7 +29,7 @@ class DbOperateEnumTest {
     void testNeOperator() {
         Condition condition = DbOperateEnum.ne.mk("user_name", "test",null);
         assertNotNull(condition);
-        assertTrue(condition.getRunsql(new ParaMap()).contains("user_name <> "));
+        assertTrue(condition.getRunsql(new ParaMap()).contains("USER_NAME <> "));
     }
 
     @Test

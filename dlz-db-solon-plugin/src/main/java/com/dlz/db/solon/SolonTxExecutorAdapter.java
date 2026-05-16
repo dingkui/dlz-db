@@ -36,34 +36,90 @@ public class SolonTxExecutorAdapter implements ITxExecutor {
         this.config = config;
     }
 
-//    @Override
-//    public <T> T execute(Supplier<T> task) throws Exception {
-//        DataSource dataSource = config.getDataSource();
-//        // 已在事务中：直接复用外层连接，不重复 begin/commit
-//        if (hasBinding(dataSource)) {
-//            return runInExisting(task);
-//        }
-//        return runNewTransaction(dataSource, task);
-//    }
+    @Override
+    public <T> T execute(Supplier<T> task) throws Exception {
+        DataSource dataSource = config.getDataSource();
+        // 已在事务中：直接复用外层连接，不重复 begin/commit
+        if (SolonConnectionHolder.hasBinding(dataSource)) {
+            return runInExisting(task);
+        }
+        return runNewTransaction(dataSource, task);
+    }
 
     @Override
     public DataSource getDataSource() {
-        return config.getDataSource();
+        return null;
     }
 
     @Override
     public boolean hasBinding(DataSource dataSource) {
-        return SolonConnectionHolder.hasBinding(dataSource);
+        return false;
     }
 
     @Override
     public void bind(DataSource dataSource, Connection connection) {
-        SolonConnectionHolder.bind(dataSource, connection);
+
     }
 
     @Override
     public void unBind(DataSource dataSource) {
-        SolonConnectionHolder.unbind(dataSource);
+
     }
 
+    public <T> T runInExisting(Supplier<T> task) {
+        try {
+            return task.get();
+        } catch (DbException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new DbException("事务执行失败：" + e.getMessage(), 1003, e);
+        }
+    }
+
+    public <T> T runNewTransaction(DataSource dataSource, Supplier<T> task) throws Exception {
+        Connection connection = null;
+        boolean bound = false;
+        boolean prevAutoCommit = true;
+        try {
+            connection = dataSource.getConnection();
+            prevAutoCommit = connection.getAutoCommit();
+            connection.setAutoCommit(false);
+
+            SolonConnectionHolder.bind(dataSource, connection);
+            bound = true;
+
+            T result = task.get();
+            connection.commit();
+            return result;
+        } catch (Exception e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    log.error("连接回滚失败", ex);
+                    throw new DbException("连接回滚失败", 1006, ex);
+                }
+            }
+            if (e instanceof DbException) {
+                throw new DbException("事务执行失败：" + e.getMessage(), 1006, e);
+            }
+            throw new DbException("事务执行失败：" + e.getMessage(), 1003, e);
+        } finally {
+            if (bound) {
+                SolonConnectionHolder.unbind(dataSource);
+            }
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(prevAutoCommit);
+                } catch (Exception e) {
+                    log.warn("还原 autoCommit 失败", e);
+                }
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    log.error("关闭连接失败", e);
+                }
+            }
+        }
+    }
 }

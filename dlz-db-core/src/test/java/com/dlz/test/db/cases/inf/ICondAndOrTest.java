@@ -146,7 +146,7 @@ class ICondAndOrTest {
                 );
         
         assertNotNull(result);
-        assertEquals("where STATUS = 1 and ((AGE > 18 and AGE < 60) or (vip_level is not null or LEVEL = 3))", getSql(result));
+        assertEquals("where STATUS = 1 and ((AGE > 18 and AGE < 60) or (VIP_LEVEL is not null or LEVEL = 3))", getSql(result));
     }
 
     // ========== 边界情况测试 ==========

@@ -100,7 +100,7 @@ class DbConvertUtilTest {
         assertEquals("NAME", DbConvertUtil.toDbColumnName("name"));
         
         // 已经包含下划线（不转换）
-        assertEquals("user_name", DbConvertUtil.toDbColumnName("user_name"));
+        assertEquals("USER_NAME", DbConvertUtil.toDbColumnName("user_name"));
         
         // 全大写（不转换）
         assertEquals("ID", DbConvertUtil.toDbColumnName("ID"));

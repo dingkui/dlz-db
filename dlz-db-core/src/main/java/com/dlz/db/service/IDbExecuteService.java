@@ -6,7 +6,11 @@ import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.support.bean.IdInfo;
+import com.dlz.kit.util.system.FieldReflections;
+
+import java.lang.reflect.Field;
 
 /**
  * 从数据库中取得单条map类型数据：{adEnddate=2015-04-08 13:47:12.0}
@@ -39,9 +43,17 @@ public interface IDbExecuteService extends IDbBaseService{
         if (paraMap instanceof PojoInsert) {
             PojoInsert p = (PojoInsert) paraMap;
             Object bean = p.getBean();
-            final IdInfo idField = PojoCache.getIdInfo(bean.getClass());
+            final Class<?> beanClass = bean.getClass();
+            final IdInfo idField = PojoCache.getIdInfo(beanClass);
+            final String tableName = PojoCache.getTableName(beanClass);
+            boolean isIgnoreLogicDelete = !SqlRunThreadHolder.isIgnoreLogicDelete()
+                    && PojoCache.isColumnExists(tableName, WrapperBuildUtil.logicDeleteField);
+            final Field logicDeleteField = isIgnoreLogicDelete?PojoCache.getLogicDeleteInfo(beanClass):null;
+            if(logicDeleteField!=null){
+                FieldReflections.setValue(bean, logicDeleteField, 0);
+            }
             if(idField != null){
-                WrapperBuildUtil.fillAutoId(PojoCache.getTableName( bean.getClass()), idField, bean);
+                WrapperBuildUtil.fillAutoId(tableName, idField, bean);
                 if(idField.getType() == IdType.AUTO){
                     final Long newid = doDb(paraMap, jdbcSql -> getSqlExecutor().updateForId(jdbcSql.sql, jdbcSql.paras));
                     if(newid != null){

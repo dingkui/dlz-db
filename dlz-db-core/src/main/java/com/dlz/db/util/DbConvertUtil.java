@@ -8,6 +8,7 @@ import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.kit.util.ValUtil;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -82,7 +83,10 @@ public class DbConvertUtil {
     }
 
     public static String toDbColumnName(String beanKey) {
-        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey);
+        if(beanKey==null || beanKey.isEmpty()){
+            return beanKey;
+        }
+        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey).toUpperCase(Locale.ROOT);
     }
 
     /**

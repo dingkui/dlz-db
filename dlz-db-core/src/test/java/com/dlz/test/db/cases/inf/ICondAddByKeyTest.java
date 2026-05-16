@@ -267,7 +267,7 @@ class ICondAddByKeyTest {
         Condition result = condition.isNull("delete_time");
         
         assertNotNull(result);
-        assertEquals("where delete_time is null", getSql(result));
+        assertEquals("where DELETE_TIME is null", getSql(result));
     }
 
     @Test
@@ -276,7 +276,7 @@ class ICondAddByKeyTest {
         Condition result = condition.isNull(true, "delete_time");
         
         assertNotNull(result);
-        assertEquals("where delete_time is null", getSql(result));
+        assertEquals("where DELETE_TIME is null", getSql(result));
     }
 
     @Test

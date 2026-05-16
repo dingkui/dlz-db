@@ -26,7 +26,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
     }
 
     public TableUpdate set(String paraName, Object value) {
-        paraName = DbConvertUtil.toDbColumnNames(paraName);
+        paraName = DbConvertUtil.toDbColumnName(paraName);
         if (!PojoCache.isColumnExists(getTableName(),paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;
