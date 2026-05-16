@@ -2,6 +2,7 @@ package com.dlz.db.spring;
 
 import com.dlz.db.convertor.rowMapper.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.core.func.ConnectionSupplier;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbLogUtil;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -31,7 +33,24 @@ import java.util.regex.Pattern;
 public class SpringSqlExecutorAdapter implements ISqlExecutor {
     private final JdbcTemplate dao;
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "JdbcTemplate由Spring容器管理，视为不可变")
+    @Override
+    public ConnectionSupplier getConnectionSupplier() {
+        return ()->{
+//            DataSource ds = DB.Dynamic.getDataSource();
+//
+//            if (TransactionSynchronizationManager.hasResource(ds)) {
+//                ConnectionHolder conHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(ds);
+//                conHolder.requested();
+//                if (conHolder.getConnectionHandle()!=null) {
+//                    return conHolder.getConnectionHandle().getConnection();
+//                }
+//            }
+
+            return DataSourceUtils.getConnection(dao.getDataSource());
+        };
+    }
+
+//    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "JdbcTemplate由Spring容器管理，视为不可变")
     public SpringSqlExecutorAdapter(JdbcTemplate jdbcTemplate) {
         this.dao = jdbcTemplate;
     }
@@ -80,7 +99,6 @@ public class SpringSqlExecutorAdapter implements ISqlExecutor {
         }, (t, r) -> DbLogUtil.generateSqlMessage(t, r, "updateForId", sql, args));
     }
 
-    @Override
     @SuppressFBWarnings(value = "SQL_INJECTION_SPRING_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
     public void execute(final String sql, Object... args) {
         doDb(() -> {

@@ -21,6 +21,7 @@ public class DBHolder {
     private static IRedisExecutor cacheExecutor;
     private static DlzDbProperties properties;
     public static ADbProvider dbProvider;
+    private static SegmentIdGenerator segmentIdGenerator = new SegmentIdGenerator(1000);
 
     public static ISqlExecutor getSqlExecutor() {
         if (sqlExecutor == null && dbProvider != null) {
@@ -72,24 +73,10 @@ public class DBHolder {
     }
 
     public static long sequence(String tableName, long initSeq) {
-        String key = "seq:" + tableName;
-        final IRedisExecutor cacheExecutor = getCacheExecutor();
-        Long seq = cacheExecutor.incrBy(key, initSeq);
-        if (seq == initSeq) {
-            try {
-                final String fistColumn = getSqlExecutor().getFistColumn("select max(id) from " + tableName, String.class);
-                if (fistColumn == null || !StringUtils.isNumber(fistColumn)) {
-                    return seq;
-                }
-                seq = ValUtil.toBigDecimalZero(fistColumn).longValue() + initSeq;
-                if (seq > initSeq) {
-                    cacheExecutor.set(key, seq.toString());
-                }
-            } catch (Exception e) {
-                log.error("", e);
-            }
-        }
-        return seq;
+        return segmentIdGenerator.nextId(tableName, initSeq);
+    }
+    public static long sequence(String tableName) {
+        return sequence(tableName, 1);
     }
 
     public static <R> R doDb(Function<ICommService, R> s) {

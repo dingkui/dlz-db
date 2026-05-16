@@ -2,6 +2,7 @@ package com.dlz.db.solon;
 
 import com.dlz.db.convertor.rowMapper.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.core.func.ConnectionSupplier;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
@@ -11,11 +12,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 /**
@@ -32,6 +36,18 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 public class SolonSqlExecutorAdapter implements ISqlExecutor {
+
+    @Override
+    public ConnectionSupplier getConnectionSupplier() {
+        return () -> {
+            DataSource ds = DB.Dynamic.getDataSource();
+            Connection bound = SolonConnectionHolder.get(ds);
+            if (bound != null) {
+                    return bound;
+            }
+            return ds.getConnection();
+        };
+    }
 
     @Override
     @SuppressFBWarnings(value = "SQL_INJECTION_JDBC", justification = "框架内部SQL执行入口，参数通过args数组绑定")
@@ -129,7 +145,6 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
         return null;
     }
 
-    @Override
     @SuppressFBWarnings(value = {"SQL_INJECTION_JDBC", "SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"}, justification = "框架内部SQL执行入口，有参时使用PreparedStatement绑定，无参时sql由框架生成")
     public void execute(String sql, Object... args) {
         doDb(() -> withConn(conn -> {

@@ -47,11 +47,11 @@ public class DbOpPostgresql extends SqlHelper {
                 .collect(Collectors.joining(","));
 
         String sql = "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" (" + columns + ")";
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
         String columnComment = PojoCache.getTableComment(clazz);
         if (StringUtils.isNotEmpty(columnComment)) {
             sql = "COMMENT ON TABLE \"public\".\"" + tableName + "\" IS '" + columnComment + "'";
-            DBHolder.getSqlExecutor().execute(sql);
+            DBHolder.getSqlExecutor().update(sql);
         }
     }
 
@@ -136,11 +136,11 @@ public class DbOpPostgresql extends SqlHelper {
     @Override
     public void createColumn(String tableName, String name, Field field) {
         String sql = "ALTER TABLE public." + tableName + " ADD COLUMN " + name + " " + getDbColumnType(field);
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
         String columnComment = PojoCache.getColumnComment(field);
         if (StringUtils.isNotEmpty(columnComment)) {
             sql = "COMMENT ON COLUMN " + tableName + "." + name + " IS '" + columnComment + "'";
-            DBHolder.getSqlExecutor().execute(sql);
+            DBHolder.getSqlExecutor().update(sql);
         }
     }
 

@@ -68,7 +68,7 @@ public class DbOpMysql extends SqlHelper {
 
         String sql = StringUtils.formatMsg(createSql, tableName,columns,tableComment);
 
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class DbOpMysql extends SqlHelper {
         if (StringUtils.isNotEmpty(columnComment)) {
             sql += " COMMENT '" + columnComment + "'";
         }
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
     }
 
     @Override

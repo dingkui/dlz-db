@@ -28,8 +28,8 @@ public class SolonSmokeTest extends BaseDBTest {
     @Order(2)
     void crud() {
         ISqlExecutor sqlExecutor = DBHolder.sqlExecutor;
-        sqlExecutor.execute("drop table if exists smoke");
-        sqlExecutor.execute("create table smoke(id integer primary key autoincrement, name text)");
+        sqlExecutor.update("drop table if exists smoke");
+        sqlExecutor.update("create table smoke(id integer primary key autoincrement, name text)");
         sqlExecutor.update("insert into smoke(name) values(?)", "tom");
         sqlExecutor.update("insert into smoke(name) values(?)", "jerry");
 

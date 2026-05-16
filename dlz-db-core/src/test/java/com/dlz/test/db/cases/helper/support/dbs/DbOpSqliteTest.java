@@ -52,12 +52,12 @@ class DbOpSqliteTest {
     }
 
     @Test
-    @DisplayName("测试 Boolean 类型映射到 TEXT")
+    @DisplayName("测试 Boolean 类型映射到 INTEGER")
     void testBooleanType() throws NoSuchFieldException {
         Field field = TestBean.class.getDeclaredField("active");
         String dbType = dbOpSqlite.getDbColumnType(field);
         
-        assertEquals("TEXT", dbType);
+        assertEquals("INTEGER", dbType);
     }
 
     @Test

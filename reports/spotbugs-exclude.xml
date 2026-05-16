@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SpotBugs 排除配置：框架内部 SQL 执行入口为误报 -->
+<FindBugsFilter>
+    <!-- SpringSqlExecutorAdapter：所有参数化查询方法均为框架内部 SQL 执行入口 -->
+    <Match>
+        <Class name="com.dlz.db.spring.SpringSqlExecutorAdapter"/>
+        <Bug pattern="SQL_INJECTION_SPRING_JDBC"/>
+    </Match>
+    <Match>
+        <Class name="com.dlz.db.spring.SpringSqlExecutorAdapter"/>
+        <Bug pattern="SQL_INJECTION_JDBC"/>
+    </Match>
+    <Match>
+        <Class name="com.dlz.db.spring.SpringSqlExecutorAdapter"/>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE"/>
+    </Match>
+
+    <!-- SolonSqlExecutorAdapter：所有参数化查询方法均为框架内部 SQL 执行入口 -->
+    <Match>
+        <Class name="com.dlz.db.solon.SolonSqlExecutorAdapter"/>
+        <Bug pattern="SQL_INJECTION_JDBC"/>
+    </Match>
+    <Match>
+        <Class name="com.dlz.db.solon.SolonSqlExecutorAdapter"/>
+        <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+    </Match>
+
+    <!-- queryLastInsertIdByDialect：SQL 为方言固定常量拼接，非用户输入 -->
+    <Match>
+        <Class name="com.dlz.db.solon.SolonSqlExecutorAdapter"/>
+        <Method name="queryLastInsertIdByDialect"/>
+        <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+    </Match>
+</FindBugsFilter>

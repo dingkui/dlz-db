@@ -2,6 +2,7 @@ package com.dlz.test.db.config;
 
 import com.dlz.db.convertor.rowMapper.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.core.func.ConnectionSupplier;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.kit.json.JSONMap;
 
@@ -64,6 +65,11 @@ public class MockSqlExecutor implements ISqlExecutor {
     }
 
     @Override
+    public ConnectionSupplier getConnectionSupplier() {
+        return null;
+    }
+
+    @Override
     public List<ResultMap> getList(String sql, Object... args) {
         String tableName = extractTableName(sql);
         if (tableName == null) {
@@ -122,10 +128,6 @@ public class MockSqlExecutor implements ISqlExecutor {
         return newId;
     }
 
-    @Override
-    public void execute(String sql, Object... args) {
-        // 空实现，不抛异常
-    }
 
     @Override
     public int[] batch(String sql, List<Object[]> batchArgs) {

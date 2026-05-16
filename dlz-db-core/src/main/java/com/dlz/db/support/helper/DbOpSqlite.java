@@ -45,7 +45,7 @@ public class DbOpSqlite extends SqlHelper {
 
         String sql = StringUtils.formatMsg(createSql, tableName,columns);
 
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class DbOpSqlite extends SqlHelper {
     @Override
     public void createColumn(String tableName, String name, Field field) {
         String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbColumnType(field);
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
     }
 
     //    1.NULL：空值。

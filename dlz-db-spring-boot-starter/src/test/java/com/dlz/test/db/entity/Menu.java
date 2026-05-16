@@ -78,7 +78,7 @@ public class Menu implements Serializable {
 	 * 菜单类型
 	 */
 	@ApiModelProperty(value = "菜单类型")
-	private Integer category;
+	private String category;
 
 	/**
 	 * 操作按钮类型

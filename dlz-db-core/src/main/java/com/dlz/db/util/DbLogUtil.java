@@ -19,6 +19,7 @@ public class DbLogUtil {
     private static long slowSqlThreshold = 0;
     private static boolean showRunSql = false;
     private static boolean showResult = false;
+
     public static void init(DlzDbProperties properties) {
         showCaller = properties.getLog().isShowCaller();
         showRunSql = properties.getLog().isShowRunSql();
@@ -84,7 +85,7 @@ public class DbLogUtil {
                 break;
             }
         }
-        if(!frw_trace.isEmpty()){
+        if (!frw_trace.isEmpty()) {
             log.trace("< {}", frw_trace.stream().collect(Collectors.joining(" < ")));
         }
         return traceInfo.replaceAll(".*\\((.*)\\)", " caller:($1)");
@@ -92,14 +93,14 @@ public class DbLogUtil {
 
     public static <T> String generateSqlMessage(Long l, T reulst, String methodName, String sql, Object[] args) {
         final String usedDataSourceName = DB.Dynamic.getUsedDataSourceName();
-        if(usedDataSourceName!=null){
-            methodName = "["+usedDataSourceName+"] "+methodName;
+        if (usedDataSourceName != null) {
+            methodName = "[" + usedDataSourceName + "] " + methodName;
         }
         String sqlMessage = showRunSql ?
                 StringUtils.formatMsg("{} {}ms sql:{}", methodName, l, SqlUtil.getRunSqlByJdbc(sql, args)) :
                 StringUtils.formatMsg("{} {}ms sql:{} {}", methodName, l, sql, args);
-        if(showResult && reulst!=null){
-            sqlMessage+=StringUtils.formatMsg("\nresult:{}", reulst);
+        if (showResult && reulst != null) {
+            sqlMessage += StringUtils.formatMsg("\nresult:{}", reulst);
         }
         return sqlMessage;
     }
@@ -109,7 +110,7 @@ public class DbLogUtil {
     }
 
     public static <T> void logInfo(DlzFn2<Long, T, String> msg, Long t, T result, Exception error) {
-        if (log.isInfoEnabled()||error != null) {
+        if (log.isInfoEnabled() || error != null) {
             if (showCaller) {
                 DbLogUtil.setCaller(1);
             }
@@ -119,12 +120,30 @@ public class DbLogUtil {
                     log.error(ExceptionUtils.getStackTrace(error));
                     log.error(msg.apply(l, result));
                 } else {
-                    if(slowSqlThreshold>0 && l>slowSqlThreshold){
+                    if (slowSqlThreshold > 0 && l > slowSqlThreshold) {
                         log.warn(msg.apply(l, result));
-                    }else{
+                    } else {
                         log.info(msg.apply(l, result));
                     }
                 }
+            } finally {
+                if (showCaller) {
+                    DbLogUtil.clearCaller();
+                }
+            }
+        }
+    }
+
+    public static void warn(String msg, Exception error) {
+        if (log.isInfoEnabled() || error != null) {
+            if (showCaller) {
+                DbLogUtil.setCaller(1);
+            }
+            try {
+                if (error != null) {
+                    log.warn(ExceptionUtils.getStackTrace(error));
+                }
+                log.warn(msg);
             } finally {
                 if (showCaller) {
                     DbLogUtil.clearCaller();

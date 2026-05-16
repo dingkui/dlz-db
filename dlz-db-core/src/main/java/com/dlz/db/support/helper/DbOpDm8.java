@@ -63,7 +63,7 @@ public class DbOpDm8 extends SqlHelper {
         }
 
 
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class DbOpDm8 extends SqlHelper {
         if (StringUtils.isNotEmpty(columnComment)) {
             sql += "; COMMENT ON COLUMN \"" + tableName.toUpperCase() + "\".\"" + name.toUpperCase() + "\" IS '" + columnComment + "'";
         }
-        DBHolder.getSqlExecutor().execute(sql);
+        DBHolder.getSqlExecutor().update(sql);
     }
 
     @Override

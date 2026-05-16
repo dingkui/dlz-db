@@ -31,52 +31,75 @@ public class SpringTxExecutorAdapter implements ITxExecutor {
         this.config = config;
     }
 
+//    @Override
+//    public <T> T execute(Supplier<T> task) throws Exception {
+//        DataSource dataSource = config.getDataSource();
+//        Connection connection = null;
+//        boolean bound = false;
+//        try {
+//            connection = dataSource.getConnection();
+//            connection.setAutoCommit(false);
+//
+//            // 绑定到 Spring 事务管理器，使 JdbcTemplate 复用同一连接
+//            ConnectionHolder connectionHolder = new ConnectionHolder(connection);
+//            TransactionSynchronizationManager.bindResource(dataSource, connectionHolder);
+//            bound = true;
+//
+//            T result = task.get();
+//            connection.commit();
+//            return result;
+//        } catch (Exception e) {
+//            if (connection != null) {
+//                try {
+//                    connection.rollback();
+//                } catch (SQLException ex) {
+//                    log.error("连接回滚失败", ex);
+//                    throw new DbException("连接回滚失败", 1006, ex);
+//                }
+//            }
+//            if (e instanceof DbException) {
+//                throw new DbException("事务执行失败：" + e.getMessage(), 1006, e);
+//            }
+//            throw new DbException("事务执行失败：" + e.getMessage(), 1003, e);
+//        } finally {
+//            if (bound) {
+//                try {
+//                    TransactionSynchronizationManager.unbindResource(dataSource);
+//                } catch (Exception e) {
+//                    log.error("解绑事务资源失败", e);
+//                }
+//            }
+//            if (connection != null) {
+//                try {
+//                    connection.setAutoCommit(true);
+//                    connection.close();
+//                } catch (Exception e) {
+//                    log.error("关闭连接失败", e);
+//                }
+//            }
+//        }
+//    }
+
     @Override
-    public <T> T execute(Supplier<T> task) throws Exception {
-        DataSource dataSource = config.getDataSource();
-        Connection connection = null;
-        boolean bound = false;
-        try {
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
+    public DataSource getDataSource() {
+        return config.getDataSource();
+    }
 
-            // 绑定到 Spring 事务管理器，使 JdbcTemplate 复用同一连接
-            ConnectionHolder connectionHolder = new ConnectionHolder(connection);
-            TransactionSynchronizationManager.bindResource(dataSource, connectionHolder);
-            bound = true;
+    @Override
+    public boolean hasBinding(DataSource dataSource) {
+        return
+                TransactionSynchronizationManager.hasResource(dataSource);
+    }
 
-            T result = task.get();
-            connection.commit();
-            return result;
-        } catch (Exception e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException ex) {
-                    log.error("连接回滚失败", ex);
-                    throw new DbException("连接回滚失败", 1006, ex);
-                }
-            }
-            if (e instanceof DbException) {
-                throw new DbException("事务执行失败：" + e.getMessage(), 1006, e);
-            }
-            throw new DbException("事务执行失败：" + e.getMessage(), 1003, e);
-        } finally {
-            if (bound) {
-                try {
-                    TransactionSynchronizationManager.unbindResource(dataSource);
-                } catch (Exception e) {
-                    log.error("解绑事务资源失败", e);
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.setAutoCommit(true);
-                    connection.close();
-                } catch (Exception e) {
-                    log.error("关闭连接失败", e);
-                }
-            }
-        }
+    @Override
+    public void bind(DataSource dataSource, Connection connection) {
+        // 绑定到 Spring 事务管理器，使 JdbcTemplate 复用同一连接
+        ConnectionHolder connectionHolder = new ConnectionHolder(connection);
+        TransactionSynchronizationManager.bindResource(dataSource, connectionHolder);
+    }
+
+    @Override
+    public void unBind(DataSource dataSource) {
+        TransactionSynchronizationManager.unbindResource(dataSource);
     }
 }

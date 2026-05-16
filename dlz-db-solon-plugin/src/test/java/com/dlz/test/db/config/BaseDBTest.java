@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;  // JUnit 4
 import org.junit.jupiter.api.BeforeAll;  // JUnit 5
+import org.junit.jupiter.api.BeforeEach;
 import org.noear.solon.Solon;
 
 /**
@@ -47,14 +48,16 @@ public class BaseDBTest {
      */
     private static void bootstrap() {
         if (Solon.app() == null) {
+            TraceUtil.setTraceId("bootstrap");
             Solon.start(Starter.class, new String[0]);
             // 在这里添加其他全局初始化逻辑
             // 例如：初始化测试数据、清理环境等
             log.info("Solon 应用启动完成，全局初始化完毕");
+            TraceUtil.clearTraceId();
         }
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         TraceUtil.setTraceId(this.getClass().getSimpleName());
     }
