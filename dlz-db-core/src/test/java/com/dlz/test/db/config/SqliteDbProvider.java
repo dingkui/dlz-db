@@ -1,8 +1,10 @@
 package com.dlz.test.db.config;
 
-import com.dlz.db.core.*;
+import com.dlz.db.core.ADbProvider;
+import com.dlz.db.core.DlzDbProperties;
+import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.core.ITxExecutor;
 import com.dlz.db.ds.DataSourceConfig;
-import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
 import com.zaxxer.hikari.HikariConfig;
@@ -20,7 +22,6 @@ public class SqliteDbProvider extends ADbProvider {
 
     private final SqliteSqlExecutor sqlExecutor;
     private final ICommService commService;
-    private final MockCacheExecutor cacheExecutor;
     private final DlzDbProperties sqlConfig;
     private final DataSource dataSource;
     private static final AtomicLong idGenerator = new AtomicLong(1000);
@@ -34,10 +35,7 @@ public class SqliteDbProvider extends ADbProvider {
         
         // 初始化服务
         this.commService = new CommServiceImpl(sqlExecutor);
-        
-        // 初始化缓存执行器
-        this.cacheExecutor = new MockCacheExecutor();
-        
+
         // 初始化配置
         this.sqlConfig = createDefaultConfig();
         
@@ -163,11 +161,6 @@ public class SqliteDbProvider extends ADbProvider {
     @Override
     public ICommService getService() {
         return commService;
-    }
-
-    @Override
-    public IRedisExecutor getCacheExecutor() {
-        return cacheExecutor;
     }
 
     @Override

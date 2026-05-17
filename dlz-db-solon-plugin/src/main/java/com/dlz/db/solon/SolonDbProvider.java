@@ -1,6 +1,9 @@
 package com.dlz.db.solon;
 
-import com.dlz.db.core.*;
+import com.dlz.db.core.ADbProvider;
+import com.dlz.db.core.DlzDbProperties;
+import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.core.ITxExecutor;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -37,10 +40,6 @@ public class SolonDbProvider extends ADbProvider {
         return Solon.context().getBean(ICommService.class);
     }
 
-    @Override
-    public IRedisExecutor getCacheExecutor() {
-        return Solon.context().getBean(IRedisExecutor.class);
-    }
 
     @Override
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "配置属性对象视为不可变")

@@ -1,6 +1,9 @@
 package com.dlz.db.spring.config;
 
-import com.dlz.db.core.*;
+import com.dlz.db.core.ADbProvider;
+import com.dlz.db.core.DlzDbProperties;
+import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.core.ITxExecutor;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.spring.SpringTxExecutorAdapter;
 import com.dlz.spring.holder.SpringHolder;
@@ -30,11 +33,6 @@ public class SpringDbProvider extends ADbProvider {
     @Override
     public ISqlExecutor getSqlExecutor() {
         return SpringHolder.getBean(ISqlExecutor.class);
-    }
-
-    @Override
-    public IRedisExecutor getCacheExecutor() {
-        return SpringHolder.getBean(IRedisExecutor.class);
     }
 
     @Override

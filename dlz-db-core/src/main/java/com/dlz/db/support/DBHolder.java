@@ -5,8 +5,6 @@ import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
 import com.dlz.kit.exception.SystemException;
-import com.dlz.kit.util.StringUtils;
-import com.dlz.kit.util.ValUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Function;
@@ -18,7 +16,6 @@ import java.util.function.Function;
 public class DBHolder {
     public static ISqlExecutor sqlExecutor;
     private static ICommService service;
-    private static IRedisExecutor cacheExecutor;
     private static DlzDbProperties properties;
     public static ADbProvider dbProvider;
     private static SegmentIdGenerator segmentIdGenerator = new SegmentIdGenerator(1000);
@@ -47,13 +44,6 @@ public class DBHolder {
         }
 
         return service;
-    }
-
-    public static IRedisExecutor getCacheExecutor() {
-        if (cacheExecutor == null && dbProvider != null) {
-            cacheExecutor = dbProvider.getCacheExecutor();
-        }
-        return cacheExecutor;
     }
 
     public static ITxExecutor getTxExecutor(DataSourceConfig dataSourceConfig) {

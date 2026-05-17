@@ -1,6 +1,9 @@
 package com.dlz.test.db.config;
 
-import com.dlz.db.core.*;
+import com.dlz.db.core.ADbProvider;
+import com.dlz.db.core.DlzDbProperties;
+import com.dlz.db.core.ISqlExecutor;
+import com.dlz.db.core.ITxExecutor;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 
@@ -12,13 +15,11 @@ public class MockDbProvider extends ADbProvider {
 
     private final MockSqlExecutor sqlExecutor;
     private final MockCommService commService;
-    private final MockCacheExecutor cacheExecutor;
     private final DlzDbProperties sqlConfig;
 
     public MockDbProvider() {
         this.sqlExecutor = new MockSqlExecutor();
         this.commService = new MockCommService(sqlExecutor);
-        this.cacheExecutor = new MockCacheExecutor();
         this.sqlConfig = createDefaultConfig();
         
         // 初始化测试数据
@@ -54,11 +55,6 @@ public class MockDbProvider extends ADbProvider {
     @Override
     public ICommService getService() {
         return commService;
-    }
-
-    @Override
-    public IRedisExecutor getCacheExecutor() {
-        return cacheExecutor;
     }
 
     @Override

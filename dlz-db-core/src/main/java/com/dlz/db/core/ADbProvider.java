@@ -37,13 +37,6 @@ public abstract class ADbProvider {
     };
 
     /**
-     * 获取 CacheExecutor 实例。
-     *
-     * @return CacheExecutor 实例
-     */
-    public abstract IRedisExecutor getCacheExecutor();
-
-    /**
      * 获取 SqlConfig 实例。
      *
      * @return SqlConfig 实例

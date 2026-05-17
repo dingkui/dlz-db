@@ -3,22 +3,18 @@ package com.dlz.db.spring.config;
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import com.dlz.db.core.ADbProvider;
 import com.dlz.db.core.DlzDbProperties;
-import com.dlz.db.core.IRedisExecutor;
 import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.support.helper.HelperScan;
-import com.dlz.db.support.DBHolder;
-import com.dlz.db.support.SqlHolder;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
-import com.dlz.db.spring.SpringCacheAdapter;
 import com.dlz.db.spring.SpringSqlExecutorAdapter;
+import com.dlz.db.support.DBHolder;
+import com.dlz.db.support.SqlHolder;
+import com.dlz.db.support.helper.HelperScan;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
 import com.dlz.spring.config.DlzFwConfig;
-import com.dlz.spring.redis.excutor.JedisExecutor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -76,20 +72,6 @@ public class SpringDlzDbConfig extends DlzFwConfig {
     public ICommService commService(ISqlExecutor sqlExecutor) {
         return new CommServiceImpl(sqlExecutor);
     }
-
-    @Bean(name = "cacheExecutor")
-    @Lazy
-    @ConditionalOnMissingBean(name = "cacheExecutor")
-    @ConditionalOnClass(JedisExecutor.class)
-    public IRedisExecutor cacheExecutor(JedisExecutor jedisExecutor) {
-        IRedisExecutor cacheExecutor = new SpringCacheAdapter(jedisExecutor);
-        if (log.isInfoEnabled()) {
-            log.info("init cacheExecutor:" + SpringCacheAdapter.class.getName());
-        }
-        return cacheExecutor;
-    }
-
-
 
     @Bean(name = "JdbcTemplate")
     @Lazy
