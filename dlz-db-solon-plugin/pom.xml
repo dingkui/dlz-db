@@ -30,12 +30,12 @@
             <version>${solon.version}</version>
         </dependency>
 
-        <!-- Solon Data（提供 @Tran 注解支持） -->
+        <!-- Solon Data（提供 @Tran 注解与 TranUtils；optional 让用户按需引入） -->
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon-data</artifactId>
             <version>${solon.version}</version>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- Jedis（可选，用于 Redis 缓存适配器，用户应用按需引入） -->

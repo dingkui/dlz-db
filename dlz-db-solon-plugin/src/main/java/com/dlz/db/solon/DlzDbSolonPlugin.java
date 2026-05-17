@@ -53,8 +53,11 @@ public class DlzDbSolonPlugin implements Plugin {
         // 3. 等 DataSource 就绪后初始化 SqlExecutor / CommService
         context.getBeanAsync(DataSource.class, dataSource -> {
             try {
-                // 注册到 DB.Dynamic（兼容 SqlHolder/SpringSqlExecutor 等的取数据源逻辑）
-                DB.Dynamic.setDefaultDataSource(dataSource);
+                // 使用 DynamicDataSource 包装原始 DataSource（类似 Spring 的 DynamicJdbcTemplate）
+                DynamicDataSource dynamicDataSource = new DynamicDataSource(dataSource);
+
+                // 注册到 Solon 容器，替换原始 DataSource
+                context.wrapAndPut(DataSource.class, dynamicDataSource);
 
                 // 构建 SqlExecutor
                 SolonSqlExecutorAdapter sqlExecutor = new SolonSqlExecutorAdapter();

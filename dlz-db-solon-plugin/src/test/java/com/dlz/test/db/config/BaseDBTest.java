@@ -57,7 +57,7 @@ public class BaseDBTest {
         }
     }
 
-    @BeforeEach
+    @Before
     public void before() {
         TraceUtil.setTraceId(this.getClass().getSimpleName());
     }
