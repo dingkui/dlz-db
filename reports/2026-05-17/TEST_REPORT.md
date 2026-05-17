@@ -185,34 +185,6 @@ dlz-db 各子模块的类覆盖情况：
 
 ---
 
-## ⚠️ dlz-db 已知问题与修复
-
-### 已修复问题
-
-#### 1. DbPojoTest内部类表名冲突
-**问题描述**:
-```
-java.lang.IllegalArgumentException: 
-Can not set java.lang.Long field com.dlz.test.db.entity.TestUser.id 
-to com.dlz.test.db.cases.modal.DbPojoTest$TestUser
-```
-
-**根本原因**:
-- 内部类TestUser和外部实体类TestUser都映射到TEST_USER表
-- PojoCache缓存中存储的是外部类的Field对象
-- 反射设置值时类型不匹配
-
-**解决方案**:
-1. 为内部类添加唯一表名: `@TableName("DbPojoTestUser")`
-2. 在@BeforeAll中手动注册表字段缓存
-3. 使用正确的表名key: "DB_POJO_TEST_USER"
-
-**修复文件**:
-- `DbPojoTest.java`: 添加注解和初始化方法
-- 测试用例: 30个全部通过 ✅
-
----
-
 ## 🎯 dlz-db 测试亮点
 
 ### 1. 完整的CRUD测试覆盖
