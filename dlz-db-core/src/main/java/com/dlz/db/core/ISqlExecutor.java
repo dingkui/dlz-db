@@ -75,7 +75,7 @@ public interface ISqlExecutor {
                     }
                 } catch (SQLFeatureNotSupportedException ignore) {
                     // 驱动不支持（如部分版本的 SQLite），走兜底
-                    DbLogUtil.warn("无自动增长主键", ignore);
+                    DbLogUtil.debug("无标准自动增长主键", ignore);
                 }
                 // 2. SQLite 等兜底：按方言查最后插入 ID
                 Long id = NativeSqlUtil.queryLastInsertIdByDialect(conn);

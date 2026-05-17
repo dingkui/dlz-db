@@ -135,7 +135,7 @@ public class DbLogUtil {
     }
 
     public static void warn(String msg, Exception error) {
-        if (log.isInfoEnabled() || error != null) {
+        if (log.isWarnEnabled() || error != null) {
             if (showCaller) {
                 DbLogUtil.setCaller(1);
             }
@@ -144,6 +144,23 @@ public class DbLogUtil {
                     log.warn(ExceptionUtils.getStackTrace(error));
                 }
                 log.warn(msg);
+            } finally {
+                if (showCaller) {
+                    DbLogUtil.clearCaller();
+                }
+            }
+        }
+    }
+    public static void debug(String msg, Exception error) {
+        if (log.isDebugEnabled() || error != null) {
+            if (showCaller) {
+                DbLogUtil.setCaller(1);
+            }
+            try {
+                if (error != null) {
+                    log.debug(ExceptionUtils.getStackTrace(error));
+                }
+                log.debug(msg);
             } finally {
                 if (showCaller) {
                     DbLogUtil.clearCaller();
