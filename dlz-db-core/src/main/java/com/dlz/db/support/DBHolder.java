@@ -1,7 +1,6 @@
 package com.dlz.db.support;
 
 import com.dlz.db.core.*;
-import com.dlz.db.core.jdbc.JdbcDbAdapter;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
@@ -19,7 +18,7 @@ public class DBHolder {
     private static ISqlExecutor sqlExecutor;
     private static ICommService service;
     private static DlzDbProperties properties;
-    private static ADbProvider dbProvider;
+    private static DlzDbAdapter dbAdapter;
     private static SegmentIdGenerator segmentIdGenerator = new SegmentIdGenerator(1000);
 
     /**
@@ -36,7 +35,7 @@ public class DBHolder {
      */
     public static ISqlExecutor getSqlExecutor() {
         if (sqlExecutor == null) {
-            sqlExecutor = dbProvider.getSqlExecutor();
+            sqlExecutor = dbAdapter.getSqlExecutor();
         }
         return sqlExecutor;
     }
@@ -50,7 +49,7 @@ public class DBHolder {
     }
 
     public static ITxExecutor getTxExecutor(DataSourceConfig dataSourceConfig) {
-        return dbProvider.createTxExecutor(dataSourceConfig);
+        return dbAdapter.createTxExecutor(dataSourceConfig);
     }
 
 
@@ -58,7 +57,7 @@ public class DBHolder {
                             Supplier<DataSource> dataSourceMaker,
                             Supplier<ISqlExecutor> sqlExecutorMaker,
                             Function<DataSource, ITxExecutor> txExecutorMaker) {
-        DBHolder.dbProvider = new JdbcDbAdapter(sqlConfig, dataSourceMaker, sqlExecutorMaker, txExecutorMaker);
+        DBHolder.dbAdapter = new DlzDbAdapter(sqlConfig, dataSourceMaker, sqlExecutorMaker, txExecutorMaker);
     }
 
     /**
@@ -67,7 +66,7 @@ public class DBHolder {
      */
     public static DlzDbProperties getSqlConfig() {
         if (properties == null) {
-            properties = dbProvider.getSqlConfig();
+            properties = dbAdapter.getSqlConfig();
         }
         return properties;
     }

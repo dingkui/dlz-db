@@ -1,8 +1,8 @@
 package com.dlz.db.support.helper;
 
+import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.bean.TableInfo;
-import com.dlz.db.modal.dto.ResultMap;
 
 import java.lang.reflect.Field;
 import java.util.List;

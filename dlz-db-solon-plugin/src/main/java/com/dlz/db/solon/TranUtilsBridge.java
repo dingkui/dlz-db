@@ -2,7 +2,6 @@ package com.dlz.db.solon;
 
 import com.dlz.db.modal.DB;
 import lombok.extern.slf4j.Slf4j;
-import org.noear.solon.data.tran.TranExecutor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

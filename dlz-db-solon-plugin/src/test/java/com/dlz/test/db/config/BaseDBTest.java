@@ -7,11 +7,9 @@ import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.util.id.TraceUtil;
 import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;  // JUnit 4
+import org.junit.BeforeClass;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;  // JUnit 5
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.noear.solon.Solon;
 

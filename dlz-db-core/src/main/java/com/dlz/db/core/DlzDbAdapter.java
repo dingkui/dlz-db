@@ -1,10 +1,6 @@
-package com.dlz.db.core.jdbc;
+package com.dlz.db.core;
 
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
-import com.dlz.db.core.ADbProvider;
-import com.dlz.db.core.DlzDbProperties;
-import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.core.ITxExecutor;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.SqlHolder;
@@ -22,17 +18,17 @@ import java.util.function.Supplier;
  * 用于单元测试，提供真实的数据库连接
  */
 @Slf4j
-public class JdbcDbAdapter extends ADbProvider {
+public class DlzDbAdapter{
     private ISqlExecutor sqlExecutor;
     private final Supplier<DataSource> dataSourceMaker;
     private final Supplier<ISqlExecutor> sqlExecutorMaker;
     private final DlzDbProperties sqlConfig;
     private final Function<DataSource, ITxExecutor> txExecutorMaker;
 
-    public JdbcDbAdapter(DlzDbProperties sqlConfig,
-                         Supplier<DataSource> dataSourceMaker,
-                         Supplier<ISqlExecutor> sqlExecutorMaker,
-                         Function<DataSource, ITxExecutor> txExecutorMaker) {
+    public DlzDbAdapter(DlzDbProperties sqlConfig,
+                        Supplier<DataSource> dataSourceMaker,
+                        Supplier<ISqlExecutor> sqlExecutorMaker,
+                        Function<DataSource, ITxExecutor> txExecutorMaker) {
         // 初始化配置
         this.sqlConfig = sqlConfig;
         this.dataSourceMaker = dataSourceMaker;
@@ -41,15 +37,13 @@ public class JdbcDbAdapter extends ADbProvider {
     }
 
 
-    @Override
     public ITxExecutor createTxExecutor(DataSourceConfig dataSourceConfig) {
         return txExecutorMaker.apply(dataSourceConfig.getDataSource());
     }
 
-    @Override
     public ISqlExecutor getSqlExecutor() {
         if (sqlExecutor == null) {
-            synchronized (JdbcDbAdapter.class) {
+            synchronized (DlzDbAdapter.class) {
                 if (sqlExecutor == null) {
                     DB.Dynamic.setDefaultDataSource(dataSourceMaker.get());
 
@@ -73,7 +67,6 @@ public class JdbcDbAdapter extends ADbProvider {
     }
 
 
-    @Override
     public DlzDbProperties getSqlConfig() {
         return sqlConfig;
     }

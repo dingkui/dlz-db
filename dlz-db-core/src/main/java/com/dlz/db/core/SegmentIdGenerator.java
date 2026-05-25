@@ -3,14 +3,11 @@ package com.dlz.db.core;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
-import com.dlz.db.util.DbLogUtil;
 import com.dlz.kit.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 

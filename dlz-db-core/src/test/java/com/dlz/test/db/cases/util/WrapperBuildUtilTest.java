@@ -1,13 +1,9 @@
 package com.dlz.test.db.cases.util;
 
-import com.dlz.db.annotation.IdType;
-import com.dlz.db.support.PojoCache;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
+import com.dlz.db.support.PojoCache;
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.test.db.entity.AutoIdEntity;
-import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.SysSql;
-import com.dlz.test.db.entity.User;
 import org.junit.Test;
 
 import java.lang.reflect.Field;

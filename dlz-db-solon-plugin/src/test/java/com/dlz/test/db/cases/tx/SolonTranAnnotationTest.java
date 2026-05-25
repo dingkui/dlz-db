@@ -1,7 +1,6 @@
 package com.dlz.test.db.cases.tx;
 
 import com.dlz.db.modal.DB;
-import com.dlz.db.support.DBHolder;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import com.dlz.test.db.service.SolonTxTestService;

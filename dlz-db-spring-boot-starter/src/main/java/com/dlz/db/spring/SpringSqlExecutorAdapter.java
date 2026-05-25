@@ -1,18 +1,14 @@
 package com.dlz.db.spring;
 
-import com.dlz.db.core.DlzConnectionHolder;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.core.anno.ConnectionSupplier;
 import com.dlz.db.core.jdbc.JdbcSqlExecutor;
-import com.dlz.db.modal.DB;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.ConnectionHolder;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 
 /**
  * {@link ISqlExecutor} 的 Spring JDBC 实现。

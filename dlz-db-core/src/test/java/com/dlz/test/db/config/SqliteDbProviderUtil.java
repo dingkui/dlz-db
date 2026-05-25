@@ -1,7 +1,6 @@
 package com.dlz.test.db.config;
 
 import com.dlz.db.core.DlzDbProperties;
-import com.dlz.db.util.DbLogUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 

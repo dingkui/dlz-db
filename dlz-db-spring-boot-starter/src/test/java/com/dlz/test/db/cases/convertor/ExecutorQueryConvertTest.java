@@ -1,15 +1,12 @@
 package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
-import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.dlz.db.convertor.dbtype;
 
 import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.modal.DB;
 import com.dlz.db.support.PojoCache;
 import com.dlz.kit.util.ValUtil;
 import lombok.AllArgsConstructor;
