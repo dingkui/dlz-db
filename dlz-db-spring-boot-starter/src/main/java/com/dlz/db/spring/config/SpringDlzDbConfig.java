@@ -30,6 +30,7 @@ public class SpringDlzDbConfig{
     @Bean
     public static BeanFactoryPostProcessor myBeanFactory() {
         return beanFactory -> {
+            System.out.println("xxxxxxxxxxxxxxx3");
             SpringHolder.init(beanFactory);
         };
     }

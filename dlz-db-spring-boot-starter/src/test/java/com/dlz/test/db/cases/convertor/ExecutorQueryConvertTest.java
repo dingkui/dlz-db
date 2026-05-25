@@ -24,19 +24,6 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 public class ExecutorQueryConvertTest extends BaseDBTest {
-
-    @Before
-    public void setUp() {
-        // 清理线程上下文，确保每次测试都是干净的状态
-        SqlRunThreadHolder.removeLogicDeleteSetting();
-    }
-
-    @After
-    public void tearDown() {
-        // 清理线程上下文
-        SqlRunThreadHolder.removeLogicDeleteSetting();
-    }
-
     /**
      * 测试 convert() 方法 - 使用自定义转换器
      */

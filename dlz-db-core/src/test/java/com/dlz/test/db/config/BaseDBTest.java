@@ -11,6 +11,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 测试基类 - 自动初始化 MockDbProvider
  * 所有需要数据库功能的测试类继承此类即可
@@ -43,6 +46,10 @@ public abstract class BaseDBTest {
                 if (!init) {
                     TraceUtil.setTraceId("initMockDb");
                     final DlzDbProperties testConfig = SqliteDbProviderUtil.createTestConfig();
+                    List<String> sqlList = new ArrayList<>();
+                    sqlList.add("app/*");
+                    sqlList.add("demo/*");
+                    testConfig.setSqllist(sqlList);
                     testConfig.getHelper().setPackageName("com.dlz.test.db.entity");
                     testConfig.getHelper().setAutoUpdate(true);
 

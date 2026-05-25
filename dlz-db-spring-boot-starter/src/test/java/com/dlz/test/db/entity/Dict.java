@@ -28,5 +28,5 @@ public class Dict extends BaseEntity {
     @ApiModelProperty("Object：")
     @TableField(exist=false)
     private Object a7;
-    private Object isDeleted;
+    private int isDeleted;
 }

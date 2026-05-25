@@ -1,7 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
-import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
@@ -25,19 +24,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @DisplayName("查询转换器测试")
 public class ExecutorQueryConvertSolonTest extends BaseDBTest {
-
     @BeforeEach
-    public void setUp() {
-        // 清理线程上下文，确保每次测试都是干净的状态
-        SqlRunThreadHolder.removeLogicDeleteSetting();
+    public void before() {
+        DB.Jdbc.execute("DELETE FROM SYS_SQL");
+        DB.Jdbc.insert("insert into SYS_SQL(IS_DELETED,SQL_KEY,ID) values(0,'xxx',666)");
     }
-
     @AfterEach
-    public void tearDown() {
-        // 清理线程上下文
-        SqlRunThreadHolder.removeLogicDeleteSetting();
+    public void after() {
+        DB.Jdbc.execute("DELETE FROM SYS_SQL");
     }
-
     @Test
     @DisplayName("测试 convert() - 使用自定义转换器")
     public void testConvert_WithCustomConverter() {

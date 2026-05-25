@@ -9,7 +9,7 @@ spring:
 #    username: root
 #    password: 1234qwer
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:./test/testdb.sqlite3
+    url: jdbc:sqlite:./test/testdb22.sqlite3
     username:
     password:
   profiles:
