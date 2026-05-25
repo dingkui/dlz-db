@@ -1,4 +1,7 @@
-package com.dlz.db.solon;
+package com.dlz.db.core;
+
+import com.dlz.db.core.jdbc.JdbcSqlExecutor;
+import com.dlz.db.core.jdbc.JdbcTxExecutor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -6,21 +9,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Solon 事务连接持有者。
+ * Dlz 事务连接持有者。
  * <p>用 ThreadLocal 按 {@link DataSource} 维度绑定事务连接，使
- * {@link SolonSqlExecutorAdapter} 与 {@link SolonTxExecutorAdapter} 在同一事务内复用同一连接。</p>
+ * {@link JdbcTxExecutor} 与 {@link JdbcSqlExecutor} 在同一事务内复用同一连接。</p>
  *
  * <p>使用 {@code Map<DataSource,Connection>} 而非单 Connection，是为了支持
- * 嵌套切换数据源时（如 {@code DB.Dynamic.use("ds2", ...)}）各自独立的事务连接。</p>
+ * 嵌套切换数据源时（如 {@code DB.Dynamic.use("test", ...)}）各自独立的事务连接。</p>
  *
- * @since 7.0.0
+ * @since 7.0.1
  */
-public final class SolonConnectionHolder {
+public final class DlzConnectionHolder {
 
     private static final ThreadLocal<Map<DataSource, Connection>> BINDINGS =
             ThreadLocal.withInitial(HashMap::new);
 
-    private SolonConnectionHolder() {
+    private DlzConnectionHolder() {
     }
 
     /** 绑定一个连接到当前线程的指定数据源。 */
