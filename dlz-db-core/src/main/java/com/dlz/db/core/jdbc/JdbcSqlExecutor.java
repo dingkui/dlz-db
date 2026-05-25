@@ -2,7 +2,7 @@ package com.dlz.db.core.jdbc;
 
 import com.dlz.db.core.DlzConnectionHolder;
 import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.core.func.ConnectionSupplier;
+import com.dlz.db.core.anno.ConnectionSupplier;
 import com.dlz.db.modal.DB;
 import lombok.extern.slf4j.Slf4j;
 
