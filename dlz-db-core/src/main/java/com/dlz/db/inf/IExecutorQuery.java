@@ -137,7 +137,7 @@ public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,ICh
      * 执行 {@code COUNT(*)} 查询，返回匹配记录数。
      * <pre>int n = ...count();</pre>
      */
-    default int count() {
+    default long count() {
         return DBHolder.doDb(s->s.getCnt(this));
     }
 }

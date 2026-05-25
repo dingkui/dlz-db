@@ -75,7 +75,7 @@ public class PresetSqlTest extends BaseDBTest {
 
     @Test
     public void sql_count() {
-        int cnt = DB.Sql.select("SELECT COUNT(*) FROM user WHERE status=#{status}")
+        long cnt = DB.Sql.select("SELECT COUNT(*) FROM user WHERE status=#{status}")
                 .addPara("status", "1").count();
         assertEquals(2, cnt);
     }

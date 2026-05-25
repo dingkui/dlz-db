@@ -79,7 +79,7 @@ public class Page<T> extends Sort<Page> implements Serializable {
     }
 
 
-    public Page<T> doPage(Supplier<Integer> total, Supplier<List<T>> record) {
+    public Page<T> doPage(Supplier<Long> total, Supplier<List<T>> record) {
         if(getCurrent()<=0){
             setCurrent(1);
         }

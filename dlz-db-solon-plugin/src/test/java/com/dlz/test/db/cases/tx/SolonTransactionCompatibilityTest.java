@@ -72,7 +72,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     @Test
     @Order(2)
     void testSolonTranRollback() {
-        int size = DB.Pojo.select(User.class)
+        long size = DB.Pojo.select(User.class)
                 .like(User::getName, "Solon回滚用户")
                 .count();
         try {
@@ -82,7 +82,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
             log.info("捕获到预期异常: {}", e.getMessage());
         }
 
-        int size2 = DB.Pojo.select(User.class)
+        long size2 = DB.Pojo.select(User.class)
                 .like(User::getName, "Solon回滚用户")
                 .count();
 

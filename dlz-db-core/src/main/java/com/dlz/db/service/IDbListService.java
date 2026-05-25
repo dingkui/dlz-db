@@ -38,8 +38,8 @@ public interface IDbListService extends IDbBaseService{
         final PojoQuery<T> wrapper = PojoQuery.wrapper(bean);
         return getBeanList(wrapper,wrapper.getBeanClass());
     }
-    default int getCnt(IExecutorQuery paraMap) {
-        return doCnt(paraMap, jdbcSql -> getSqlExecutor().getFistColumn(jdbcSql.sql, Integer.class, jdbcSql.paras));
+    default long getCnt(IExecutorQuery paraMap) {
+        return doCnt(paraMap, jdbcSql -> getSqlExecutor().getFistColumn(jdbcSql.sql, Long.class, jdbcSql.paras));
     }
     /**
      * 取得分页数据

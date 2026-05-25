@@ -416,13 +416,13 @@ public class SolonTranAnnotationTest extends BaseDBTest {
     void testMultipleTransactionCalls() {
         // 第一次调用
         txService.testCommit();
-        int count1 = DB.Pojo.select(User.class)
+        long count1 = DB.Pojo.select(User.class)
                 .like(User::getName, "事务用户")
                 .count();
 
         // 第二次调用
         txService.testCommit();
-        int count2 = DB.Pojo.select(User.class)
+        long count2 = DB.Pojo.select(User.class)
                 .like(User::getName, "事务用户")
                 .count();
 
