@@ -64,7 +64,7 @@ public class DynamicAndTxTest extends BaseDBTest {
             DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 1, "alice");
         });
 
-        int count = DB.Dynamic.use(TEST_DS_NAME, () ->
+        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
                 DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 1).count()
         );
         assertEquals(1, count);
@@ -105,7 +105,7 @@ public class DynamicAndTxTest extends BaseDBTest {
             DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 100, "committed");
         });
 
-        int count = DB.Dynamic.use(TEST_DS_NAME, () ->
+        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
                 DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 100).count()
         );
         assertEquals("事务提交后应能查到数据", 1, count);
@@ -113,10 +113,10 @@ public class DynamicAndTxTest extends BaseDBTest {
 
     @Test
     public void testTxRun_rollbackOnException() {
-        Integer count1 = DB.Dynamic.use(TEST_DS_NAME, () ->
+        long count1 = DB.Dynamic.use(TEST_DS_NAME, () ->
                 DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
-        assertEquals("异常应触发回滚，数据不应持久化", Integer.valueOf(0), count1);
+        assertEquals("异常应触发回滚，数据不应持久化", 0, count1);
         try {
             DB.Tx.run(TEST_DS_NAME, () -> {
                 DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 200, "rollback");
@@ -129,10 +129,10 @@ public class DynamicAndTxTest extends BaseDBTest {
                     e.getMessage().contains("模拟业务异常"));
         }
 
-        Integer count2 = DB.Dynamic.use(TEST_DS_NAME, () ->
+        long count2 = DB.Dynamic.use(TEST_DS_NAME, () ->
             DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
-        assertEquals("异常应触发回滚，数据不应持久化", Integer.valueOf(0), count2);
+        assertEquals("异常应触发回滚，数据不应持久化", 0, count2);
     }
 
     @Test
@@ -143,7 +143,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         });
         assertEquals(Integer.valueOf(42), result);
 
-        int count = DB.Dynamic.use(TEST_DS_NAME, () ->
+        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
                 DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 300).count()
         );
         assertEquals(1, count);
@@ -158,7 +158,7 @@ public class DynamicAndTxTest extends BaseDBTest {
             DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 400, "nested_tx");
         }));
 
-        int count = DB.Dynamic.use(TEST_DS_NAME, () ->
+        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
             DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 400).count()
         );
         assertEquals(1, count);

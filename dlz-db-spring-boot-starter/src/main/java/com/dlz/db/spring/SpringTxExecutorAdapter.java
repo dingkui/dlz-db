@@ -1,8 +1,6 @@
 package com.dlz.db.spring;
 
 import com.dlz.db.core.ITxExecutor;
-import com.dlz.db.ds.DataSourceConfig;
-import com.dlz.db.exception.DbException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.ConnectionHolder;
@@ -10,8 +8,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.function.Supplier;
 
 /**
  * Spring 事务执行器实现。
@@ -24,11 +20,11 @@ import java.util.function.Supplier;
 @Slf4j
 public class SpringTxExecutorAdapter implements ITxExecutor {
 
-    private final DataSourceConfig config;
+    private final DataSource dataSource;
 
     @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "DataSourceConfig由容器注入，视为不可变")
-    public SpringTxExecutorAdapter(DataSourceConfig config) {
-        this.config = config;
+    public SpringTxExecutorAdapter(DataSource config) {
+        this.dataSource = config;
     }
 
 //    @Override
@@ -82,7 +78,7 @@ public class SpringTxExecutorAdapter implements ITxExecutor {
 
     @Override
     public DataSource getDataSource() {
-        return config.getDataSource();
+        return dataSource;
     }
 
     @Override

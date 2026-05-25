@@ -26,23 +26,17 @@ spring:
     timeout: 5000
 
 dlz:
-  redis:
-    prefix: dlzDbTest
-  cache:
-    anno: true
   db:
     use-db-sql: false
+    sqllist:
+      - app/*
+      - demo/*
     log:
       show-result: false
       show-run-sql: true
-      show-key-sql: true
-      jdbc-sql: true
       show-caller: true
     helper:
       auto-update: true
       package-name: com.dlz.test.db.entity
     logic-delete-field: IS_DELETED
     table-cache-time: -1
-  fw:
-    api-scan-path:
-

@@ -1,25 +1,18 @@
 package com.dlz.db.spring.config;
 
-import com.dlz.db.convertor.dbtype.TableColumnMapper;
-import com.dlz.db.core.ADbProvider;
-import com.dlz.db.core.DlzDbProperties;
-import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.service.ICommService;
-import com.dlz.db.service.impl.CommServiceImpl;
 import com.dlz.db.spring.SpringSqlExecutorAdapter;
+import com.dlz.db.spring.SpringTxExecutorAdapter;
 import com.dlz.db.support.DBHolder;
-import com.dlz.db.support.SqlHolder;
-import com.dlz.db.support.helper.HelperScan;
-import com.dlz.db.util.DbConvertUtil;
-import com.dlz.db.util.DbLogUtil;
-import com.dlz.spring.config.DlzFwConfig;
+import com.dlz.spring.holder.SpringHolder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -30,47 +23,35 @@ import javax.sql.DataSource;
  */
 @Slf4j
 @EnableConfigurationProperties({SpringDlzDbProperties.class})
-public class SpringDlzDbConfig extends DlzFwConfig {
-    @Bean(name = "dbProvider")
-    @ConditionalOnMissingBean(name = "dbProvider")
-    @DependsOn("JdbcTemplate")
-    public ADbProvider dbProvider(SpringDlzDbProperties properties) {
-        ADbProvider provider = new SpringDbProvider(properties);
-        DBHolder.setDbProvider(provider);
-        DbLogUtil.init(properties);
-        if (log.isInfoEnabled()) {
-            log.info("init dbProvider:" + SpringDbProvider.class.getName());
-        }
-        return provider;
+public class SpringDlzDbConfig{
+    /**
+     * spring 容器启动开始执行
+     */
+    @Bean
+    public static BeanFactoryPostProcessor myBeanFactory() {
+        return beanFactory -> {
+            SpringHolder.init(beanFactory);
+        };
     }
 
-    @Bean(name = "sqlExecutor")
-    @Lazy
-    @ConditionalOnMissingBean(name = "sqlExecutor")
-    @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD", justification = "Spring单例配置类，实例方法初始化全局静态组件")
-    public ISqlExecutor sqlExecutor(JdbcTemplate jdbc, ADbProvider dbProvider) {
-        final DlzDbProperties properties = dbProvider.getSqlConfig();
-        final SpringSqlExecutorAdapter springSqlExecutorAdapter = new SpringSqlExecutorAdapter(jdbc);
-        SqlHolder.init();
-        DbConvertUtil.defaultTableColumnMapper = new TableColumnMapper(springSqlExecutorAdapter);
-        if (log.isInfoEnabled()) {
-            log.info("init sqlExecutor:" + SpringSqlExecutorAdapter.class.getName());
-            log.info("init tableCloumnMapper:" + TableColumnMapper.class.getName());
-        }
-        SqlHolder.loadDbSql();
-        DBHolder.sqlExecutor = springSqlExecutorAdapter;
-        //自动扫描
-        if (properties.getHelper().isAutoUpdate()) {
-            log.info("dlzHelper autoUpdate ...");
-            HelperScan.scan(properties.getHelper().getPackageName());
-        }
-        return springSqlExecutorAdapter;
-    }
-    @Bean(name = "commService")
-    @Lazy
-    @ConditionalOnMissingBean(name = "commService")
-    public ICommService commService(ISqlExecutor sqlExecutor) {
-        return new CommServiceImpl(sqlExecutor);
+    /**
+     * 容器刷新完成后初始化 DBHolder（此时 ConfigurationPropertiesBindingPostProcessor 已注册，
+     * SpringDlzDbProperties 已绑定配置文件中的值）
+     */
+    @Bean
+    public ApplicationListener<ContextRefreshedEvent> dbInitListener(SpringDlzDbProperties properties) {
+        return event -> {
+//            DataSource dataSource = SpringHolder.getBean(DataSource.class);
+//            JdbcTemplate jdbcTemplate = SpringHolder.getBean(JdbcTemplate.class);
+//            DBHolder.init(properties,
+//                    () -> dataSource,
+//                    () -> new SpringSqlExecutorAdapter(jdbcTemplate),
+//                    SpringTxExecutorAdapter::new);
+            DBHolder.init(properties,
+                    () -> SpringHolder.getBean(DataSource.class),
+                    () -> new SpringSqlExecutorAdapter(SpringHolder.getBean(JdbcTemplate.class)),
+                    SpringTxExecutorAdapter::new);
+        };
     }
 
     @Bean(name = "JdbcTemplate")

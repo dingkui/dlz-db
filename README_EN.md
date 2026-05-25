@@ -178,11 +178,11 @@ dlz:
 
 ```java
 @Configuration
-@EnableConfigurationProperties(DlzDbProperties.class)
-public class DlzDbConfigs extends DlzDbConfig {}
+@EnableConfigurationProperties(SpringDlzDbProperties.class)
+public class DlzDbConfigs extends SpringDlzDbConfig {}
 ```
 
-> Package path: `com.dlz.db.spring.config.DlzDbConfig`, `com.dlz.db.spring.config.DlzDbProperties`
+> Package path: `com.dlz.db.spring.config.SpringDlzDbConfig`, `com.dlz.db.spring.config.SpringDlzDbProperties`
 
 #### 4. Start Using
 

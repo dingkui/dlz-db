@@ -179,11 +179,11 @@ dlz:
 
 ```java
 @Configuration
-@EnableConfigurationProperties(DlzDbProperties.class)
-public class DlzDbConfigs extends DlzDbConfig {}
+@EnableConfigurationProperties(SpringDlzDbProperties.class)
+public class DlzDbConfigs extends SpringDlzDbConfig {}
 ```
 
-> 包路径：`com.dlz.db.spring.config.DlzDbConfig`、`com.dlz.db.spring.config.DlzDbProperties`
+> 包路径：`com.dlz.db.spring.config.SpringDlzDbConfig`、`com.dlz.db.spring.config.SpringDlzDbProperties`
 
 #### 4. 开始使用
 

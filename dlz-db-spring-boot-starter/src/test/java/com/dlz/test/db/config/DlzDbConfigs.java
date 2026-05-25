@@ -15,4 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({SpringDlzDbProperties.class})
 public class DlzDbConfigs extends SpringDlzDbConfig {
 
+//    public DlzDbConfigs(SpringDlzDbProperties properties) {
+//        super(properties);
+//    }
 }

@@ -71,8 +71,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         log.info("已创建新的 tx_test_user 表");
         
         // 验证表为空
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("测试开始时表应该为空", 0, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("测试开始时表应该为空", 0, count);
         log.info("验证通过：表为空，记录数 = 0");
     }
 
@@ -112,8 +112,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         log.info("=== 测试：验证测试环境配置 ===");
         
         // 验证表为空
-        Integer countBefore = DB.Jdbc.select("SELECT * FROM tx_test_user").count();
-        assertEquals("测试开始时应该没有数据", 0, countBefore.intValue());
+        long countBefore = DB.Jdbc.select("SELECT * FROM tx_test_user").count();
+        assertEquals("测试开始时应该没有数据", 0, countBefore);
         log.info("验证通过：测试开始时记录数 = 0");
         
         // 插入测试数据
@@ -121,8 +121,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         log.info("已插入测试数据：id=1, name=test_user, age=25");
         
         // 验证数据已插入
-        Integer countAfter = DB.Jdbc.select("SELECT * FROM tx_test_user").count();
-        assertEquals("数据应该已插入", 1, countAfter.intValue());
+        long countAfter = DB.Jdbc.select("SELECT * FROM tx_test_user").count();
+        assertEquals("数据应该已插入", 1, countAfter);
         log.info("验证通过：插入后记录数 = 1");
         
         // 验证数据内容
@@ -173,8 +173,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         }
 
         // 验证两层的数据都已回滚
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("两层事务的数据都应该被回滚", 0, count);
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
 
         log.info("=== 测试完成 ===");
@@ -215,8 +215,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         }
 
         // 验证两层的数据都已回滚
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("两层事务的数据都应该被回滚", 0, count);
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
 
         log.info("=== 测试完成 ===");
@@ -251,8 +251,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         transactionTestService.springContainsDlzNoExceptionBothCommit();
 
         // 验证两层的数据都已提交
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被提交", 2, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("两层事务的数据都应该被提交", 2, count);
         log.info("验证通过：记录数 = 2，两层事务都已提交");
 
         // 验证数据内容
@@ -318,8 +318,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         }
         
         // 验证两层的数据都已回滚
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("两层事务的数据都应该被回滚", 0, count);
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
         
         log.info("=== 测试完成 ===");
@@ -376,8 +376,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         }
         
         // 验证两层的数据都已回滚
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("两层事务的数据都应该被回滚", 0, count);
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
         
         log.info("=== 测试完成 ===");
@@ -423,8 +423,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         log.info("外层 DLZ 事务：正常完成");
         
         // 验证两层的数据都已提交
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被提交", 2, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("两层事务的数据都应该被提交", 2, count);
         log.info("验证通过：记录数 = 2，两层事务都已提交");
         
         // 验证数据内容
@@ -487,8 +487,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         }
         
         // 验证数据已回滚
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("数据应该被回滚", 0, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("数据应该被回滚", 0, count);
         log.info("验证通过：记录数 = 0，事务已回滚");
         
         log.info("=== 测试完成 ===");
@@ -531,8 +531,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         }
         
         // 验证数据已回滚
-        Integer count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("数据应该被回滚", 0, count.intValue());
+        long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("数据应该被回滚", 0, count);
         log.info("验证通过：记录数 = 0，事务已回滚");
         
         log.info("=== 测试完成 ===");
@@ -584,8 +584,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         }
         
         // 验证第一次操作的数据已回滚
-        Integer countAfterFirst = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("第一次操作的数据应该被回滚", 0, countAfterFirst.intValue());
+        long countAfterFirst = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("第一次操作的数据应该被回滚", 0, countAfterFirst);
         log.info("验证通过：第一次操作已回滚");
         
         // 第二次操作：正常执行
@@ -596,8 +596,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         });
         
         // 验证第二次操作成功
-        Integer countAfterSecond = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("第二次操作应该成功", 1, countAfterSecond.intValue());
+        long countAfterSecond = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("第二次操作应该成功", 1, countAfterSecond);
         log.info("验证通过：第二次操作成功，记录数 = 1");
         
         // 验证数据内容
@@ -635,8 +635,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         log.info("=== 测试：数据隔离验证 ===");
         
         // 验证测试开始时数据库为空
-        Integer countBefore = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("测试开始时应该没有数据", 0, countBefore.intValue());
+        long countBefore = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("测试开始时应该没有数据", 0, countBefore);
         log.info("验证通过：测试开始时记录数 = 0");
         
         // 插入测试数据
@@ -645,8 +645,8 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
         log.info("已插入测试数据 id=1");
         
         // 验证数据已插入
-        Integer countAfter = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("数据应该已插入", 1, countAfter.intValue());
+        long countAfter = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
+        assertEquals("数据应该已插入", 1, countAfter);
         log.info("验证通过：插入后记录数 = 1");
         
         // 验证数据内容
