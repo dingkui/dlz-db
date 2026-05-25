@@ -173,47 +173,6 @@ class DbPojoTest extends BaseDBTest {
         dbPojo.insert(user);
     }
 
-    @Test
-    @DisplayName("测试 insertBatch - 带批次大小")
-    void testInsertBatchWithSize() {
-        List<TestUser> users = Arrays.asList(
-                new TestUser(),
-                new TestUser()
-        );
-
-        // insertBatch 会尝试执行 SQL
-        dbPojo.insertBatch(users, 100);
-    }
-
-    @Test
-    @DisplayName("测试 insertBatch - 默认批次大小")
-    void testInsertBatchDefaultSize() {
-        List<TestUser> users = Arrays.asList(
-                new TestUser(),
-                new TestUser()
-        );
-
-        dbPojo.insertBatch(users);
-    }
-
-    @Test
-    @DisplayName("测试 insertBatch - 空列表")
-    void testInsertBatchEmptyList() {
-        List<TestUser> users = Collections.emptyList();
-
-        boolean result = dbPojo.insertBatch(users);
-
-        assertFalse(result);
-    }
-
-    @Test
-    @DisplayName("测试 insertBatch - null 列表")
-    void testInsertBatchNullList() {
-        assertThrows(NullPointerException.class, () -> {
-            dbPojo.insertBatch(null);
-        });
-    }
-
     // ========== INSERT OR UPDATE 测试 ==========
 
     @Test

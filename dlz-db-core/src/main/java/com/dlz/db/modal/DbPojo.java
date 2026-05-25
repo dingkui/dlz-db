@@ -82,7 +82,7 @@ public class DbPojo {
             return obj;
         }
         log.warn("更新数据条数应为1,实际更新数据为:{}", execute);
-        return obj;
+        return null;
     }
 
     public <T> T updateById(T obj) {
