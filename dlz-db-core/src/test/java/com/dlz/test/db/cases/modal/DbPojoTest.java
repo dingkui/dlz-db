@@ -1,8 +1,6 @@
 package com.dlz.test.db.cases.modal;
 
 
-import com.dlz.db.annotation.TableName;
-import com.dlz.db.support.PojoCache;
 import com.dlz.db.modal.DbPojo;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -10,17 +8,12 @@ import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.TestUser;
-import lombok.Getter;
-import lombok.Setter;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,26 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DbPojoTest extends BaseDBTest {
 
     private DbPojo dbPojo;
-
-    @BeforeAll
-    static void initTestUserTable() throws Exception {
-        // 为内部类 TestUser 预置表字段信息到缓存中
-        HashMap<String, Integer> tableColumns = new HashMap<>();
-        tableColumns.put("ID", -5);      // BIGINT
-        tableColumns.put("NAME", 12);    // VARCHAR
-        tableColumns.put("AGE", 4);      // INTEGER
-        tableColumns.put("EMAIL", 12);   // VARCHAR
-
-        // 通过反射获取 PojoCache 的 tableColumnsInfoCache 字段
-        Field cacheField = PojoCache.class.getDeclaredField("tableColumnsInfoCache");
-        cacheField.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        java.util.concurrent.ConcurrentHashMap<String, HashMap<String, Integer>> cache =
-                (java.util.concurrent.ConcurrentHashMap<String, HashMap<String, Integer>>) cacheField.get(null);
-        
-        // 注册 DB_POJO_TEST_USER 表的字段信息（注意：表名会被转换为大写带下划线的形式）
-        cache.put("DB_POJO_TEST_USER", tableColumns);
-    }
 
     @BeforeEach
     void setUp() {

@@ -1,22 +1,25 @@
 package com.dlz.db.support;
 
 import com.dlz.db.core.*;
+import com.dlz.db.core.jdbc.JdbcDbAdapter;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.sql.DataSource;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 数据库配置信息
  */
 @Slf4j
 public class DBHolder {
-    public static ISqlExecutor sqlExecutor;
+    private static ISqlExecutor sqlExecutor;
     private static ICommService service;
     private static DlzDbProperties properties;
-    public static ADbProvider dbProvider;
+    private static ADbProvider dbProvider;
     private static SegmentIdGenerator segmentIdGenerator = new SegmentIdGenerator(1000);
 
     /**
@@ -51,8 +54,11 @@ public class DBHolder {
     }
 
 
-    public static void setDbProvider(ADbProvider provider) {
-        DBHolder.dbProvider = provider;
+    public static void init(DlzDbProperties sqlConfig,
+                            Supplier<DataSource> dataSourceMaker,
+                            Supplier<ISqlExecutor> sqlExecutorMaker,
+                            Function<DataSource, ITxExecutor> txExecutorMaker) {
+        DBHolder.dbProvider = new JdbcDbAdapter(sqlConfig, dataSourceMaker, sqlExecutorMaker, txExecutorMaker);
     }
 
     /**
@@ -60,7 +66,7 @@ public class DBHolder {
      * <p>性能考虑：避免每次调用都经过Provider的方法调用
      */
     public static DlzDbProperties getSqlConfig() {
-        if (properties == null && dbProvider != null) {
+        if (properties == null) {
             properties = dbProvider.getSqlConfig();
         }
         return properties;
