@@ -59,17 +59,6 @@ public class DbPojo {
         throw new SystemException("插入失败");
     }
 
-    public <T> boolean insertBatch(List<T> bean, int batchSize) {
-        if (!bean.isEmpty()) {
-            return PojoInsert.wrapper(bean.get(0)).batch(bean, batchSize);
-        }
-        return false;
-    }
-
-    public <T> boolean insertBatch(List<T> bean) {
-        return insertBatch(bean, 1000);
-    }
-
     public <T> T insertOrUpdate(T obj) {
         final Class<T> aClass = (Class<T>) obj.getClass();
         final IdInfo idInfo = PojoCache.getIdInfo(aClass);
