@@ -1,8 +1,6 @@
 package com.dlz.db.core;
 
 import com.dlz.db.ds.DataSourceConfig;
-import com.dlz.db.service.ICommService;
-import com.dlz.db.service.impl.CommServiceImpl;
 
 /**
  * 数据库组件提供者抽象类。
@@ -27,14 +25,6 @@ public abstract class ADbProvider {
      */
     public abstract ISqlExecutor getSqlExecutor();
 
-    /**
-     * 获取 ICommService 实例。
-     *
-     * @return ICommService 实例
-     */
-    public ICommService getService(){
-        return new CommServiceImpl(getSqlExecutor());
-    };
 
     /**
      * 获取 SqlConfig 实例。
