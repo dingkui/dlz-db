@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;  // JUnit 4
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;  // JUnit 5
 import org.junit.jupiter.api.BeforeEach;
 import org.noear.solon.Solon;
@@ -57,12 +58,12 @@ public class BaseDBTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         TraceUtil.setTraceId(this.getClass().getSimpleName());
     }
 
-    @After
+    @AfterEach
     public void after() {
         TraceUtil.clearTraceId();
     }

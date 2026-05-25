@@ -19,11 +19,11 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
     @BeforeEach
     void setUp() {
         // 清理测试数据，确保每次测试环境干净
-        DBHolder.sqlExecutor.update("DROP TABLE IF EXISTS " + TEST_TABLE);
-        DBHolder.sqlExecutor.update("CREATE TABLE " + TEST_TABLE + " (id INTEGER PRIMARY KEY, name TEXT)");
+        DB.Jdbc.execute("DROP TABLE IF EXISTS " + TEST_TABLE);
+        DB.Jdbc.execute("CREATE TABLE " + TEST_TABLE + " (id INTEGER PRIMARY KEY, name TEXT)");
 
         // 清理号段记录
-        DBHolder.sqlExecutor.update("DROP TABLE IF EXISTS sys_seq");
+        DB.Jdbc.execute("DROP TABLE IF EXISTS sys_seq");
         final DataSourceProperty properties = new DataSourceProperty();
         properties.setName("test");
         properties.setDriverClassName("org.sqlite.JDBC");
@@ -31,11 +31,11 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         DB.Dynamic.setDataSource(properties);
         DB.Dynamic.use("test", () -> {
             // 清理测试数据，确保每次测试环境干净
-            DBHolder.sqlExecutor.update("DROP TABLE IF EXISTS " + TEST_TABLE);
-            DBHolder.sqlExecutor.update("CREATE TABLE " + TEST_TABLE + " (id INTEGER PRIMARY KEY, name TEXT)");
+            DB.Jdbc.execute("DROP TABLE IF EXISTS " + TEST_TABLE);
+            DB.Jdbc.execute("CREATE TABLE " + TEST_TABLE + " (id INTEGER PRIMARY KEY, name TEXT)");
 
             // 清理号段记录
-            DBHolder.sqlExecutor.update("DROP TABLE IF EXISTS sys_seq");
+            DB.Jdbc.execute("DROP TABLE IF EXISTS sys_seq");
         });
     }
 

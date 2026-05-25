@@ -1,16 +1,8 @@
 package com.dlz.db.solon;
 
-import com.dlz.db.convertor.dbtype.TableColumnMapper;
-import com.dlz.db.core.ADbProvider;
-import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.modal.DB;
-import com.dlz.db.service.ICommService;
-import com.dlz.db.service.impl.CommServiceImpl;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.SqlHolder;
-import com.dlz.db.support.helper.HelperScan;
-import com.dlz.db.util.DbConvertUtil;
-import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.noear.solon.Solon;
 import org.noear.solon.core.AppContext;
@@ -25,8 +17,6 @@ import javax.sql.DataSource;
  * <ol>
  *   <li>从配置 {@code dlz.db} 绑定 {@link SolonDbProperties}。</li>
  *   <li>等待用户应用注册 {@link DataSource}，注册到 {@link DB#Dynamic} 默认数据源。</li>
- *   <li>构建 {@link SolonDbProvider} 并写入 {@link DBHolder}。</li>
- *   <li>构建 {@link SolonSqlExecutorAdapter} 与 {@link CommServiceImpl}，注册到 Solon 容器。</li>
  *   <li>触发 {@link SqlHolder#init()} 与 {@link SqlHolder#loadDbSql()}，加载 SQL 资源。</li>
  * </ol>
  *
@@ -40,13 +30,6 @@ public class DlzDbSolonPlugin implements Plugin {
         // 1. 绑定配置
         final SolonDbProperties properties = Solon.cfg().getProp("dlz.db").toBean(SolonDbProperties.class);
 
-        // 2. 注册 DbProvider（先于 DataSource，便于其他组件引用）
-        SolonDbProvider provider = new SolonDbProvider(properties);
-        DBHolder.setDbProvider(provider);
-        DbLogUtil.init(properties);
-        context.wrapAndPut(ADbProvider.class, provider);
-        log.info("init dbProvider: {}", SolonDbProvider.class.getName());
-
         // 3. 等 DataSource 就绪后初始化 SqlExecutor / CommService
         context.getBeanAsync(DataSource.class, dataSource -> {
             try {
@@ -56,29 +39,9 @@ public class DlzDbSolonPlugin implements Plugin {
                 // 注册到 Solon 容器，替换原始 DataSource
                 context.wrapAndPut(DataSource.class, dynamicDataSource);
 
-                // 构建 SqlExecutor
-                SolonSqlExecutorAdapter sqlExecutor = new SolonSqlExecutorAdapter();
-                DBHolder.sqlExecutor = sqlExecutor;
 
-                // 加载 SQL 资源（依赖 dbProvider.getResourceLoader()）
-                SqlHolder.init();
-                DbConvertUtil.defaultTableColumnMapper = new TableColumnMapper(sqlExecutor);
-                log.info("init sqlExecutor: {}", SolonSqlExecutorAdapter.class.getName());
-                log.info("init tableCloumnMapper: {}", TableColumnMapper.class.getName());
-                SqlHolder.loadDbSql();
-
-                // 自动更新数据库结构
-                if (properties.getHelper().isAutoUpdate()) {
-                    log.info("dlzHelper autoUpdate ...");
-                    HelperScan.scan(properties.getHelper().getPackageName());
-                }
-
-                // 注册到 Solon 容器
-                context.wrapAndPut(ISqlExecutor.class, sqlExecutor);
-
-                ICommService commService = new CommServiceImpl(sqlExecutor);
-                context.wrapAndPut(ICommService.class, commService);
-                log.info("init commService: {}", CommServiceImpl.class.getName());
+                // 2. 注册 DbProvider（先于 DataSource，便于其他组件引用）
+                DBHolder.init(properties, () -> context.getBean(DataSource.class), SolonSqlExecutorAdapter::new, SolonTxExecutorAdapter::new);
             } catch (Throwable e) {
                 log.error("DLZ-DB 初始化失败", e);
                 throw new RuntimeException(e);

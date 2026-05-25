@@ -6,6 +6,7 @@ dlz:
     use-db-sql: false
     sqllist:
       - app/*
+      - demo/*
     log:
       show-result: false
       show-run-sql: true

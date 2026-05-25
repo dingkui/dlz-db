@@ -1,13 +1,11 @@
 package com.dlz.test.db.cases.db;
 
-import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.support.DBHolder;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
@@ -21,16 +19,21 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SolonSmokeTest extends BaseDBTest {
     @BeforeEach
-    void crud() {
-        ISqlExecutor sqlExecutor = DBHolder.sqlExecutor;
-        sqlExecutor.update("drop table if exists smoke");
-        sqlExecutor.update("create table smoke(id integer primary key autoincrement, name text)");
+    void clear1() {
+        DB.Jdbc.execute("delete from user");
+        DB.Jdbc.execute("delete from smoke");
+    }
+
+    @AfterEach
+    void clear2() {
+        DB.Jdbc.execute("delete from user");
+        DB.Jdbc.execute("delete from smoke");
     }
 
     @Test
     void transactionCommit() {
         DB.Tx.run(() -> {
-            DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "alice");
+            DB.Jdbc.execute("insert into smoke(name) values(?)", "alice");
         });
         long count = DB.Jdbc.select("select count(*) c from smoke where name=?", "alice").count();
         Assertions.assertEquals(1, count);
@@ -41,7 +44,7 @@ public class SolonSmokeTest extends BaseDBTest {
     void transactionRollback() {
         try {
             DB.Tx.run(() -> {
-                DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "bob");
+                DB.Jdbc.execute("insert into smoke(name) values(?)", "bob");
                 throw new RuntimeException("force rollback");
             });
             Assertions.fail("应该抛异常");
@@ -63,10 +66,10 @@ public class SolonSmokeTest extends BaseDBTest {
     void testSolonOuter_DlzInner_InnerException() {
         try {
             DB.Tx.run(() -> {
-                DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "s1_d1_in");
+                DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_in");
                 // 嵌套 DLZ 事务
                 DB.Tx.run(() -> {
-                    DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "s1_d1_in_nested");
+                    DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_in_nested");
                     throw new RuntimeException("DLZ inner exception");
                 });
             });
@@ -86,9 +89,9 @@ public class SolonSmokeTest extends BaseDBTest {
     void testSolonOuter_DlzInner_OuterException() {
         try {
             DB.Tx.run(() -> {
-                DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "s1_d1_out");
+                DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_out");
                 DB.Tx.run(() -> {
-                    DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "s1_d1_out_nested");
+                    DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_out_nested");
                 });
                 throw new RuntimeException("Solon outer exception");
             });
@@ -108,10 +111,10 @@ public class SolonSmokeTest extends BaseDBTest {
     void testDlzOuter_SolonInner_InnerException() {
         try {
             DBHolder.getTxExecutor(null).execute(() -> {
-                DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "d1_s1_in");
+                DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_in");
                 // 嵌套 Solon 事务
                 DB.Tx.run(() -> {
-                    DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "d1_s1_in_nested");
+                    DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_in_nested");
                     throw new RuntimeException("Solon inner exception");
                 });
             });
@@ -131,9 +134,9 @@ public class SolonSmokeTest extends BaseDBTest {
     void testDlzOuter_SolonInner_OuterException() {
         try {
             DBHolder.getTxExecutor(null).execute(() -> {
-                DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "d1_s1_out");
+                DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_out");
                 DB.Tx.run(() -> {
-                    DBHolder.sqlExecutor.update("insert into smoke(name) values(?)", "d1_s1_out_nested");
+                    DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_out_nested");
                 });
                 throw new RuntimeException("DLZ outer exception");
             });
@@ -153,14 +156,7 @@ public class SolonSmokeTest extends BaseDBTest {
     @Order(9)
     void testPojoInsertAndSelect() {
         // 创建用户表
-        DB.Jdbc.execute("DROP TABLE IF EXISTS test_user");
-        DB.Jdbc.execute("CREATE TABLE test_user (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "name TEXT, " +
-                "age INTEGER, " +
-                "email TEXT, " +
-                "create_time DATETIME DEFAULT CURRENT_TIMESTAMP)"
-        );
+        DB.Jdbc.execute("delete from test_user");
 
         // 插入单条记录
         User user = new User();
@@ -327,7 +323,7 @@ public class SolonSmokeTest extends BaseDBTest {
         DB.Pojo.insert(user2);
         
         List<User> users = DB.Pojo.select(User.class)
-                .or(wrapper -> wrapper
+                .ors(wrapper -> wrapper
                         .eq(User::getName, "OR测试A")
                         .ge(User::getAge, 30))
                 .queryBeanList();
@@ -343,14 +339,6 @@ public class SolonSmokeTest extends BaseDBTest {
     @Test
     @Order(16)
     void testLogicDelete() {
-        // 创建带有 isDeleted 字段的测试表
-        DB.Jdbc.execute("DROP TABLE IF EXISTS test_logic_delete");
-        DB.Jdbc.execute("CREATE TABLE test_logic_delete (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "name TEXT, " +
-                "is_deleted INTEGER DEFAULT 0)"
-        );
-        
         // 注意：这里需要使用有 isDeleted 字段的实体进行测试
         // 由于 User 实体已有 isDeleted 字段，可以直接使用
         User user = new User();

@@ -20,10 +20,11 @@ import java.sql.SQLFeatureNotSupportedException;
 @Slf4j
 public class DynamicDataSource implements DataSource {
 
+    private final DataSource defaultDataSource;
+
     public DynamicDataSource(DataSource defaultDataSource) {
+        this.defaultDataSource = defaultDataSource;
         DB.Dynamic.setDefaultDataSource(defaultDataSource);
-        // 注意：不设置自己为默认数据源，避免循环依赖
-        // 默认数据源由外部设置（如 DlzDbSolonPlugin）
         log.info("初始化 DynamicDataSource，默认数据源: {}", defaultDataSource);
     }
 
@@ -76,6 +77,10 @@ public class DynamicDataSource implements DataSource {
      * 从 DB.Dynamic 获取当前线程的目标数据源
      */
     private DataSource getTargetDataSource() {
-        return DB.Dynamic.getDataSource();
+        DataSource dataSource = DB.Dynamic.getDataSource();
+        if (dataSource == null || dataSource == this) {
+            return defaultDataSource;
+        }
+        return dataSource;
     }
 }

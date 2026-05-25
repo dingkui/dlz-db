@@ -1,7 +1,9 @@
 package com.dlz.db.solon;
 
+import com.dlz.db.core.DlzConnectionHolder;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.core.func.ConnectionSupplier;
+import com.dlz.db.core.jdbc.JdbcSqlExecutor;
 import com.dlz.db.modal.DB;
 import lombok.extern.slf4j.Slf4j;
 import org.noear.solon.annotation.Component;
@@ -24,14 +26,14 @@ import java.sql.Connection;
  */
 @Slf4j
 @Component
-public class SolonSqlExecutorAdapter implements ISqlExecutor {
+public class SolonSqlExecutorAdapter extends JdbcSqlExecutor {
 
     @Override
     public ConnectionSupplier getConnectionSupplier() {
         return () -> {
             DataSource ds = DB.Dynamic.getDataSource();
             // 1. 优先复用 dlz-db 自身事务连接（DB.Tx.run）
-            Connection bound = SolonConnectionHolder.get(ds);
+            Connection bound = DlzConnectionHolder.get(ds);
             if (bound != null) {
                 log.debug("复用 dlz-db 自身事务连接（需要 wrapNoClose）");
                 return wrapNoClose(bound);
@@ -48,24 +50,5 @@ public class SolonSqlExecutorAdapter implements ISqlExecutor {
             log.debug("获取新连接");
             return ds.getConnection();
         };
-    }
-
-    /**
-     * 包装一个 close() 无操作的连接代理，避免 try-with-resources 关闭事务连接。
-     */
-    private static Connection wrapNoClose(Connection real) {
-        return (Connection) java.lang.reflect.Proxy.newProxyInstance(
-                Connection.class.getClassLoader(),
-                new Class<?>[]{Connection.class},
-                (proxy, method, args) -> {
-                    if ("close".equals(method.getName()) && (args == null || args.length == 0)) {
-                        return null;
-                    }
-                    try {
-                        return method.invoke(real, args);
-                    } catch (java.lang.reflect.InvocationTargetException e) {
-                        throw e.getTargetException();
-                    }
-                });
     }
 }
