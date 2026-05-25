@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.modal;
 
+import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DbSql;
 import com.dlz.db.modal.wrapper.SqlExecute;
 import com.dlz.db.modal.wrapper.SqlQuery;
@@ -71,9 +72,7 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 execute 方法")
     void testExecute() {
-        // Mock 环境下 execute 不会抛异常，返回 0
-        int result = dbSql.execute("SELECT 1");
-        assertEquals(0, result);
+        assertThrows(DbException.class, () -> dbSql.execute("SELECT 1"));
     }
 
     @Test
