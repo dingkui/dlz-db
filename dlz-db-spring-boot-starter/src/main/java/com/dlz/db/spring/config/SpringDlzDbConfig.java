@@ -28,9 +28,8 @@ public class SpringDlzDbConfig{
      * spring 容器启动开始执行
      */
     @Bean
-    public static BeanFactoryPostProcessor myBeanFactory() {
+    public BeanFactoryPostProcessor myDbBeanFactory() {
         return beanFactory -> {
-            System.out.println("xxxxxxxxxxxxxxx3");
             SpringHolder.init(beanFactory);
         };
     }
