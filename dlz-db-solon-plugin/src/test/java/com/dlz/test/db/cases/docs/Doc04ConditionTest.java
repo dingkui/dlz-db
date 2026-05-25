@@ -117,7 +117,7 @@ public class Doc04ConditionTest extends BaseDBTest {
     @Test
     public void conditionTest4_2_2() {
         DB.Pojo.select(User.class)
-                .or(w -> w
+                .ors(w -> w
                         .eq(User::getCity, "北京")
                         .eq(User::getCity, "上海")
                         .eq(User::getCity, "广州")
@@ -131,7 +131,7 @@ public class Doc04ConditionTest extends BaseDBTest {
     public void conditionTest4_2_3() {
         DB.Pojo.select(User.class)
                 .eq(User::getStatus, 1)
-                .and(w -> w
+                .ands(w -> w
                         .gt(User::getAge, 18)
                         .lt(User::getAge, 60)
                 )
@@ -143,9 +143,9 @@ public class Doc04ConditionTest extends BaseDBTest {
     public void conditionTest4_2_4() {
         DB.Pojo.select(User.class)
                 .eq(User::getStatus, 1)
-                .or(w -> w
+                .ors(w -> w
                         .eq(User::getVip, 1)
-                        .and(o -> o
+                        .ands(o -> o
                                 .eq(User::getVip, 0)
                                 .gt(User::getScore, 100)
                         )
@@ -167,7 +167,7 @@ public class Doc04ConditionTest extends BaseDBTest {
         // 应用到查询
         DB.Pojo.select(User.class)
                 .where(baseCondition)
-                .or(w -> w.addChildren(vipCondition))
+                .ors(w -> w.addChildren(vipCondition))
                 .queryList();
         // 复用条件   STATUS = 1 and AGE > 18
         //sql:select * from USER t where STATUS = 1 and AGE > 18 and (VIP = 1 or LEVEL > 5) and IS_DELETED = 0

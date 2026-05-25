@@ -102,14 +102,14 @@ public class ConditionTest extends BaseDBTest {
     @Test
     public void pojo_and() {
         assertEquals(1, DB.Pojo.select(User.class)
-                .and(a -> a.eq(User::getStatus, "1").eq(User::getName, "alice"))
+                .ands(a -> a.eq(User::getStatus, "1").eq(User::getName, "alice"))
                 .queryBeanList().size());
     }
 
     @Test
     public void pojo_or() {
         assertEquals(2, DB.Pojo.select(User.class)
-                .or(q->q.eq(User::getName, "alice").eq(User::getName, "bob"))
+                .ors(q->q.eq(User::getName, "alice").eq(User::getName, "bob"))
                 .queryBeanList().size());
     }
 
@@ -130,7 +130,7 @@ public class ConditionTest extends BaseDBTest {
 
     @Test
     public void table_and() {
-        assertEquals(1, DB.Table.select("user").eq("status", "1").and(a->a.eq("name", "alice")).queryList().size());
+        assertEquals(1, DB.Table.select("user").eq("status", "1").ands(a->a.eq("name", "alice")).queryList().size());
     }
 
     @Test

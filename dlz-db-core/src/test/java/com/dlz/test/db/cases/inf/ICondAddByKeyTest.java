@@ -359,9 +359,9 @@ class ICondAddByKeyTest {
     void testComplexCondition() {
         Condition result = condition
                 .eq("tenantId", 100)
-                .and(c -> c
+                .ands(c -> c
                     .eq("status", 1)
-                    .or(o -> o
+                    .ors(o -> o
                         .gt("age", 18)
                         .isNotNull("email")
                     )

@@ -19,9 +19,9 @@ public class WrapperSelectTest extends BaseDBTest {
         menu.setName("全生命周期项目");
         final PojoQuery<Menu> wrapper = DB.Pojo.select(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
-                .or(w -> w
+                .ors(w -> w
                         .eq(Menu::getCode, menu.getCode())
-                        .and(s -> s.eq(Menu::getName, menu.getName()).eq(Menu::getCategory, "1")));
+                        .ands(s -> s.eq(Menu::getName, menu.getName()).eq(Menu::getCategory, "1")));
         showSql(wrapper, "conditionWhereTest3_2", "select * from sys_menu t where (CODE = 'qsm' or (NAME = '全生命周期项目' and CATEGORY = '1')) and IS_DELETED = 0");
     }
 
@@ -33,7 +33,7 @@ public class WrapperSelectTest extends BaseDBTest {
         final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
                 .eq(Menu::getCategory, "1")
-                .or(w -> w
+                .ors(w -> w
                         .eq(Menu::getCode, menu.getCode())
                         .eq(Menu::getName, "1"));
         showSql(menuQueryWrapper, "conditionWhereTest3_3", "select * from sys_menu t where CATEGORY = '1' and (CODE = 'qsm' or NAME = '1') and IS_DELETED = 0");
@@ -47,7 +47,7 @@ public class WrapperSelectTest extends BaseDBTest {
         final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
                 .eq(Menu::getCategory, "1")
-                .or(xx -> xx
+                .ors(xx -> xx
                         .eq(Menu::getCode, menu.getCode())
                         .eq(Menu::getName, "1"));
         showSql(menuQueryWrapper, "conditionWhereTest3_4", "select * from sys_menu t where CATEGORY = '1' and (CODE = 'qsm' or NAME = '1') and IS_DELETED = 0");
@@ -60,9 +60,9 @@ public class WrapperSelectTest extends BaseDBTest {
         menu.setName("全生命周期项目");
         final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
-                .or(w -> w
+                .ors(w -> w
                         .eq(Menu::getCode, menu.getCode())
-                        .and(xx1 -> xx1
+                        .ands(xx1 -> xx1
                                 .eq(Menu::getName, menu.getName())
                                 .eq(Menu::getCategory, "1")));
         showSql(menuQueryWrapper, "conditionWhereTest3_5", "select * from sys_menu t where (CODE = 'qsm' or (NAME = '全生命周期项目' and CATEGORY = '1')) and IS_DELETED = 0");

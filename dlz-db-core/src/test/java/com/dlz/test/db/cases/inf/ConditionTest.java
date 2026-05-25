@@ -211,18 +211,18 @@ class ConditionTest {
     // ========== AND/OR 嵌套测试 ==========
 
     @Test
-    @DisplayName("测试 and() 嵌套")
+    @DisplayName("测试 ands() 嵌套")
     void testAnd() {
-        Condition result = condition.and(c -> c.eq("status", 1).gt("age", 18));
+        Condition result = condition.ands(c -> c.eq("status", 1).gt("age", 18));
         
         assertNotNull(result);
         assertEquals("where (STATUS = 1 and AGE > 18)", getSql(result));
     }
 
     @Test
-    @DisplayName("测试 or() 嵌套")
+    @DisplayName("测试 ors() 嵌套")
     void testOr() {
-        Condition result = condition.or(c -> c.eq("status", 1).eq("status", 2));
+        Condition result = condition.ors(c -> c.eq("status", 1).eq("status", 2));
         
         assertNotNull(result);
         assertEquals("where (STATUS = 1 or STATUS = 2)", getSql(result));
@@ -265,9 +265,9 @@ class ConditionTest {
     void testComplexCondition() {
         Condition result = condition
                 .eq("tenantId", 100)
-                .and(c -> c
+                .ands(c -> c
                     .eq("status", 1)
-                    .or(o -> o
+                    .ors(o -> o
                         .gt("age", 18)
                         .isNotNull("email")
                     )

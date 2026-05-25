@@ -51,8 +51,8 @@ public class TableDeleteTest extends BaseDBTest {
                         .ne(Dict::getA2, "3")
                         .eq(Dict::getA4, "2")
                         .le(Dict::getA6, "10")
-                        .or(o -> o.eq(Dict::getA6, "10").eq(Dict::getA6, "10"))
-                        .and(a -> a.eq(Dict::getA6, "10").eq(Dict::getA6, "10"))
+                        .ors(o -> o.eq(Dict::getA6, "10").eq(Dict::getA6, "10"))
+                        .ands(a -> a.eq(Dict::getA6, "10").eq(Dict::getA6, "10"))
                         .sql("exists (select 1 from dual where t_b_dict where 1=#{xx}) ", new JSONMap("xx", 999)));
 
         showSql(delete, "tableDeleteConditionTest1", "delete from t_b_dict where XXSS <> '3' and A4 = '2' and A6 <= '10' and (A6 = '10' or A6 = '10') and (A6 = '10' and A6 = '10') and (exists (select 1 from dual where t_b_dict where 1=999) ) and IS_DELETED = 0");
@@ -62,7 +62,7 @@ public class TableDeleteTest extends BaseDBTest {
     public void tableDeleteConditionTest2() {
         TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1")
-                .or(o -> o
+                .ors(o -> o
                         .in(Dict::getA2, "3,4,5,6")
                         .in(Dict::getA2, "'31',111,5,6")
                         .in(Dict::getA2, "1")
@@ -76,8 +76,8 @@ public class TableDeleteTest extends BaseDBTest {
                 .where(Condition.where()
                         .eq("equipment_id", 1)
                         .eq("equipment_id2", 2)
-                        .and(w -> w.eq("xxId2", 3).eq("xxId1", 4))
-                        .or(w -> w.eq("xxId2", 3).eq("xxId1", 4))
+                        .ands(w -> w.eq("xxId2", 3).eq("xxId1", 4))
+                        .ors(w -> w.eq("xxId2", 3).eq("xxId1", 4))
                         .eq("xxId3", 5));
         showSql(delete, "tableDeleteConditionTest3", "delete from dh_room where equipment_id = 1 and equipment_id2 = 2 and (XX_ID2 = 3 and XX_ID1 = 4) and (XX_ID2 = 3 or XX_ID1 = 4) and XX_ID3 = 5");
     }

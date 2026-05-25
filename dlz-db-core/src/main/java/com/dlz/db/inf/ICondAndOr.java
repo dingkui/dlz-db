@@ -87,24 +87,24 @@ public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
 
     /**
      * 添加一组用 <b>AND</b> 连接的子条件，整组与外层条件用外层默认连接符（通常为 AND）拼接。
-     * <p>语义：<b>方法名 = 括号内部的连接符</b>。{@code .and(ands -> ...)} 表示 lambda 内的每个子条件都用 AND 拼接。
+     * <p>语义：<b>方法名 = 括号内部的连接符</b>。{@code .ands(ands -> ...)} 表示 lambda 内的每个子条件都用 AND 拼接。
      * <p>子条件数量 > 1 时自动加括号。
      *
      * <pre>
      * // 单纯使用：等价于链式 AND（通常不需要，直接链式即可）
-     * .and(a -> a.eq(User::getStatus, 1).gt(User::getAge, 18))
+     * .ands(a -> a.eq(User::getStatus, 1).gt(User::getAge, 18))
      * // SQL: (status = 1 AND age > 18)
      *
      * // 在 or 内部使用，构造  (A AND B) OR (C AND D)
-     * .or(o -> o
-     *     .and(a -> a.eq(User::getType, 1).gt(User::getAge, 18))
-     *     .and(a -> a.eq(User::getType, 2).lt(User::getAge, 60)))
+     * .ors(o -> o
+     *     .ands(a -> a.eq(User::getType, 1).gt(User::getAge, 18))
+     *     .ands(a -> a.eq(User::getType, 2).lt(User::getAge, 60)))
      * </pre>
      *
      * @param ands 一组将被 <b>AND</b> 连接的子条件（lambda 内调用 eq/gt/or/... 等）
      * @return 当前条件对象，支持链式调用
      */
-    default ME and(Consumer<Condition> ands) {
+    default ME ands(Consumer<Condition> ands) {
         // 实现思路：新建一个 muAnd 容器节点挂到当前条件上，
         // 再把该容器作为参数传给 lambda，用户在 lambda 内添加的所有子条件
         // 都会被 addChildren 到此容器，最终渲染时容器内的 children 全部用 AND 拼接。
@@ -117,29 +117,29 @@ public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
 
     /**
      * 添加一组用 <b>OR</b> 连接的子条件，整组与外层条件用外层默认连接符（通常为 AND）拼接。
-     * <p>语义：<b>方法名 = 括号内部的连接符</b>。{@code .or(ors -> ...)} 表示 lambda 内的每个子条件都用 OR 拼接。
+     * <p>语义：<b>方法名 = 括号内部的连接符</b>。{@code .ors(ors -> ...)} 表示 lambda 内的每个子条件都用 OR 拼接。
      * <p>子条件数量 > 1 时自动加括号。
      *
      * <pre>
      * // 最常见用法：A AND (B OR C)
      * .eq(User::getStatus, 1)
-     * .or(o -> o.like(User::getName, kw).like(User::getMobile, kw))
+     * .ors(o -> o.like(User::getName, kw).like(User::getMobile, kw))
      * // SQL: status = 1 AND (name LIKE ? OR mobile LIKE ?)
      *
      * // 并列多个 or 组：(A OR B) AND (C OR D)
-     * .or(o -> o.eq(User::getType, 1).eq(User::getType, 2))
-     * .or(o -> o.gt(User::getAge, 60).lt(User::getAge, 18))
+     * .ors(o -> o.eq(User::getType, 1).eq(User::getType, 2))
+     * .ors(o -> o.gt(User::getAge, 60).lt(User::getAge, 18))
      * // SQL: (type = 1 OR type = 2) AND (age > 60 OR age < 18)
      * </pre>
      *
-     * <p><b>⚠️ 与 MyBatis-Plus 的差异</b>：MP 的 {@code .or(lambda)} 表示 "下一组与前文用 OR 连接，lambda 内部默认 AND"；
-     * DLZ-DB 的 {@code .or(lambda)} 表示 "lambda 内部强制 OR 连接，整组与前文用 AND"。语义相反，从 MP 迁移时请逐处审查。
+     * <p><b>⚠️ 与 MyBatis-Plus 的差异</b>：MP 的 {@code .ors(lambda)} 表示 "下一组与前文用 OR 连接，lambda 内部默认 AND"；
+     * DLZ-DB 的 {@code .ors(lambda)} 表示 "lambda 内部强制 OR 连接，整组与前文用 AND"。语义相反，从 MP 迁移时请逐处审查。
      *
      * @param ors 一组将被 <b>OR</b> 连接的子条件（lambda 内调用 eq/gt/and/... 等）
      * @return 当前条件对象，支持链式调用
      */
-    default ME or(Consumer<Condition> ors) {
-        // 实现思路：与 and(...) 对称，只是容器类型换成 muOr。
+    default ME ors(Consumer<Condition> ors) {
+        // 实现思路：与 ands(...) 对称，只是容器类型换成 muOr。
         // muOr 容器在渲染时把内部 children 全部用 OR 拼接；容器本身与外层（默认 AND）相接。
         // 这也是 "方法名 = 内部连接符" 这一核心设计的体现：调用处只需关心括号内的逻辑运算。
         Condition or = DbBuildEnum.muOr.build(getTableName());

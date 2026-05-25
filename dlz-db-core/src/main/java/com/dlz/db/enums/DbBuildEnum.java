@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 
 @AllArgsConstructor
 public enum DbBuildEnum {
-    and("and #s"),//and多条件语句,
-    or("or #s"),//or多条件语句,
+    ands("and #s"),//and多条件语句,
+    ors("or #s"),//or多条件语句,
     muOr("#s"),//多条件语句 or 拼接
     muAnd("#s"),//多条件语句 and 拼接,
     sql("(#s)"),//自定义sql,
@@ -87,8 +87,8 @@ public enum DbBuildEnum {
     public Condition build(String tableName) {
         switch (this) {
             case where:
-            case and:
-            case or:
+            case ands:
+            case ors:
             case muOr:
             case muAnd:
                 return new Condition(this, tableName).setRunSql(_sql);

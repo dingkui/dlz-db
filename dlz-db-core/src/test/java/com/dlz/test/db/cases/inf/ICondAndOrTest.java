@@ -33,30 +33,30 @@ class ICondAndOrTest {
     // ========== AND 嵌套测试 ==========
 
     @Test
-    @DisplayName("测试 and() - 简单AND嵌套")
+    @DisplayName("测试 ands() - 简单AND嵌套")
     void testAndSimple() {
-        Condition result = condition.and(c -> c.eq("status", 1).gt("age", 18));
+        Condition result = condition.ands(c -> c.eq("status", 1).gt("age", 18));
         
         assertNotNull(result);
         assertEquals("where (STATUS = 1 and AGE > 18)", getSql(result));
     }
 
     @Test
-    @DisplayName("测试 and() - 单个条件")
+    @DisplayName("测试 ands() - 单个条件")
     void testAndSingleCondition() {
-        Condition result = condition.and(c -> c.eq("status", 1));
+        Condition result = condition.ands(c -> c.eq("status", 1));
         
         assertNotNull(result);
         assertEquals("where STATUS = 1", getSql(result));
     }
 
     @Test
-    @DisplayName("测试 and() - 多个AND嵌套")
+    @DisplayName("测试 ands() - 多个AND嵌套")
     void testAndMultiple() {
         Condition result = condition
                 .eq("tenantId", 100)
-                .and(c -> c.eq("status", 1).gt("age", 18))
-                .and(c -> c.like("name", "张").isNotNull("email"));
+                .ands(c -> c.eq("status", 1).gt("age", 18))
+                .ands(c -> c.like("name", "张").isNotNull("email"));
         
         assertNotNull(result);
         assertEquals("where TENANT_ID = 100 and (STATUS = 1 and AGE > 18) and (NAME like '%张%' and EMAIL is not null)", getSql(result));
@@ -65,29 +65,29 @@ class ICondAndOrTest {
     // ========== OR 嵌套测试 ==========
 
     @Test
-    @DisplayName("测试 or() - 简单OR嵌套")
+    @DisplayName("测试 ors() - 简单OR嵌套")
     void testOrSimple() {
-        Condition result = condition.or(c -> c.eq("status", 1).eq("status", 2));
+        Condition result = condition.ors(c -> c.eq("status", 1).eq("status", 2));
         
         assertNotNull(result);
         assertEquals("where (STATUS = 1 or STATUS = 2)", getSql(result));
     }
 
     @Test
-    @DisplayName("测试 or() - 单个条件")
+    @DisplayName("测试 ors() - 单个条件")
     void testOrSingleCondition() {
-        Condition result = condition.or(c -> c.eq("status", 1));
+        Condition result = condition.ors(c -> c.eq("status", 1));
         
         assertNotNull(result);
         assertEquals("where STATUS = 1", getSql(result));
     }
 
     @Test
-    @DisplayName("测试 or() - 多个OR嵌套")
+    @DisplayName("测试 ors() - 多个OR嵌套")
     void testOrMultiple() {
         Condition result = condition
-                .or(c -> c.eq("type", 1).eq("type", 2))
-                .or(c -> c.gt("age", 60).lt("age", 18));
+                .ors(c -> c.eq("type", 1).eq("type", 2))
+                .ors(c -> c.gt("age", 60).lt("age", 18));
         
         assertNotNull(result);
         assertEquals("where (TYPE = 1 or TYPE = 2) and (AGE > 60 or AGE < 18)", getSql(result));
@@ -100,7 +100,7 @@ class ICondAndOrTest {
     void testAndOrMixed1() {
         Condition result = condition
                 .eq("status", 1)
-                .or(c -> c.like("name", "张").like("mobile", "138"));
+                .ors(c -> c.like("name", "张").like("mobile", "138"));
         
         assertNotNull(result);
         assertEquals("where STATUS = 1 and (NAME like '%张%' or MOBILE like '%138%')", getSql(result));
@@ -109,9 +109,9 @@ class ICondAndOrTest {
     @Test
     @DisplayName("测试 and/or 混合 - (A AND B) OR (C AND D)")
     void testAndOrMixed2() {
-        Condition result = condition.or(c -> 
-            c.and(a -> a.eq("type", 1).gt("age", 18))
-             .and(a -> a.eq("type", 2).lt("age", 60))
+        Condition result = condition.ors(c -> 
+            c.ands(a -> a.eq("type", 1).gt("age", 18))
+             .ands(a -> a.eq("type", 2).lt("age", 60))
         );
         
         assertNotNull(result);
@@ -123,9 +123,9 @@ class ICondAndOrTest {
     void testAndOrComplex() {
         Condition result = condition
                 .eq("tenantId", 100)
-                .and(c -> c
+                .ands(c -> c
                     .eq("status", 1)
-                    .or(o -> o
+                    .ors(o -> o
                         .gt("age", 18)
                         .isNotNull("email")
                     )
@@ -140,9 +140,9 @@ class ICondAndOrTest {
     void testAndOrMultiLevel() {
         Condition result = condition
                 .eq("status", 1)
-                .or(c -> c
-                    .and(a -> a.gt("age", 18).lt("age", 60))
-                    .or(o -> o.isNotNull("vip_level").eq("level", 3))
+                .ors(c -> c
+                    .ands(a -> a.gt("age", 18).lt("age", 60))
+                    .ors(o -> o.isNotNull("vip_level").eq("level", 3))
                 );
         
         assertNotNull(result);
@@ -152,18 +152,18 @@ class ICondAndOrTest {
     // ========== 边界情况测试 ==========
 
     @Test
-    @DisplayName("测试 and() - 空lambda")
+    @DisplayName("测试 ands() - 空lambda")
     void testAndEmptyLambda() {
-        Condition result = condition.and(c -> {});
+        Condition result = condition.ands(c -> {});
         
         assertNotNull(result);
         assertEquals("", getSql(result));
     }
 
     @Test
-    @DisplayName("测试 or() - 空lambda")
+    @DisplayName("测试 ors() - 空lambda")
     void testOrEmptyLambda() {
-        Condition result = condition.or(c -> {});
+        Condition result = condition.ors(c -> {});
         
         assertNotNull(result);
         assertEquals("", getSql(result));
@@ -173,7 +173,7 @@ class ICondAndOrTest {
     @DisplayName("测试链式调用 - and后继续链式")
     void testChainedAfterAnd() {
         Condition result = condition
-                .and(c -> c.eq("status", 1))
+                .ands(c -> c.eq("status", 1))
                 .gt("age", 18)
                 .like("name", "张");
         
@@ -185,7 +185,7 @@ class ICondAndOrTest {
     @DisplayName("测试链式调用 - or后继续链式")
     void testChainedAfterOr() {
         Condition result = condition
-                .or(c -> c.eq("type", 1))
+                .ors(c -> c.eq("type", 1))
                 .eq("status", 1)
                 .isNotNull("email");
         

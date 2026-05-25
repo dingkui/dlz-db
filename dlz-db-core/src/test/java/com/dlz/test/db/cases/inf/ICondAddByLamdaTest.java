@@ -287,9 +287,9 @@ class ICondAddByLamdaTest {
     void testComplexCondition() {
         Condition result = condition
                 .eq(TestUser::getId, 100L)
-                .and(c -> c
+                .ands(c -> c
                     .eq(TestUser::getStatus, 1)
-                    .or(o -> o
+                    .ors(o -> o
                         .gt(TestUser::getAge, 18)
                         .isNotNull(TestUser::getEmail)
                     )
