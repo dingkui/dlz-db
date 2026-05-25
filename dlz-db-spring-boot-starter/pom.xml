@@ -19,11 +19,11 @@
         </dependency>
 
         <!-- dlz-spring (Spring 依赖) -->
-        <dependency>
-            <groupId>top.dlzio</groupId>
-            <artifactId>dlz-spring</artifactId>
-            <version>${dlz-spring.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>top.dlzio</groupId>-->
+<!--            <artifactId>dlz-spring</artifactId>-->
+<!--            <version>${dlz-spring.version}</version>-->
+<!--        </dependency>-->
 
         <!-- Spring Boot -->
         <dependency>
