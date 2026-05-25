@@ -1,8 +1,8 @@
 package com.dlz.db.core;
 
 import com.dlz.db.convertor.rowMapper.IRowMapper;
-import com.dlz.db.core.func.ConnectionSupplier;
-import com.dlz.db.core.func.SqlAction;
+import com.dlz.db.core.anno.ConnectionSupplier;
+import com.dlz.db.core.anno.SqlAction;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
