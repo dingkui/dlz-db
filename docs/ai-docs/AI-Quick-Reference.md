@@ -1,4 +1,4 @@
-# AI 速读 
+# AI 速读
 
 适用：top.dlzio:dlz-db-spring-boot-starter:V7.0.1  top.dlzio:dlz-db-solon-plugin:V7.0.1
 
@@ -119,11 +119,11 @@ List<User> r = DB.Sql.select("key.demo.user.find").addPara("status", "1,2,3".spl
 ## 九、预设sql
 
 ### sql语法及参数说明:
- - 动态sql: `[]` 内使用的参数为空`(null/空字符串/空集合)`时，该片段自动忽略
- - #{key} 为参数占位，转换为 `?`
- - ${key}为sql拼接替换，支持${key.xxx}，自动拼接其他预设sql片段.仅适用于列名/排序/SQL片段等场景，不可用于用户输入值
- - param为集合类型，自动生成in sql，已做防sql注入处理
- - 以上语法适用 DB.Pojo.select(Bean.class).sql(" [a=#{a}]",new JSONMap("a",1)) 
+- 动态sql: `[]` 内使用的参数为空`(null/空字符串/空集合)`时，该片段自动忽略
+- #{key} 为参数占位，转换为 `?`
+- ${key}为sql拼接替换，支持${key.xxx}，自动拼接其他预设sql片段.仅适用于列名/排序/SQL片段等场景，不可用于用户输入值
+- param为集合类型，自动生成in sql，已做防sql注入处理
+- 以上语法适用 DB.Pojo.select(Bean.class).sql(" [a=#{a}]",new JSONMap("a",1))
 
 ### 配置方式1：配置文件
 

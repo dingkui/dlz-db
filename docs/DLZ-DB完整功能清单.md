@@ -167,8 +167,8 @@ notBetween(field, min, max)     // NOT BETWEEN
 #### 模糊查询
 ```java
 like(field, value)        // LIKE '%value%'
-likeLeft(field, value)        // LIKE 'value%'
-likeRight(field, value)        // LIKE '%value'
+likeLeft(field, value)        // LIKE '%value'
+likeRight(field, value)        // LIKE 'value%'
 notLike(field, value)        // NOT LIKE '%value%'
 ```
 
