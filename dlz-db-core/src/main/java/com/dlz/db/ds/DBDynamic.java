@@ -65,11 +65,10 @@ public class DBDynamic {
             return null;
         });
     }
-
     /**
      * 获取当前线程的数据源配置（包级可见，供 {@link DBTx} 使用）
      */
-    DataSourceConfig getCurrentConfig() {
+    public DataSourceConfig getCurrentConfig() {
         DataSourceConfig config = HOLDER_config.get();
         if (config == null) {
             config = configPool.get(DEFAULT_NAME);

@@ -117,4 +117,8 @@ public class DataSourceConfig {
             rowMapper = null;
         }
     }
+
+    public String getName() {
+        return property.getName();
+    }
 }

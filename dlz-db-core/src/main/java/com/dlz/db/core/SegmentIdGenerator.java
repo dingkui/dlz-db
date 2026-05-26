@@ -44,7 +44,7 @@ public class SegmentIdGenerator {
     public long nextId(String tableName, long count) {
         if (count <= 0) count = 1;
         // 使用 dataSourceId:tableName 作为复合 Key，确保多数据源隔离
-        String key = DB.Dynamic.getDataSource() + ":" + tableName;
+        String key = DB.Dynamic.getCurrentConfig().getName() + ":" + tableName;
         SegmentBuffer buffer = bufferMap.computeIfAbsent(key, k -> new SegmentBuffer(tableName, defaultStep));
         return buffer.nextIds(count);
     }
