@@ -7,14 +7,15 @@
     </parent>
     <name>dlz-db</name>
 	<artifactId>dlz-db</artifactId>
-    <version>7.0.1</version>
+    <version>7.0.1-2</version>
 	<packaging>pom</packaging>
     <description>DLZ-DB v7.0: 多模块数据库框架，支持 Spring 和 Solon</description>
     <properties>
         <java.version>1.8</java.version>
         <dlz-spring.version>6.6.5</dlz-spring.version>
         <dlz-kit.version>6.6.5</dlz-kit.version>
-        
+        <dlz-db.version>7.0.1-2</dlz-db.version>
+
         <!-- 代码质量工具版本 -->
         <jacoco.version>0.8.11</jacoco.version>
         <spotbugs.version>4.8.6</spotbugs.version>
@@ -22,6 +23,11 @@
         <findsecbugs.version>1.12.0</findsecbugs.version>
         <checkstyle.version>9.3</checkstyle.version>
         <pmd.version>3.21.2</pmd.version>
+
+
+        <solon.version>3.0.6</solon.version>
+        <jedis.version>4.4.3</jedis.version>
+        <sqlite.version>3.43.0.0</sqlite.version>
         
         <!-- 质量阈值 -->
         <jacoco.line.coverage>0.70</jacoco.line.coverage>
@@ -35,36 +41,7 @@
     </modules>
     <dependencies>
         <!-- Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>tomcat-jdbc</artifactId>
-                    <groupId>org.apache.tomcat</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>log4j-to-slf4j</artifactId>
-                    <groupId>org.apache.logging.log4j</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>logback-classic</artifactId>
-                    <groupId>ch.qos.logback</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- 测试 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-            <version>2.6.12</version>
-        </dependency>
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
