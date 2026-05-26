@@ -21,7 +21,7 @@ List<User> users = DB.Pojo.select(User.class)
 
 ## 版本说明
 
-当前版本 v7.0.0（开源初始版 v6.6.4）。
+当前版本 v7.0.1-2（开源初始版 v6.6.4）。
 
 这个项目不是从零开始的。它大约在 **2009 年**开始积累，**2014 年**左右成型，作为公司内部的数据库操作工具包投入使用。此后十年间，累计被数十个内部项目采用，适配过各种老旧系统、各种开源框架组合、各种奇奇怪怪的版本混搭。
 
@@ -153,7 +153,7 @@ DLZ-DB v7 采用多模块架构，可根据运行环境选择依赖：
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.0.0</version>
+    <version>7.0.1-2</version>
 </dependency>
 ```
 
@@ -218,7 +218,7 @@ public class UserController {
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.0.0</version>
+    <version>7.0.1-2</version>
 </dependency>
 ```
 
