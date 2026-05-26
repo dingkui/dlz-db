@@ -4,8 +4,11 @@ import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
 import com.dlz.test.db.config.BaseDBTest;
+import com.dlz.test.db.entity.AutoIdEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
+
+import java.util.stream.Collectors;
 
 /**
  * 智能号段 ID 生成器测试用例
@@ -14,16 +17,14 @@ import org.junit.jupiter.api.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class SegmentIdGeneratorTest extends BaseDBTest {
 
-    private static final String TEST_TABLE = "test_segment_id";
+    private static final String TEST_TABLE = "TEST_AUTO_ID";
 
     @BeforeEach
     void setUp() {
         // 清理测试数据，确保每次测试环境干净
-        DB.Jdbc.execute("DROP TABLE IF EXISTS " + TEST_TABLE);
-        DB.Jdbc.execute("CREATE TABLE " + TEST_TABLE + " (id INTEGER PRIMARY KEY, name TEXT)");
-
         // 清理号段记录
         DB.Jdbc.execute("DROP TABLE IF EXISTS sys_seq");
+        DB.Jdbc.execute("delete from TEST_AUTO_ID");
         final DataSourceProperty properties = new DataSourceProperty();
         properties.setName("test");
         properties.setDriverClassName("org.sqlite.JDBC");
@@ -53,9 +54,24 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
     void testSingleIdGeneration() {
         long maxId1 = DBHolder.sequence(TEST_TABLE, 1);
         long maxId2 = DBHolder.sequence(TEST_TABLE, 1);
-
         Assertions.assertEquals(maxId1 + 1, maxId2, "单次取号应连续递增");
         log.info("Single ID generation: {} -> {}", maxId1, maxId2);
+    }
+
+    @Test
+    @Order(2)
+    void testSingleIdGeneration2() {
+        int i = 20;
+        AutoIdEntity autoIdEntity = new AutoIdEntity();
+        autoIdEntity.setName("test");
+        long maxId1 = DB.Pojo.insertOrUpdate(autoIdEntity).getId();
+        while (i-- > 0) {
+            AutoIdEntity autoIdEntity2 = new AutoIdEntity();
+            autoIdEntity2.setName("test");
+            long maxId2 = DB.Pojo.insertOrUpdate(autoIdEntity2).getId();
+            Assertions.assertEquals(maxId1 + 1, maxId2, "单次取号应连续递增");
+            maxId1 = maxId2;
+        }
     }
 
     @Test

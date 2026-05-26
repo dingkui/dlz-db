@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *   <li><b>乐观锁 CAS</b> — WHERE max_id = ? 条件避免多实例并发冲突</li>
  *   <li><b>零浪费拼接</b> — 本地号段不足时，旧号段剩余与新号段首部连续拼接，不丢弃</li>
  *   <li><b>自动建表 + 自愈</b> — 首次使用或表丢失时自动创建 table_id_segment，并从业务表 MAX(id) 接续</li>
- *   <li><b>多数据源跟随</b> — key 仅用 tableName，数据源切换自动路由到对应库</li>
+ *   <li><b>多数据源跟随</b> — k 仅用 tableName，数据源切换自动路由到对应库</li>
  * </ul>
  */
 @Slf4j
@@ -95,7 +95,7 @@ public class SegmentIdGenerator {
 
         private Long getTableMaxId() {
             try {
-                final Long id = getId("SELECT MAX(id) FROM \"" + tableName + "\"");
+                final Long id = getId("SELECT MAX(id) FROM `" + tableName + "`");
                 if (id != null) {
                     log.info("Real MAX(id) of table {} is {}", tableName, id);
                 } else {
@@ -135,7 +135,7 @@ public class SegmentIdGenerator {
                     // ========== 乐观路径：本地有缓存才直接用 max CAS ==========
                     int rows = 0;
                     if (this.max > 0) {
-                        String sql = "UPDATE sys_seq SET id = id + ? WHERE key = ? AND id = ?";
+                        String sql = "UPDATE sys_seq SET id = id + ? WHERE k = ? AND id = ?";
                         rows = update(sql, step, tableName, this.max);
                         if (rows == 1) {
                             long oldMax = this.max;
@@ -148,23 +148,25 @@ public class SegmentIdGenerator {
                     }
 
                     // ========== 悲观路径：本地无缓存 / 冲突 / 记录不存在 ==========
-                    Long currentMax = getId("SELECT id FROM sys_seq WHERE key = ?", tableName);
+                    Long currentMax = getId("SELECT id FROM sys_seq WHERE k = ?", tableName);
 
                     if (currentMax == null) {
                         // 记录不存在 → 插入初始记录
                         try {
                             Long maxId = getTableMaxId();
                             maxId = maxId == null ? 0 : maxId;
+                            this.max = maxId + step;
                             // 插入时，id 应该代表当前已使用的最大值
-                            update("INSERT INTO sys_seq (key, id) VALUES (?, ?)", tableName, maxId);
+                            update("INSERT INTO sys_seq (k, id) VALUES (?, ?)", tableName, this.max);
                             return maxId;
                         } catch (Exception e) {
                             log.debug("Insert conflict for table {}, retrying...", tableName);
                         }
                     } else {
                         // 记录存在但缓存已过时 → 用真实值 CAS 重试
-                        rows = update("UPDATE sys_seq SET id = id + ? WHERE key = ? AND id = ?", step, tableName, currentMax);
+                        rows = update("UPDATE sys_seq SET id = id + ? WHERE k = ? AND id = ?", step, tableName, currentMax);
                         if (rows == 1) {
+                            this.max = currentMax + step;
                             return currentMax;
                         }
                         log.debug("CAS conflict for table {} (currentMax={}), retrying...", tableName, currentMax);
@@ -183,8 +185,8 @@ public class SegmentIdGenerator {
                         initTableSegment();
                     } else {
                         log.error("Failed to fetch segment for table {}", tableName, e);
-                        if(e instanceof DbException){
-                            throw (DbException)e;
+                        if (e instanceof DbException) {
+                            throw (DbException) e;
                         }
                     }
 
@@ -213,10 +215,7 @@ public class SegmentIdGenerator {
             log.info("Creating {}sys_seq and initializing for table {}...", tableName);
 
             // 1. 建表（幂等）
-            String ddl = "CREATE TABLE IF NOT EXISTS sys_seq (" +
-                    "key VARCHAR(64) PRIMARY KEY, " +
-                    "id BIGINT NOT NULL DEFAULT 0, " +
-                    "step BIGINT NOT NULL DEFAULT 1000)";
+            String ddl = "CREATE TABLE IF NOT EXISTS sys_seq (k VARCHAR(64) PRIMARY KEY, id BIGINT NOT NULL DEFAULT 0, step BIGINT NOT NULL DEFAULT 1000)";
             update(ddl);
 
             // 2. 取业务表实际 MAX(id)，使新号段从现有数据之后开始
@@ -226,7 +225,7 @@ public class SegmentIdGenerator {
 
             // 3. 插入初始记录（已存在则忽略）
             try {
-                update("INSERT INTO sys_seq (key, id) VALUES (?, ?)", tableName, realMax);
+                update("INSERT INTO sys_seq (k, id) VALUES (?, ?)", tableName, realMax);
             } catch (Exception e) {
                 log.debug("Initial record for table {} already exists, skipped", tableName);
             }
@@ -254,22 +253,10 @@ public class SegmentIdGenerator {
 
             int loadStep = (int) Math.max(this.step, count);
             long oldMaxFromDb = fetchFromDb(loadStep);
-            long newMax = oldMaxFromDb + loadStep;
-
-            long result;
-            if (oldMaxFromDb == max) {
-                // 连续性成立：零浪费拼接
-                result = cur + count - 1;
-            } else {
-                // 连续性被破坏（DB 记录被删除/重置），放弃旧号段残余
-                result = oldMaxFromDb + count;
-                log.warn("Segment continuity broken for table {} (DB oldMax: {}, cached max: {}), " +
-                        "discarded {} stale IDs", tableName, oldMaxFromDb, max, remaining);
-            }
-
-            this.current = new AtomicLong(result + 1);
-            this.max = newMax;
-            return result;
+            cur = oldMaxFromDb + 1;
+            this.current = new AtomicLong(cur);
+            current.addAndGet(count);
+            return cur + count - 1;
         }
     }
 }
