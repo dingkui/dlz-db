@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.JarURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -115,14 +116,48 @@ public class DlzResourceLoader {
         List<URL> urls = getResources(location);
         List<InputStream> streams = new ArrayList<>(urls.size());
         for (URL url : urls) {
-            try {
-                InputStream stream = url.openStream();
+            InputStream stream = tryOpenResourceStream(url);
+            if (stream != null) {
                 streams.add(stream);
-            } catch (IOException e) {
-                log.warn("打开资源流失败: {}", url.toString(), e);
+            } else {
+                log.warn("打开资源流失败: {}", url.toString());
             }
         }
         return streams.toArray(new InputStream[0]);
+    }
+
+    /**
+     * 尝试打开资源流，Spring Boot 嵌套 JAR 兼容：
+     * jar:jar:file:.../app.jar!/BOOT-INF/lib/lib.jar!/path 格式无法通过 {@link URL#openStream()} 直接打开，
+     * 回退到通过 {@link ClassLoader#getResourceAsStream(String)} 加载。
+     */
+    private static InputStream tryOpenResourceStream(URL url) {
+        try {
+            return url.openStream();
+        } catch (IOException e) {
+            log.debug("直接打开 URL 失败，尝试通过 ClassLoader 加载: {}", url, e);
+            String resourcePath = extractInnerResourcePath(url);
+            if (resourcePath != null) {
+                InputStream is = currentClassLoader().getResourceAsStream(resourcePath);
+                if (is != null) {
+                    return is;
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * 从 URL 中提取最内层的资源路径。
+     * 例如 jar:jar:file:/app.jar!/BOOT-INF/lib/lib.jar!/sql/sys/sys.sql → sql/sys/sys.sql
+     */
+    private static String extractInnerResourcePath(URL url) {
+        String urlStr = url.toString();
+        int lastSep = urlStr.lastIndexOf("!/");
+        if (lastSep >= 0 && lastSep + 2 < urlStr.length()) {
+            return urlStr.substring(lastSep + 2);
+        }
+        return null;
     }
 
     /**
@@ -133,7 +168,7 @@ public class DlzResourceLoader {
         if (urls.isEmpty()) {
             return null;
         }
-        return urls.get(0).openStream();
+        return tryOpenResourceStream(urls.get(0));
     }
 
     // ============== 内部实现 ==============
@@ -180,6 +215,10 @@ public class DlzResourceLoader {
             } else {
                 log.debug("不支持的资源协议: {}, 跳过 url={}", protocol, rootUrl);
             }
+        }
+        // Spring Boot JAR 兼容：标准方式找不到时，回退到扫描所有类路径根
+        if (result.isEmpty() && all) {
+            collectFromClasspathRoots(cl, basePath, regex, result);
         }
         return result;
     }
@@ -280,6 +319,86 @@ public class DlzResourceLoader {
                         log.warn("转换文件URL失败: {}", child.getPath(), e);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Spring Boot JAR 兼容：扫描所有类路径根（用于标准方式查不到时的回退）。
+     */
+    private static void collectFromClasspathRoots(ClassLoader cl, String basePath, Pattern regex, List<URL> result) throws IOException {
+        Enumeration<URL> roots = cl.getResources("");
+        while (roots.hasMoreElements()) {
+            URL root = roots.nextElement();
+            String protocol = root.getProtocol();
+            if ("file".equals(protocol)) {
+                try {
+                    File base = new File(root.toURI());
+                    if (base.isDirectory()) {
+                        File target = new File(base, basePath);
+                        if (target.isDirectory()) {
+                            walkFile(target, "", basePath, regex, result);
+                        }
+                    }
+                } catch (URISyntaxException e) {
+                    log.debug("转换文件 URL 失败: {}", root, e);
+                }
+            } else if ("jar".equals(protocol) || "zip".equals(protocol) || "wsjar".equals(protocol)) {
+                // 打开外层 JAR 并扫描所有条目，处理 Spring Boot 路径前缀
+                collectFromJarWithPrefix(root, basePath, regex, result);
+            }
+        }
+    }
+
+    /**
+     * Spring Boot JAR 兼容：从 JAR 根 URL 扫描所有条目，处理 BOOT-INF/classes/ 前缀。
+     */
+    private static void collectFromJarWithPrefix(URL rootUrl, String basePath, Pattern regex, List<URL> result) {
+        JarFile jarFile = null;
+        try {
+            String protocol = rootUrl.getProtocol();
+            if (!"jar".equals(protocol) && !"zip".equals(protocol) && !"wsjar".equals(protocol)) {
+                return;
+            }
+            URLConnection conn = rootUrl.openConnection();
+            if (!(conn instanceof JarURLConnection)) {
+                return;
+            }
+            JarURLConnection jarConn = (JarURLConnection) conn;
+            jarConn.setUseCaches(false);
+            jarFile = jarConn.getJarFile();
+            String jarBaseUrl = jarConn.getJarFileURL().toString();
+            // 确定路径前缀：如 jar:file:/app.jar!/BOOT-INF/classes!/ 的 entryName 是 BOOT-INF/classes!/
+            String entryName = jarConn.getEntryName();
+            String jaredPrefix = "";
+            if (entryName != null && entryName.endsWith("!/")) {
+                jaredPrefix = entryName.substring(0, entryName.length() - 2); // 去掉 "!/"
+            } else if (entryName != null && !entryName.isEmpty()) {
+                jaredPrefix = entryName.endsWith("/") ? entryName.substring(0, entryName.length() - 1) : entryName;
+            }
+            // 扫描 JAR 所有条目
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.isDirectory()) continue;
+                String name = entry.getName();
+                // 尝试去掉 jar 内路径前缀（如 BOOT-INF/classes）后匹配
+                String matchName = name;
+                if (!jaredPrefix.isEmpty() && name.startsWith(jaredPrefix + "/")) {
+                    matchName = name.substring(jaredPrefix.length() + 1);
+                }
+                if (matchName.startsWith(basePath)) {
+                    String relative = matchName.substring(basePath.length());
+                    if (regex.matcher(relative).matches()) {
+                        result.add(new URL("jar:" + jarBaseUrl + "!/" + name));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("扫描 JAR 根资源失败: {}", rootUrl.toString(), e);
+        } finally {
+            if (jarFile != null) {
+                try { jarFile.close(); } catch (IOException e) { /* ignore */ }
             }
         }
     }
