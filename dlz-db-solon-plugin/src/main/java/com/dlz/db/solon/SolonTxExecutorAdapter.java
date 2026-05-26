@@ -2,14 +2,13 @@ package com.dlz.db.solon;
 
 import com.dlz.db.core.DlzConnectionHolder;
 import com.dlz.db.core.ITxExecutor;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 
 /**
- * {@link ITxExecutor} 的 Solon 实现：基于原生 JDBC + {@link SolonConnectionHolder}。
+ * {@link ITxExecutor} 的 Solon 实现：基于原生 JDBC + {@link DlzConnectionHolder}。
  *
  * <h3>嵌套事务策略</h3>
  * <ul>
@@ -28,7 +27,6 @@ public class SolonTxExecutorAdapter implements ITxExecutor {
 
     private final DataSource dataSource;
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "DataSourceConfig由容器注入，视为不可变")
     public SolonTxExecutorAdapter(DataSource dataSource) {
         this.dataSource = dataSource;
     }

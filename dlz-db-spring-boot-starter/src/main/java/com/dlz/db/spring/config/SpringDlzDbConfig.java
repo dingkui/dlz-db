@@ -1,5 +1,6 @@
 package com.dlz.db.spring.config;
 
+import com.dlz.db.core.DlzDbAdapter;
 import com.dlz.db.spring.SpringSqlExecutorAdapter;
 import com.dlz.db.spring.SpringTxExecutorAdapter;
 import com.dlz.db.support.DBHolder;
@@ -38,20 +39,14 @@ public class SpringDlzDbConfig{
      * 容器刷新完成后初始化 DBHolder（此时 ConfigurationPropertiesBindingPostProcessor 已注册，
      * SpringDlzDbProperties 已绑定配置文件中的值）
      */
-    @Bean
-    public ApplicationListener<ContextRefreshedEvent> dbInitListener(SpringDlzDbProperties properties) {
-        return event -> {
-//            DataSource dataSource = SpringHolder.getBean(DataSource.class);
-//            JdbcTemplate jdbcTemplate = SpringHolder.getBean(JdbcTemplate.class);
-//            DBHolder.init(properties,
-//                    () -> dataSource,
-//                    () -> new SpringSqlExecutorAdapter(jdbcTemplate),
-//                    SpringTxExecutorAdapter::new);
+    @Bean(name = "initDbAdapter")
+    @ConditionalOnMissingBean(name = "initDbAdapter")
+    public DlzDbAdapter initDbAdapter(SpringDlzDbProperties properties) {
+        return
             DBHolder.init(properties,
                     () -> SpringHolder.getBean(DataSource.class),
                     () -> new SpringSqlExecutorAdapter(SpringHolder.getBean(JdbcTemplate.class)),
                     SpringTxExecutorAdapter::new);
-        };
     }
 
     @Bean(name = "JdbcTemplate")

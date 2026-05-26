@@ -53,11 +53,14 @@ public class DBHolder {
     }
 
 
-    public static void init(DlzDbProperties sqlConfig,
+    public static DlzDbAdapter init(DlzDbProperties sqlConfig,
                             Supplier<DataSource> dataSourceMaker,
                             Supplier<ISqlExecutor> sqlExecutorMaker,
                             Function<DataSource, ITxExecutor> txExecutorMaker) {
-        DBHolder.dbAdapter = new DlzDbAdapter(sqlConfig, dataSourceMaker, sqlExecutorMaker, txExecutorMaker);
+        if(dbAdapter==null){
+            dbAdapter = new DlzDbAdapter(sqlConfig, dataSourceMaker, sqlExecutorMaker, txExecutorMaker);
+        }
+        return dbAdapter;
     }
 
     /**
