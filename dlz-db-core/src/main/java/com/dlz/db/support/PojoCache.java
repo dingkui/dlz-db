@@ -102,6 +102,21 @@ public class PojoCache {
         }
         return map.containsKey(DbConvertUtil.toDbColumnName(columnName.replaceAll("`", "")).toUpperCase());
     }
+    /**
+     * 判断字段是否存在
+     *
+     * @param tableName  表名
+     * @param columnName 字段名：支持bean字段名，数据库字段名
+     * @author dk 2018-09-28
+     */
+    public static Integer getTableColumnType(String tableName, String columnName) {
+        Map<String, Integer> map = getTableColumnsInfo(tableName);
+        if (map == null) {
+            return null;
+        }
+        return map.get(columnName.replaceAll("`", ""));
+    }
+
 
     /**
      * bean字段名转换成数据库字段名
