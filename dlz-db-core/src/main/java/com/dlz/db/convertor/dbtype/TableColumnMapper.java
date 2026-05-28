@@ -12,23 +12,23 @@ import java.util.Map;
 @AllArgsConstructor
 @SuppressWarnings("unused") // sqlExecutor 保留供未来扩展使用
 public class TableColumnMapper implements ITableColumnMapper {
-	final ISqlExecutor sqlExecutor;
-	@Override
-	public Object converObj4Db(String tableName, String columnName, Object value) {
-		Map<String, Integer> map = PojoCache.getTableColumnsInfo(tableName);
-		if (map != null) {
-			Integer dbClass = map.get(columnName.toUpperCase(Locale.ROOT));
-			if(dbClass==null){
-				return value;
-			}
-			return cover(dbClass, value);
-		}
+    final ISqlExecutor sqlExecutor;
+    @Override
+    public Object converObj4Db(String tableName, String columnName, Object value) {
+        Map<String, Integer> map = PojoCache.getTableColumnsInfo(tableName);
+        if (map != null) {
+            Integer dbClass = map.get(columnName.toUpperCase(Locale.ROOT));
+            if(dbClass==null){
+                return value;
+            }
+            return cover(dbClass, value);
+        }
 //		final List<ResultMap> list = dao.getList("select * from information_schema.columns where table_name = '" + tableName + "'", new ResultMapRowMapper(new ColumnNameCamel()));
-		return value;
-	}
+        return value;
+    }
 
-	private static Object cover(Integer dbClass, Object obj) {
-		switch (dbClass) {
+    public static Object cover(Integer dbClass, Object obj) {
+        switch (dbClass) {
             // 整数族：统一 Long，避免 Integer 溢出问题，也避免 BigDecimal 的 overkill
             case Types.TINYINT:
                 if(obj instanceof Boolean){
@@ -51,15 +51,18 @@ public class TableColumnMapper implements ITableColumnMapper {
             case Types.DOUBLE:
                 return ValUtil.toDouble(obj);
             case Types.CHAR:
+            case Types.LONGVARCHAR:
             case Types.VARCHAR:
+            case Types.CLOB:
+            case Types.BLOB:
                 return ValUtil.toStr(obj);
             case Types.DATE:
             case Types.TIME:
             case Types.TIMESTAMP:
                 return ValUtil.toDate(obj);
-		default:
-			break;
-		}
-		return obj;
-	}
+            default:
+                break;
+        }
+        return obj;
+    }
 }
