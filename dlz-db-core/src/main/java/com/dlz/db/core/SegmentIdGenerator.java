@@ -1,11 +1,14 @@
 package com.dlz.db.core;
 
+import com.dlz.db.core.anno.SqlAction;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
-import com.dlz.db.support.DBHolder;
+import com.dlz.db.util.DbLogUtil;
 import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.fn.DlzFn2;
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,7 +74,7 @@ public class SegmentIdGenerator {
         // ==================== 数据库操作 ====================
 
         private int update(String sql, Object... args) {
-            return DBHolder.getSqlExecutor().doDb(conn -> {
+            return doDb(conn -> {
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
                     NativeSqlUtil.bindArgs(ps, args);
                     return ps.executeUpdate();
@@ -79,8 +82,30 @@ public class SegmentIdGenerator {
             }, null);
         }
 
+        private <T> T doDb(SqlAction action,
+                           DlzFn2<Long, T, String> msg
+        ) {
+            long t = System.currentTimeMillis();
+            T re = null;
+            Exception err = null;
+            try (Connection conn = DB.Dynamic.getCurrentConfig().getDataSource().getConnection()) {
+                re = (T) action.run(conn);
+                return re;
+            } catch (Exception e) {
+                err = e;
+                if (e instanceof DbException) {
+                    throw (DbException) e;
+                }
+                throw new DbException("sql执行错误:"+e.getMessage(), 1001,e);
+            } finally {
+                if (msg != null) {
+                    DbLogUtil.logInfo(msg, t, re, err);
+                }
+            }
+        }
+
         private Long getId(String sql, Object... args) {
-            return DBHolder.getSqlExecutor().doDb(conn -> {
+            return doDb(conn -> {
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
                     NativeSqlUtil.bindArgs(ps, args);
                     try (ResultSet rs = ps.executeQuery()) {
