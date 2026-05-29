@@ -1,11 +1,9 @@
 package com.dlz.db.core;
 
-import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.SqlHolder;
 import com.dlz.db.support.helper.HelperScan;
-import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +49,6 @@ public class DlzDbAdapter{
                     DbLogUtil.init(sqlConfig);
 
                     SqlHolder.init();
-                    DbConvertUtil.defaultTableColumnMapper = new TableColumnMapper(sqlExecutor1);
 
                     SqlHolder.loadDbSql();
                     this.sqlExecutor = sqlExecutor1;

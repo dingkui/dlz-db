@@ -9,10 +9,8 @@ import java.sql.Types;
 import java.util.Locale;
 import java.util.Map;
 
-@AllArgsConstructor
 @SuppressWarnings("unused") // sqlExecutor 保留供未来扩展使用
 public class TableColumnMapper implements ITableColumnMapper {
-    final ISqlExecutor sqlExecutor;
     @Override
     public Object converObj4Db(String tableName, String columnName, Object value) {
         Map<String, Integer> map = PojoCache.getTableColumnsInfo(tableName);

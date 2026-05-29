@@ -5,13 +5,11 @@ import com.dlz.db.convertor.columnname.IColumnNameConvertor;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.kit.util.ValUtil;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +22,7 @@ public class DbConvertUtil {
     /**
      * 数据库字段信息及内容转换
      */
-    public static ITableColumnMapper defaultTableColumnMapper = null;
+    public static ITableColumnMapper defaultTableColumnMapper = new TableColumnMapper();
 
     /**
      * 数据库字段名转换器
