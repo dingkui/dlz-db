@@ -27,14 +27,12 @@ class DbConvertUtilTest_Extended {
     void setUp() {
         // 确保使用默认的转换器
         DbConvertUtil.defaultColumnMapper = new ColumnNameCamel();
-        DbConvertUtil.defaultTableColumnMapper = null;
     }
 
     @AfterEach
     void tearDown() {
         // 恢复默认值
         DbConvertUtil.defaultColumnMapper = new ColumnNameCamel();
-        DbConvertUtil.defaultTableColumnMapper = null;
     }
 
     @Test
@@ -126,8 +124,6 @@ class DbConvertUtilTest_Extended {
     @Test
     @DisplayName("测试 getVal4Db - null 映射器")
     void testGetVal4Db_NullMapper() {
-        DbConvertUtil.defaultTableColumnMapper = null;
-        
         // 当映射器为 null 时，返回原值
         Object result = DbConvertUtil.getVal4Db("user", "name", "test");
         assertEquals("test", result);

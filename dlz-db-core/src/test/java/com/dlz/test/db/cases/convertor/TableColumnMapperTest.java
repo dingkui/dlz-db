@@ -62,7 +62,7 @@ public class TableColumnMapperTest extends BaseDBTest {
 
     @Test
     public void converObj4Db_unknownColumnReturnsOriginal() {
-        TableColumnMapper mapper = new TableColumnMapper(null);
+        TableColumnMapper mapper = new TableColumnMapper();
         Object value = "keep_me";
         Object result = mapper.converObj4Db("SYS_SQL", "NOT_EXIST_COLUMN", value);
         assertEquals("表中不存在的字段应保持原值", value, result);
@@ -70,7 +70,7 @@ public class TableColumnMapperTest extends BaseDBTest {
 
     @Test
     public void converObj4Db_integerColumnToLong() {
-        TableColumnMapper mapper = new TableColumnMapper(null);
+        TableColumnMapper mapper = new TableColumnMapper();
         Object result = mapper.converObj4Db("SYS_SQL", "DELETED", "1");
         assertTrue("SYS_SQL.DELETED  为 INTEGER 类型，字符串数字应转为 Long", result instanceof Long);
         assertEquals(1L, result);
