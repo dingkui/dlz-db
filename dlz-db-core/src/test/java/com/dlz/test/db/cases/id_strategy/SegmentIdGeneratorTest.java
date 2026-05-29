@@ -21,7 +21,7 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
     void setUp() {
         // 清理测试数据，确保每次测试环境干净
         // 清理号段记录
-        DB.Jdbc.execute("delete from sys_seq");
+        DB.Jdbc.execute("DROP TABLE IF EXISTS sys_seq");
         DB.Jdbc.execute("delete from TEST_AUTO_ID");
         final DataSourceProperty properties = new DataSourceProperty();
         properties.setName("test");

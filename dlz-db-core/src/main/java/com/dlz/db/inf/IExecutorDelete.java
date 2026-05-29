@@ -11,9 +11,9 @@ import com.dlz.db.support.SqlRunThreadHolder;
 /**
  * 删除执行器：在"查询构造器"上叠加"执行删除"能力，并内置 <b>逻辑删除</b> 支持。
  *
- * <p><b>逻辑删除规则</b>：当 Bean/表存在配置中 {@code dlz.db.logic-delete-field} 指定的列（如 {@code is_deleted}），
+ * <p><b>逻辑删除规则</b>：当 Bean/表存在配置中 {@code dlz.db.logic-delete-field} 指定的列（如 {@code deleted}），
  * 且当前线程未调用 {@link #ignoreLogicDelete(boolean) ignoreLogicDelete(true)} 时，
- * {@link #execute()} 会将 DELETE 自动改写为 {@code UPDATE ... SET is_deleted = 1 WHERE ...}。
+ * {@link #execute()} 会将 DELETE 自动改写为 {@code UPDATE ... SET deleted = 1 WHERE ...}。
  *
  * <pre>
  * // 默认：逻辑删除

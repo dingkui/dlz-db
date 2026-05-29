@@ -30,6 +30,7 @@ class IExecutorDeleteTest {
         assertNotNull(result);
         assertSame(delete, result);
         assertTrue(SqlRunThreadHolder.isIgnoreLogicDelete());
+        SqlRunThreadHolder.removeLogicDeleteSetting();
     }
 
     @Test
@@ -40,6 +41,7 @@ class IExecutorDeleteTest {
         assertNotNull(result);
         assertSame(delete, result);
         assertFalse(SqlRunThreadHolder.isIgnoreLogicDelete());
+        SqlRunThreadHolder.removeLogicDeleteSetting();
     }
 
     @Test

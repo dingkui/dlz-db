@@ -44,7 +44,7 @@ public class DlzDbProperties {
     /**
      * 逻辑删除字段
      **/
-    private String logicDeleteField = "IS_DELETED";
+    private String logicDeleteField = "deleted";
     /**
      * sqlHelper配置
      */
