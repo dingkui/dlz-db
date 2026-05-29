@@ -5,7 +5,9 @@ import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,20 +20,20 @@ import static org.junit.Assert.*;
  */
 public class PresetSqlConfigTest extends BaseDBTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // 清理用户表数据
         DB.Jdbc.execute("DELETE FROM user");
 
         // 插入测试数据
-        DB.Batch.update("INSERT INTO user(name, age, status, is_deleted) VALUES(?, ?, ?, ?)",
+        DB.Batch.update("INSERT INTO user(name, age, status, DELETED ) VALUES(?, ?, ?, ?)",
                 Arrays.asList(new Object[]{"张三", 25, "1", 0},
                         new Object[]{"李四", 30, "1", 0},
                         new Object[]{"王五", 35, "0", 0},
                         new Object[]{"赵六", 28, "1", 0}));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         // 清理测试数据
         DB.Jdbc.execute("DELETE FROM user");

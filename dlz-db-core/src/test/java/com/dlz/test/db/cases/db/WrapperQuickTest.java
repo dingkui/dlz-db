@@ -1,0 +1,102 @@
+package com.dlz.test.db.cases.db;
+
+import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.modal.DB;
+import com.dlz.db.support.helper.HelperScan;
+import com.dlz.db.support.helper.SqlHelper;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.test.db.config.BaseDBTest;
+import com.dlz.test.db.entity.SysSql;
+import com.dlz.test.db.entity.Yc1Record;
+import com.dlz.test.db.entity.YcRecord;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+@Slf4j
+public class WrapperQuickTest extends BaseDBTest {
+
+    @Test
+    public void insertOrUpdateTest1() {
+        SysSql dict = new SysSql();
+        dict.setName("xx");
+        try {
+            DB.Pojo.insertOrUpdate(dict);
+            fail("应该抛出 SystemException");
+        } catch (SystemException e) {
+            assertTrue(e.getMessage().contains("SysSql.id为手动输入"));
+        }
+    }
+
+    @Test
+    public void insertTest1() {
+        SysSql dict = new SysSql();
+        dict.setName("xx");
+        try {
+            DB.Pojo.insert(dict);
+            fail("应该抛出 SystemException");
+        } catch (SystemException e) {
+            assertTrue(e.getMessage().contains("SysSql.id为手动输入"));
+        }
+    }
+    @Test
+    public void insertTest2() {
+        YcRecord dict = new Yc1Record();
+        dict.setRe("xx");
+        dict.setPcid("xx");
+        dict.setSta(1);
+        DB.Pojo.insert(dict);
+    }
+    @Test
+    public void insertTest22() {
+        YcRecord yc1Record = new Yc1Record();
+        yc1Record.setSta(1);
+        DB.Pojo.insert(yc1Record);
+    }
+    @Test
+    public void updateByIdTest1() {
+        SysSql dict = new SysSql();
+        dict.setId(1l);
+        dict.setName("xx");
+        DB.Pojo.updateById(dict);
+    }
+
+    @Test
+    public void removeByIds1() {
+        DB.Pojo.deleteByIds(SysSql.class, "1,2,3");
+    }
+
+    @Test
+    public void getById1() {
+        DB.Pojo.selectById(SysSql.class, "1");
+    }
+    @Test
+    public void getUseDbById1() {
+
+        final DataSourceProperty properties = new DataSourceProperty();
+        properties.setName("test");
+        properties.setDriverClassName("org.sqlite.JDBC");
+        properties.setUrl("jdbc:sqlite:./test/testdb_dynamic.sqlite3");
+        DB.Dynamic.setDataSource(properties);
+
+
+        DB.Dynamic.use("test",()-> {
+            final SqlHelper helper = DB.Dynamic.getSqlHelper();
+            HelperScan.initTable(SysSql.class,helper);
+            DB.Pojo.selectById(SysSql.class, "1");
+            DB.Pojo.selectById(SysSql.class, "2");
+            return null;
+        });
+
+        DB.Pojo.selectById(SysSql.class, "1");
+        DB.Dynamic.use("default",()-> {
+            DB.Pojo.selectById(SysSql.class, "1");
+            DB.Pojo.selectById(SysSql.class, "2");
+            return null;
+        });
+
+    }
+
+}

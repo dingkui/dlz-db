@@ -47,5 +47,5 @@ public class Role extends BaseEntity {
 	 * 是否已删除
 	 */
 	@ApiModelProperty(value = "是否已删除")
-	private Integer isDeleted;
+	private Integer deleted;
 }

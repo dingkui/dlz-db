@@ -4,7 +4,7 @@ import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.PojoCache;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.List;

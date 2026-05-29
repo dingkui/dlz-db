@@ -17,7 +17,7 @@ import java.util.Objects;
  * @author dk
  */
 @Data
-@TableName("sys_menu")
+@TableName("SYS_MENU")
 @ApiModel(value = "Menu对象", description = "Menu对象")
 public class Menu implements Serializable {
 
@@ -102,7 +102,7 @@ public class Menu implements Serializable {
 	 * 是否已删除
 	 */
 	@ApiModelProperty(value = "是否已删除")
-	private Integer isDeleted;
+	private Integer deleted;
 
 
 	@Override

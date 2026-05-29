@@ -44,7 +44,7 @@ class DbConvertUtilTest {
         "user_id, userId",
         "create_time, createTime",
         "update_time, updateTime",
-        "is_deleted, isDeleted",
+        "DELETED , deleted",
         "order_no, orderNo"
     })
     void testToFieldName_Parameterized(String dbKey, String expected) {
@@ -86,7 +86,7 @@ class DbConvertUtilTest {
         "userId, USER_ID",
         "createTime, CREATE_TIME",
         "updateTime, UPDATE_TIME",
-        "isDeleted, IS_DELETED",
+        "deleted, DELETED ",
         "orderNo, ORDER_NO"
     })
     void testToDbColumnName_Parameterized(String beanKey, String expected) {

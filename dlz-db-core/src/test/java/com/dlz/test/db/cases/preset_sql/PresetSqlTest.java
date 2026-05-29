@@ -5,7 +5,9 @@ import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -18,15 +20,15 @@ import static org.junit.Assert.assertNotNull;
  */
 public class PresetSqlTest extends BaseDBTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         DB.Jdbc.execute("delete from user");
-        // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, is_deleted INTEGER DEFAULT 0)");
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,is_deleted) VALUES(?,?,?,?)", "alice", 25, "1", 0);
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,is_deleted) VALUES(?,?,?,?)", "bob", 30, "1", 0);
+        // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, DELETED  INTEGER DEFAULT 0)");
+        DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "alice", 25, "1", 0);
+        DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "bob", 30, "1", 0);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         DB.Jdbc.execute("delete from user");
     }
@@ -46,7 +48,7 @@ public class PresetSqlTest extends BaseDBTest {
 
     @Test
     public void sql_insert() {
-        DB.Sql.insert("INSERT INTO user(name,age,status,is_deleted) VALUES(#{name},#{age},#{status},#{isdel})")
+        DB.Sql.insert("INSERT INTO user(name,age,status,DELETED ) VALUES(#{name},#{age},#{status},#{isdel})")
                 .addPara("name", "sql_ins").addPara("age", 11).addPara("status", "1").addPara("isdel", 0).execute();
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "sql_ins").count());
     }

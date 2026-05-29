@@ -30,7 +30,7 @@ public class User {
     private String createUser;
     private String updateUser;
     private Date updateTime;
-    private String isDeleted;
+    private String deleted;
     private String deleteUser;
     private Date deleteTime;
     private String isExpired;
