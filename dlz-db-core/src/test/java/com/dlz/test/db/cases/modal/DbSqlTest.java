@@ -1,9 +1,11 @@
 package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.exception.DbException;
+import com.dlz.db.modal.DB;
 import com.dlz.db.modal.DbSql;
 import com.dlz.db.modal.wrapper.SqlExecute;
 import com.dlz.db.modal.wrapper.SqlQuery;
+import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,17 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("DbSql SQL 操作测试")
 class DbSqlTest extends BaseDBTest {
 
-    private DbSql dbSql;
-
-    @BeforeEach
-    void setUp() {
-        dbSql = new DbSql();
-    }
 
     @Test
     @DisplayName("测试 select 方法")
     void testSelect() {
-        SqlQuery query = dbSql.select("SELECT * FROM user WHERE id = ?");
+        SqlQuery query = DB.Sql.select("SELECT * FROM user WHERE id = ?");
         
         assertNotNull(query);
         assertTrue(query instanceof SqlQuery);
@@ -36,7 +32,7 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 insert 方法")
     void testInsert() {
-        SqlExecute execute = dbSql.insert("INSERT INTO user (name) VALUES (?)");
+        SqlExecute execute = DB.Sql.insert("INSERT INTO user (name) VALUES (?)");
         
         assertNotNull(execute);
         assertTrue(execute instanceof SqlExecute);
@@ -45,7 +41,7 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 update 方法")
     void testUpdate() {
-        SqlExecute execute = dbSql.update("UPDATE user SET name = ? WHERE id = ?");
+        SqlExecute execute = DB.Sql.update("UPDATE user SET name = ? WHERE id = ?");
         
         assertNotNull(execute);
         assertTrue(execute instanceof SqlExecute);
@@ -54,7 +50,7 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 delete 方法")
     void testDelete() {
-        SqlExecute execute = dbSql.delete("DELETE FROM user WHERE id = ?");
+        SqlExecute execute = DB.Sql.delete("DELETE FROM user WHERE id = ?");
         
         assertNotNull(execute);
         assertTrue(execute instanceof SqlExecute);
@@ -63,7 +59,7 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 executer 方法")
     void testExecuter() {
-        SqlExecute execute = dbSql.executer("CREATE TABLE test (id INT)");
+        SqlExecute execute = DB.Sql.executer("CREATE TABLE test (id INT)");
         
         assertNotNull(execute);
         assertTrue(execute instanceof SqlExecute);
@@ -72,15 +68,16 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 execute 方法")
     void testExecute() {
-        assertThrows(DbException.class, () -> dbSql.execute("SELECT 1"));
+        assertNotNull( DB.Sql.execute("delete from user where id=#{id}",new JSONMap("id",1)));
+        assertThrows(DbException.class, () -> DB.Sql.execute("SELECT 1",new JSONMap()));
     }
 
     @Test
     @DisplayName("测试不同 SQL 语句")
     void testDifferentSqlStatements() {
-        SqlQuery query1 = dbSql.select("SELECT * FROM user");
-        SqlQuery query2 = dbSql.select("SELECT COUNT(*) FROM user");
-        SqlQuery query3 = dbSql.select("SELECT u.name, o.amount FROM user u JOIN orders o ON u.id = o.user_id");
+        SqlQuery query1 = DB.Sql.select("SELECT * FROM user");
+        SqlQuery query2 = DB.Sql.select("SELECT COUNT(*) FROM user");
+        SqlQuery query3 = DB.Sql.select("SELECT u.name, o.amount FROM user u JOIN orders o ON u.id = o.user_id");
         
         assertNotNull(query1);
         assertNotNull(query2);
@@ -90,7 +87,7 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试空 SQL")
     void testEmptySql() {
-        SqlQuery query = dbSql.select("");
+        SqlQuery query = DB.Sql.select("");
         
         assertNotNull(query);
     }
@@ -98,7 +95,7 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 null SQL")
     void testNullSql() {
-        SqlQuery query = dbSql.select(null);
+        SqlQuery query = DB.Sql.select(null);
         
         assertNotNull(query);
     }
@@ -114,7 +111,7 @@ class DbSqlTest extends BaseDBTest {
                            "HAVING order_count > ? " +
                            "ORDER BY u.create_time DESC";
         
-        SqlQuery query = dbSql.select(complexSql);
+        SqlQuery query = DB.Sql.select(complexSql);
         
         assertNotNull(query);
     }

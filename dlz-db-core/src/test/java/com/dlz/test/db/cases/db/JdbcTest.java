@@ -4,9 +4,12 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.JdbcQuery;
+import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 @Slf4j
 public class JdbcTest extends BaseDBTest {
@@ -31,4 +34,17 @@ public class JdbcTest extends BaseDBTest {
                 .page(Page.build(Order.descs("x1", "x2")));
         showSql(page, "jdbcPageTest3", "select 1 from dual where 1=1 order by X1 desc,X2 desc");
     }
+
+    @Test
+    public void jdbcExecute() {
+        final int execute = DB.Jdbc.execute("delete from user");
+        assertNotNull("Jdbc 执行并返回影响行数", execute);
+    }
+
+    @Test
+    public void jdbcDelete() {
+        final int execute = DB.Jdbc.delete("delete from user where id=?",1);
+        assertNotNull("Jdbc 执行并返回影响行数", execute);
+    }
+
 }

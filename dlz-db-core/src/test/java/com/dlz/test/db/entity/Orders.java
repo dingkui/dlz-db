@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 
 /**
@@ -23,4 +25,6 @@ public class Orders implements Serializable {
     private Long id;
     private String userId;
     private Integer amount;
+    private Date updateTime;
+    private LocalDateTime createTime;
 }

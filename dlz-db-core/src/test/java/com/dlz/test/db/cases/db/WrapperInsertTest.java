@@ -11,7 +11,9 @@ import com.dlz.test.db.entity.SysSql;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -75,6 +77,8 @@ public class WrapperInsertTest extends BaseDBTest {
         Orders orders = new Orders();
         orders.setUserId("u001");
         orders.setAmount(100);
+        orders.setUpdateTime(new Date());
+        orders.setCreateTime(LocalDateTime.now());
         assertNull(orders.getId());
 
         DB.Pojo.insert(orders);

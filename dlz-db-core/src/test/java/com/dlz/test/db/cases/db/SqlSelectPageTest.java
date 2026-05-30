@@ -20,5 +20,11 @@ public class SqlSelectPageTest extends BaseDBTest {
                 .page(Page.build(1, 2, Order.asc("id"), Order.desc("xx2")))
                 .addPara("goodsId", 123).queryOne();
     }
+    @Test
+    public void PageTest3() {
+        DB.Sql.select("select t.* from GOODS_PRICE t where t.goods_id=#{goodsId}")
+                .page(null)
+                .addPara("goodsId", 123).queryOne();
+    }
 
 }

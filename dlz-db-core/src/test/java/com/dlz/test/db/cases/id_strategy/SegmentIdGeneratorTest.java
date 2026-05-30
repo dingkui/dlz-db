@@ -3,8 +3,10 @@ package com.dlz.test.db.cases.id_strategy;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
+import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
+import com.dlz.test.db.entity.NoIdEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
@@ -70,6 +72,13 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
             Assertions.assertEquals(maxId1 + 1, maxId2, "单次取号应连续递增");
             maxId1 = maxId2;
         }
+    }
+    @Test
+    @Order(2)
+    void testSingleIdGeneration3() {
+        NoIdEntity autoIdEntity = new NoIdEntity();
+        autoIdEntity.setName("test");
+        Assertions.assertThrowsExactly(SystemException.class, () -> DB.Pojo.insertOrUpdate(autoIdEntity));
     }
 
     @Test

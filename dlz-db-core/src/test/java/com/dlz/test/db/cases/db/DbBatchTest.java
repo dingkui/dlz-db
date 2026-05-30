@@ -4,6 +4,7 @@ import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.TestUser;
+import com.dlz.test.db.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -114,6 +115,10 @@ class DbBatchTest extends BaseDBTest {
         );
 
         DB.Batch.update(sql, params, 100);
+        DB.Batch.update(sql, params, 1);
+        DB.Batch.update(sql, params, 2);
+        DB.Batch.update(sql, params, 0);
+        DB.Batch.update(sql, Arrays.asList(), 100);
     }
 
     @Test
@@ -124,6 +129,20 @@ class DbBatchTest extends BaseDBTest {
 
         // 空列表不会进入循环，直接返回 true
         boolean result = DB.Batch.update(sql, params);
+
+        assertTrue(result);
+    }
+
+    @Test
+    @DisplayName("测试 update - 空参数列表")
+    void testUpdateWithEmptyBeans() {
+        final User insert1 = DB.Pojo.insert(new User());
+        final User insert2 = DB.Pojo.insert(new User());
+        List<User> users = Arrays.asList(insert1, insert2);
+        insert1.setAge(12);
+        insert2.setAge(6);
+        // 空列表不会进入循环，直接返回 true
+        boolean result = DB.Batch.update(users, 10);
 
         assertTrue(result);
     }
