@@ -4,6 +4,7 @@ import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DBTx;
 
 public class DB {
+    private DB(){}
     /**
      * 原生JDBC操作，适合简单的少参数sql.可快速构建功能
      * 建议采用Sql操作

@@ -52,10 +52,8 @@ public class DbPojo {
 
     //以下都是直接操作执行
     public <T> T insert(T bean) {
-        if (PojoInsert.wrapper(bean).execute() == 1) {
-            return bean;
-        }
-        throw new SystemException("插入失败");
+        PojoInsert.wrapper(bean).execute();
+        return bean;
     }
 
     public <T> T insertOrUpdate(T obj) {

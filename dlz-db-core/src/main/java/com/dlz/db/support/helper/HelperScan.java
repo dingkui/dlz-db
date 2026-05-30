@@ -23,7 +23,7 @@ public class HelperScan {
             Set<Class<?>> set = DlzResourceLoader.scan(packageName, TableName.class);
             set.stream().forEach(clazz -> initTable(clazz, helper));
         } catch (Exception e) {
-            log.error("扫描包失败: " + packageName, e);
+            log.error("扫描包失败: {}", packageName, e);
         }
     }
 
