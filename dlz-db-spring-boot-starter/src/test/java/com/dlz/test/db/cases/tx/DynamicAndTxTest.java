@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.tx;
 
 import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DBTx;
@@ -8,9 +8,7 @@ import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,7 +29,7 @@ public class DynamicAndTxTest extends BaseDBTest {
     private static final String TEST_DS_NAME = "tx_test_ds";
     private static final String DB_FILE = "./test/tx_test.sqlite3";
 
-    @BeforeEach
+    @Before
     public void setup() {
         // 清理已有数据源
         try {
@@ -53,7 +51,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         });
     }
 
-    @AfterEach
+    @After
     public void teardown() {
         DB.Dynamic.removeDataSource(TEST_DS_NAME);
     }
@@ -118,7 +116,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         long count1 = DB.Dynamic.use(TEST_DS_NAME, () ->
                 DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
-        assertEquals("异常应触发回滚，数据不应持久化",0, count1);
+        assertEquals("异常应触发回滚，数据不应持久化", 0, count1);
         try {
             DB.Tx.run(TEST_DS_NAME, () -> {
                 DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 200, "rollback");

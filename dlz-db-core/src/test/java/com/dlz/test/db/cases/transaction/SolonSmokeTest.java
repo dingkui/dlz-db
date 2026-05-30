@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.transaction;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;

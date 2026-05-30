@@ -14,5 +14,5 @@ dlz:
     helper:
       auto-update: true
       package-name: com.dlz.test.db.entity
-    logic-delete-field: IS_DELETED
+    logic-delete-field: deleted
     table-cache-time: -1

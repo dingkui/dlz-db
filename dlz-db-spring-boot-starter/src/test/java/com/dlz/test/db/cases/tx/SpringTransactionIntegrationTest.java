@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases;
+package com.dlz.test.db.cases.tx;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
