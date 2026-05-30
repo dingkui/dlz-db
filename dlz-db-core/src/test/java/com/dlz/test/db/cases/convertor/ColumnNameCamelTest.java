@@ -1,4 +1,4 @@
-package com.dlz.test.db.performance;
+package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
 import org.junit.jupiter.api.BeforeEach;

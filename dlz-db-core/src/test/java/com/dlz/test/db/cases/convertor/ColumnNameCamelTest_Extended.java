@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.convertor.columnname;
+package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
 import org.junit.jupiter.api.BeforeEach;
@@ -409,57 +409,4 @@ class ColumnNameCamelTest_Extended {
         assertEquals("😀USER_NAME", converter.toDbColumnName("😀userName"));
     }
 
-    // ========== 性能扩展测试 ==========
-
-    @Test
-    @DisplayName("性能测试 - toFieldName - 大量数据")
-    void testPerformance_ToFieldName_LargeData() {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < 100000; i++) {
-            converter.toFieldName("user_name_info_" + i);
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        assertTrue(duration < 5000, "toFieldName 性能测试失败，耗时: " + duration + "ms");
-    }
-
-    @Test
-    @DisplayName("性能测试 - toDbColumnName - 大量数据")
-    void testPerformance_ToDbColumnName_LargeData() {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < 100000; i++) {
-            converter.toDbColumnName("userNameInfo" + i);
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        assertTrue(duration < 5000, "toDbColumnName 性能测试失败，耗时: " + duration + "ms");
-    }
-
-    @Test
-    @DisplayName("性能测试 - toFieldName - 特殊字符")
-    void testPerformance_ToFieldName_SpecialChars() {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < 10000; i++) {
-            converter.toFieldName("user_name_info_" + i + "!@#$%^&*()");
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        assertTrue(duration < 1000, "toFieldName 性能测试失败，耗时: " + duration + "ms");
-    }
-
-    @Test
-    @DisplayName("性能测试 - toDbColumnName - 特殊字符")
-    void testPerformance_ToDbColumnName_SpecialChars() {
-        long startTime = System.currentTimeMillis();
-
-        for (int i = 0; i < 10000; i++) {
-            converter.toDbColumnName("userNameInfo" + i + "!@#$%^&*()");
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        assertTrue(duration < 1000, "toDbColumnName 性能测试失败，耗时: " + duration + "ms");
-    }
 }

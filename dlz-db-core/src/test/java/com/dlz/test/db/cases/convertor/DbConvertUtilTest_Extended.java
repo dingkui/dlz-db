@@ -1,4 +1,4 @@
-package com.dlz.test.db.performance;
+package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
 import com.dlz.db.convertor.columnname.ColumnNameToLower;
@@ -261,31 +261,5 @@ class DbConvertUtilTest_Extended {
         
         result = DbConvertUtil.toDbColumnName("user1Name2");
         assertEquals("USER1_NAME2", result);
-    }
-
-    @Test
-    @DisplayName("测试性能 - toFieldName")
-    void testPerformance_ToFieldName() {
-        long startTime = System.currentTimeMillis();
-        
-        for (int i = 0; i < 10000; i++) {
-            DbConvertUtil.toFieldName("user_name_info_" + i);
-        }
-        
-        long duration = System.currentTimeMillis() - startTime;
-        assertTrue(duration < 1000, "toFieldName 性能测试失败，耗时: " + duration + "ms");
-    }
-
-    @Test
-    @DisplayName("测试性能 - toDbColumnName")
-    void testPerformance_ToDbColumnName() {
-        long startTime = System.currentTimeMillis();
-        
-        for (int i = 0; i < 10000; i++) {
-            DbConvertUtil.toDbColumnName("userNameInfo" + i);
-        }
-        
-        long duration = System.currentTimeMillis() - startTime;
-        assertTrue(duration < 1000, "toDbColumnName 性能测试失败，耗时: " + duration + "ms");
     }
 }

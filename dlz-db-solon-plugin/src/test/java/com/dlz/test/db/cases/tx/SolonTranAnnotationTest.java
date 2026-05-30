@@ -39,7 +39,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
 //                "age INTEGER, " +
 //                "email TEXT, " +
 //                "create_time DATETIME, " +
-//                "is_deleted TEXT DEFAULT '0'" +
+//                "deleted TEXT DEFAULT '0'" +
 //                ")");
     }
 
