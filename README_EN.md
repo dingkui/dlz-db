@@ -168,7 +168,7 @@ spring:
 # DLZ-DB Configuration (optional)
 dlz:
   db:
-    logic-delete-field: is_deleted
+    logic-delete-field: deleted
     log:
       show-run-sql: true
       show-caller: true
@@ -192,7 +192,7 @@ public class User {
     private Long id;
     private String name;
     private Integer age;
-    private Integer isDeleted;      // Optional: presence enables logical delete
+    private Integer deleted;      // Optional: presence enables logical delete
     private Date createTime;
 }
 
@@ -226,7 +226,7 @@ public class UserController {
 ```yaml
 dlz:
   db:
-    logic-delete-field: is_deleted
+    logic-delete-field: deleted
     log:
       show-run-sql: true
       show-caller: true
@@ -292,7 +292,7 @@ DB.Batch.insert(users, 100);
 DB.Pojo.update(user).eq(User::getId, id).execute();
 DB.Pojo.update(User.class).set(User::getName, "New Name").eq(User::getId, id).execute();
 
-// Delete (with isDeleted field automatically uses logical delete)
+// Delete (with deleted field automatically uses logical delete)
 DB.Pojo.delete(User.class).eq(User::getId, id).execute();
 
 // Preset SQL (defined in xml/db, key starts with "key.")

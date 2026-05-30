@@ -58,8 +58,8 @@ public class User {
 
 ## 逻辑删除
 
-Entity 里只要有 `isDeleted` 字段（`Boolean` 或 `Integer`），DLZ-DB 自动启用逻辑删除：
+Entity 里只要有 `deleted` 字段（`Boolean` 或 `Integer`），DLZ-DB 自动启用逻辑删除：
 
-- 查询自动加 `WHERE is_deleted = 0`
-- DELETE 语句自动转换为 `UPDATE SET is_deleted = 1`
+- 查询自动加 `WHERE deleted = 0`
+- DELETE 语句自动转换为 `UPDATE SET deleted = 1`
 - 需要物理删除时加 `.ignoreLogicDelete(true)`

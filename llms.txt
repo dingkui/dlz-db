@@ -108,7 +108,7 @@ DB.Dynamic.use("slave", () ->
 - Table name: CamelCase to snake_case (User.class → user). Custom: `@TableName("t_user")`
 - Field mapping: `User::getUserName` → `user_name`. Custom: `@TableField("email_address")`
 - Primary key: `@TableId`
-- Logical delete: Bean with `isDeleted` field auto-enables (query adds `is_deleted = 0`, DELETE converts to UPDATE)
+- Logical delete: Bean with `deleted` field auto-enables (query adds `deleted = 0`, DELETE converts to UPDATE)
 
 ## Documentation
 

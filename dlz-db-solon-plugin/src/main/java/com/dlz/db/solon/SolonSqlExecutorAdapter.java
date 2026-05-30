@@ -17,7 +17,7 @@ import java.sql.Connection;
  * <h3>连接来源</h3>
  * <ol>
  *   <li>当前线程数据源由 {@link DB#Dynamic} 决定。</li>
- *   <li>若 {@link SolonConnectionHolder} 中存在该数据源的事务连接，则复用且执行后<b>不</b>关闭。</li>
+ *   <li>若 {@link DlzConnectionHolder} 中存在该数据源的事务连接，则复用且执行后<b>不</b>关闭。</li>
  *   <li>若 Solon @Tran 事务中存在该数据源的连接，则复用。</li>
  *   <li>否则新开连接，执行后立即关闭（短连接模式）。</li>
  * </ol>

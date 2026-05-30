@@ -490,10 +490,10 @@ public void createUser() {
 
 ### 10.1 逻辑删除
 
-当实体类包含 `isDeleted` 字段时，自动启用逻辑删除：
-- 查询自动添加 `WHERE is_deleted = 0`
-- 删除转换为 `UPDATE is_deleted = 1`
-- 更新自动添加 `WHERE is_deleted = 0`
+当实体类包含 `deleted` 字段时，自动启用逻辑删除：
+- 查询自动添加 `WHERE deleted = 0`
+- 删除转换为 `UPDATE deleted = 1`
+- 更新自动添加 `WHERE deleted = 0`
 
 ### 10.2 预设 SQL
 

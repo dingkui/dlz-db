@@ -6,7 +6,7 @@
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.0.1</version>
+    <version>7.0.1-2</version>
 </dependency>
 ```
 
@@ -30,7 +30,7 @@ datasource:
 
 dlz:
   db:
-    logic-delete-field: is_deleted
+    logic-delete-field: deleted
     log:
       show-run-sql: true
       show-caller: true

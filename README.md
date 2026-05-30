@@ -169,7 +169,7 @@ spring:
 # DLZ-DB 配置（可选）
 dlz:
   db:
-    logic-delete-field: is_deleted
+    logic-delete-field: deleted
     log:
       show-run-sql: true
       show-caller: true
@@ -193,7 +193,7 @@ public class User {
     private Long id;
     private String name;
     private Integer age;
-    private Integer isDeleted;      // 可选：存在即启用逻辑删除
+    private Integer deleted;      // 可选：存在即启用逻辑删除
     private Date createTime;
 }
 
@@ -227,7 +227,7 @@ public class UserController {
 ```yaml
 dlz:
   db:
-    logic-delete-field: is_deleted
+    logic-delete-field: deleted
     log:
       show-run-sql: true
       show-caller: true
@@ -293,7 +293,7 @@ DB.Batch.insert(users, 100);
 DB.Pojo.update(user).eq(User::getId, id).execute();
 DB.Pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
 
-// 删除（有 isDeleted 字段自动走逻辑删除）
+// 删除（有 deleted 字段自动走逻辑删除）
 DB.Pojo.delete(User.class).eq(User::getId, id).execute();
 
 // 预设 SQL（xml / db 中定义，key 以 "key." 开头）
