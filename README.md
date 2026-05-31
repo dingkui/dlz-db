@@ -6,7 +6,7 @@
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
 [![Build Status](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml)
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-7.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
-[![codecov](https://shields.io)](https://codecov.io)
+[![codecov](https://codecov.io/gh/dingkui/dlz-db/graph/badge.svg?token=UDX6ZH1R0Q)](https://codecov.io/gh/dingkui/dlz-db)
 
 ```java
 List<User> users = DB.Pojo.select(User.class)
