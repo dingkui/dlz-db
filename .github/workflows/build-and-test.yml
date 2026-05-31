@@ -12,31 +12,30 @@ jobs:
     
     strategy:
       matrix:
+        # 注意点 1：检查你的项目本身是否使用了 Java 11 或 17 的新特性。
+        # 如果你的 pom.xml 指定了必须用 Java 17，请把 '8' 和 '11' 删掉，否则 CI 编译会报错。
         java: [ '8', '11', '17' ]
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v4
-      with:
-        java-version: ${{ matrix.java }}
-        distribution: 'temurin'
-        cache: maven
-    
-    - name: Build with Maven
-      run: mvn -B clean compile --file pom.xml
-    
-    - name: Run tests
-      run: mvn -B test --file pom.xml
-    
-    - name: Generate test coverage
-      run: mvn -B jacoco:report --file pom.xml
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./target/site/jacoco/jacoco.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: maven
+
+      # 这样写绝对万无一失，既显式调用了 jacoco，又合并了编译和测试
+      - name: Build, Test and Force Generate JaCoCo Report
+        run: mvn -B clean verify jacoco:report --file pom.xml
+
+      # 硬伤修正：Codecov v4 版本现在【强行要求】必须提供 Token，不传会上传失败。
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # 必须在 GitHub 仓库设置里配置这个 Secret
+          file: ./target/site/jacoco/jacoco.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
