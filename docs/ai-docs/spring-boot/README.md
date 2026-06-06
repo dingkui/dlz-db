@@ -6,7 +6,7 @@
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.0.1-2</version>
+    <version>7.0.1-3</version>
 </dependency>
 ```
 

@@ -152,7 +152,7 @@ DLZ-DB v7 adopts a multi-module architecture, choose dependencies based on runti
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.0.1-2</version>
+    <version>7.0.1-3</version>
 </dependency>
 ```
 
@@ -217,7 +217,7 @@ public class UserController {
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.0.1-2</version>
+    <version>7.0.1-3</version>
 </dependency>
 ```
 
