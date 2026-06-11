@@ -122,25 +122,6 @@ class SqlUtilTest {
         });
     }
 
-    @Test
-    @DisplayName("测试 coverString2Object - Date 类型")
-    void testCoverString2Object_Date() {
-        String value = "2024-01-01 12:00:00";
-        
-        Object result = SqlUtil.coverString2Object(value, ParaTypeEnum.Date);
-        assertNotNull(result);
-    }
-
-    @Test
-    @DisplayName("测试 coverString2Object - 默认类型")
-    void testCoverString2Object_Default() {
-        String value = "test";
-        
-        Object result = SqlUtil.coverString2Object(value, null);
-        assertEquals("test", result);
-    }
-
-
 
     @Test
     @DisplayName("测试 replaceSql - 基本替换")

@@ -1,10 +1,12 @@
 package com.dlz.db.modal.items;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 public class SqlItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -21,9 +23,9 @@ public class SqlItem implements Serializable {
      */
     private String sqlRun;
 
-
-    private String sqlJdbc;
-    private Object[] sqlJdbcPara;
+//
+//    private String sqlJdbc;
+//    private Object[] sqlJdbcPara;
 
 
 }

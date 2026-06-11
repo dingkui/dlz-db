@@ -390,32 +390,6 @@ public class SqlUtil {
         return o != null && !"".equals(o);
     }
 
-    /**
-     * 将参数转换成对应的Object
-     *
-     * @param value
-     * @param pte
-     * @author dk 2015-04-09
-     */
-    public static Object coverString2Object(String value, ParaTypeEnum pte) {
-        if (pte == null) {
-            return value;
-        }
-        try {
-            switch (pte) {
-                case Blob:
-                    return value.getBytes(DBHolder.getSqlConfig().getBlob_charset());
-                case Date:
-                    return ValUtil.toDate(value);
-                default:
-                    return value;
-            }
-        } catch (Exception e) {
-            log.error("转换参数失败: {}", e.getMessage(), e);
-        }
-        return value;
-    }
-
     public static String getSqlInStr(Object o) {
         if (StringUtils.isEmpty(o)) {
             throw new SystemException("转换成in的参数不能为空！");

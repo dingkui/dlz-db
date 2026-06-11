@@ -15,9 +15,6 @@ public class JdbcItem implements Serializable {
 		this.sql = sqlJdbc;
 		this.paras = sqlJdbcPara;
 	}
-    public String toString() {
-        return "sql: " + sql + " paras: " + paras;
-    }
     public String toRunSql() {
         return SqlUtil.getRunSqlByJdbc(sql, paras).trim();
     }

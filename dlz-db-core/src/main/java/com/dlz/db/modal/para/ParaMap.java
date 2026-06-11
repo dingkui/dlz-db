@@ -33,25 +33,8 @@ public class ParaMap<ME extends ParaMap> implements Serializable , ISqlPara, ICh
         sqlItem.setSqlKey(sqlKey);
     }
 
-    public ParaMap(String sqlKey, Page page) {
-        sqlItem.setSqlKey(sqlKey);
-        this.page=page;
-    }
-
     public ME addParas(Map<String, Object> map) {
-        for (String key : map.keySet()) {
-            Object v = map.get(key);
-            if (v instanceof String[]) {
-                String[] paras = (String[]) map.get(key);
-                if (paras.length == 1) {
-                    para.put(key, paras[0]);
-                } else {
-                    para.put(key, paras);
-                }
-            } else {
-                para.put(key, v);
-            }
-        }
+        para.putAll(map);
         return me();
     }
 
@@ -67,18 +50,6 @@ public class ParaMap<ME extends ParaMap> implements Serializable , ISqlPara, ICh
     }
     public <T> ME addPara(DlzFn<T, ?> column, Object value){
         return addPara(PojoCache.fnName(column),value);
-    }
-
-    /**
-     * 添加指定类型的参数（根据类型自动转换）
-     *
-     * @param key
-     * @param value
-     * @param pte
-          */
-    public ME addPara(String key, String value, ParaTypeEnum pte) {
-		para.put(key, SqlUtil.coverString2Object(value, pte));
-        return me();
     }
 
     public JdbcItem jdbcSql() {
