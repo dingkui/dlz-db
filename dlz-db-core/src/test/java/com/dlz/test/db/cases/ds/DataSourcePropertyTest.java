@@ -1,7 +1,6 @@
 package com.dlz.test.db.cases.ds;
 
 import com.dlz.db.ds.DataSourceProperty;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,118 +9,107 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * DataSourceProperty 数据源属性测试
- */
 @DisplayName("DataSourceProperty 数据源属性测试")
 class DataSourcePropertyTest {
 
-    private DataSourceProperty property;
-
-    @BeforeEach
-    void setUp() {
-        property = new DataSourceProperty();
-    }
-
     @Test
-    @DisplayName("测试基本属性设置")
-    void testBasicProperties() {
-        property.setName("test_db");
-        property.setUrl("jdbc:mysql://localhost:3306/test");
-        property.setUsername("root");
-        property.setPassword("123456");
-        property.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        
-        assertEquals("test_db", property.getName());
-        assertEquals("jdbc:mysql://localhost:3306/test", property.getUrl());
-        assertEquals("root", property.getUsername());
-        assertEquals("123456", property.getPassword());
-        assertEquals("com.mysql.cj.jdbc.Driver", property.getDriverClassName());
-    }
-
-    @Test
-    @DisplayName("测试连接池配置默认值")
+    @DisplayName("默认连接池配置")
     void testDefaultPoolConfig() {
-        assertEquals(10, property.getMaxPoolSize());
-        assertEquals(2, property.getMinIdle());
-        assertEquals(30000, property.getConnectionTimeout());
-        assertEquals(3000, property.getValidationTimeout());
-        assertEquals(600000, property.getIdleTimeout());
-        assertEquals(1800000, property.getMaxLifetime());
-        assertEquals(60000, property.getLeakDetectionThreshold());
+        DataSourceProperty prop = new DataSourceProperty();
+        assertEquals(10, prop.getMaxPoolSize());
+        assertEquals(2, prop.getMinIdle());
+        assertEquals(30000, prop.getConnectionTimeout());
+        assertEquals(3000, prop.getValidationTimeout());
+        assertEquals(600000, prop.getIdleTimeout());
+        assertEquals(1800000, prop.getMaxLifetime());
+        assertEquals(60000, prop.getLeakDetectionThreshold());
     }
 
     @Test
-    @DisplayName("测试连接池配置自定义值")
-    void testCustomPoolConfig() {
-        property.setMaxPoolSize(20);
-        property.setMinIdle(5);
-        property.setConnectionTimeout(60000);
-        property.setValidationTimeout(5000);
-        property.setIdleTimeout(1200000);
-        property.setMaxLifetime(3600000);
-        property.setLeakDetectionThreshold(120000);
-        
-        assertEquals(20, property.getMaxPoolSize());
-        assertEquals(5, property.getMinIdle());
-        assertEquals(60000, property.getConnectionTimeout());
-        assertEquals(5000, property.getValidationTimeout());
-        assertEquals(1200000, property.getIdleTimeout());
-        assertEquals(3600000, property.getMaxLifetime());
-        assertEquals(120000, property.getLeakDetectionThreshold());
+    @DisplayName("额外配置默认为空Map")
+    void testDefaultAdditionalProperties() {
+        DataSourceProperty prop = new DataSourceProperty();
+        assertNotNull(prop.getAdditionalProperties());
+        assertTrue(prop.getAdditionalProperties().isEmpty());
     }
 
     @Test
-    @DisplayName("测试额外配置属性")
-    void testAdditionalProperties() {
-        Map<String, Object> additionalProps = new HashMap<>();
-        additionalProps.put("cachePrepStmts", true);
-        additionalProps.put("prepStmtCacheSize", 250);
-        
-        property.setAdditionalProperties(additionalProps);
-        
-        assertNotNull(property.getAdditionalProperties());
-        assertEquals(2, property.getAdditionalProperties().size());
-        assertTrue((Boolean) property.getAdditionalProperties().get("cachePrepStmts"));
-        assertEquals(250, property.getAdditionalProperties().get("prepStmtCacheSize"));
+    @DisplayName("健康检查配置默认为空Map")
+    void testDefaultHealthCheckRegistry() {
+        DataSourceProperty prop = new DataSourceProperty();
+        assertNotNull(prop.getHealthCheckRegistry());
+        assertTrue(prop.getHealthCheckRegistry().isEmpty());
     }
 
     @Test
-    @DisplayName("测试健康检查配置")
-    void testHealthCheckRegistry() {
-        Map<String, String> healthCheck = new HashMap<>();
-        healthCheck.put("healthCheckMetricRegistry", "my-registry");
-        
-        property.setHealthCheckRegistry(healthCheck);
-        
-        assertNotNull(property.getHealthCheckRegistry());
-        assertEquals(1, property.getHealthCheckRegistry().size());
-        assertEquals("my-registry", property.getHealthCheckRegistry().get("healthCheckMetricRegistry"));
+    @DisplayName("setter/getter - 基本属性")
+    void testBasicProperties() {
+        DataSourceProperty prop = new DataSourceProperty();
+        prop.setName("primary");
+        prop.setDriverClassName("org.sqlite.JDBC");
+        prop.setUrl("jdbc:sqlite::memory:");
+        prop.setUsername("user");
+        prop.setPassword("pass");
+        prop.setTestQuery("SELECT 1");
+        prop.setSchema("public");
+
+        assertEquals("primary", prop.getName());
+        assertEquals("org.sqlite.JDBC", prop.getDriverClassName());
+        assertEquals("jdbc:sqlite::memory:", prop.getUrl());
+        assertEquals("user", prop.getUsername());
+        assertEquals("pass", prop.getPassword());
+        assertEquals("SELECT 1", prop.getTestQuery());
+        assertEquals("public", prop.getSchema());
     }
 
     @Test
-    @DisplayName("测试可选属性")
-    void testOptionalProperties() {
-        property.setDbProductName("MySQL");
-        property.setTestQuery("SELECT 1");
-        property.setSchema("public");
-        property.setCreatorClassName("com.example.CustomCreator");
-        
-        assertEquals("MySQL", property.getDbProductName());
-        assertEquals("SELECT 1", property.getTestQuery());
-        assertEquals("public", property.getSchema());
-        assertEquals("com.example.CustomCreator", property.getCreatorClassName());
+    @DisplayName("setter/getter - 连接池属性")
+    void testPoolProperties() {
+        DataSourceProperty prop = new DataSourceProperty();
+        prop.setMaxPoolSize(20);
+        prop.setMinIdle(5);
+        prop.setConnectionTimeout(60000);
+        prop.setIdleTimeout(300000);
+        prop.setMaxLifetime(900000);
+        prop.setLeakDetectionThreshold(120000);
+        prop.setValidationTimeout(5000);
+
+        assertEquals(20, prop.getMaxPoolSize());
+        assertEquals(5, prop.getMinIdle());
+        assertEquals(60000, prop.getConnectionTimeout());
+        assertEquals(300000, prop.getIdleTimeout());
+        assertEquals(900000, prop.getMaxLifetime());
+        assertEquals(120000, prop.getLeakDetectionThreshold());
+        assertEquals(5000, prop.getValidationTimeout());
     }
 
     @Test
-    @DisplayName("测试空字符串和 null 值")
-    void testNullAndEmptyValues() {
-        property.setName(null);
-        property.setUrl("");
-        property.setUsername(null);
-        
-        assertNull(property.getName());
-        assertEquals("", property.getUrl());
-        assertNull(property.getUsername());
+    @DisplayName("setter/getter - 额外配置和健康检查")
+    void testExtraProperties() {
+        DataSourceProperty prop = new DataSourceProperty();
+        Map<String, Object> additional = new HashMap<>();
+        additional.put("key", "value");
+        prop.setAdditionalProperties(additional);
+        assertEquals("value", prop.getAdditionalProperties().get("key"));
+
+        Map<String, String> health = new HashMap<>();
+        health.put("check", "true");
+        prop.setHealthCheckRegistry(health);
+        assertEquals("true", prop.getHealthCheckRegistry().get("check"));
+    }
+
+    @Test
+    @DisplayName("creatorClassName 默认为null")
+    void testCreatorClassNameDefault() {
+        DataSourceProperty prop = new DataSourceProperty();
+        assertNull(prop.getCreatorClassName());
+    }
+
+    @Test
+    @DisplayName("dbProductName setter/getter")
+    void testDbProductName() {
+        DataSourceProperty prop = new DataSourceProperty();
+        prop.setDbProductName("SQLite");
+        assertEquals("SQLite", prop.getDbProductName());
     }
 }
