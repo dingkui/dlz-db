@@ -317,24 +317,344 @@ class ICondAddByFnTest {
         assertEquals("where ID = 100 and (STATUS = 1 and (AGE > 18 or EMAIL is not null))", getSql(result));
     }
 
+    // ========== 动态条件false分支 ==========
+
+    @Test
+    @DisplayName("测试 ne() - 动态条件true")
+    void testNeDynamicTrue() {
+        Condition result = condition.ne(true, TestUser::getStatus, 0);
+        assertNotNull(result);
+        assertEquals("where STATUS <> 0", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 ne() - 动态条件false")
+    void testNeDynamicFalse() {
+        Condition result = condition.ne(false, TestUser::getStatus, 0);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 gt() - 动态条件true")
+    void testGtDynamicTrue() {
+        Condition result = condition.gt(true, TestUser::getAge, 18);
+        assertNotNull(result);
+        assertEquals("where AGE > 18", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 gt() - 动态条件false")
+    void testGtDynamicFalse() {
+        Condition result = condition.gt(false, TestUser::getAge, 18);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 ge() - 动态条件true")
+    void testGeDynamicTrue() {
+        Condition result = condition.ge(true, TestUser::getAge, 18);
+        assertNotNull(result);
+        assertEquals("where AGE >= 18", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 ge() - 动态条件false")
+    void testGeDynamicFalse() {
+        Condition result = condition.ge(false, TestUser::getAge, 18);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 lt() - 动态条件true")
+    void testLtDynamicTrue() {
+        Condition result = condition.lt(true, TestUser::getAge, 60);
+        assertNotNull(result);
+        assertEquals("where AGE < 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 lt() - 动态条件false")
+    void testLtDynamicFalse() {
+        Condition result = condition.lt(false, TestUser::getAge, 60);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 le() - 动态条件true")
+    void testLeDynamicTrue() {
+        Condition result = condition.le(true, TestUser::getAge, 60);
+        assertNotNull(result);
+        assertEquals("where AGE <= 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 le() - 动态条件false")
+    void testLeDynamicFalse() {
+        Condition result = condition.le(false, TestUser::getAge, 60);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    // ========== LIKE 动态分支 ==========
+
+    @Test
+    @DisplayName("测试 like() - 动态条件true")
+    void testLikeDynamicTrue() {
+        Condition result = condition.like(true, TestUser::getName, "张");
+        assertNotNull(result);
+        assertEquals("where NAME like '%张%'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 like() - 动态条件false")
+    void testLikeDynamicFalse() {
+        Condition result = condition.like(false, TestUser::getName, "张");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 likeLeft() - 动态条件true")
+    void testLikeLeftDynamicTrue() {
+        Condition result = condition.likeLeft(true, TestUser::getName, "张");
+        assertNotNull(result);
+        assertEquals("where NAME like '%张'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 likeLeft() - 动态条件false")
+    void testLikeLeftDynamicFalse() {
+        Condition result = condition.likeLeft(false, TestUser::getName, "张");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 likeRight() - 动态条件true")
+    void testLikeRightDynamicTrue() {
+        Condition result = condition.likeRight(true, TestUser::getEmail, "@qq.com");
+        assertNotNull(result);
+        assertEquals("where EMAIL like '@qq.com%'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 likeRight() - 动态条件false")
+    void testLikeRightDynamicFalse() {
+        Condition result = condition.likeRight(false, TestUser::getEmail, "@qq.com");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notLike() - 动态条件true")
+    void testNotLikeDynamicTrue() {
+        Condition result = condition.notLike(true, TestUser::getName, "测试");
+        assertNotNull(result);
+        assertEquals("where NAME not like '%测试%'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notLike() - 动态条件false")
+    void testNotLikeDynamicFalse() {
+        Condition result = condition.notLike(false, TestUser::getName, "测试");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    // ========== IN/NOT IN 动态分支 ==========
+
+    @Test
+    @DisplayName("测试 in() - 动态条件true")
+    void testInDynamicTrue() {
+        Condition result = condition.in(true, TestUser::getId, "1,2,3");
+        assertNotNull(result);
+        assertEquals("where ID in (1,2,3)", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 in() - 动态条件false")
+    void testInDynamicFalse() {
+        Condition result = condition.in(false, TestUser::getId, "1,2,3");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notIn() - 动态条件true")
+    void testNotInDynamicTrue() {
+        Condition result = condition.notIn(true, TestUser::getStatus, "1,2,3");
+        assertNotNull(result);
+        assertTrue(getSql(result).contains("STATUS not in"));
+    }
+
+    @Test
+    @DisplayName("测试 notIn() - 动态条件false")
+    void testNotInDynamicFalse() {
+        Condition result = condition.notIn(false, TestUser::getStatus, "1,2,3");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    // ========== BETWEEN/NOT BETWEEN 补充 ==========
+
+    @Test
+    @DisplayName("测试 between() - 动态条件true")
+    void testBetweenDynamicTrue() {
+        Condition result = condition.between(true, TestUser::getAge, 18, 60);
+        assertNotNull(result);
+        assertEquals("where AGE between 18 and 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 between() - 动态条件false")
+    void testBetweenDynamicFalse() {
+        Condition result = condition.between(false, TestUser::getAge, 18, 60);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 between() - 单值动态true")
+    void testBetweenSingleValueDynamicTrue() {
+        Condition result = condition.between(true, TestUser::getAge, "18,60");
+        assertNotNull(result);
+        assertEquals("where AGE between '18' and '60'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 between() - 单值动态false")
+    void testBetweenSingleValueDynamicFalse() {
+        Condition result = condition.between(false, TestUser::getAge, "18,60");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notBetween() - 动态条件true")
+    void testNotBetweenDynamicTrue() {
+        Condition result = condition.notBetween(true, TestUser::getAge, 18, 60);
+        assertNotNull(result);
+        assertEquals("where AGE not between 18 and 60", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notBetween() - 动态条件false")
+    void testNotBetweenDynamicFalse() {
+        Condition result = condition.notBetween(false, TestUser::getAge, 18, 60);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notBetween() - 单值")
+    void testNotBetweenSingleValue() {
+        Condition result = condition.notBetween(TestUser::getAge, "18,60");
+        assertNotNull(result);
+        assertEquals("where AGE not between '18' and '60'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notBetween() - 单值动态true")
+    void testNotBetweenSingleValueDynamicTrue() {
+        Condition result = condition.notBetween(true, TestUser::getAge, "18,60");
+        assertNotNull(result);
+        assertEquals("where AGE not between '18' and '60'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 notBetween() - 单值动态false")
+    void testNotBetweenSingleValueDynamicFalse() {
+        Condition result = condition.notBetween(false, TestUser::getAge, "18,60");
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    // ========== IS NULL / IS NOT NULL 动态分支 ==========
+
+    @Test
+    @DisplayName("测试 isNull() - 动态条件true")
+    void testIsNullDynamicTrue() {
+        Condition result = condition.isNull(true, TestUser::getEmail);
+        assertNotNull(result);
+        assertEquals("where EMAIL is null", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 isNull() - 动态条件false")
+    void testIsNullDynamicFalse() {
+        Condition result = condition.isNull(false, TestUser::getEmail);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 isNotNull() - 动态条件true")
+    void testIsNotNullDynamicTrue() {
+        Condition result = condition.isNotNull(true, TestUser::getEmail);
+        assertNotNull(result);
+        assertEquals("where EMAIL is not null", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 isNotNull() - 动态条件false")
+    void testIsNotNullDynamicFalse() {
+        Condition result = condition.isNotNull(false, TestUser::getEmail);
+        assertNotNull(result);
+        assertEquals("", getSql(result));
+    }
+
+    // ========== 自定义操作符补充 ==========
+
+    @Test
+    @DisplayName("测试 op() - like操作符")
+    void testOpLike() {
+        Condition result = condition.op(TestUser::getName, DbOperateEnum.like, "张");
+        assertNotNull(result);
+        assertTrue(getSql(result).contains("NAME like"));
+    }
+
+    @Test
+    @DisplayName("测试 op() - isNull操作符")
+    void testOpIsNull() {
+        Condition result = condition.op(TestUser::getEmail, DbOperateEnum.isNull, null);
+        assertNotNull(result);
+        assertEquals("where EMAIL is null", getSql(result));
+    }
+
     // ========== 边界情况测试 ==========
 
     @Test
     @DisplayName("测试 - null值")
     void testNullValue() {
         Condition result = condition.eq(TestUser::getStatus, null);
-        
         assertNotNull(result);
-        // null值会被正确处理
     }
 
     @Test
     @DisplayName("测试 - Lambda类型安全")
     void testLambdaTypeSafety() {
-        // 编译期类型检查，如果属性不存在会编译错误
         Condition result = condition.eq(TestUser::getName, "test");
-        
         assertNotNull(result);
         assertEquals("where NAME = 'test'", getSql(result));
+    }
+
+    @Test
+    @DisplayName("测试 between() - List参数")
+    void testBetweenList() {
+        Condition result = condition.between(TestUser::getAge, Arrays.asList(18, 60));
+        assertNotNull(result);
+        assertTrue(getSql(result).contains("AGE between"));
+    }
+
+    @Test
+    @DisplayName("测试 in() - sql子查询")
+    void testInSqlSubquery() {
+        Condition result = condition.in(TestUser::getId, "sql:SELECT id FROM vip");
+        assertNotNull(result);
+        assertTrue(getSql(result).contains("ID in"));
     }
 }
