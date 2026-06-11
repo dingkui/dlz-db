@@ -262,11 +262,11 @@ Solon transactions use `@Tran` annotation:
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
     DB.Pojo.update(Account.class)
-        .setSql("balance = balance - #{amount}", Params.of("amount", amount))
+        .setSql("balance = balance - #{amount}", new JSONMap("AMOUNT", amount))
         .eq(Account::getId, fromId)
         .execute();
     DB.Pojo.update(Account.class)
-        .setSql("balance = balance + #{amount}", Params.of("amount", amount))
+        .setSql("balance = balance + #{amount}", new JSONMap("AMOUNT", amount))
         .eq(Account::getId, toId)
         .execute();
 }

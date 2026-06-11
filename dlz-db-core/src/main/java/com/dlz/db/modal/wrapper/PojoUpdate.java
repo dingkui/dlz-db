@@ -73,6 +73,31 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         return set(col, "sql:" + expr);
     }
 
+    /**
+     * 以原生 SQL 片段更新字段，形如 "col = expr"，并附带命名参数。
+     * 内部等价于 {@code set(col, "sql:" + expr)}，复用 sql: 前缀分支。
+     * <p>⚠️ expr 为原生 SQL，严禁拼接外部输入。
+     * <p>注意：expr 中的 {@code #{key}} 占位符会被列名转换器统一转为大写，
+     * 因此 params 的 key 必须使用大写形式才能正确匹配。
+     * <pre>
+     *   .setSql("score = score + #{score}",new JSONMap("SCORE",2))
+     *   .setSql("view_count = view_count + 1")
+     * </pre>
+     */
+    public PojoUpdate<T> setSql(String sqlFragment, Map<String, Object> params) {
+        if (sqlFragment == null || sqlFragment.trim().isEmpty()) {
+            return this;
+        }
+        int eq = sqlFragment.indexOf('=');
+        if (eq <= 0) {
+            throw new ValidateException("setSql 需要 'col = expr' 形式: " + sqlFragment);
+        }
+        String col = sqlFragment.substring(0, eq).trim();
+        String expr = sqlFragment.substring(eq + 1).trim();
+        getPm().getPara().putAll(params);
+        return set(col, "sql:" + expr);
+    }
+
     public PojoUpdate<T> set(T bean, Function<String, Boolean> ignore) {
         List<Field> fields = FieldReflections.getFields(bean.getClass());
         for (Field field : fields) {
