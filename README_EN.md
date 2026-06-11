@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
-[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.0.1--3-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 
 ```java
 List<User> users = DB.Pojo.select(User.class)
@@ -20,7 +20,7 @@ No Mapper interfaces, no Service layer, no XML.
 
 ## Version Notes
 
-Current version v7.0.0 (initial open-source version v6.6.4).
+Current version v7.0.1-3 (initial open-source version v6.6.4).
 
 This project didn't start from scratch. It began accumulating around **2009**, took shape around **2014**, and has been used as an internal database operation toolkit in the company for over a decade. During this period, it has been adopted by dozens of internal projects, adapted to various legacy systems, different open-source framework combinations, and various strange version mixes.
 
