@@ -19,6 +19,6 @@ Provide context about your question:
 If applicable, provide a code sample that illustrates your question.
 
 ## Environment
-- DLZ-DB version: [e.g. 7.0.1-3]
+- DLZ-DB version: [e.g. 7.0.1-4]
 - Java version: [e.g. 11]
 - Database type and version: [e.g. MySQL 8.0]
