@@ -1,6 +1,5 @@
 package com.dlz.db.util;
 
-import com.dlz.db.enums.ParaTypeEnum;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
@@ -9,7 +8,6 @@ import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.ParaJdbc;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.SqlHolder;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.json.JSONMap;
@@ -309,7 +307,7 @@ public class SqlUtil {
      */
     public static String replaceSql(String sql, Map<String, Object> m, int replaceTimes) {
         int length = sql.length();
-        if (length > 10000 || replaceTimes++ > 3000) {
+        if ((length > 500000 || replaceTimes++ > 3000) && PATTERN_REPLACE.matcher(sql).find()) {
             throw new DbException("sql过长或出现引用死循环！", 1002);
         }
         Matcher mat = PATTERN_REPLACE.matcher(sql);
