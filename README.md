@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
 [![Build Status](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml)
-[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.0.1--3-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 [![codecov](https://codecov.io/gh/dingkui/dlz-db/graph/badge.svg?token=UDX6ZH1R0Q)](https://codecov.io/gh/dingkui/dlz-db)
 
 ```java
@@ -22,7 +22,7 @@ List<User> users = DB.Pojo.select(User.class)
 
 ## 版本说明
 
-当前版本 v7.0.1-2（开源初始版 v6.6.4）。
+当前版本 v7.0.1-3（开源初始版 v6.6.4）。
 
 这个项目不是从零开始的。它大约在 **2009 年**开始积累，**2014 年**左右成型，作为公司内部的数据库操作工具包投入使用。此后十年间，累计被数十个内部项目采用，适配过各种老旧系统、各种开源框架组合、各种奇奇怪怪的版本混搭。
 
@@ -264,11 +264,11 @@ Solon 事务使用 `@Tran` 注解：
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
     DB.Pojo.update(Account.class)
-        .setSql("balance = balance - #{amount}", Params.of("amount", amount))
+        .setSql("balance = balance - #{amount}", new JSONMap("AMOUNT", amount))
         .eq(Account::getId, fromId)
         .execute();
     DB.Pojo.update(Account.class)
-        .setSql("balance = balance + #{amount}", Params.of("amount", amount))
+        .setSql("balance = balance + #{amount}", new JSONMap("AMOUNT", amount))
         .eq(Account::getId, toId)
         .execute();
 }
@@ -406,7 +406,7 @@ DB.Pojo.select(User.class)
 
 ### 其他
 - [5.1 AI 速读](./docs/第05章-AI辅助/5.1-AI速读.md)（AI 代码生成规范）
-- [5.1 AI Quick Reference (English)](./docs/Chapter05-AI/5.1-AI-Quick-Reference.md)（English AI Quick Reference）
+- [5.2 AI 工具配置指南](./docs/第05章-AI辅助/5.2-AI工具配置指南.md)
 - [7.1 最佳实践](./docs/第07章-最佳实践/7.1-最佳实践.md)
 
 ### English Documentation
