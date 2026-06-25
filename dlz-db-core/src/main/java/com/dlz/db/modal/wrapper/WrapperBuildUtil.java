@@ -1,6 +1,8 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
+import com.dlz.db.interceptor.DbPlugin;
+import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
@@ -17,6 +19,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -36,7 +39,7 @@ public class WrapperBuildUtil {
     private static final String MAKER_VALUES = "values";
     private static final String MAKER_STR_SETS = "sets";
     private static final String MAKER_WHERE = "where";
-    public static final String logicDeleteField = DBHolder.getSqlConfig().getLogicDeleteField();
+
 
     /**
      * 生成查询条件sql
@@ -69,15 +72,12 @@ public class WrapperBuildUtil {
 
     /**
      * 生成查询条件sql
-     *
+     * <p>先调用所有启用的插件的 {@link SqlBuildInterceptor#onBuildWhere}，
+     * 再生成最终 WHERE 子句。
      */
     public static void buildWhere(AQuery maker) {
-        if (!SqlRunThreadHolder.isIgnoreLogicDelete()
-                && PojoCache.isColumnExists(maker.getTableName(), logicDeleteField)
-                && !maker.where().isContainCondition(logicDeleteField)
-        ) {
-            maker.where().eq(logicDeleteField, 0);
-        }
+        // 调用插件链：逻辑删除/租户/权限 等自动注入 WHERE 条件
+        DbPlugin.onBuildWhere( maker.getTableName(), maker.where());
         String where = maker.where().getRunsql(maker);
         if (!maker.isAllowFullQuery() && StringUtils.isEmpty(where)) {
             where = "where false";
@@ -87,15 +87,20 @@ public class WrapperBuildUtil {
 
     /**
      * 生成掺入sql
-     *
+     * <p>先调用所有启用的插件的 {@link SqlBuildInterceptor#onBuildInsert}，
+     * 再生成最终 INSERT 语句。
      */
     public static void buildInsertSql(TableInsert maker) {
         StringBuilder sbColumns = new StringBuilder();
         StringBuilder sbValues = new StringBuilder();
-        if (maker.insertValues.isEmpty()) {
+        final Map<String, Object> insertValues = maker.insertValues;
+        if (insertValues.isEmpty()) {
             throw new SystemException("插入字段信息未设置");
         }
-        for (Map.Entry<String, Object> entry : maker.insertValues.entrySet()) {
+        // 调用插件链：逻辑删除/租户 等自动注入插入字段
+        final String tableName = maker.getTableName();
+        DbPlugin.onBuildInsert(tableName, insertValues);
+        for (Map.Entry<String, Object> entry : insertValues.entrySet()) {
             String paraName = entry.getKey();
             Object value = entry.getValue();
             String columnName = paraName.replaceAll("`", "");
@@ -108,11 +113,11 @@ public class WrapperBuildUtil {
             if (appendSql(sbValues, value, columnName)) continue;
             if (value == null)
                 value = "";
-            maker.addPara(columnName, DbConvertUtil.getVal4Db(maker.getTableName(), columnName, value));
+            maker.addPara(columnName, DbConvertUtil.getVal4Db(tableName, columnName, value));
         }
         maker.addPara(MAKER_COLUMNS, sbColumns.toString());
         maker.addPara(MAKER_VALUES, sbValues.toString());
-        maker.addPara(MAKER_TABLE_NAME, maker.getTableName());
+        maker.addPara(MAKER_TABLE_NAME, tableName);
     }
 
     /**

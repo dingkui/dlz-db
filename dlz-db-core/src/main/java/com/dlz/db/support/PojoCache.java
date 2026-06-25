@@ -295,19 +295,14 @@ public class PojoCache {
         });
     }
 
-    public static Field getLogicDeleteInfo(Class<?> beanClass) {
+    public static Field getLogicDeleteInfo(Class<?> beanClass,String logicDeleteFileName) {
         final Field field = deletedFieldCache.computeIfAbsent(beanClass,k -> {
             List<Field> fields = getBeanFields(beanClass);
             if (fields == null) {
                 return null;
             }
-            // 1) @TableId（本项目注解）
-            final String logicDeleteField = WrapperBuildUtil.logicDeleteField;
-            if (logicDeleteField == null) {
-                return null;
-            }
             for (Field f : fields) {
-                if (logicDeleteField.equalsIgnoreCase(getColumnName(f))) {
+                if (logicDeleteFileName.equalsIgnoreCase(getColumnName(f))) {
                     return f;
                 }
             }

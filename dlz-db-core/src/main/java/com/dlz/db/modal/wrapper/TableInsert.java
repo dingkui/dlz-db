@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 public class TableInsert extends AParaTable implements IExecutorInsert {
     private static final long serialVersionUID = 8374167270612933157L;
-    final Map<String, Object> insertValues = new HashMap<>();
+    public final Map<String, Object> insertValues = new HashMap<>();
 
     public TableInsert(String tableName) {
         super(tableName);

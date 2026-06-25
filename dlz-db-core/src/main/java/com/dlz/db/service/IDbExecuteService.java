@@ -3,6 +3,7 @@ package com.dlz.db.service;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.inf.IExecutorInsert;
 import com.dlz.db.inf.IExecutorUDI;
+import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.PojoCache;
@@ -46,12 +47,6 @@ public interface IDbExecuteService extends IDbBaseService{
             final Class<?> beanClass = bean.getClass();
             final IdInfo idField = PojoCache.getIdInfo(beanClass);
             final String tableName = PojoCache.getTableName(beanClass);
-            boolean isIgnoreLogicDelete = !SqlRunThreadHolder.isIgnoreLogicDelete()
-                    && PojoCache.isColumnExists(tableName, WrapperBuildUtil.logicDeleteField);
-            final Field logicDeleteField = isIgnoreLogicDelete?PojoCache.getLogicDeleteInfo(beanClass):null;
-            if(logicDeleteField!=null){
-                FieldReflections.setValue(bean, logicDeleteField, 0);
-            }
             if(idField != null){
                 WrapperBuildUtil.fillAutoId(tableName, idField, bean);
                 if(idField.getType() == IdType.AUTO){

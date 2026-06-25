@@ -1,26 +1,23 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.modal.para.ParaMap;
-import com.dlz.db.modal.wrapper.PojoUpdate;
-import com.dlz.db.modal.wrapper.TableDelete;
-import com.dlz.db.modal.wrapper.TableUpdate;
+import com.dlz.db.interceptor.DbPlugin;
+import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.support.DBHolder;
-import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.SqlRunThreadHolder;
 
 /**
- * 删除执行器：在"查询构造器"上叠加"执行删除"能力，并内置 <b>逻辑删除</b> 支持。
+ * 删除执行器：在"查询构造器"上叠加"执行删除"能力。
  *
- * <p><b>逻辑删除规则</b>：当 Bean/表存在配置中 {@code dlz.db.logic-delete-field} 指定的列（如 {@code deleted}），
- * 且当前线程未调用 {@link #ignoreLogicDelete(boolean) ignoreLogicDelete(true)} 时，
- * {@link #execute()} 会将 DELETE 自动改写为 {@code UPDATE ... SET deleted = 1 WHERE ...}。
+ * <p><b>逻辑删除</b>已抽取为 {@link com.dlz.db.interceptor.LogicDeleteInterceptor} 插件，
+ * 通过 {@link SqlBuildInterceptor#onExecuteDelete(IExecutorDelete)} 钩子实现 DELETE → UPDATE 改写。
+ * 本接口不再硬编码逻辑删除逻辑，统一走插件链。
  *
  * <pre>
- * // 默认：逻辑删除
- * DB.Table("user").delete().eq("id", 1).execute();
+ * // 默认：如果注册了 LogicDeleteInterceptor 且表有 deleted 字段 → 逻辑删除
+ * DB.Table.delete("user").eq("id", 1).execute();
  *
- * // 本次强制物理删除
- * DB.Table("user").delete().ignoreLogicDelete(true).eq("id", 1).execute();
+ * // 本次强制物理删除（跳过逻辑删除插件）
+ * DB.Table.delete("user").ignoreLogicDelete(true).eq("id", 1).execute();
  * </pre>
  */
 public interface IExecutorDelete<ME extends IExecutorDelete>
@@ -29,28 +26,24 @@ public interface IExecutorDelete<ME extends IExecutorDelete>
     String getTableName();
 
     /**
-     * 执行删除：有逻辑删除列且未关闭开关时，实际执行 UPDATE 软删除；否则执行物理 DELETE。
+     * 执行删除。
+     * <p>先遍历已注册的 {@link DbPlugin} 逻辑删除插件 执行结果>-1 表示生效，拦截真是 DELETE </p>
+     * -1 放行则执行物理 DELETE
+     *
      * @return 受影响行数
      */
     default int execute() {
-        final String logicDeleteField = DBHolder.getSqlConfig().getLogicDeleteField();
-        if(SqlRunThreadHolder.isIgnoreLogicDelete() || !PojoCache.isColumnExists(getTableName(), logicDeleteField)){
-            try {
-                return DBHolder.doDb(s -> s.execute(this));
-            }finally {
-                SqlRunThreadHolder.removeLogicDeleteSetting();
+        try {
+            // 调用插件：逻辑删除插件会在此将 DELETE 改写为 UPDATE deleted=1
+            final int logicDeleteCnt = DbPlugin.doLogicDelete(this);
+            if(logicDeleteCnt >-1){
+                return logicDeleteCnt;
             }
+            // 无插件拦截，走物理 DELETE
+            return DBHolder.doDb(s -> s.execute(this));
+        } finally {
+            SqlRunThreadHolder.removeLogicDeleteSetting();
         }
-        final TableUpdate update = new TableUpdate(getTableName())
-                .set(logicDeleteField, 1)
-                .where(this.where());
-        if(this instanceof TableDelete){
-            update.getPara().putAll(((TableDelete) this).getPara());
-        }else if(this instanceof PojoUpdate){
-            final ParaMap pm = ((PojoUpdate) this).getPm();
-            update.getPara().putAll(pm.getPara());
-        }
-        return DBHolder.doDb(s -> s.execute(update));
     }
 
     /**

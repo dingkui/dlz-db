@@ -27,7 +27,7 @@ public class WrapperInsertTest extends BaseDBTest {
         dict.setId(123L);
         dict.setSqlKey("xxx");
         PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
-        assertEquals("insert into SYS_SQL(SQL_KEY,ID) values('xxx',123)", toSql(insert));
+        assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',123,0)", toSql(insert));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class WrapperInsertTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setSqlKey("xxx");
         PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
-        showSql(insert,"insertWrapperTest2","insert into SYS_SQL(SQL_KEY) values('xxx')");
+        showSql(insert,"insertWrapperTest2","insert into SYS_SQL(SQL_KEY,DELETED) values('xxx',0)");
         try {
             insert.execute();
             fail("应该抛出 SystemException");

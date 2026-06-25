@@ -2,6 +2,9 @@ package com.dlz.db.support;
 
 import com.dlz.db.core.*;
 import com.dlz.db.ds.DataSourceConfig;
+import com.dlz.db.interceptor.DbPlugin;
+import com.dlz.db.interceptor.LogicDeleteInterceptor;
+import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +62,11 @@ public class DBHolder {
                             Function<DataSource, ITxExecutor> txExecutorMaker) {
         if(dbAdapter==null){
             dbAdapter = new DlzDbAdapter(sqlConfig, dataSourceMaker, sqlExecutorMaker, txExecutorMaker);
+            // 自动注册逻辑删除插件（根据配置判断是否启用）
+            String logicDeleteField = sqlConfig.getLogicDeleteField();
+            if (logicDeleteField != null && !logicDeleteField.isEmpty()) {
+                DbPlugin.registerInterceptor(new LogicDeleteInterceptor(logicDeleteField));
+            }
         }
         return dbAdapter;
     }

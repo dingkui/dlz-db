@@ -2,6 +2,7 @@ package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.inf.IExecutorUDI;
+import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.modal.para.AParaPojo;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
@@ -57,9 +58,8 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
                 .collect(Collectors.toList());
         String sql = WrapperBuildUtil.buildInsertSql(dbName, fields);
 
-        boolean isIgnoreLogicDelete = !SqlRunThreadHolder.isIgnoreLogicDelete()
-                && PojoCache.isColumnExists(dbName, WrapperBuildUtil.logicDeleteField);
-        final Field logicDeleteField = isIgnoreLogicDelete?PojoCache.getLogicDeleteInfo(beanClass):null;
+        // Pojo 批量插入走原生 JDBC（buildInsertSql(fields) + batch），不经过 TableInsert.buildInsertSql
+        final Field logicDeleteField = DbPlugin.getLogicDeleteField(dbName, beanClass);
 
         while (!valueBeans.isEmpty() && batchSize > 0) {
             if (batchSize > valueBeans.size()) {
