@@ -77,7 +77,7 @@ public class DbOpSqlite extends SqlHelper {
             }
         }
 
-        // 获取字段信息
+        // 获取字段信息（PRAGMA table_info 含 notnull/dflt_value/pk）
         sql = "PRAGMA TABLE_INFO(`" + tableName + "`)";
         maps = DBHolder.getSqlExecutor().getList(sql);
         List<ColumnInfo> columnInfos = new ArrayList<>();
@@ -90,6 +90,15 @@ public class DbOpSqlite extends SqlHelper {
             columnInfo.setColumnComment("");
             // 转换字段类型为Java类型
             columnInfo.setJavaType(getJavaType(columnInfo.getColumnType()));
+            // 6 个新字段
+            int notnull = ValUtil.toInt(map.get("notnull"), 0);
+            columnInfo.setNullable(notnull == 0);
+            columnInfo.setDefaultValue(ValUtil.toStr(map.get("dflt_value")));
+            columnInfo.setAutoIncrement(false); // SQLite AUTOINCREMENT 后期可从 sql 解析
+            columnInfo.setColumnSize(0); // SQLite 类型不强制长度
+            columnInfo.setDecimalDigits(0);
+            int pkFlag = ValUtil.toInt(map.get("pk"), 0);
+            columnInfo.setPrimaryKey(pkFlag > 0);
             columnInfos.add(columnInfo);
         }
 

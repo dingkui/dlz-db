@@ -8,6 +8,7 @@ import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
 import com.dlz.db.support.bean.TableInfo;
 import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
@@ -100,9 +101,14 @@ public class DbOpDm8 extends SqlHelper {
         tableInfo.setPrimaryKeys(primaryKeys);
 
 
-        // 查询字段信息
+        // 查询字段信息（补全 nullable/defaultValue/dataLength/dataPrecision/dataScale）
         sql="   SELECT A.COLUMN_NAME, " +
-                "          A.DATA_TYPE," +
+                "          A.DATA_TYPE, " +
+                "          A.DATA_LENGTH, " +
+                "          A.DATA_PRECISION, " +
+                "          A.DATA_SCALE, " +
+                "          A.NULLABLE, " +
+                "          A.DATA_DEFAULT, " +
                 "          C.COMMENTS" +
                 "     FROM USER_TAB_COLUMNS A" +
                 " LEFT JOIN ALL_COL_COMMENTS C " +
@@ -118,6 +124,20 @@ public class DbOpDm8 extends SqlHelper {
                     columnInfo.setColumnType(map.getStr("dataType", ""));
                     columnInfo.setColumnComment(map.getStr("comments", ""));
                     columnInfo.setJavaType(getJavaType(columnInfo.getColumnType()));
+                    // 6 个新字段
+                    // ALL_TAB_COLUMNS.NULLABLE: 'Y' 或 'N'
+                    columnInfo.setNullable("Y".equalsIgnoreCase(ValUtil.toStr(map.get("nullable"))));
+                    columnInfo.setDefaultValue(ValUtil.toStr(map.get("dataDefault")));
+                    columnInfo.setAutoIncrement(false); // DM8 IDENTITY 后期可补
+                    // DATA_PRECISION 优先（数值类型），DATA_LENGTH 兜底（字符类型）
+                    int precision = ValUtil.toInt(map.get("dataPrecision"), 0);
+                    if (precision > 0) {
+                        columnInfo.setColumnSize(precision);
+                        columnInfo.setDecimalDigits(ValUtil.toInt(map.get("dataScale"), 0));
+                    } else {
+                        columnInfo.setColumnSize(ValUtil.toInt(map.get("dataLength"), 0));
+                    }
+                    columnInfo.setPrimaryKey(primaryKeys != null && primaryKeys.contains(columnInfo.getColumnName()));
                     return columnInfo;
                 })
                 .collect(Collectors.toList());

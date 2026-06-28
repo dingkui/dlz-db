@@ -8,6 +8,7 @@ import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
 import com.dlz.db.support.bean.TableInfo;
 import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
@@ -110,8 +111,9 @@ public class DbOpMysql extends SqlHelper {
         List<String> primaryKeys = DBHolder.getSqlExecutor().getList(sql, tableName).stream().map(map -> map.getStr("columnName", "")).collect(Collectors.toList());
         tableInfo.setPrimaryKeys(primaryKeys);
 
-        // 构建查询字段信息的SQL语句
-        sql = "SELECT COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
+        // 构建查询字段信息的SQL语句（补全 nullable/defaultValue/autoIncrement/columnSize/decimalDigits）
+        sql = "SELECT COLUMN_NAME, COLUMN_TYPE, COLUMN_COMMENT, IS_NULLABLE, COLUMN_DEFAULT, EXTRA, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE " +
+                "FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
         // 执行查询并获取结果
         List<ColumnInfo> columnInfos = DBHolder.getSqlExecutor().getList(sql, tableName).stream().map(map -> {
             ColumnInfo columnInfo = new ColumnInfo();
@@ -120,6 +122,19 @@ public class DbOpMysql extends SqlHelper {
             columnInfo.setColumnComment(map.getStr("columnComment", ""));
             // 转换字段类型为Java类型
             columnInfo.setJavaType(getJavaType(columnInfo.getColumnType()));
+            // 6 个新字段
+            columnInfo.setNullable("YES".equalsIgnoreCase(map.getStr("isNullable", "")));
+            columnInfo.setDefaultValue(map.getStr("columnDefault"));
+            String extra = map.getStr("extra", "");
+            columnInfo.setAutoIncrement(extra != null && extra.toLowerCase().contains("auto_increment"));
+            columnInfo.setColumnSize(ValUtil.toInt(map.get("characterMaximumLength"), 0));
+            // numericPrecision 对应 DECIMAL(10,2) 的 10，作为 columnSize 兜底
+            if (columnInfo.getColumnSize() == 0) {
+                columnInfo.setColumnSize(ValUtil.toInt(map.get("numericPrecision"), 0));
+            }
+            columnInfo.setDecimalDigits(ValUtil.toInt(map.get("numericScale"), 0));
+            // primaryKey 由 TableInfo.primaryKeys 推导
+            columnInfo.setPrimaryKey(primaryKeys != null && primaryKeys.contains(columnInfo.getColumnName()));
             return columnInfo;
         }).collect(Collectors.toList());
         tableInfo.setColumnInfos(columnInfos);

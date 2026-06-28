@@ -93,12 +93,18 @@ public class DbOpPostgresql extends SqlHelper {
         tableInfo.setPrimaryKeys(primaryKeys);
 
 
-        // 构建查询字段信息的SQL语句
-        sql = "SELECT a.attname AS COLUMN_NAME, pg_catalog.format_type(a.atttypid, a.atttypmod) AS COLUMN_TYPE, pg_catalog.col_description(a.attrelid, a.attnum) AS COLUMN_COMMENT " +
+        // 构建查询字段信息的SQL语句（补全 nullable/defaultValue/atttypmod 推导 size/digits）
+        sql = "SELECT a.attname AS COLUMN_NAME, pg_catalog.format_type(a.atttypid, a.atttypmod) AS COLUMN_TYPE, " +
+                "pg_catalog.col_description(a.attrelid, a.attnum) AS COLUMN_COMMENT, " +
+                "a.attnotnull AS IS_NOT_NULL, pg_get_expr(d.adbin, d.adrelid) AS COLUMN_DEFAULT, " +
+                "a.atttypmod, t.typtype, t.typname " +
                 "FROM pg_catalog.pg_attribute a " +
                 "JOIN pg_catalog.pg_class c ON a.attrelid = c.oid " +
                 "JOIN pg_catalog.pg_namespace n ON c.relnamespace = n.oid " +
-                "WHERE c.relname = ? AND n.nspname = 'public' AND a.attnum > 0 AND NOT a.attisdropped";
+                "JOIN pg_catalog.pg_type t ON a.atttypid = t.oid " +
+                "LEFT JOIN pg_catalog.pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum " +
+                "WHERE c.relname = ? AND n.nspname = 'public' AND a.attnum > 0 AND NOT a.attisdropped " +
+                "ORDER BY a.attnum";
         // 执行查询并获取结果
         maps = DBHolder.getSqlExecutor().getList(sql, tableName);
         List<ColumnInfo> columnInfos = new ArrayList<>();
@@ -110,6 +116,25 @@ public class DbOpPostgresql extends SqlHelper {
             columnInfo.setColumnComment(ValUtil.toStr(map.get("COLUMN_COMMENT"), ""));
             // 转换字段类型为Java类型
             columnInfo.setJavaType(getJavaType(columnInfo.getColumnType()));
+            // 6 个新字段
+            Object notNullObj = map.get("IS_NOT_NULL");
+            boolean notNull = Boolean.TRUE.equals(notNullObj) || "t".equals(ValUtil.toStr(notNullObj)) || "true".equalsIgnoreCase(ValUtil.toStr(notNullObj));
+            columnInfo.setNullable(!notNull);
+            columnInfo.setDefaultValue(ValUtil.toStr(map.get("COLUMN_DEFAULT")));
+            columnInfo.setAutoIncrement(false); // PG 用 SERIAL/IDENTITY，attidentity 字段可后期补
+            // PG 的 atttypmod 对 varchar 存储为 size+4（varchar 头部开销），对 numeric 存储为 (precision<<16)|scale+4
+            int atttypmod = ValUtil.toInt(map.get("atttypmod"), -1);
+            String typname = ValUtil.toStr(map.get("typname"), "");
+            if (atttypmod > 0 && typname.contains("varchar")) {
+                columnInfo.setColumnSize(atttypmod - 4);
+            } else if (atttypmod > 0 && (typname.contains("numeric") || typname.contains("decimal"))) {
+                int precision = (atttypmod - 4) >> 16;
+                int scale = (atttypmod - 4) & 0xFFFF;
+                columnInfo.setColumnSize(precision);
+                columnInfo.setDecimalDigits(scale);
+            }
+            // primaryKey 由 TableInfo.primaryKeys 推导
+            columnInfo.setPrimaryKey(primaryKeys != null && primaryKeys.contains(columnInfo.getColumnName()));
             columnInfos.add(columnInfo);
         }
         tableInfo.setColumnInfos(columnInfos);
