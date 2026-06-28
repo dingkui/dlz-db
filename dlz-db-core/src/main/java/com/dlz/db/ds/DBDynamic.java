@@ -227,6 +227,46 @@ public class DBDynamic {
     }
 
     /**
+     * 测试数据源连接（不注册到 configPool，测完即关）。
+     * <p>失败抛 {@link DbException}，成功返回 void。内部用 DriverManager 直连，不走连接池。</p>
+     *
+     * @param properties 数据源配置（url / username / password / driverClassName / testQuery）
+     */
+    public void testConnection(DataSourceProperty properties) {
+        if (properties == null) {
+            throw new SystemException("数据源配置不能为空");
+        }
+        if (StringUtils.isEmpty(properties.getUrl())) {
+            throw new SystemException("数据源 url 不能为空");
+        }
+        java.sql.Connection conn = null;
+        try {
+            // 如指定驱动类则显式加载（兼容老驱动）
+            if (StringUtils.isNotEmpty(properties.getDriverClassName())) {
+                Class.forName(properties.getDriverClassName());
+            }
+            conn = java.sql.DriverManager.getConnection(
+                    properties.getUrl(),
+                    properties.getUsername(),
+                    properties.getPassword()
+            );
+            // 简单校验连接可用
+            try (java.sql.Statement st = conn.createStatement()) {
+                st.execute(properties.getTestQuery() != null ? properties.getTestQuery() : "SELECT 1");
+            }
+        } catch (Exception e) {
+            throw new DbException("数据源连接测试失败: " + e.getMessage(), 1005, e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    /**
      * 获取所有数据源名称
      */
     public Set<String> getAllDataSourceNames() {
