@@ -6,7 +6,7 @@
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.0.1-4</version>
+    <version>7.0.2</version>
 </dependency>
 ```
 
