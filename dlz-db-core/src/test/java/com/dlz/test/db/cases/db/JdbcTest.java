@@ -43,7 +43,7 @@ public class JdbcTest extends BaseDBTest {
 
     @Test
     public void jdbcDelete() {
-        final int execute = DB.Jdbc.delete("delete from user where id=?",1);
+        final int execute = DB.Jdbc.execute("delete from user where id=?",1);
         assertNotNull("Jdbc 执行并返回影响行数", execute);
     }
 

@@ -30,42 +30,6 @@ class DbSqlTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 insert 方法")
-    void testInsert() {
-        SqlExecute execute = DB.Sql.insert("INSERT INTO user (name) VALUES (?)");
-        
-        assertNotNull(execute);
-        assertTrue(execute instanceof SqlExecute);
-    }
-
-    @Test
-    @DisplayName("测试 update 方法")
-    void testUpdate() {
-        SqlExecute execute = DB.Sql.update("UPDATE user SET name = ? WHERE id = ?");
-        
-        assertNotNull(execute);
-        assertTrue(execute instanceof SqlExecute);
-    }
-
-    @Test
-    @DisplayName("测试 delete 方法")
-    void testDelete() {
-        SqlExecute execute = DB.Sql.delete("DELETE FROM user WHERE id = ?");
-        
-        assertNotNull(execute);
-        assertTrue(execute instanceof SqlExecute);
-    }
-
-    @Test
-    @DisplayName("测试 executer 方法")
-    void testExecuter() {
-        SqlExecute execute = DB.Sql.executer("CREATE TABLE test (id INT)");
-        
-        assertNotNull(execute);
-        assertTrue(execute instanceof SqlExecute);
-    }
-
-    @Test
     @DisplayName("测试 execute 方法")
     void testExecute() {
         assertNotNull( DB.Sql.execute("delete from user where id=#{id}",new JSONMap("id",1)));

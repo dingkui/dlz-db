@@ -10,22 +10,6 @@ public class DbSql {
         return new SqlQuery(sql);
     }
 
-    public SqlExecute insert(String sql) {
-        return new SqlExecute(sql);
-    }
-
-    public SqlExecute update(String sql) {
-        return new SqlExecute(sql);
-    }
-
-    public SqlExecute delete(String sql) {
-        return new SqlExecute(sql);
-    }
-
-    public SqlExecute executer(String sql) {
-        return new SqlExecute(sql);
-    }
-
     public int execute(String sql, Map<String, Object> paras) {
         return new SqlExecute(sql).addParas(paras).execute();
     }

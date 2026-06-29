@@ -2,6 +2,7 @@ package com.dlz.test.db.cases.preset_sql;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.After;
 import org.junit.Before;
@@ -42,20 +43,20 @@ public class PresetSqlTest extends BaseDBTest {
 
     @Test
     public void sql_update() {
-        DB.Sql.update("UPDATE user SET age=#{age} WHERE name=#{name}").addPara("age", 77).addPara("name", "alice").execute();
+        DB.Sql.execute("UPDATE user SET age=#{age} WHERE name=#{name}",new JSONMap("age", 77,"name", "alice"));
         assertEquals(Integer.valueOf(77),  DB.Jdbc.select("SELECT age FROM user WHERE name=?", "alice").queryInt());
     }
 
     @Test
     public void sql_insert() {
-        DB.Sql.insert("INSERT INTO user(name,age,status,DELETED ) VALUES(#{name},#{age},#{status},#{isdel})")
-                .addPara("name", "sql_ins").addPara("age", 11).addPara("status", "1").addPara("isdel", 0).execute();
+        DB.Sql.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(#{name},#{age},#{status},#{isdel})",
+                new JSONMap("name", "sql_ins", "age", 11, "status", "1","isdel", 0));
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "sql_ins").count());
     }
 
     @Test
     public void sql_delete() {
-        DB.Sql.delete("DELETE FROM user WHERE name=#{name}").addPara("name", "alice").execute();
+        DB.Sql.execute("DELETE FROM user WHERE name=#{name}",new JSONMap("name", "alice"));
         assertEquals(0, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "alice").count());
     }
 

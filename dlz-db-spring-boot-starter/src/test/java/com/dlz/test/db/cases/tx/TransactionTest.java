@@ -37,7 +37,7 @@ public class TransactionTest extends BaseDBTest {
     public void tx_rollback() {
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.update("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "tx_r", 10, "1", 0);
+                DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "tx_r", 10, "1", 0);
                 throw new RuntimeException("force rollback");
             });
             fail("should throw");
@@ -48,7 +48,7 @@ public class TransactionTest extends BaseDBTest {
     @Test
     public void tx_returnValue() {
         Integer result = DB.Tx.run(() -> {
-            DB.Jdbc.update("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "tx_ret", 10, "1", 0);
+            DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "tx_ret", 10, "1", 0);
             return 42;
         });
         assertEquals(Integer.valueOf(42), result);
@@ -58,8 +58,8 @@ public class TransactionTest extends BaseDBTest {
     @Test
     public void tx_nested() {
         DB.Tx.run(() -> {
-            DB.Jdbc.update("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "outer", 10, "1", 0);
-            DB.Tx.run(() -> DB.Jdbc.update("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "inner", 20, "1", 0));
+            DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "outer", 10, "1", 0);
+            DB.Tx.run(() -> DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "inner", 20, "1", 0));
         });
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "outer").count());
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "inner").count());
@@ -69,9 +69,9 @@ public class TransactionTest extends BaseDBTest {
     public void tx_nested_rollback_inner() {
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.update("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "outer_ok", 10, "1", 0);
+                DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "outer_ok", 10, "1", 0);
                 DB.Tx.run(() -> {
-                    DB.Jdbc.update("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "inner_fail", 20, "1", 0);
+                    DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "inner_fail", 20, "1", 0);
                     throw new RuntimeException("inner rollback");
                 });
             });

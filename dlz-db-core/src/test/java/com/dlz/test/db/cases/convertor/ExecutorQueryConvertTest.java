@@ -26,7 +26,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
     @BeforeEach
     public void before() {
         DB.Jdbc.execute("DELETE FROM SYS_SQL");
-        DB.Jdbc.insert("insert into SYS_SQL(DELETED ,SQL_KEY,ID) values(0,'xxx',666)");
+        DB.Jdbc.execute("insert into SYS_SQL(DELETED ,SQL_KEY,ID) values(0,'xxx',666)");
     }
     @AfterEach
     public void after() {

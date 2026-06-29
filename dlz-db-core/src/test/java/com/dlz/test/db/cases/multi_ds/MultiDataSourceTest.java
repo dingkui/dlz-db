@@ -31,7 +31,7 @@ public class MultiDataSourceTest extends BaseDBTest {
     public void dynamic_use() {
         String ds = DB.Dynamic.use("default", () -> {
              DB.Jdbc.execute("CREATE TABLE IF NOT EXISTS dyn_t(id INTEGER PRIMARY KEY, val TEXT)");
-            DB.Jdbc.update("INSERT INTO dyn_t(id,val) VALUES(?,?)", 1, "hello");
+            DB.Jdbc.execute("INSERT INTO dyn_t(id,val) VALUES(?,?)", 1, "hello");
             return DB.Dynamic.getUsedDataSourceName();
         });
         assertEquals("default", ds);

@@ -2,8 +2,6 @@ package com.dlz.test.db.cases.transaction;
 
 import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.BaseDBTest;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +37,7 @@ public class TransactionTest extends BaseDBTest {
     public void tx_rollback() {
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.update("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "tx_r", 10, "1", 0);
+                DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "tx_r", 10, "1", 0);
                 throw new RuntimeException("force rollback");
             });
             fail("should throw");
@@ -50,7 +48,7 @@ public class TransactionTest extends BaseDBTest {
     @Test
     public void tx_returnValue() {
         Integer result = DB.Tx.run(() -> {
-            DB.Jdbc.update("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "tx_ret", 10, "1", 0);
+            DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "tx_ret", 10, "1", 0);
             return 42;
         });
         assertEquals(Integer.valueOf(42), result);
@@ -60,8 +58,8 @@ public class TransactionTest extends BaseDBTest {
     @Test
     public void tx_nested() {
         DB.Tx.run(() -> {
-            DB.Jdbc.update("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "outer", 10, "1", 0);
-            DB.Tx.run(() -> DB.Jdbc.update("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "inner", 20, "1", 0));
+            DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "outer", 10, "1", 0);
+            DB.Tx.run(() -> DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "inner", 20, "1", 0));
         });
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "outer").count());
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "inner").count());
@@ -71,9 +69,9 @@ public class TransactionTest extends BaseDBTest {
     public void tx_nested_rollback_inner() {
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.update("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "outer_ok", 10, "1", 0);
+                DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "outer_ok", 10, "1", 0);
                 DB.Tx.run(() -> {
-                    DB.Jdbc.update("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "inner_fail", 20, "1", 0);
+                    DB.Jdbc.execute("INSERT INTO user(name,age,status,DELETED ) VALUES(?,?,?,?)", "inner_fail", 20, "1", 0);
                     throw new RuntimeException("inner rollback");
                 });
             });
