@@ -154,7 +154,7 @@ DLZ-DB v7 采用多模块架构，可根据运行环境选择依赖：
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.0.2</version>
+    <version>7.1.0</version>
 </dependency>
 ```
 
@@ -219,7 +219,7 @@ public class UserController {
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.0.2</version>
+    <version>7.1.0</version>
 </dependency>
 ```
 

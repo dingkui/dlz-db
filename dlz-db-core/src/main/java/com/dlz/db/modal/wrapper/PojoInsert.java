@@ -24,7 +24,7 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
         return new PojoInsert(valueBean);
     }
 
-    private PojoInsert(T valueBean) {
+    public PojoInsert(T valueBean) {
         super(valueBean);
         setPm(new TableInsert(getTableName()));
     }

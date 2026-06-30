@@ -1,6 +1,7 @@
 package com.dlz.test.db.cases.modal;
 
 
+import com.dlz.db.modal.DB;
 import com.dlz.db.modal.DbPojo;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -23,32 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DisplayName("DbPojo POJO 操作测试")
 class DbPojoTest extends BaseDBTest {
-
-    private DbPojo dbPojo;
-
-    @BeforeEach
-    void setUp() {
-        dbPojo = new DbPojo();
-    }
-
     // ========== SELECT 方法测试 ==========
 
     @Test
     @DisplayName("测试 select - Class 参数")
-    void testSelectWithClass() {
-        PojoQuery<TestUser> query = dbPojo.select(TestUser.class);
-
-        assertNotNull(query);
-        assertTrue(query instanceof PojoQuery);
-    }
-
-    @Test
-    @DisplayName("测试 select - 条件 Bean 参数")
-    void testSelectWithConditionBean() {
-        TestUser condition = new TestUser();
-        condition.setName("张三");
-
-        PojoQuery<TestUser> query = dbPojo.select(condition);
+    void testSelectWWithClass() {
+        PojoQuery<TestUser> query = DB.Pojo.selectW(TestUser.class);
 
         assertNotNull(query);
         assertTrue(query instanceof PojoQuery);
@@ -56,10 +37,10 @@ class DbPojoTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 select - null 条件 Bean")
-    void testSelectWithNullCondition() {
+    void testSelectWWithNullCondition() {
         // select(null) 会抛出 DbException
         assertThrows(Exception.class, () -> {
-            dbPojo.select((TestUser) null);
+            DB.Pojo.selectW(null);
         });
     }
 
@@ -67,20 +48,8 @@ class DbPojoTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 delete - Class 参数")
-    void testDeleteWithClass() {
-        PojoDelete<TestUser> delete = dbPojo.delete(TestUser.class);
-
-        assertNotNull(delete);
-        assertTrue(delete instanceof PojoDelete);
-    }
-
-    @Test
-    @DisplayName("测试 delete - 条件 Bean 参数")
-    void testDeleteWithConditionBean() {
-        TestUser condition = new TestUser();
-        condition.setId(1L);
-
-        PojoDelete<TestUser> delete = dbPojo.delete(condition);
+    void testDeleteWWithClass() {
+        PojoDelete<TestUser> delete = DB.Pojo.deleteW(TestUser.class);
 
         assertNotNull(delete);
         assertTrue(delete instanceof PojoDelete);
@@ -90,8 +59,8 @@ class DbPojoTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 update - Class 参数")
-    void testUpdateWithClass() {
-        PojoUpdate<TestUser> update = dbPojo.update(TestUser.class);
+    void testUpdateWWithClass() {
+        PojoUpdate<TestUser> update = DB.Pojo.updateW(TestUser.class);
 
         assertNotNull(update);
         assertTrue(update instanceof PojoUpdate);
@@ -99,12 +68,12 @@ class DbPojoTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 update - Bean 参数")
-    void testUpdateWithBean() {
+    void testUpdateWWithBean() {
         TestUser user = new TestUser();
         user.setId(1L);
         user.setName("新名字");
 
-        PojoUpdate<TestUser> update = dbPojo.update(user);
+        PojoUpdate<TestUser> update = DB.Pojo.updateW(user);
 
         assertNotNull(update);
         assertTrue(update instanceof PojoUpdate);
@@ -112,12 +81,12 @@ class DbPojoTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 update - Bean 参数带忽略规则")
-    void testUpdateWithBeanAndIgnore() {
+    void testUpdateWWithBeanAndIgnore() {
         TestUser user = new TestUser();
         user.setId(1L);
         user.setName("新名字");
 
-        PojoUpdate<TestUser> update = dbPojo.update(user, name -> "password".equals(name));
+        PojoUpdate<TestUser> update = DB.Pojo.updateW(user, name -> "password".equals(name));
 
         assertNotNull(update);
         assertTrue(update instanceof PojoUpdate);
@@ -125,11 +94,11 @@ class DbPojoTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 update - null 忽略规则")
-    void testUpdateWithNullIgnore() {
+    void testUpdateWWithNullIgnore() {
         TestUser user = new TestUser();
         user.setId(1L);
 
-        PojoUpdate<TestUser> update = dbPojo.update(user, (java.util.function.Function<String, Boolean>) null);
+        PojoUpdate<TestUser> update = DB.Pojo.updateW(user, (java.util.function.Function<String, Boolean>) null);
 
         assertNotNull(update);
     }
@@ -143,147 +112,147 @@ class DbPojoTest extends BaseDBTest {
         user.setName("张三");
 
         // insert 会尝试执行 SQL，在没有数据库的情况下会抛出异常
-        dbPojo.insert(user);
+        DB.Pojo.insert(user);
     }
 
     // ========== INSERT OR UPDATE 测试 ==========
 
     @Test
     @DisplayName("测试 insertOrUpdate - ID 为空时执行 insert")
-    void testInsertOrUpdateWithNullId() {
+    void testInsertOrUpdateWWithNullId() {
         TestUser user = new TestUser();
         user.setName("张三");
         // id 为 null
-        dbPojo.insertOrUpdate(user);
+        DB.Pojo.insertOrUpdate(user);
     }
 
     @Test
     @DisplayName("测试 insertOrUpdate - ID 不为空时执行 update")
-    void testInsertOrUpdateWithId() {
+    void testInsertOrUpdateWWithId() {
         TestUser user = new TestUser();
         user.setId(1L);
         user.setName("张三");
 
-        dbPojo.insertOrUpdate(user);
+        DB.Pojo.insertOrUpdate(user);
     }
 
     // ========== UPDATE BY ID 测试 ==========
 
     @Test
     @DisplayName("测试 updateById - ID 为空抛出异常")
-    void testUpdateByIdWithNullId() {
+    void testUpdateWByIdWithNullId() {
         TestUser user = new TestUser();
         user.setName("张三");
         // id 为 null
 
         // StringUtils.isEmpty(null) 返回 true，所以会抛出 SystemException
         assertThrows(SystemException.class, () -> {
-            dbPojo.updateById(user);
+            DB.Pojo.updateById(user);
         });
     }
 
     @Test
     @DisplayName("测试 updateById - ID 不为空")
-    void testUpdateByIdWithId() {
+    void testUpdateWByIdWithId() {
         TestUser user = new TestUser();
         user.setId(1L);
         user.setName("张三");
 
-        dbPojo.updateById(user);
+        DB.Pojo.updateById(user);
     }
 
     // ========== SELECT BY ID 测试 ==========
 
     @Test
     @DisplayName("测试 selectById - ID 为空抛出异常")
-    void testSelectByIdWithNullId() {
+    void testSelectWByIdWithNullId() {
         // StringUtils.isEmpty(null) 返回 true，所以会抛出 SystemException
         assertThrows(SystemException.class, () -> {
-            dbPojo.selectById(TestUser.class, null);
+            DB.Pojo.selectById(TestUser.class, null);
         });
     }
 
     @Test
     @DisplayName("测试 selectById - ID 不为空")
-    void testSelectByIdWithId() {
-        dbPojo.selectById(TestUser.class, 1L);
+    void testSelectWByIdWithId() {
+        DB.Pojo.selectById(TestUser.class, 1L);
     }
 
     @Test
     @DisplayName("测试 selectById - 字符串 ID")
-    void testSelectByIdWithStringId() {
-        dbPojo.selectById(TestUser.class, "1");
+    void testSelectWByIdWithStringId() {
+        DB.Pojo.selectById(TestUser.class, "1");
     }
 
     // ========== SELECT BY IDS 测试 ==========
 
     @Test
     @DisplayName("测试 selectByIds - IDs 为空抛出异常")
-    void testSelectByIdsWithNullIds() {
+    void testSelectWByIdsWithNullIds() {
         assertThrows(SystemException.class, () -> {
-            dbPojo.selectByIds(TestUser.class, null);
+            DB.Pojo.selectByIds(TestUser.class, null);
         });
     }
 
     @Test
     @DisplayName("测试 selectByIds - IDs 不为空")
-    void testSelectByIdsWithIds() {
-        dbPojo.selectByIds(TestUser.class, "1,2,3");
+    void testSelectWByIdsWithIds() {
+        DB.Pojo.selectByIds(TestUser.class, "1,2,3");
     }
 
     // ========== DELETE BY ID 测试 ==========
 
     @Test
     @DisplayName("测试 deleteById - ID 为空抛出异常")
-    void testDeleteByIdWithNullId() {
+    void testDeleteWByIdWithNullId() {
         assertThrows(SystemException.class, () -> {
-            dbPojo.deleteById(TestUser.class, null);
+            DB.Pojo.deleteById(TestUser.class, null);
         });
     }
 
     @Test
     @DisplayName("测试 deleteById - ID 不为空")
-    void testDeleteByIdWithId() {
-        dbPojo.deleteById(TestUser.class, 1L);
+    void testDeleteWByIdWithId() {
+        DB.Pojo.deleteById(TestUser.class, 1L);
     }
 
     // ========== DELETE BY IDS 测试 ==========
 
     @Test
     @DisplayName("测试 deleteByIds - String IDs 为空抛出异常")
-    void testDeleteByIdsStringWithNullIds() {
+    void testDeleteWByIdsStringWithNullIds() {
         assertThrows(SystemException.class, () -> {
-            dbPojo.deleteByIds(TestUser.class, (String) null);
+            DB.Pojo.deleteByIds(TestUser.class, (String) null);
         });
     }
 
     @Test
     @DisplayName("测试 deleteByIds - String IDs 不为空")
-    void testDeleteByIdsStringWithIds() {
-        dbPojo.deleteByIds(TestUser.class, "1,2,3");
+    void testDeleteWByIdsStringWithIds() {
+        DB.Pojo.deleteByIds(TestUser.class, "1,2,3");
     }
 
     @Test
     @DisplayName("测试 deleteByIds - List IDs 为空抛出异常")
-    void testDeleteByIdsListWithNullIds() {
+    void testDeleteWByIdsListWithNullIds() {
         assertThrows(SystemException.class, () -> {
-            dbPojo.deleteByIds(TestUser.class, (List<?>) null);
+            DB.Pojo.deleteByIds(TestUser.class, (List<?>) null);
         });
     }
 
     @Test
     @DisplayName("测试 deleteByIds - List IDs 不为空")
-    void testDeleteByIdsListWithIds() {
-        dbPojo.deleteByIds(TestUser.class, Arrays.asList(1, 2, 3));
+    void testDeleteWByIdsListWithIds() {
+        DB.Pojo.deleteByIds(TestUser.class, Arrays.asList(1, 2, 3));
     }
 
     @Test
     @DisplayName("测试 deleteByIds - 空列表抛出异常")
-    void testDeleteByIdsListWithEmptyList() {
+    void testDeleteWByIdsListWithEmptyList() {
         // StringUtils.isEmpty(emptyList) 返回 false（因为不是 null 也不是空字符串）
         // 但由于没有主键字段，会抛出其他异常
         assertThrows(Exception.class, () -> {
-            dbPojo.deleteByIds(TestUser.class, Collections.emptyList());
+            DB.Pojo.deleteByIds(TestUser.class, Collections.emptyList());
         });
     }
 

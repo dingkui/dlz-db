@@ -74,21 +74,6 @@ public class DbOpMysql extends SqlHelper {
 
     @Override
     public Set<String> getTableColumnNames(String tableName) {
-//        // 获取表所有字段
-//        String sql = "SHOW COLUMNS FROM `" + tableName + "`";
-//        List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql);
-//        Set<String> re = new HashSet();
-//        maps.forEach(item -> {
-//            String field = ValUtil.toStr(item.get("Field"), "");
-//            if(field.length()==0){
-//                field = ValUtil.toStr(item.get("field"), "");
-//            }
-//            if(field.length()>0){
-//                re.add(field.toUpperCase());
-//            }
-//        });
-//        return re;
-
         // 构建查询字段信息的SQL语句
         String sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
         // 执行查询并获取结果
@@ -139,15 +124,6 @@ public class DbOpMysql extends SqlHelper {
         }).collect(Collectors.toList());
         tableInfo.setColumnInfos(columnInfos);
         return tableInfo;
-    }
-
-
-
-    @Override
-    public List<ResultMap> getTableIndexs(String tableName) {
-        // 获取表所有索引
-        String sql = "SHOW INDEX FROM `" + tableName + "`";
-        return DBHolder.getSqlExecutor().getList(sql);
     }
 
     @Override

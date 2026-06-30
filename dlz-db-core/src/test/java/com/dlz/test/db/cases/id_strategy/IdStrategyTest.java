@@ -60,7 +60,7 @@ public class IdStrategyTest extends BaseDBTest {
         m1.setName("ba1");
         AutoIdEntity m2 = new AutoIdEntity();
         m2.setName("ba2");
-        DB.Batch.insert(Arrays.asList(m1, m2), 100);
+        DB.Batch.pojoInsert(Arrays.asList(m1, m2), 100);
         assertNull("AUTO batch 不应回填", m1.getId());
         assertNull("AUTO batch 不应回填", m2.getId());
     }

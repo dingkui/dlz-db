@@ -164,12 +164,12 @@ class MapColumnBeanTest extends BaseDBTest {
         newMap2.put("namexxx", "updated");
 
         // 更新
-       DB.Pojo.update(MapColumnBean.class)
+       DB.Pojo.updateW(MapColumnBean.class)
                 .set(MapColumnBean::getT2, newMap2)
                 .eq(MapColumnBean::getId, inserted.getId())
                 .execute();
 
-        final ResultMap map = DB.Pojo.select(MapColumnBean.class).eq(MapColumnBean::getId, inserted.getId()).queryOne();
+        final ResultMap map = DB.Pojo.selectW(MapColumnBean.class).eq(MapColumnBean::getId, inserted.getId()).queryOne();
         final MapColumnBean mapColumnBean = map.as(MapColumnBean.class);
 
         // 查询验证

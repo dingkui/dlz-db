@@ -144,14 +144,6 @@ public class DbOpDm8 extends SqlHelper {
         tableInfo.setColumnInfos(columnInfos);
         return tableInfo;
     }
-
-    @Override
-    public List<ResultMap> getTableIndexs(String tableName) {
-        // 查询索引信息
-        String sql = "SELECT INDEX_NAME, COLUMN_NAME FROM ALL_IND_COLUMNS WHERE TABLE_OWNER = USER AND TABLE_NAME = ?";
-        return DBHolder.getSqlExecutor().getList(sql, tableName.toUpperCase());
-    }
-
     @Override
     public void createColumn(String tableName, String name, Field field) {
         String sql = "ALTER TABLE \"" + tableName.toUpperCase() + "\" ADD \"" + name.toUpperCase() + "\" " + getDbColumnType(field);

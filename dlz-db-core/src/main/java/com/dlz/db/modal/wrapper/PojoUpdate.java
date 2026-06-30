@@ -27,11 +27,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         ISqlQuery<PojoUpdate<T>>,
         ICondAddByLamda<PojoUpdate<T>, T>,
         IExecutorUDI {
-    public static <T> PojoUpdate<T> wrapper(Class<T> beanClass) {
-        return new PojoUpdate(beanClass);
-    }
-
-    private PojoUpdate(Class<T> beanClass) {
+    public PojoUpdate(Class<T> beanClass) {
         super(beanClass);
         setPm(new TableUpdate(getTableName()));
     }

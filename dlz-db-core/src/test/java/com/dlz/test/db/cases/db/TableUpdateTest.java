@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class TableUpdateTest extends BaseDBTest {
 	@Test
 	public void UpdateParaMapTest(){
-		TableUpdate where = DB.Table.update("Sys_Sql")
+		TableUpdate where = DB.Table.updateW("Sys_Sql")
 				.set("sql_key", "1")
 				.where(Condition.where()
 						.eq("equipment_id", 1)

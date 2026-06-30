@@ -23,27 +23,27 @@ public class DbOpPostgresql extends SqlHelper {
     @Override
     public void createTable(String tableName, Class<?> clazz) {
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
-            String columnName = PojoCache.getColumnName(field);
-            String column = null;
-            if (columnName.equals("")) {
-                return column;
-            }
-            column = "\"" + columnName + "\" " + getDbColumnType(field);
-            if (PojoCache.isColumnPk(field)) {
-                TableId tableId = field.getAnnotation(TableId.class);
-                if (tableId != null && tableId.type() == IdType.AUTO) {
-                    // PostgreSQL AUTO 类型使用 SERIAL
-                    Class<?> fieldType = field.getType();
-                    if (fieldType == Long.class || "long".equals(fieldType.getCanonicalName())) {
-                        column = "\"" + columnName + "\" BIGSERIAL";
-                    } else {
-                        column = "\"" + columnName + "\" SERIAL";
+                    String columnName = PojoCache.getColumnName(field);
+                    String column = null;
+                    if (columnName.equals("")) {
+                        return column;
                     }
-                }
-                column += " PRIMARY KEY";
-            }
-            return column;
-        }).filter(Objects::nonNull)
+                    column = "\"" + columnName + "\" " + getDbColumnType(field);
+                    if (PojoCache.isColumnPk(field)) {
+                        TableId tableId = field.getAnnotation(TableId.class);
+                        if (tableId != null && tableId.type() == IdType.AUTO) {
+                            // PostgreSQL AUTO 类型使用 SERIAL
+                            Class<?> fieldType = field.getType();
+                            if (fieldType == Long.class || "long".equals(fieldType.getCanonicalName())) {
+                                column = "\"" + columnName + "\" BIGSERIAL";
+                            } else {
+                                column = "\"" + columnName + "\" SERIAL";
+                            }
+                        }
+                        column += " PRIMARY KEY";
+                    }
+                    return column;
+                }).filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
 
         String sql = "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" (" + columns + ")";
@@ -142,23 +142,6 @@ public class DbOpPostgresql extends SqlHelper {
     }
 
     @Override
-    public List<ResultMap> getTableIndexs(String tableName) {
-        // 获取表所有索引
-        String sql = "SELECT " + //
-                "A.INDEXNAME as name " + //
-                "FROM PG_AM B " + //
-                "LEFT JOIN PG_CLASS F ON B.OID = F.RELAM " + //
-                "LEFT JOIN PG_STAT_ALL_INDEXES E ON F.OID = E.INDEXRELID " + //
-                "LEFT JOIN PG_INDEX C ON E.INDEXRELID = C.INDEXRELID " + //
-                "LEFT OUTER JOIN PG_DESCRIPTION D ON C.INDEXRELID = D.OBJOID, " + //
-                "PG_INDEXES A " + //
-                "WHERE " + //
-                "A.SCHEMANAME = E.SCHEMANAME AND A.TABLENAME = E.RELNAME AND A.INDEXNAME = E.INDEXRELNAME " + //
-                "AND E.SCHEMANAME = 'public' AND E.RELNAME = '" + tableName + "' ";//
-        return DBHolder.getSqlExecutor().getList(sql);
-    }
-
-    @Override
     public void createColumn(String tableName, String name, Field field) {
         String sql = "ALTER TABLE public." + tableName + " ADD COLUMN " + name + " " + getDbColumnType(field);
         DBHolder.getSqlExecutor().update(sql);
@@ -183,7 +166,7 @@ public class DbOpPostgresql extends SqlHelper {
             return "int4";
         } else if (Number.class.isAssignableFrom(classs)) {
             return "numeric(12, 1)";
-        } else if (Date.class.isAssignableFrom(classs)||classs== LocalDateTime.class||classs== LocalDate.class) {
+        } else if (Date.class.isAssignableFrom(classs) || classs == LocalDateTime.class || classs == LocalDate.class) {
             return "date";
         }
         return "text";

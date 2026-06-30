@@ -42,19 +42,17 @@
 - 使用 `DbPojo` 类直接操作
 - 正确的 API 调用方式：
   ```java
-  DbPojo dbPojo = new DbPojo();
-  
   // 插入 - 返回对象本身
-  TestEntity result = dbPojo.insert(entity);
+  TestEntity result = DB.Pojo.insert(entity);
   
   // 查询 - 需要两个参数
-  TestEntity found = dbPojo.selectById(TestEntity.class, id);
+  TestEntity found = DB.Pojo.selectById(TestEntity.class, id);
   
   // 删除 - 需要两个参数
-  int rows = dbPojo.deleteById(TestEntity.class, id);
+  int rows = DB.Pojo.deleteById(TestEntity.class, id);
   
   // 批量插入 - 返回 boolean
-  boolean success = dbPojo.insertBatch(entities);
+  boolean success = DB.Pojo.insertBatch(entities);
   ```
 
 ### 2. 内部类表名缓存注册
@@ -140,16 +138,9 @@ static void initTestTable() throws Exception {
 @DisplayName("功能描述")
 class XxxTest extends BaseDBTest {
 
-    private DbPojo dbPojo;
-
     @BeforeAll
     static void initTestTable() throws Exception {
         // 注册内部类表信息到缓存
-    }
-
-    @BeforeEach
-    void setUp() {
-        dbPojo = new DbPojo();
     }
 
     @Test

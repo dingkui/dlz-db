@@ -169,7 +169,7 @@ public class SolonSmokeTest extends BaseDBTest {
         Assertions.assertNotNull(user.getId(), "插入后应回填主键");
         
         // 查询单条记录
-        User found = DB.Pojo.select(User.class)
+        User found = DB.Pojo.selectW(User.class)
                 .eq(User::getId, user.getId())
                 .queryBean();
         
@@ -193,9 +193,9 @@ public class SolonSmokeTest extends BaseDBTest {
             users.add(user);
         }
 
-        long count1 = DB.Pojo.select(User.class).count();
-        DB.Batch.insert(users);
-        long count = DB.Pojo.select(User.class).count();
+        long count1 = DB.Pojo.selectW(User.class).count();
+        DB.Batch.pojoInsert(users);
+        long count = DB.Pojo.selectW(User.class).count();
 //        Assertions.assertTrue(count >= 5, "批量插入后应有至少5条记录");
         Assertions.assertEquals(5, count-count1);
     }
@@ -216,10 +216,10 @@ public class SolonSmokeTest extends BaseDBTest {
         // 更新记录
         user.setName("更新后");
         user.setAge(31);
-        DB.Pojo.update(user).eq(User::getId, userId).execute();
+        DB.Pojo.updateW(user).eq(User::getId, userId).execute();
         
         // 验证更新结果
-        User updated = DB.Pojo.select(User.class)
+        User updated = DB.Pojo.selectW(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
         
@@ -240,10 +240,10 @@ public class SolonSmokeTest extends BaseDBTest {
         Long userId = user.getId();
         
         // 删除记录
-        DB.Pojo.delete(User.class).eq(User::getId, userId).execute();
+        DB.Pojo.deleteW(User.class).eq(User::getId, userId).execute();
         
         // 验证删除结果
-        User found = DB.Pojo.select(User.class)
+        User found = DB.Pojo.selectW(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
         
@@ -267,7 +267,7 @@ public class SolonSmokeTest extends BaseDBTest {
         }
         
         // 分页查询
-        Page<User> page = DB.Pojo.select(User.class)
+        Page<User> page = DB.Pojo.selectW(User.class)
                 .page(1, 10)
                 .orderByDesc(User::getId)
                 .queryBeanPage();
@@ -297,7 +297,7 @@ public class SolonSmokeTest extends BaseDBTest {
         DB.Pojo.insert(user2);
         
         // 多条件查询
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.Pojo.selectW(User.class)
                 .like(User::getName, "条件测试")
                 .ge(User::getAge, 25)
                 .orderByAsc(User::getAge)
@@ -322,7 +322,7 @@ public class SolonSmokeTest extends BaseDBTest {
         user2.setAge(35);
         DB.Pojo.insert(user2);
         
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.Pojo.selectW(User.class)
                 .ors(wrapper -> wrapper
                         .eq(User::getName, "OR测试A")
                         .ge(User::getAge, 30))
@@ -348,10 +348,10 @@ public class SolonSmokeTest extends BaseDBTest {
         Long userId = user.getId();
         
         // 执行逻辑删除
-        DB.Pojo.delete(User.class).eq(User::getId, userId).execute();
+        DB.Pojo.deleteW(User.class).eq(User::getId, userId).execute();
         
         // 普通查询不应查到已逻辑删除的记录
-        User found = DB.Pojo.select(User.class)
+        User found = DB.Pojo.selectW(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
         Assertions.assertNull(found, "逻辑删除后普通查询不应查到");
@@ -360,7 +360,7 @@ public class SolonSmokeTest extends BaseDBTest {
         // 注意：ignoreLogicDelete 是 IExecutorDelete 接口的方法，用于删除操作
         // 对于查询，逻辑删除会自动在 WHERE 中添加 DELETED = 0 条件
         // 要查询已逻辑删除的数据，需要使用 DB.Table 或手动指定条件
-        User foundIgnore = DB.Pojo.select(User.class)
+        User foundIgnore = DB.Pojo.selectW(User.class)
                 .eq(User::getId, userId)
                 .eq("DELETED", 1)  // 手动添加条件查询已删除的记录
                 .queryBean();
@@ -400,13 +400,13 @@ public class SolonSmokeTest extends BaseDBTest {
     @Test
     @Order(18)
     void testEmptyResult() {
-        User found = DB.Pojo.select(User.class)
+        User found = DB.Pojo.selectW(User.class)
                 .eq(User::getId, -1L)  // 不存在的ID
                 .queryBean();
         
         Assertions.assertNull(found, "查询不存在的记录应返回null");
         
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.Pojo.selectW(User.class)
                 .eq(User::getName, "不存在的用户")
                 .queryBeanList();
         

@@ -4,6 +4,9 @@ import com.dlz.db.annotation.TableField;
 import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.TableName;
 import com.dlz.db.annotation.proxy.AnnoProxies;
+import com.dlz.db.core.DlzDbProperties;
+import com.dlz.db.ds.DBDynamic;
+import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
@@ -37,6 +40,7 @@ public class PojoCache {
     private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCache = new CacheMap<>();
     private static final CacheMap<Class<?>, IdInfo> idFieldCache = new CacheMap<>();
     private static final CacheMap<Class<?>, Field> deletedFieldCache = new CacheMap<>();
+    private static final CacheMap<String, String> idNameCache = new CacheMap<>();
 
     public static void clearAll() {
         tableColumnsInfoCache.clear();
@@ -292,6 +296,28 @@ public class PojoCache {
                 }
             }
             return null;
+        });
+    }
+
+
+    /**
+     * （带缓存）取得 bean 的主键字段。
+     * <p>优先级：{@code @TableId} 注解 → MyBatis-Plus 的 {@code @TableId} → 名为 {@code "id"} 的字段 → null。
+     * <p>仅在 {@link #getBeanFields(Class)} 返回的表内字段中查找，避免命中 transient 字段。
+     *
+     * @param tableName bean 类
+     * @return 主键 Field；若不存在返回 null
+     */
+    public static String getIdName(String tableName) {
+        return idNameCache.getAndSet(tableName, () -> {
+            final List<String> primaryKeys = DB.Dynamic.getSqlHelper().getTableInfo(tableName).getPrimaryKeys();
+            if(primaryKeys == null || primaryKeys.isEmpty()){
+                throw new SystemException("表["+tableName+"]无主键");
+            }
+            if(primaryKeys.size()>1){
+                throw new SystemException("表["+tableName+"]为复合主键，不支持此操作");
+            }
+            return primaryKeys.get(0);
         });
     }
 

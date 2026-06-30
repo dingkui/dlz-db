@@ -38,7 +38,7 @@ public class BatchTest extends BaseDBTest {
         o2.setAmount(20);
         assertNull(o1.getId());
         assertNull(o2.getId());
-        DB.Batch.insert(Arrays.asList(o1, o2), 100);
+        DB.Batch.pojoInsert(Arrays.asList(o1, o2), 100);
         assertNotNull(o1.getId());
         assertNotNull(o2.getId());
         assertNotEquals(o1.getId(), o2.getId());
@@ -55,13 +55,13 @@ public class BatchTest extends BaseDBTest {
         Orders o3 = new Orders();
         o3.setUserId("b3");
         o3.setAmount(30);
-        DB.Batch.insert(Arrays.asList(o1, o2, o3), 2);
+        DB.Batch.pojoInsert(Arrays.asList(o1, o2, o3), 2);
         assertEquals(3, DB.Jdbc.select("SELECT COUNT(*) FROM Orders").count());
     }
 
     @Test
     public void batch_insert_empty() {
-        DB.Batch.insert(Arrays.asList(), 100);
+        DB.Batch.pojoInsert(Arrays.asList(), 100);
         assertEquals(0, DB.Jdbc.select("SELECT COUNT(*) FROM Orders").count());
     }
 
@@ -71,7 +71,7 @@ public class BatchTest extends BaseDBTest {
         o1.setUserId("single");
         o1.setAmount(100);
         assertNull(o1.getId());
-        DB.Batch.insert(Arrays.asList(o1), 100);
+        DB.Batch.pojoInsert(Arrays.asList(o1), 100);
         assertNotNull(o1.getId());
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM Orders").count());
     }

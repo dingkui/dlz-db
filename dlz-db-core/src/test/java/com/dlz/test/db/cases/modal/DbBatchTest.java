@@ -21,73 +21,71 @@ class DbBatchTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 insert - 空列表返回 false")
-    void testInsertEmptyList() {
+    void testPojoInsertEmptyList() {
         List<TestUser> users = Collections.emptyList();
-
-        boolean result = DB.Batch.insert(users);
-
+        boolean result = DB.Batch.pojoInsert(users);
         assertFalse(result);
     }
 
     @Test
     @DisplayName("测试 insert - null 列表抛出异常")
-    void testInsertNullList() {
+    void testPojoInsertNullList() {
         assertThrows(NullPointerException.class, () -> {
-            DB.Batch.insert(null);
+            DB.Batch.pojoInsert(null);
         });
     }
 
     @Test
     @DisplayName("测试 insert - 带批次大小参数")
-    void testInsertWithBatchSize() {
+    void testPojoInsertWithBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
 
         // 会触发 WrapperBuildUtil 初始化错误
-        DB.Batch.insert(users, 100);
+        DB.Batch.pojoInsert(users, 100);
     }
 
     @Test
     @DisplayName("测试 insert - 默认批次大小")
-    void testInsertDefaultBatchSize() {
+    void testPojoInsertDefaultBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
 
-        DB.Batch.insert(users);
+        DB.Batch.pojoInsert(users);
     }
 
     @Test
     @DisplayName("测试 update - 空列表返回 false")
-    void testUpdateEmptyList() {
+    void testPojoUpdateEmptyList() {
         List<TestUser> users = Collections.emptyList();
 
-        boolean result = DB.Batch.update(users);
+        boolean result = DB.Batch.pojoUpdate(users);
 
         assertFalse(result);
     }
 
     @Test
     @DisplayName("测试 update - null 列表抛出异常")
-    void testUpdateNullList() {
+    void testPojoUpdateNullList() {
         assertThrows(NullPointerException.class, () -> {
-            DB.Batch.update(null);
+            DB.Batch.pojoUpdate(null);
         });
     }
 
     @Test
     @DisplayName("测试 update - 带批次大小参数")
-    void testUpdateWithBatchSize() {
+    void testPojoUpdateWithBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
         assertThrows(SystemException.class, () -> {
-            DB.Batch.update(users, 100);
+            DB.Batch.pojoUpdate(users, 100);
         });
     }
 
     @Test
     @DisplayName("测试 update - 默认批次大小")
-    void testUpdateDefaultBatchSize() {
+    void testPojoUpdateDefaultBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
 
         assertThrows(SystemException.class, () -> {
-            DB.Batch.update(users);
+            DB.Batch.pojoUpdate(users);
         });
     }
 
@@ -101,7 +99,7 @@ class DbBatchTest extends BaseDBTest {
         );
 
         // 需要 DBHolder.getSqlExecutor()，会抛出异常
-        DB.Batch.update(sql, params);
+        DB.Batch.jdbcExecute(sql, params);
     }
 
     @Test
@@ -113,7 +111,7 @@ class DbBatchTest extends BaseDBTest {
                 new Object[]{"李四", 2}
         );
 
-        DB.Batch.update(sql, params, 100);
+        DB.Batch.jdbcExecute(sql, params, 100);
     }
 
     @Test
@@ -123,7 +121,7 @@ class DbBatchTest extends BaseDBTest {
         List<Object[]> params = Collections.emptyList();
 
         // 空列表不会进入循环，直接返回 true
-        boolean result = DB.Batch.update(sql, params);
+        boolean result = DB.Batch.jdbcExecute(sql, params);
 
         assertTrue(result);
     }

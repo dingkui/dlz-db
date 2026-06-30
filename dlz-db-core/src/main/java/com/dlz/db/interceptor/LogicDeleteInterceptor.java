@@ -54,7 +54,7 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
     private final String fieldName;
 
     public LogicDeleteInterceptor(String fieldName) {
-        this.fieldName = fieldName;
+        this.fieldName = DbConvertUtil.toFieldName(fieldName);
         this.dbColumnName = DbConvertUtil.toDbColumnName(fieldName);
     }
 
@@ -140,5 +140,19 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
             return null; // 表无逻辑删除字段
         }
         return PojoCache.getLogicDeleteInfo(beanClass, fieldName);
+    }
+
+    /**
+     * 逻辑删除执行
+     * @return
+     */
+    public String getLogicDeleteField(String tableName) {
+        if (SqlRunThreadHolder.isIgnoreLogicDelete()) {
+            return null; // 忽略不做逻辑删除处理
+        }
+        if (!PojoCache.isColumnExists(tableName, dbColumnName)) {
+            return null; // 表无逻辑删除字段
+        }
+        return fieldName;
     }
 }

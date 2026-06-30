@@ -26,7 +26,7 @@ public class WrapperInsertTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setId(123L);
         dict.setSqlKey("xxx");
-        PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
+        PojoInsert<SysSql> insert = new PojoInsert(dict);
         assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',123,0)", toSql(insert));
     }
 
@@ -36,14 +36,14 @@ public class WrapperInsertTest extends BaseDBTest {
         dict.setId(666L);
         dict.setSqlKey("xxx");
         dict.setDeleted(0);
-        DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 666L).execute();
-        DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 666L).ignoreLogicDelete(true).execute();
-        PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
+        DB.Pojo.deleteW(SysSql.class).eq(SysSql::getId, 666L).execute();
+        DB.Pojo.deleteW(SysSql.class).eq(SysSql::getId, 666L).ignoreLogicDelete(true).execute();
+        PojoInsert<SysSql> insert = new PojoInsert(dict);
         assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',666,0)", toSql(insert));
         insert.execute();
-        final List<ResultMap> resultMaps = DB.Table.select("Sys_Sql").setAllowFullQuery(true).queryList();
+        final List<ResultMap> resultMaps = DB.Table.selectW("Sys_Sql").setAllowFullQuery(true).queryList();
         log.info("resultMaps:"+resultMaps);
-        final List<ResultMap> resultMaps2 = DB.Table.select("Sys_Sql").setAllowFullQuery(true).convertLower().queryList();
+        final List<ResultMap> resultMaps2 = DB.Table.selectW("Sys_Sql").setAllowFullQuery(true).convertLower().queryList();
         log.info("resultMaps:"+resultMaps2);
     }
 
@@ -51,7 +51,7 @@ public class WrapperInsertTest extends BaseDBTest {
     public void insertWrapperTest2() {
         SysSql dict = new SysSql();
         dict.setSqlKey("xxx");
-        PojoInsert<SysSql> insert = PojoInsert.wrapper(dict);
+        PojoInsert<SysSql> insert = new PojoInsert(dict);
         showSql(insert,"insertWrapperTest2","insert into SYS_SQL(SQL_KEY,DELETED) values('xxx',0)");
         try {
             insert.execute();
@@ -99,7 +99,7 @@ public class WrapperInsertTest extends BaseDBTest {
         assertNull(o1.getId());
         assertNull(o2.getId());
 
-        DB.Batch.insert(Arrays.asList(o1, o2), 100);
+        DB.Batch.pojoInsert(Arrays.asList(o1, o2), 100);
 
         assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o1.getId());
         assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o2.getId());
@@ -114,7 +114,7 @@ public class WrapperInsertTest extends BaseDBTest {
         AutoIdEntity m2 = new AutoIdEntity();
         m2.setName("batch_auto2");
 
-        DB.Batch.insert(Arrays.asList(m1, m2), 100);
+        DB.Batch.pojoInsert(Arrays.asList(m1, m2), 100);
 
         assertNull("AUTO 类型 batch 后不应回填主键（驱动限制）", m1.getId());
     }

@@ -2,12 +2,11 @@ package com.dlz.test.db.cases.preset_sql;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,22 +18,21 @@ import static org.junit.Assert.*;
  * 覆盖文档中描述的预设SQL配置和使用场景
  */
 public class PresetSqlConfigTest extends BaseDBTest {
-
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
         // 清理用户表数据
         DB.Jdbc.execute("DELETE FROM user");
 
         // 插入测试数据
-        DB.Batch.update("INSERT INTO user(name, age, status, DELETED ) VALUES(?, ?, ?, ?)",
+        DB.Batch.jdbcExecute("INSERT INTO user(name, age, status, DELETED ) VALUES(?, ?, ?, ?)",
                 Arrays.asList(new Object[]{"张三", 25, "1", 0},
                         new Object[]{"李四", 30, "1", 0},
                         new Object[]{"王五", 35, "0", 0},
                         new Object[]{"赵六", 28, "1", 0}));
     }
 
-    @AfterEach
-    public void tearDown() {
+    @AfterAll
+    public static void tearDown() {
         // 清理测试数据
         DB.Jdbc.execute("DELETE FROM user");
     }
@@ -151,31 +149,6 @@ public class PresetSqlConfigTest extends BaseDBTest {
         assertNotNull(results2);
         // 应该返回status为1的用户
         assertTrue(results2.size() >= 2);
-    }
-
-    /**
-     * 测试SQL拼接${key}功能
-     * 验证SQL片段的嵌套引用
-     */
-    @Test
-    public void testSqlFragmentReference() {
-        // 这里需要预先在sql配置文件中定义相关的SQL片段
-        // 由于这是一个示例测试，我们模拟这个功能
-        // 实际使用时需要在resources/sql目录下配置相应的SQL文件
-
-        // 假设有一个基础的WHERE条件片段
-        // <sql sqlId="key.demo.user.baseWhere"><![CDATA[
-        //   WHERE 1=1 [AND status IN (${status})]
-        // ]]></sql>
-
-        // 然后在主SQL中引用它
-        // <sql sqlId="key.demo.user.findWithBase"><![CDATA[
-        //   SELECT * FROM user ${key.demo.user.baseWhere}
-        // ]]></sql>
-
-        // 由于当前环境中可能没有预定义这些SQL片段，我们跳过实际执行
-        // 在实际项目中，需要确保SQL配置文件存在
-        assertTrue(true); // 占位断言
     }
 
     /**

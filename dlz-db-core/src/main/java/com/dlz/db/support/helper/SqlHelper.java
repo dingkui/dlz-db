@@ -28,12 +28,6 @@ public abstract class SqlHelper {
     public abstract Set<String> getTableColumnNames(String tableName);
 
     /**
-     * 获取表所有索引
-     * @param tableName
-          */
-    public abstract List<ResultMap> getTableIndexs(String tableName);
-
-    /**
      * 获取表详细信息（含字段、主键、注释）
      * @param tableName
           */

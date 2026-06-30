@@ -1,6 +1,7 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
+import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.modal.para.AParaTable;
@@ -11,12 +12,14 @@ import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.json.JSONMap;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -170,6 +173,17 @@ public class WrapperBuildUtil {
         }
         return "INSERT INTO " + dbName + " (" + StringUtils.join(",", fieldsPart) + ") VALUES (" + StringUtils.join(",", placeHolder) + ")";
     }
+    public static String buildInsertSql(String dbName, HashMap<String, Integer> fields) {
+        List<String> fieldsPart = new ArrayList<>();
+        List<String> placeHolder = new ArrayList<>();
+        for (String dbColumnName : fields.keySet()) {
+            if (!dbColumnName.equals("")) {
+                fieldsPart.add(dbColumnName);
+                placeHolder.add("?");
+            }
+        }
+        return "INSERT INTO " + dbName + " (" + StringUtils.join(",", fieldsPart) + ") VALUES (" + StringUtils.join(",", placeHolder) + ")";
+    }
 
     public static Object[] buildInsertParams(Object object, List<Field> fields) {
         List<Object> params = new ArrayList<>();
@@ -178,6 +192,14 @@ public class WrapperBuildUtil {
             if (!dbColumnName.equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
+        }
+        return params.toArray();
+    }
+
+    public static Object[] buildInsertParams(JSONMap object, HashMap<String, Integer> fields) {
+        List<Object> params = new ArrayList<>();
+        for (Map.Entry<String, Integer> field : fields.entrySet()) {
+             params.add(TableColumnMapper.cover(field.getValue(),object.get(field.getKey())));
         }
         return params.toArray();
     }
@@ -202,6 +224,32 @@ public class WrapperBuildUtil {
         for (Field field : fields) {
             if (idField != field && !PojoCache.getColumnName(field).equals("")) {
                 params.add(FieldReflections.getValue(object, field));
+            }
+        }
+        params.add(value);
+        return params.toArray();
+    }
+
+
+    public static String buildUpdateSql(String dbName, HashMap<String, Integer> fields, String idName) {
+        List<String> fieldsPart = new ArrayList<>();
+        for (String dbColumnName : fields.keySet()) {
+            if (!dbColumnName.equals(idName) && !dbColumnName.equals("")) {
+                fieldsPart.add(dbColumnName + "=?");
+            }
+        }
+        return "UPDATE " + dbName + " SET " + StringUtils.join(",", fieldsPart) + " WHERE " + idName + " = ?";
+    }
+
+    public static Object[] buildUpdateParams(JSONMap object, HashMap<String, Integer> fields, String idName) {
+        final Object value = object.get(idName);
+        if(value == null){
+            throw new SystemException("更新操作"+idName+"不能为空");
+        }
+        List<Object> params = new ArrayList<>(fields.size());
+        for (Map.Entry<String, Integer> field : fields.entrySet()) {
+            if (!idName.equals(field.getKey())) {
+                params.add(TableColumnMapper.cover(field.getValue(),object.get(field.getKey())));
             }
         }
         params.add(value);

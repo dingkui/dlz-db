@@ -15,26 +15,16 @@ import java.util.function.Function;
 
 @Slf4j
 public class DbPojo {
-    public <T> PojoQuery<T> select(Class<T> re) {
+    public <T> PojoQuery<T> selectW(Class<T> re) {
         return PojoQuery.wrapper(re);
     }
-
-    public <T> PojoQuery<T> select(T conditionBean) {
-        return PojoQuery.wrapper(conditionBean);
-    }
-
-    public <T> PojoDelete<T> delete(Class<T> beanClass) {
+    public <T> PojoDelete<T> deleteW(Class<T> beanClass) {
         return PojoDelete.wrapper(beanClass);
     }
 
-    public <T> PojoDelete<T> delete(T condition) {
-        return PojoDelete.wrapper(condition);
+    public <T> PojoUpdate<T> updateW(Class<T> beanClass) {
+        return new PojoUpdate(beanClass);
     }
-
-    public <T> PojoUpdate<T> update(Class<T> beanClass) {
-        return PojoUpdate.wrapper(beanClass);
-    }
-
     /**
      *
      * @param value
@@ -42,17 +32,16 @@ public class DbPojo {
      * @param <T>
      * @return
      */
-    public <T> PojoUpdate<T> update(T value, Function<String, Boolean> ignore) {
-        return PojoUpdate.wrapper((Class<T>) value.getClass()).set(value, ignore);
+    public <T> PojoUpdate<T> updateW(T value, Function<String, Boolean> ignore) {
+        return new PojoUpdate((Class<T>) value.getClass()).set(value, ignore);
     }
-
-    public <T> PojoUpdate<T> update(T value) {
-        return PojoUpdate.wrapper((Class<T>) value.getClass()).set(value);
+    public <T> PojoUpdate<T> updateW(T value) {
+        return new PojoUpdate((Class<T>) value.getClass()).set(value);
     }
 
     //以下都是直接操作执行
     public <T> T insert(T bean) {
-        PojoInsert.wrapper(bean).execute();
+        new PojoInsert(bean).execute();
         return bean;
     }
 
@@ -74,7 +63,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(idValue)) {
             throw new SystemException(idName + "不能为空");
         }
-        final int execute = update(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, idValue).execute();
+        final int execute = updateW(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, idValue).execute();
         if (execute == 1) {
             return obj;
         }
@@ -94,7 +83,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return select(c).eq(idName, id).queryBean();
+        return selectW(c).eq(idName, id).queryBean();
     }
 
     public <T> List<T> selectByIds(Class<T> c, Object id) {
@@ -102,7 +91,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return select(c).in(idName, id).queryBeanList();
+        return selectW(c).in(idName, id).queryBeanList();
     }
 
     public <T> int deleteByIds(Class<T> c, String ids) {
@@ -110,7 +99,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
-        return delete(c).in(idName, ids).execute();
+        return deleteW(c).in(idName, ids).execute();
     }
 
     public <T> int deleteByIds(Class<T> c, List<?> ids) {
@@ -118,7 +107,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
-        return delete(c).in(idName, ids).execute();
+        return deleteW(c).in(idName, ids).execute();
     }
 
     public <T> int deleteById(Class<T> c, Object id) {
@@ -126,6 +115,6 @@ public class DbPojo {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return delete(c).eq(idName, id).execute();
+        return deleteW(c).eq(idName, id).execute();
     }
 }

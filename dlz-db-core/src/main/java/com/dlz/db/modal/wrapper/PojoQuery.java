@@ -46,20 +46,19 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
         setAllowFullQuery(true);
     }
 
-    public PojoQuery<T> columns(String... columns) {
+    public PojoQuery<T> select(String... columns) {
         if (columns.length > 0) {
-            getPm().columns(columns);
+            getPm().select(columns);
         }
         return this;
     }
     @SuppressWarnings("unchecked")
-    public PojoQuery<T> columns(DlzFn<T, ?>... columns) {
+    public PojoQuery<T> select(DlzFn<T, ?>... columns) {
         if (columns.length > 0) {
-            getPm().columns(columns);
+            getPm().select(columns);
         }
         return this;
     }
-
     /**
      * 自动根据map的键值对添加查询条件
      *

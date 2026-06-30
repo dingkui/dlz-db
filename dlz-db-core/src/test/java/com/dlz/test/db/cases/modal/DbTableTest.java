@@ -27,8 +27,8 @@ class DbTableTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 insert 方法")
-    void testInsert() {
-        TableInsert insert = dbTable.insert("user");
+    void testInsertW() {
+        TableInsert insert = dbTable.insertW("user");
         
         assertNotNull(insert);
         assertTrue(insert instanceof TableInsert);
@@ -36,8 +36,8 @@ class DbTableTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 delete 方法")
-    void testDelete() {
-        TableDelete delete = dbTable.delete("user");
+    void testDeleteW() {
+        TableDelete delete = dbTable.deleteW("user");
         
         assertNotNull(delete);
         assertTrue(delete instanceof TableDelete);
@@ -45,8 +45,8 @@ class DbTableTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 update 方法")
-    void testUpdate() {
-        TableUpdate update = dbTable.update("user");
+    void testUpdateW() {
+        TableUpdate update = dbTable.updateW("user");
         
         assertNotNull(update);
         assertTrue(update instanceof TableUpdate);
@@ -54,8 +54,8 @@ class DbTableTest extends BaseDBTest {
 
     @Test
     @DisplayName("测试 select 方法")
-    void testSelect() {
-        TableQuery query = dbTable.select("user");
+    void testSelectW() {
+        TableQuery query = dbTable.selectW("user");
         
         assertNotNull(query);
         assertTrue(query instanceof TableQuery);
@@ -64,9 +64,9 @@ class DbTableTest extends BaseDBTest {
     @Test
     @DisplayName("测试不同表名")
     void testDifferentTableNames() {
-        TableInsert insert1 = dbTable.insert("user");
-        TableInsert insert2 = dbTable.insert("order");
-        TableInsert insert3 = dbTable.insert("product_category");
+        TableInsert insert1 = dbTable.insertW("user");
+        TableInsert insert2 = dbTable.insertW("order");
+        TableInsert insert3 = dbTable.insertW("product_category");
         
         assertNotNull(insert1);
         assertNotNull(insert2);
@@ -78,7 +78,7 @@ class DbTableTest extends BaseDBTest {
     void testEmptyTableName() {
         // 空表名可能会触发 WrapperBuildUtil 初始化错误
         assertThrows(Throwable.class, () -> {
-            dbTable.insert("");
+            dbTable.insertW("");
         });
     }
 
@@ -87,7 +87,7 @@ class DbTableTest extends BaseDBTest {
     void testNullTableName() {
         // null 表名可能会触发 ValidateException 初始化错误
         assertThrows(Throwable.class, () -> {
-            dbTable.insert(null);
+            dbTable.insertW(null);
         });
     }
 }

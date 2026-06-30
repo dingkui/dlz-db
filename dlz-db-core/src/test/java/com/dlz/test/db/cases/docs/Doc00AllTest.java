@@ -27,7 +27,7 @@ public class Doc00AllTest extends BaseDBTest {
 
     @Test
     public void allTest_0_1() {
-        DB.Pojo.delete(User.class).execute();
+        DB.Pojo.deleteW(User.class).execute();
     }
 
 }

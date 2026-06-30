@@ -112,13 +112,6 @@ public class DbOpSqlite extends SqlHelper {
     }
 
     @Override
-    public List<ResultMap> getTableIndexs(String tableName) {
-        // 获取表所有索引
-        String sql = "PRAGMA INDEX_LIST(`" + tableName + "`)";
-        return DBHolder.getSqlExecutor().getList(sql);
-    }
-
-    @Override
     public void createColumn(String tableName, String name, Field field) {
         String sql = "ALTER TABLE `" + tableName + "` ADD COLUMN `" + name + "` " + getDbColumnType(field);
         DBHolder.getSqlExecutor().update(sql);

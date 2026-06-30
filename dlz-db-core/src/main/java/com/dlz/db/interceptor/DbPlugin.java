@@ -135,4 +135,14 @@ public class DbPlugin {
         }
         return logicDeleteInterceptor.getLogicDeleteField(tableName, beanClass);
     }
+    /**
+     */
+    public static String getLogicDeleteField(String tableName) {
+        // 调用插件：逻辑删除/租户 等自动注入插入字段
+        // 调用插件链：逻辑删除插件会在此将 DELETE 改写为 UPDATE deleted=1
+        if(logicDeleteInterceptor == null){
+            return null;
+        }
+        return logicDeleteInterceptor.getLogicDeleteField(tableName);
+    }
 }

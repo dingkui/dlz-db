@@ -17,7 +17,7 @@ public class WrapperSelectTest extends BaseDBTest {
         Menu menu = new Menu();
         menu.setCode("qsm");
         menu.setName("全生命周期项目");
-        final PojoQuery<Menu> wrapper = DB.Pojo.select(Menu.class)
+        final PojoQuery<Menu> wrapper = DB.Pojo.selectW(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
                 .ors(w -> w
                         .eq(Menu::getCode, menu.getCode())
@@ -30,7 +30,7 @@ public class WrapperSelectTest extends BaseDBTest {
         Menu menu = new Menu();
         menu.setCode("qsm");
         menu.setName("全生命周期项目");
-        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
+        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.selectW(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
                 .eq(Menu::getCategory, "1")
                 .ors(w -> w
@@ -44,7 +44,7 @@ public class WrapperSelectTest extends BaseDBTest {
         Menu menu = new Menu();
         menu.setCode("qsm");
         menu.setName("全生命周期项目");
-        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
+        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.selectW(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
                 .eq(Menu::getCategory, "1")
                 .ors(xx -> xx
@@ -58,7 +58,7 @@ public class WrapperSelectTest extends BaseDBTest {
         Menu menu = new Menu();
         menu.setCode("qsm");
         menu.setName("全生命周期项目");
-        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
+        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.selectW(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
                 .ors(w -> w
                         .eq(Menu::getCode, menu.getCode())
@@ -74,7 +74,7 @@ public class WrapperSelectTest extends BaseDBTest {
         menu.setId(1L);
         menu.setCode("qsm");
         menu.setName("全生命周期项目");
-        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
+        final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.selectW(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
                 .sql("xx in (select x from dual where 1=#{a} and 2=#{b})", new JSONMap("a", 1, "b", 2));
         showSql(menuQueryWrapper, "conditionWhereTest4_2", "select * from SYS_MENU t where ID <> 1 and (xx in (select x from dual where 1=1 and 2=2)) and DELETED = 0");
@@ -85,8 +85,8 @@ public class WrapperSelectTest extends BaseDBTest {
     public void searchWrapperTest1() {
         SysSql dict = new SysSql();
         dict.setId(123L);
-        PojoQuery select = DB.Pojo.select(SysSql.class)
-                .columns(SysSql::getId);
+        PojoQuery select = DB.Pojo.selectW(SysSql.class)
+                .select(SysSql::getId);
         showSql(select, "searchWrapperTest1", "select ID from SYS_SQL t where DELETED = 0");
     }
 
@@ -94,7 +94,7 @@ public class WrapperSelectTest extends BaseDBTest {
     public void searchWrapperTest2() {
         SysSql dict = new SysSql();
         dict.setId(123L);
-        PojoQuery<SysSql> query = DB.Pojo.select(SysSql.class);
+        PojoQuery<SysSql> query = DB.Pojo.selectW(SysSql.class);
         showSql(query, "searchWrapperTest2", "select * from SYS_SQL t where DELETED = 0");
     }
 
@@ -102,7 +102,7 @@ public class WrapperSelectTest extends BaseDBTest {
     public void searchWrapperTest3() {
         SysSql dict = new SysSql();
         dict.setId(123L);
-        PojoQuery<SysSql> query = DB.Pojo.select(SysSql.class)
+        PojoQuery<SysSql> query = DB.Pojo.selectW(SysSql.class)
                 .eq(SysSql::getId, 123);
         showSql(query, "searchWrapperTest3", "select * from SYS_SQL t where ID = 123 and DELETED = 0");
     }
@@ -110,8 +110,8 @@ public class WrapperSelectTest extends BaseDBTest {
 
     @Test
     public void dbSqlTest1() {
-        final PojoQuery eq = DB.Pojo.select(Role.class)
-                .columns(Role::getRoleAlias)
+        final PojoQuery eq = DB.Pojo.selectW(Role.class)
+                .select(Role::getRoleAlias)
                 .in(Role::getId, "11,22")
                 .eq(Role::getDeleted, 0);
         showSql(eq, "dbSqlTest1", "select ROLE_ALIAS from sys_role t where ID in (11,22) and DELETED = 0");
@@ -120,8 +120,8 @@ public class WrapperSelectTest extends BaseDBTest {
 
     @Test
     public void dbSqlTest2() {
-        final PojoQuery eq = DB.Pojo.select(Role.class)
-                .columns(Role::getRoleAlias)
+        final PojoQuery eq = DB.Pojo.selectW(Role.class)
+                .select(Role::getRoleAlias)
                 .in(Role::getId, "a11,x22")
                 .eq(Role::getDeleted, 0);
         showSql(eq, "dbSqlTest2", "select ROLE_ALIAS from sys_role t where ID in ('a11','x22') and DELETED = 0");
@@ -129,8 +129,8 @@ public class WrapperSelectTest extends BaseDBTest {
 
     @Test
     public void dbSqlTest21() {
-        final PojoQuery eq = DB.Pojo.select(Role.class)
-                .columns(Role::getId)
+        final PojoQuery eq = DB.Pojo.selectW(Role.class)
+                .select(Role::getId)
                 .in(Role::getId, "a11,x22")
                 .eq(Role::getDeleted, 0);
         showSql(eq, "dbSqlTest2", "select ID from sys_role t where ID in ('a11','x22') and DELETED = 0");
