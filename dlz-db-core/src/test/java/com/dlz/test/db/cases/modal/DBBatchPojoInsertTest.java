@@ -1,21 +1,28 @@
-package com.dlz.test.db.cases.batch;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.modal.DB;
+import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Orders;
+import com.dlz.test.db.entity.TestUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * 批量操作专题测试
  * 覆盖批量插入/更新
  */
-public class BatchTest extends BaseDBTest {
+public class DBBatchPojoInsertTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {
@@ -71,8 +78,18 @@ public class BatchTest extends BaseDBTest {
         o1.setUserId("single");
         o1.setAmount(100);
         assertNull(o1.getId());
-        DB.Batch.pojoInsert(Arrays.asList(o1), 100);
+        DB.Batch.pojoInsert(Arrays.asList(o1));
         assertNotNull(o1.getId());
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM Orders").count());
+
+        //测试 insert - null
+        assertThrows(NullPointerException.class, () -> {
+            DB.Batch.pojoInsert(null);
+        });
+
+        //测试 insert - 空列表返回 false
+        List<Orders> users = Collections.emptyList();
+        assertFalse(DB.Batch.pojoInsert(users));
+        assertFalse(new PojoInsert(Orders.class).batch(users));
     }
 }
