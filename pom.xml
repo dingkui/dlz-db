@@ -9,7 +9,7 @@
 	<artifactId>dlz-db</artifactId>
     <version>7.1.0</version>
 	<packaging>pom</packaging>
-    <description>DLZ-DB v7.0: 多模块数据库框架，支持 Spring 和 Solon</description>
+    <description>DLZ-DB v7.1.0: 多模块数据库框架，支持 Spring 和 Solon</description>
     <properties>
         <java.version>1.8</java.version>
         <dlz-spring.version>6.6.5</dlz-spring.version>
