@@ -80,6 +80,8 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
         String sql = WrapperBuildUtil.buildUpdateSql(getTableName(), dbColumns, idName);
         final HashMap<String, Integer> fields = new LinkedHashMap<>(dbColumns.size());
         dbColumns.entrySet().forEach(entry -> fields.put(DbConvertUtil.toFieldName(entry.getKey()), entry.getValue()));
+
+        final String idName2 = DbConvertUtil.toFieldName(idName);
         while (!valueBeans.isEmpty() && batchSize > 0) {
             if (batchSize > valueBeans.size()) {
                 batchSize = valueBeans.size();
@@ -87,7 +89,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
             final List<JSONMap> ts = valueBeans.subList(0, batchSize);
 
             List<Object[]> paramValues = ts.stream()
-                    .map(v -> WrapperBuildUtil.buildUpdateParams(v, fields, idName))
+                    .map(v -> WrapperBuildUtil.buildUpdateParams(v, fields, idName2))
                     .collect(Collectors.toList());
             DBHolder.getSqlExecutor().batch(sql, paramValues);
             valueBeans = valueBeans.subList(batchSize, valueBeans.size());
