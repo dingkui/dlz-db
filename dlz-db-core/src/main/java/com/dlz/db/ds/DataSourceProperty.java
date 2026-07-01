@@ -1,11 +1,13 @@
 package com.dlz.db.ds;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class DataSourceProperty {
     private String name;
     /**

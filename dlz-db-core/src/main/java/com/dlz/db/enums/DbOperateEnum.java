@@ -101,13 +101,7 @@ public enum DbOperateEnum {
                 return paraOne(dbn, "%" + value, null);
             case likeRight:
                 return paraOne(dbn, value + "%", null);
-            case eq:
-            case ne:
-            case gt:
-            case ge:
-            case lt:
-            case le:
-                return paraOne(dbn, value, tableName);
+
             case between:
             case notBetween:
                 return paraTwo(dbn, value, tableName);
@@ -118,7 +112,14 @@ public enum DbOperateEnum {
             case notIn:
                 return paraIn(dbn, value,tableName);
             default:
-                throw new SystemException("匹配符有误：" + this);
+//            case eq:
+//            case ne:
+//            case gt:
+//            case ge:
+//            case lt:
+//            case le:
+//                return paraOne(dbn, value, tableName);
+                return paraOne(dbn, value, tableName);
         }
     }
 

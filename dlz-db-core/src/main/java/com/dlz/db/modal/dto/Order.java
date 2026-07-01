@@ -3,8 +3,9 @@ package com.dlz.db.modal.dto;
 import com.dlz.db.support.PojoCache;
 import com.dlz.kit.fn.DlzFn;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -15,7 +16,8 @@ import java.util.Arrays;
  * @author HCL
  * Create at 2019/5/27
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Order implements Serializable {

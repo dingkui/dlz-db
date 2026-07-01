@@ -61,10 +61,10 @@ public class TableInsert extends AParaTable implements IExecutorInsert {
 
     public boolean batch(List<JSONMap> valueBeans, int batchSize) {
         if (valueBeans.isEmpty()) {
-            return true;
+            return false;
         }
         final String tableName = getTableName();
-        final String idName = PojoCache.getIdName(tableName);
+//        final String idName = PojoCache.getIdName(tableName);
 
         final HashMap<String, Integer> dbColumns = PojoCache.getTableColumnsInfo(tableName);
         String sql = WrapperBuildUtil.buildInsertSql(tableName, dbColumns);

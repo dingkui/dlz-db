@@ -73,7 +73,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
     }
     public boolean batch(List<JSONMap> valueBeans, int batchSize) {
         if (valueBeans.isEmpty()) {
-            return true;
+            return false;
         }
         final String idName = PojoCache.getIdName(getTableName());
         final HashMap<String, Integer> dbColumns = PojoCache.getTableColumnsInfo(getTableName());

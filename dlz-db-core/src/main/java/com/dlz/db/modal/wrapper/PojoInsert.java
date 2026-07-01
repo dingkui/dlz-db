@@ -45,7 +45,7 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
 
     public boolean batch(List<T> valueBeans, int batchSize) {
         if (valueBeans.isEmpty()) {
-            return true;
+            return false;
         }
         final Class<T> beanClass = getBeanClass();
         String dbName = PojoCache.getTableName(beanClass);

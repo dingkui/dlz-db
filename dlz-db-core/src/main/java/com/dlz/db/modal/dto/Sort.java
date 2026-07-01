@@ -5,7 +5,8 @@ import com.dlz.db.util.DbConvertUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
 @ApiModel(value = "排序对象")
 public class Sort<T extends Sort> implements Serializable, IChained<T> {
     private static final long serialVersionUID = 1L;

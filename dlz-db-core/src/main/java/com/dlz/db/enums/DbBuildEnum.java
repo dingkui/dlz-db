@@ -18,11 +18,11 @@ public enum DbBuildEnum {
     muOr("#s"),//多条件语句 or 拼接
     muAnd("#s"),//多条件语句 and 拼接,
     sql("(#s)"),//自定义sql,
-    apply("(#s)"),//自定义sql,
+//    apply("(#s)"),//自定义sql,
     where("where #s");//自定义sql,
     private final String _sql;
 
-    private static final Pattern PATTERN_INDEX = Pattern.compile("\\{(\\d+)\\}");
+//    private static final Pattern PATTERN_INDEX = Pattern.compile("\\{(\\d+)\\}");
 
     public Condition build(String tableName,String sql, JSONMap paras) {
         switch (this) {
@@ -46,43 +46,43 @@ public enum DbBuildEnum {
         throw new SystemException("匹配符有误：" + this);
     }
 
-    public Condition build(String tableName, String sql, Object... paras) {
-        switch (this) {
-            case apply:
-                if (StringUtils.isEmpty(sql)) {
-                    return null;
-                }
-                Condition condition = new Condition(this, tableName);
-                JSONMap paraM = new JSONMap();
-
-                Matcher mat = PATTERN_INDEX.matcher(sql);
-                int start = 0;
-                StringBuilder sb = new StringBuilder();
-                while (mat.find()) {
-                    String index = mat.group(1);
-                    sb.append(sql, start, mat.start());
-                    String key = KeyUtil.getKeyName("apply_");
-                    sb.append("#{" + key + "}");
-                    paraM.put(key, paras[Integer.parseInt(index)]);
-                    start = mat.end();
-                }
-
-                if (start > 0) {
-                    sb.append(sql, start, sql.length());
-                    sql = sb.toString();
-                }
-
-                sql = sql.replaceAll("\\$\\.", "\\\\\\$\\\\\\.");
-                sql = SqlUtil.getConditionStr(sql, paraM);
-                sql = SqlUtil.replaceSql(sql, paraM, 0);
-                condition.setRunSql(buildSql(sql));
-                if (!paraM.isEmpty()) {
-                    condition.addParas(paraM);
-                }
-                return condition;
-        }
-        throw new SystemException("匹配符有误：" + this);
-    }
+//    public Condition build(String tableName, String sql, Object... paras) {
+//        switch (this) {
+//            case apply:
+//                if (StringUtils.isEmpty(sql)) {
+//                    return null;
+//                }
+//                Condition condition = new Condition(this, tableName);
+//                JSONMap paraM = new JSONMap();
+//
+//                Matcher mat = PATTERN_INDEX.matcher(sql);
+//                int start = 0;
+//                StringBuilder sb = new StringBuilder();
+//                while (mat.find()) {
+//                    String index = mat.group(1);
+//                    sb.append(sql, start, mat.start());
+//                    String key = KeyUtil.getKeyName("apply_");
+//                    sb.append("#{" + key + "}");
+//                    paraM.put(key, paras[Integer.parseInt(index)]);
+//                    start = mat.end();
+//                }
+//
+//                if (start > 0) {
+//                    sb.append(sql, start, sql.length());
+//                    sql = sb.toString();
+//                }
+//
+//                sql = sql.replaceAll("\\$\\.", "\\\\\\$\\\\\\.");
+//                sql = SqlUtil.getConditionStr(sql, paraM);
+//                sql = SqlUtil.replaceSql(sql, paraM, 0);
+//                condition.setRunSql(buildSql(sql));
+//                if (!paraM.isEmpty()) {
+//                    condition.addParas(paraM);
+//                }
+//                return condition;
+//        }
+//        throw new SystemException("匹配符有误：" + this);
+//    }
 
     public Condition build(String tableName) {
         switch (this) {
