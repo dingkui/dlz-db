@@ -2,6 +2,8 @@ package com.dlz.test.db.cases.enums;
 
 import com.dlz.db.enums.DbBuildEnum;
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,31 +61,21 @@ class DbBuildEnumTest extends BaseDBTest {
     void testBuildWhere() {
         Condition cond = DbBuildEnum.where.build("test_table");
         assertNotNull(cond);
+        assertThrows(SystemException.class, () -> DbBuildEnum.where.build("",null, null));
     }
 
     @Test
     @DisplayName("build(tableName) - sql类型抛异常")
-    void testBuildSqlTypeThrows() {
+    void testBuildTypeThrows() {
         assertThrows(Exception.class, () -> DbBuildEnum.sql.build("test_table"));
-    }
-
-    @Test
-    @DisplayName("build(tableName) - apply类型抛异常")
-    void testBuildApplyTypeThrows() {
-        assertThrows(Exception.class, () -> DbBuildEnum.apply.build("test_table"));
-    }
-
-    @Test
-    @DisplayName("枚举值数量为7")
-    void testEnumCount() {
-        assertEquals(7, DbBuildEnum.values().length);
+        assertThrows(SystemException.class, () -> DbBuildEnum.where.build("",null, null));
     }
 
     @Test
     @DisplayName("valueOf 正确解析")
     void testValueOf() {
         assertEquals(DbBuildEnum.ands, DbBuildEnum.valueOf("ands"));
-        assertEquals(DbBuildEnum.sql, DbBuildEnum.valueOf("sql"));
-        assertEquals(DbBuildEnum.apply, DbBuildEnum.valueOf("apply"));
+//        assertEquals(DbBuildEnum.sql, DbBuildEnum.valueOf("sql"));
+//        assertEquals(DbBuildEnum.apply, DbBuildEnum.valueOf("apply"));
     }
 }

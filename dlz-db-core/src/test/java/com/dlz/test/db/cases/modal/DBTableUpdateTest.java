@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.condition.Condition;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  * 单元测试支撑类<br>
  * @author dk
  */
-public class TableUpdateTest extends BaseDBTest {
+public class DBTableUpdateTest extends BaseDBTest {
 	@Test
 	public void UpdateParaMapTest(){
 		TableUpdate where = DB.Table.updateW("Sys_Sql")

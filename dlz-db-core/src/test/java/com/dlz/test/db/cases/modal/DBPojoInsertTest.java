@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @Slf4j
-public class WrapperInsertTest extends BaseDBTest {
+public class DBPojoInsertTest extends BaseDBTest {
 
     @Test
     public void insertWrapperTest1() {

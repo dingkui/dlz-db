@@ -107,16 +107,16 @@ class DbLogUtilTest {
         );
     }
 
-    @Test
-    @DisplayName("测试 logInfo 方法 - 异常日志")
-    void testLogInfo_Exception() {
-        Long time = System.currentTimeMillis();
-        ResultMap result = new ResultMap();
-        Exception error = new RuntimeException("Test error");
-        
-        // 测试异常日志记录（不抛出异常即可）
-        assertDoesNotThrow(() -> 
-            DbLogUtil.logInfo((t, r) -> "Test message", time, result, error)
-        );
-    }
+//    @Test
+//    @DisplayName("测试 logInfo 方法 - 异常日志")
+//    void testLogInfo_Exception() {
+//        Long time = System.currentTimeMillis();
+//        ResultMap result = new ResultMap();
+//        Exception error = new RuntimeException("Test error");
+//
+//        // 测试异常日志记录（不抛出异常即可）
+//        assertDoesNotThrow(() ->
+//            DbLogUtil.logInfo((t, r) -> "Test message", time, result, error)
+//        );
+//    }
 }

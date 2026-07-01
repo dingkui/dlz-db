@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoUpdate;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  * 单元测试支撑类<br>
  * @author dk
  */
-public class WrapperUpdateTest extends BaseDBTest {
+public class DBPojoUpdateTest extends BaseDBTest {
 	@Test
 	public void dbSqlTest3() {
 		Role role = new Role();

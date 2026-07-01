@@ -1,8 +1,10 @@
 package com.dlz.test.db.cases.inf;
 
+import com.dlz.db.enums.DbBuildEnum;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
+import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.json.JSONMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -227,7 +229,6 @@ class ConditionTest {
         assertNotNull(result);
         assertEquals("where (STATUS = 1 or STATUS = 2)", getSql(result));
     }
-
     // ========== auto() 自动条件测试 ==========
 
 
@@ -242,6 +243,23 @@ class ConditionTest {
         
         assertNotNull(result);
         assertEquals("where (AND status = 1)", getSql(result));
+
+        result = Condition.where().sql("exists(select 1 from dual where x=#{x})",new JSONMap("x",1));
+        assertNotNull(result);
+        assertEquals("where (exists(select 1 from dual where x=1))", getSql(result));
+        result = Condition.where().sql("exists(select 1 from dual where x=#{x})",new JSONMap());
+        assertEquals("where (exists(select 1 from dual where x='null'))", getSql(result));
+        result = Condition.where().sql("exists(select 1 from dual where x=#{x})",null);
+        assertEquals("where (exists(select 1 from dual where x='null'))", getSql(result));
+    }
+    @Test
+    @DisplayName("测试 sql()null 方法")
+    void testSqlNull() {
+        JSONMap paras = new JSONMap();
+        final Condition where = Condition.where();
+        assertEquals("", getSql(where));
+        Condition result = where.sql(null, paras);
+        assertEquals("", getSql(result));
     }
 
     // ========== 链式调用测试 ==========

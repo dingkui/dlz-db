@@ -1,8 +1,10 @@
 package com.dlz.test.db.cases.inf;
 
+import com.dlz.db.enums.DbBuildEnum;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
+import com.dlz.kit.json.JSONMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +38,6 @@ class ICondAndOrTest {
     @DisplayName("测试 ands() - 简单AND嵌套")
     void testAndSimple() {
         Condition result = condition.ands(c -> c.eq("status", 1).gt("age", 18));
-        
         assertNotNull(result);
         assertEquals("where (STATUS = 1 and AGE > 18)", getSql(result));
     }

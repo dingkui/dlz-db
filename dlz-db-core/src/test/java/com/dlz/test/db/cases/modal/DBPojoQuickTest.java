@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.modal.DB;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @Slf4j
-public class WrapperQuickTest extends BaseDBTest {
+public class DBPojoQuickTest extends BaseDBTest {
 
     @Test
     public void insertOrUpdateTest1() {

@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoDelete;
@@ -6,7 +6,7 @@ import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import org.junit.jupiter.api.Test;
 
-public class WrapperDeleteTest extends BaseDBTest {
+public class DBPojoDeleteTest extends BaseDBTest {
 
     @Test
     public void deleteWrapperTest1() {

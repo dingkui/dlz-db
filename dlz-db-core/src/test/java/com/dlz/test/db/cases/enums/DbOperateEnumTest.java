@@ -3,6 +3,7 @@ package com.dlz.test.db.cases.enums;
 import com.dlz.db.enums.DbOperateEnum;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
+import com.dlz.kit.exception.SystemException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -119,6 +120,7 @@ class DbOperateEnumTest {
         Condition condition = DbOperateEnum.between.mk("age", new Object[]{18, 60},null);
         assertNotNull(condition);
         assertTrue(condition.getRunsql(new ParaMap()).contains("AGE between "));
+        assertThrows(SystemException.class,()->DbOperateEnum.between.mk("age", new Object[]{18},null));
     }
 
     @Test

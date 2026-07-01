@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
@@ -6,7 +6,7 @@ import com.dlz.db.modal.dto.Page;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.Test;
 
-public class SqlSelectPageTest extends BaseDBTest {
+public class DBSqlSelectPageTest extends BaseDBTest {
     @Test
     public void PageTest() {
         DB.Sql.select("select t.* from Goods t where t.goods_id=310")

@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.db;
+package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class SqlSelectTest extends BaseDBTest {
+public class DBSqlSelectTest extends BaseDBTest {
     @Test
     public void sqlSelectTest1() {
         String sql = "key.sqlTest.sqlUtil";
