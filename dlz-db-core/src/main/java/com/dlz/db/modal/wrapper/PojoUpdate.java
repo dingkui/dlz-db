@@ -85,7 +85,8 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
     }
 
     public PojoUpdate<T> set(T bean) {
-        return set(bean, name -> name.equalsIgnoreCase("ID"));
+        final IdInfo idInfo = PojoCache.getIdInfo(getBeanClass());
+        return set(bean, name -> name.equals(idInfo.getName()));
     }
 
     @Override

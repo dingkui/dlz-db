@@ -6,7 +6,7 @@ import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import org.junit.jupiter.api.Test;
 
-public class PojoDeleteTest extends BaseDBTest {
+public class PojoDeleteWTest extends BaseDBTest {
 
     @Test
     public void deleteWrapperTest1() {

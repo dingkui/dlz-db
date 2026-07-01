@@ -317,7 +317,7 @@ public class PojoCache {
             if(primaryKeys.size()>1){
                 throw new SystemException("表["+tableName+"]为复合主键，不支持此操作");
             }
-            return primaryKeys.get(0);
+            return DbConvertUtil.toFieldName(primaryKeys.get(0));
         });
     }
 
