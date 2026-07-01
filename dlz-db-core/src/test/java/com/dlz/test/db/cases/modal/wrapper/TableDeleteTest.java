@@ -2,13 +2,15 @@ package com.dlz.test.db.cases.modal.wrapper;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Dict;
 import org.junit.jupiter.api.Test;
 
+/**
+ * TableDelete SQL 生成测试（仅验证 SQL，不执行）
+ */
 public class TableDeleteTest extends BaseDBTest {
     @Test
     public void tableDeleteTest1() {
@@ -19,37 +21,16 @@ public class TableDeleteTest extends BaseDBTest {
     }
 
     @Test
-    public void tableDeleteTest12() {
-        PojoDelete<Dict> delete = DB.Pojo.deleteW(Dict.class)
-                .eq(Dict::getA2, "1")
-                .eq(Dict::getDeleted,1);
-        delete.execute();
-        showSql(delete, "tableDeleteTest1", "delete from T_B_DICT where XXSS = 1 and DELETED = 1");
-    }
-
-    @Test
-    public void tableDeleteTest2() {
-        TableDelete delete = DB.Table.deleteW("t_b_dict")
-                .addPara(Dict::getA2, "1")
-                .where(Condition.where().sql("[id=#{id2}]", new JSONMap("id", "123")))
-                .eq("DELETED", 8);
-
-//        showSql(delete,"conditionTest1","delete from t_b_dict where DELETED = 0");
-        delete.execute();
-    }
-
-    @Test
     public void tableDeleteTest3() {
         TableDelete delete = DB.Table.deleteW("t_b_dict")
                 .addPara(Dict::getA2, "1");
-//        delete.where(DbBuildEnum.where.build())
         showSql(delete, "tableDeleteTest3", "delete from t_b_dict where DELETED = 0");
     }
+
     @Test
     public void tableDeleteTest31() {
         TableDelete delete = DB.Table.deleteW("sys_menu")
                 .addPara(Dict::getA2, "1");
-//        delete.where(DbBuildEnum.where.build())
         showSql(delete, "tableDeleteTest3", "delete from sys_menu where DELETED = 0");
     }
 

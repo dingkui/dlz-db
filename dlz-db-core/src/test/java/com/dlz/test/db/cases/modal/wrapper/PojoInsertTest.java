@@ -1,23 +1,17 @@
 package com.dlz.test.db.cases.modal.wrapper;
 
 import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.PojoInsert;
-import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.test.db.entity.AutoIdEntity;
-import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.SysSql;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
-
+/**
+ * PojoInsert SQL 生成测试（仅验证 SQL，不执行）
+ */
 @Slf4j
 public class PojoInsertTest extends BaseDBTest {
 
@@ -36,15 +30,8 @@ public class PojoInsertTest extends BaseDBTest {
         dict.setId(666L);
         dict.setSqlKey("xxx");
         dict.setDeleted(0);
-        DB.Pojo.deleteW(SysSql.class).eq(SysSql::getId, 666L).execute();
-        DB.Pojo.deleteW(SysSql.class).eq(SysSql::getId, 666L).ignoreLogicDelete(true).execute();
         PojoInsert<SysSql> insert = new PojoInsert(dict);
         assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',666,0)", toSql(insert));
-        insert.execute();
-        final List<ResultMap> resultMaps = DB.Table.selectW("Sys_Sql").setAllowFullQuery(true).queryList();
-        log.info("resultMaps:"+resultMaps);
-        final List<ResultMap> resultMaps2 = DB.Table.selectW("Sys_Sql").setAllowFullQuery(true).convertLower().queryList();
-        log.info("resultMaps:"+resultMaps2);
     }
 
     @Test
@@ -52,39 +39,6 @@ public class PojoInsertTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setSqlKey("xxx");
         PojoInsert<SysSql> insert = new PojoInsert(dict);
-        showSql(insert,"insertWrapperTest2","insert into SYS_SQL(SQL_KEY,DELETED) values('xxx',0)");
-        try {
-            insert.execute();
-            fail("应该抛出 SystemException");
-        } catch (SystemException e) {
-            assertTrue(e.getMessage().contains("为手动输入,不能为空"));
-        }
+        showSql(insert, "insertWrapperTest2", "insert into SYS_SQL(SQL_KEY,DELETED) values('xxx',0)");
     }
-
-    @Test
-    public void insertExecuteAutoBackfillTest() {
-        AutoIdEntity entity = new AutoIdEntity();
-        entity.setName("auto_backfill");
-        assertNull(entity.getId());
-
-        DB.Pojo.insert(entity);
-        assertNotNull("AUTO 类型 execute 后应回填生成的主键", entity.getId());
-        assertTrue("回填的主键应大于 0", entity.getId() > 0);
-    }
-
-    @Test
-    public void insertExecuteAssignIdBackfillTest() {
-        Orders orders = new Orders();
-        orders.setUserId("u001");
-        orders.setAmount(100);
-        orders.setUpdateTime(new Date());
-        orders.setCreateTime(LocalDateTime.now());
-        assertNull(orders.getId());
-
-        DB.Pojo.insert(orders);
-
-        assertNotNull("ASSIGN_ID 类型 execute 后应预生成并回填主键", orders.getId());
-    }
-
-
 }
