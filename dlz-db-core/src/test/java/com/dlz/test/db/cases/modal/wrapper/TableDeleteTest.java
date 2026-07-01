@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.modal;
+package com.dlz.test.db.cases.modal.wrapper;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.condition.Condition;
@@ -9,7 +9,7 @@ import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Dict;
 import org.junit.jupiter.api.Test;
 
-public class DBTableDeleteTest extends BaseDBTest {
+public class TableDeleteTest extends BaseDBTest {
     @Test
     public void tableDeleteTest1() {
         TableDelete delete = DB.Table.deleteW("t_b_dict")

@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.modal;
+package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;

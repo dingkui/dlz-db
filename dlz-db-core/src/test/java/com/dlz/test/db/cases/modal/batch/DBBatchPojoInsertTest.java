@@ -1,8 +1,9 @@
-package com.dlz.test.db.cases.modal;
+package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.test.db.config.BaseDBTest;
+import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.TestUser;
 import org.junit.jupiter.api.AfterEach;
@@ -91,5 +92,38 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
         List<Orders> users = Collections.emptyList();
         assertFalse(DB.Batch.pojoInsert(users));
         assertFalse(new PojoInsert(Orders.class).batch(users));
+    }
+
+    @Test
+    public void batchAssignIdBackfillTest() {
+        Orders o1 = new Orders();
+        o1.setUserId("batch_u1");
+        o1.setAmount(10);
+
+        Orders o2 = new Orders();
+        o2.setUserId("batch_u2");
+        o2.setAmount(20);
+
+        assertNull(o1.getId());
+        assertNull(o2.getId());
+
+        DB.Batch.pojoInsert(Arrays.asList(o1, o2), 100);
+
+        assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o1.getId());
+        assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o2.getId());
+        assertNotEquals("两个 bean 的 ASSIGN_ID 应不同", o1.getId(), o2.getId());
+    }
+
+    @Test
+    public void batchAutoNotBackfillTest() {
+        AutoIdEntity m1 = new AutoIdEntity();
+        m1.setName("batch_auto1");
+
+        AutoIdEntity m2 = new AutoIdEntity();
+        m2.setName("batch_auto2");
+
+        DB.Batch.pojoInsert(Arrays.asList(m1, m2), 100);
+
+        assertNull("AUTO 类型 batch 后不应回填主键（驱动限制）", m1.getId());
     }
 }

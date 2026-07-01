@@ -1,4 +1,4 @@
-package com.dlz.test.db.cases.modal;
+package com.dlz.test.db.cases.modal.wrapper;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class DBPojoSelectTest extends BaseDBTest {
+public class PojoQueryTest extends BaseDBTest {
     @Test
     public void conditionWhereTest3_2() {
         Menu menu = new Menu();

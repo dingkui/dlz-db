@@ -2,14 +2,12 @@ package com.dlz.test.db.cases.modal;
 
 
 import com.dlz.db.modal.DB;
-import com.dlz.db.modal.DbPojo;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.TestUser;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
