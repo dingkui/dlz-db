@@ -11,7 +11,7 @@
 
 | 组件 | 一句话 | 坐标 |
 |------|--------|------|
-| **DLZ-DB** | 轻量 Java ORM（<7000 行），无 Mapper/XML，静态入口 `DB.` + Lambda 链式 API | `top.dlzio:dlz-db-spring-boot-starter:7.1.0` |
+| **DLZ-DB** | 轻量 Java ORM（<7000 行），无 Mapper/XML，静态入口 `DB.` + Lambda 链式 API | `top.dlzio:dlz-db-spring-boot-starter:7.2.0` |
 | **DLZ-KIT** | JSON 工具库，JSONMap 路径取值 + 自动类型转换 + `@SetValue` 注解映射 | `top.dlzio:dlz-kit:6.6.4` |
 
 **设计哲学**：显式 > 隐式。用 Lambda 链式调用替代注解代理，控制流写在代码里才是可靠的控制流。

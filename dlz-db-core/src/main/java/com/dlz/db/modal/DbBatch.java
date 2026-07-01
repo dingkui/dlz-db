@@ -1,75 +1,32 @@
 package com.dlz.db.modal;
 
-import com.dlz.db.modal.wrapper.PojoInsert;
-import com.dlz.db.modal.wrapper.PojoUpdate;
-import com.dlz.db.modal.wrapper.TableInsert;
-import com.dlz.db.modal.wrapper.TableUpdate;
-import com.dlz.db.support.DBHolder;
-import com.dlz.kit.json.JSONMap;
-
 import java.util.List;
 
+/**
+ * 批量操作门面。
+ * <p>链式：insert/update/execute 返回 Builder，.size(n) 设批次大小，.execute() 执行。
+ *
+ * <pre>
+ * DB.batch.insert(userList).execute();                      // 默认批次
+ * DB.batch.insert(userList).size(500).execute();            // 自定义批次
+ * DB.batch.update(userList).size(200).execute();
+ * DB.batch.execute("INSERT INTO log(msg) VALUES(?)", params).size(100).execute();
+ * </pre>
+ */
 public class DbBatch {
-    // Pojo 批量处理
-    public <T> boolean pojoInsert(List<T> bean) {
-        return pojoInsert(bean, 1000);
+
+    /** 批量插入（Pojo），返回 Builder。 */
+    public <T> BatchInsert<T> insert(List<T> list) {
+        return new BatchInsert<>(list);
     }
 
-    public <T> boolean pojoInsert(List<T> bean, int batchSize) {
-        if (!bean.isEmpty()) {
-            return new PojoInsert(bean.get(0)).batch(bean, batchSize);
-        }
-        return false;
-    }
-    public <T> boolean pojoUpdate(List<T> bean) {
-        return pojoUpdate(bean, 1000);
+    /** 批量更新（Pojo），返回 Builder。 */
+    public <T> BatchUpdate<T> update(List<T> list) {
+        return new BatchUpdate<>(list);
     }
 
-    public <T> boolean pojoUpdate(List<T> bean, int batchSize) {
-        if (!bean.isEmpty()) {
-            final Class<T> aClass = (Class<T>)bean.get(0).getClass();
-            return new PojoUpdate(aClass).batch(bean, batchSize);
-        }
-        return false;
-    }
-
-    // Table 批量处理
-
-    public boolean tableInsert(String tableName, List<JSONMap> bean) {
-        return tableInsert(tableName, bean, 1000);
-    }
-
-    public boolean tableInsert(String tableName, List<JSONMap> bean, int batchSize) {
-        if (!bean.isEmpty()) {
-            return new TableInsert(tableName).batch(bean, batchSize);
-        }
-        return false;
-    }
-    public boolean tableUpdate(String tableName, List<JSONMap> bean) {
-        return tableUpdate(tableName,bean, 1000);
-    }
-
-    public boolean tableUpdate(String tableName, List<JSONMap> bean, int batchSize) {
-        if (!bean.isEmpty()) {
-            return new TableUpdate(tableName).batch(bean, batchSize);
-        }
-        return false;
-    }
-
-    // JdbcSql 批量处理
-
-    public boolean jdbcExecute(String sql, List<Object[]> valueBeans) {
-        return jdbcExecute(sql, valueBeans, 1000);
-    }
-
-    public boolean jdbcExecute(String sql, List<Object[]> valueBeans, int batchSize) {
-        for (; !valueBeans.isEmpty() && batchSize > 0; valueBeans = valueBeans.subList(batchSize, valueBeans.size())) {
-            if (batchSize > valueBeans.size()) {
-                batchSize = valueBeans.size();
-            }
-            List<Object[]> paramValues = valueBeans.subList(0, batchSize);
-            DBHolder.getSqlExecutor().batch(sql, paramValues);
-        }
-        return true;
+    /** 批量执行原生 SQL（? 占位），返回 Builder。 */
+    public BatchRaw execute(String sql, List<Object[]> paramList) {
+        return new BatchRaw(sql, paramList);
     }
 }

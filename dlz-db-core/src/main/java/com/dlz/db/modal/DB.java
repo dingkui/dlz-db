@@ -1,42 +1,33 @@
 package com.dlz.db.modal;
 
-import com.dlz.db.ds.DBDynamic;
-import com.dlz.db.ds.DBTx;
-
+/**
+ * dlz-db 唯一入口。
+ * <p>只挂 8 个 final 字段（门面注册表），不挂任何业务方法——这是 5 年不变的核心。
+ *
+ * <p>8 个门面分三组：
+ * <ul>
+ *   <li>数据操作：pojo / table / jdbc / sql</li>
+ *   <li>基础设施：tx / ds / batch</li>
+ *   <li>辅助工具：config</li>
+ * </ul>
+ */
 public class DB {
-    private DB(){}
-    /**
-     * 原生JDBC操作，适合简单的少参数sql.可快速构建功能
-     * 建议采用Sql操作
-     */
-    public final static DbJdbc Jdbc = new DbJdbc();
-    /**
-     * 根据表名操作数据库，适合为定义Pojo的情况下快速操作数据库
-     * 建议定义Pojo，采用Pojo操作
-     */
-    public final static DbTable Table = new DbTable();
-    /**
-     * 预设sql语句操作,支持复杂自定义sql，支持参数设置，支持动态判断
-     * sql:
-     *   1.直接写：select * from user where id=#{id}
-     *   2.xml预设sql：<sql id="key.selectUser">select * from user where id=#{id}</sql>
-     *   3.db 预设sql：selectUser= select * from user where id=#{id}
-     */
-    public final static DbSql Sql = new DbSql();
-    /**
-     * 基于Pojo 和lambda 操作数据库,Lambda 表达式，IDE 自动补全，重构安全
-     */
-    public final static DbPojo Pojo = new DbPojo();
-    /**
-     * 批量操作数据库
-     */
-    public final static DbBatch Batch = new DbBatch();
-    /**
-     * 动态数据源操作（仅切换数据源，不开启事务）
-     */
-    public final static DBDynamic Dynamic = new DBDynamic();
-    /**
-     * 事务执行器（在当前线程数据源或指定数据源上开启事务）
-     */
-    public final static DBTx Tx = new DBTx();
+    private DB() {}
+
+    /** 实体驱动，Lambda 类型安全。有实体类时用。 */
+    public final static DbPojo pojo = new DbPojo();
+    /** 表名驱动，无需实体。动态表名、报表、低代码时用。 */
+    public final static DbTable table = new DbTable();
+    /** 原生 SQL + ? 占位。一句 SQL 跑完的简单场景。 */
+    public final static DbJdbc jdbc = new DbJdbc();
+    /** 预设 SQL + #{} 命名参数。复用/管理/动态配置的复杂场景。 */
+    public final static DbSql sql = new DbSql();
+    /** 批量操作。大量数据写入。 */
+    public final static DbBatch batch = new DbBatch();
+    /** 事务执行器。需要原子性时用。 */
+    public final static DbTx tx = new DbTx();
+    /** 数据源管理。多租户、动态数据源、灰度。 */
+    public final static DbDs ds = new DbDs();
+    /** 配置与扩展注册。注册插件/拦截器/方言。 */
+    public final static DbConfig config = new DbConfig();
 }

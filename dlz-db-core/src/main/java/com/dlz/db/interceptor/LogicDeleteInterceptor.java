@@ -45,7 +45,7 @@ import java.util.Map;
  * </pre>
  *
  * @author dingkui
- * @since 7.1.0
+ * @since 7.2.0
  */
 @Slf4j
 public class LogicDeleteInterceptor implements SqlBuildInterceptor {

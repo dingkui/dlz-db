@@ -109,7 +109,7 @@ DB.Pojo.delete(User.class).eq(User::getId, 1).execute();
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.1.0</version>
+    <version>7.2.0</version>
 </dependency>
 ```
 

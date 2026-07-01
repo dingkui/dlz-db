@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
 [![Build Status](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml)
-[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.2.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 [![codecov](https://codecov.io/gh/dingkui/dlz-db/graph/badge.svg?token=UDX6ZH1R0Q)](https://codecov.io/gh/dingkui/dlz-db)
 
 ```java
@@ -22,7 +22,7 @@ List<User> users = DB.Pojo.select(User.class)
 
 ## 版本说明
 
-当前版本 v7.0.1-2（开源初始版 v6.6.4）。
+当前版本 v7.2.0（开源初始版 v6.6.4）。
 
 这个项目不是从零开始的。它大约在 **2009 年**开始积累，**2014 年**左右成型，作为公司内部的数据库操作工具包投入使用。此后十年间，累计被数十个内部项目采用，适配过各种老旧系统、各种开源框架组合、各种奇奇怪怪的版本混搭。
 
@@ -154,7 +154,7 @@ DLZ-DB v7 采用多模块架构，可根据运行环境选择依赖：
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.1.0</version>
+    <version>7.2.0</version>
 </dependency>
 ```
 
@@ -219,7 +219,7 @@ public class UserController {
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.1.0</version>
+    <version>7.2.0</version>
 </dependency>
 ```
 
@@ -367,6 +367,68 @@ DB.Pojo.select(User.class)
 **Q：v7 和 v6 的 API 兼容吗？**
 
 `DB.Pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 等核心 API 完全兼容。但 Maven 坐标、配置类包路径有变更，详见 [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md)。
+
+---
+
+## 版本历史
+
+### v7.2.0 — 2026-07-01
+
+架构级重构：插件化逻辑删除、API 命名统一、DbTable 一步式操作、测试覆盖大幅提升。
+
+#### ✨ 新增
+
+- **插件化架构**：新增 `SqlBuildInterceptor` 接口 + `DbPlugin` 注册中心，`LogicDeleteInterceptor` 从核心代码抽取为可插拔插件，后续可扩展租户隔离、数据权限等。
+- **`DbTable` 一步式操作**：新增 `insert(table, map)` / `insertWithAutoKey()` / `insertOrUpdate()` / `selectById()` / `selectByIds()` / `deleteById()` / `deleteByIds()` 直接执行 API，无需 Wrapper 链式调用。
+- **`DBDynamic.testConnection(DataSourceProperty)`**：测试数据源连接，不注册到配置池，返回成功/异常。
+- **`SqlHelper.listTables()`**：跨数据库通用表列表查询，走 JDBC `DatabaseMetaData.getTables()`，统一 MySQL/PostgreSQL/H2 行为。
+- **`PojoCache.getIdName(String tableName)`**：按表名查询主键字段名（支持 `DB.Table` 一步式操作）。
+
+#### 🔧 变更（Breaking）
+
+| 变更 | 旧 API (7.0.x) | 新 API (7.2.0) | 说明 |
+|------|----------------|----------------|------|
+| **DbPojo 方法重命名** | `DB.Pojo.select(User.class)` | `DB.Pojo.selectW(User.class)` | `select` / `delete` / `update` → `selectW` / `deleteW` / `updateW` |
+| | `DB.Pojo.select(conditionBean)` | 移除 | 请改用 `selectW(Class)` + 条件链 |
+| | `DB.Pojo.delete(conditionBean)` | 移除 | 同上 |
+| | `DB.Pojo.update(Class)` | `DB.Pojo.updateW(Class)` | 同上 |
+| **DbTable 方法重命名** | `DB.Table.select("user")` | `DB.Table.selectW("user")` | `select` / `insert` / `delete` / `update` → `selectW` / `insertW` / `deleteW` / `updateW` |
+| **DbBatch 方法重命名** | `DB.Batch.insert(list)` | `DB.Batch.pojoInsert(list)` | 区分 Pojo / Table / Jdbc 三种模式 |
+| | `DB.Batch.update(list)` | `DB.Batch.pojoUpdate(list)` | 同上 |
+| | — | `DB.Batch.tableInsert/tableUpdate/jdbcExecute` | 新增 Table/Jdbc 批量 API |
+| **DbJdbc 精简** | `DB.Jdbc.insert/update/delete` | 移除 | 统一用 `DB.Jdbc.execute()` |
+| **DbSql 精简** | `DB.Sql.insert/update/delete` | 移除 | 统一用 `DB.Sql.execute()` |
+| **逻辑删除** | 硬编码在 `IExecutorDelete` / `WrapperBuildUtil` | 抽取为 `LogicDeleteInterceptor` 插件 | 需通过 `DbPlugin.registerInterceptor()` 注册 |
+| **ISqlExecutor.doDb(Supplier)** | 公开默认方法 | 注释掉 | 改用 `doDb(SqlAction, msg)` 重载 |
+
+#### 🐛 修复
+
+- **`IExecutorDelete.execute()` 插件链**：逻辑删除从硬编码改为插件调用，修复 `ignoreLogicDelete` 作用域残留问题（`finally` 块确保清理）。
+- **PojoCache.getLogicDeleteInfo**：不再从 `WrapperBuildUtil.logicDeleteField` 静态变量获取，改为由 `LogicDeleteInterceptor` 构造参数注入。
+- **`NativeJdbcSupport`**：整文件注释掉（已废弃，替换为 `NativeSqlUtil`）。
+
+#### 🗑 移除
+
+- `NativeJdbcSupport.java`（已废弃两年）
+- `DbJdbc.insert/update/delete`（统一为 `execute`）
+- `DbSql.insert/update/delete`（统一为 `execute`）
+- `DbPojo.select(conditionBean)` / `delete(conditionBean)`（重命名为 `selectW/deleteW`）
+- `SqlHelper.getTableIndexs()`（未使用，替代方案为 JDBC `DatabaseMetaData.getIndexInfo()`）
+- 测试用废弃实体类：`Department` / `GoodsPrice` / `Room` / `Smoke` / `Vip`
+
+#### 📦 依赖
+
+- 版本号：`7.0.1-4` → `7.2.0`
+- `dlz-kit` → `6.6.5`
+- `dlz-spring` → `6.6.5`
+- `solon` → `3.0.6`
+
+#### ✅ 测试
+
+- 123 个文件变更，+4130 / −2410 行
+- 新增：`DbTableTest`（42 测试）、`ISqlExecutorTest`（15 测试）、batch 测试（5 文件）、wrapper 测试重构
+- `com.dlz.db.util` 包覆盖从 ~50% 提升至 ~90%
+- `IExecutorQuery` 默认方法覆盖达 100%
 
 ---
 

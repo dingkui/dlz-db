@@ -25,7 +25,7 @@ A clear and concise description of what you expected to happen.
 ```
 
 ## Environment
-- DLZ-DB version: [e.g. 7.1.0]
+- DLZ-DB version: [e.g. 7.2.0]
 - Java version: [e.g. 11]
 - Database type and version: [e.g. MySQL 8.0]
 - Operating system: [e.g. Windows 10]
