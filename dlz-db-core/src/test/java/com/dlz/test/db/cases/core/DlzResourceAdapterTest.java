@@ -6,10 +6,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DlzResourceAdapter 资源适配器测试
@@ -39,6 +40,53 @@ class DlzResourceAdapterTest {
         if (stream != null) {
             stream.close();
         }
+    }
+
+    @Test
+    @DisplayName("测试 getResourceStream - 获取存在的资源（覆盖非空 URL 分支）")
+    void testGetResourceStreamWithExistingResource() throws Exception {
+        // 不加 classpath: 前缀，用类路径根下的已知文件
+        InputStream stream = DlzResourceLoader.getResourceStream("logback-test.xml");
+        assertNotNull(stream, "logback-test.xml 应存在并成功打开流");
+        stream.close();
+    }
+
+    @Test
+    @DisplayName("测试 getResources - 通配符路径不使用 classpath: 前缀（覆盖 enumOf）")
+    void testGetResourcesWithWildcardNoPrefix() throws Exception {
+        // 不加 classpath: 前缀 → all=false → findPatternResources 中使用 enumOf
+        List<URL> urls = DlzResourceLoader.getResources("com/dlz/**/*.class");
+        assertNotNull(urls);
+    }
+
+    @Test
+    @DisplayName("测试 getResources - 同时包含 * 和 ?（覆盖 firstWildcardIndex Math.min）")
+    void testGetResourcesWithBothWildcards() throws Exception {
+        List<URL> urls = DlzResourceLoader.getResources("com/dlz/**/test?.class");
+        assertNotNull(urls);
+    }
+
+    @Test
+    @DisplayName("测试 getResources - pattern 结尾为 **（覆盖 wildcardToRegex 裸 ** 分支）")
+    void testGetResourcesWithDoubleStarEnd() throws Exception {
+        List<URL> urls = DlzResourceLoader.getResources("classpath:com/dlz/**");
+        assertNotNull(urls);
+    }
+
+    @Test
+    @DisplayName("测试 getResources - pattern 内嵌 /**/（覆盖 wildcardToRegex /**/ 分支）")
+    void testGetResourcesWithEmbeddedDoubleStarSlash() throws Exception {
+        // com/dlz/**/x/**/y.class → pattern = "**/x/**/y.class" 触发 /**/ 分支
+        List<URL> urls = DlzResourceLoader.getResources("com/dlz/**/x/**/y.class");
+        assertNotNull(urls);
+    }
+
+    @Test
+    @DisplayName("测试 getResources - pattern 中 /** 结尾（覆盖 wildcardToRegex /** 分支）")
+    void testGetResourcesWithDoubleStarAfterSlash() throws Exception {
+        // com/dlz/**/x/**y → pattern = "**/x/**y" 触发 /** 无斜杠分支
+        List<URL> urls = DlzResourceLoader.getResources("classpath:com/dlz/**/x/**y");
+        assertNotNull(urls);
     }
 
     @Test

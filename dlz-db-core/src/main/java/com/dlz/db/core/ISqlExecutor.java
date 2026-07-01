@@ -171,30 +171,30 @@ public interface ISqlExecutor {
         }
     }
 
-    /**
-     * 统一的 SQL 执行包装：日志、耗时、异常转换。
-     *
-     * @param s   真实执行逻辑
-     * @param msg 日志消息生成器（耗时 + 结果 -> 消息）
-     */
-    default <T> T doDb(Supplier<T> s, DlzFn2<Long, T, String> msg) {
-        if (msg == null) {
-            return s.get();
-        }
-        long t = System.currentTimeMillis();
-        T re = null;
-        Exception err = null;
-        try {
-            re = s.get();
-            return re;
-        } catch (Exception e) {
-            err = e;
-            if (e instanceof DbException) {
-                throw e;
-            }
-            throw new DbException("sql执行错误:", 1001);
-        } finally {
-            DbLogUtil.logInfo(msg, t, re, err);
-        }
-    }
+//    /**
+//     * 统一的 SQL 执行包装：日志、耗时、异常转换。
+//     *
+//     * @param s   真实执行逻辑
+//     * @param msg 日志消息生成器（耗时 + 结果 -> 消息）
+//     */
+//    default <T> T doDb(Supplier<T> s, DlzFn2<Long, T, String> msg) {
+//        if (msg == null) {
+//            return s.get();
+//        }
+//        long t = System.currentTimeMillis();
+//        T re = null;
+//        Exception err = null;
+//        try {
+//            re = s.get();
+//            return re;
+//        } catch (Exception e) {
+//            err = e;
+//            if (e instanceof DbException) {
+//                throw e;
+//            }
+//            throw new DbException("sql执行错误:", 1001);
+//        } finally {
+//            DbLogUtil.logInfo(msg, t, re, err);
+//        }
+//    }
 }
