@@ -120,7 +120,7 @@ class DbConvertUtilTest {
 
     @Test
     @DisplayName("getFirstColumn - 正常返回第一个非特殊列")
-    void testGetFistColumn_Normal() {
+    void testGetFirstColumn_Normal() {
         ResultMap map = new ResultMap();
         map.put("id", 1);
         Object result = DbConvertUtil.getFirstColumn(map);
@@ -129,7 +129,7 @@ class DbConvertUtilTest {
 
     @Test
     @DisplayName("getFirstColumn - 跳过 ROWNUM_ 和 rownum 列")
-    void testGetFistColumn_SkipRownum() {
+    void testGetFirstColumn_SkipRownum() {
         ResultMap map = new ResultMap();
         map.put("ROWNUM_", 1);
         map.put("name", "test");
@@ -138,13 +138,13 @@ class DbConvertUtilTest {
 
     @Test
     @DisplayName("getFirstColumn - null 返回 null")
-    void testGetFistColumn_Null() {
+    void testGetFirstColumn_Null() {
         assertNull(DbConvertUtil.getFirstColumn((ResultMap) null));
     }
 
     @Test
     @DisplayName("getFirstColumn - 只有 ROWNUM_ 列应返回 null（覆盖仅 rownum 分支）")
-    void testGetFistColumn_OnlyRownum() {
+    void testGetFirstColumn_OnlyRownum() {
         ResultMap map = new ResultMap();
         map.put("ROWNUM_", 1);
         assertNull(DbConvertUtil.getFirstColumn(map));
@@ -154,7 +154,7 @@ class DbConvertUtilTest {
 
     @Test
     @DisplayName("getFirstColumn(Class) - 映射为 String")
-    void testGetFistColumnWithType_String() {
+    void testGetFirstColumnWithType_String() {
         ResultMap map = new ResultMap();
         map.put("name", "test");
         assertEquals("test", DbConvertUtil.getFirstColumn(map, String.class));
@@ -162,7 +162,7 @@ class DbConvertUtilTest {
 
     @Test
     @DisplayName("getFirstColumn(Class) - 映射为 Integer")
-    void testGetFistColumnWithType_Integer() {
+    void testGetFirstColumnWithType_Integer() {
         ResultMap map = new ResultMap();
         map.put("id", "123");
         assertEquals(123, DbConvertUtil.getFirstColumn(map, Integer.class));

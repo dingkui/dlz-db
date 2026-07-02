@@ -77,7 +77,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumn - 使用自定义转换器")
-    void testGetFistColumn_WithCustomConverter() {
+    void testGetFirstColumn_WithCustomConverter() {
         ColumnNameToLower converter = new ColumnNameToLower();
         DbConvertUtil.defaultColumnMapper = converter;
         
@@ -131,7 +131,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumnWithType - String 类型")
-    void testGetFistColumnWithType_String() {
+    void testGetFirstColumnWithType_String() {
         ResultMap map = new ResultMap();
         map.put("name", "test");
         
@@ -141,7 +141,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumnWithType - Integer 类型")
-    void testGetFistColumnWithType_Integer() {
+    void testGetFirstColumnWithType_Integer() {
         ResultMap map = new ResultMap();
         map.put("id", "123");
         
@@ -151,7 +151,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumnWithType - Long 类型")
-    void testGetFistColumnWithType_Long() {
+    void testGetFirstColumnWithType_Long() {
         ResultMap map = new ResultMap();
         map.put("id", "123456789");
         
@@ -161,7 +161,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumnWithType - Double 类型")
-    void testGetFistColumnWithType_Double() {
+    void testGetFirstColumnWithType_Double() {
         ResultMap map = new ResultMap();
         map.put("price", "12.34");
         
@@ -171,7 +171,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumnWithType - Boolean 类型")
-    void testGetFistColumnWithType_Boolean() {
+    void testGetFirstColumnWithType_Boolean() {
         ResultMap map = new ResultMap();
         map.put("active", "true");
         
@@ -181,7 +181,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumnWithType - null 类型")
-    void testGetFistColumnWithType_NullType() {
+    void testGetFirstColumnWithType_NullType() {
         ResultMap map = new ResultMap();
         map.put("name", "test");
         
@@ -191,7 +191,7 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 getFirstColumnWithType - Map 为空")
-    void testGetFistColumnWithType_NullMap() {
+    void testGetFirstColumnWithType_NullMap() {
         String result = DbConvertUtil.getFirstColumn(null, String.class);
         assertNull(result);
     }
