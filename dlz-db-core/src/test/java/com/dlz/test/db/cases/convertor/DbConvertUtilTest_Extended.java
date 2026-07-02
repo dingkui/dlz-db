@@ -76,7 +76,7 @@ class DbConvertUtilTest_Extended {
     }
 
     @Test
-    @DisplayName("测试 getFistColumn - 使用自定义转换器")
+    @DisplayName("测试 getFirstColumn - 使用自定义转换器")
     void testGetFistColumn_WithCustomConverter() {
         ColumnNameToLower converter = new ColumnNameToLower();
         DbConvertUtil.defaultColumnMapper = converter;
@@ -85,7 +85,7 @@ class DbConvertUtilTest_Extended {
         map.put("id", 1);
         map.put("name", "test");
         
-        Object result = DbConvertUtil.getFistColumn(map);
+        Object result = DbConvertUtil.getFirstColumn(map);
         assertNotNull(result);
     }
 
@@ -130,69 +130,69 @@ class DbConvertUtilTest_Extended {
     }
 
     @Test
-    @DisplayName("测试 getFistColumnWithType - String 类型")
+    @DisplayName("测试 getFirstColumnWithType - String 类型")
     void testGetFistColumnWithType_String() {
         ResultMap map = new ResultMap();
         map.put("name", "test");
         
-        String result = DbConvertUtil.getFistColumn(map, String.class);
+        String result = DbConvertUtil.getFirstColumn(map, String.class);
         assertEquals("test", result);
     }
 
     @Test
-    @DisplayName("测试 getFistColumnWithType - Integer 类型")
+    @DisplayName("测试 getFirstColumnWithType - Integer 类型")
     void testGetFistColumnWithType_Integer() {
         ResultMap map = new ResultMap();
         map.put("id", "123");
         
-        Integer result = DbConvertUtil.getFistColumn(map, Integer.class);
+        Integer result = DbConvertUtil.getFirstColumn(map, Integer.class);
         assertEquals(123, result);
     }
 
     @Test
-    @DisplayName("测试 getFistColumnWithType - Long 类型")
+    @DisplayName("测试 getFirstColumnWithType - Long 类型")
     void testGetFistColumnWithType_Long() {
         ResultMap map = new ResultMap();
         map.put("id", "123456789");
         
-        Long result = DbConvertUtil.getFistColumn(map, Long.class);
+        Long result = DbConvertUtil.getFirstColumn(map, Long.class);
         assertEquals(123456789L, result);
     }
 
     @Test
-    @DisplayName("测试 getFistColumnWithType - Double 类型")
+    @DisplayName("测试 getFirstColumnWithType - Double 类型")
     void testGetFistColumnWithType_Double() {
         ResultMap map = new ResultMap();
         map.put("price", "12.34");
         
-        Double result = DbConvertUtil.getFistColumn(map, Double.class);
+        Double result = DbConvertUtil.getFirstColumn(map, Double.class);
         assertEquals(12.34, result, 0.001);
     }
 
     @Test
-    @DisplayName("测试 getFistColumnWithType - Boolean 类型")
+    @DisplayName("测试 getFirstColumnWithType - Boolean 类型")
     void testGetFistColumnWithType_Boolean() {
         ResultMap map = new ResultMap();
         map.put("active", "true");
         
-        Boolean result = DbConvertUtil.getFistColumn(map, Boolean.class);
+        Boolean result = DbConvertUtil.getFirstColumn(map, Boolean.class);
         assertTrue(result);
     }
 
     @Test
-    @DisplayName("测试 getFistColumnWithType - null 类型")
+    @DisplayName("测试 getFirstColumnWithType - null 类型")
     void testGetFistColumnWithType_NullType() {
         ResultMap map = new ResultMap();
         map.put("name", "test");
         
-        String result = DbConvertUtil.getFistColumn(map, null);
+        String result = DbConvertUtil.getFirstColumn(map, null);
         assertEquals("test", result);
     }
 
     @Test
-    @DisplayName("测试 getFistColumnWithType - Map 为空")
+    @DisplayName("测试 getFirstColumnWithType - Map 为空")
     void testGetFistColumnWithType_NullMap() {
-        String result = DbConvertUtil.getFistColumn(null, String.class);
+        String result = DbConvertUtil.getFirstColumn(null, String.class);
         assertNull(result);
     }
 

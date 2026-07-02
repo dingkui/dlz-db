@@ -47,8 +47,8 @@ public interface IDbJdbcService {
         return doJdbc(() -> DbConvertUtil.getColumnList(getSqlExecutor().getList(sql, para), tClass));
     }
 
-    default <T> T getFistColumn(String sql, Class<T> tClass, Object... para) {
-        return doJdbc(() -> getSqlExecutor().getFistColumn(sql,tClass, para));
+    default <T> T getFirstColumn(String sql, Class<T> tClass, Object... para) {
+        return doJdbc(() -> getSqlExecutor().getFirstColumn(sql,tClass, para));
     }
 
     /**
@@ -67,27 +67,27 @@ public interface IDbJdbcService {
     }
 
     default String getStr(String sql, Object... para) {
-        return this.getFistColumn(sql, String.class, para);
+        return this.getFirstColumn(sql, String.class, para);
     }
 
     default BigDecimal getBigDecimal(String sql, Object... para) {
-        return this.getFistColumn(sql, BigDecimal.class, para);
+        return this.getFirstColumn(sql, BigDecimal.class, para);
     }
 
     default Float getFloat(String sql, Object... para) {
-        return this.getFistColumn(sql, Float.class, para);
+        return this.getFirstColumn(sql, Float.class, para);
     }
 
     default Integer getInt(String sql, Object... para) {
-        return this.getFistColumn(sql, Integer.class, para);
+        return this.getFirstColumn(sql, Integer.class, para);
     }
 
     default Long getLong(String sql, Object... para) {
-        return this.getFistColumn(sql, Long.class, para);
+        return this.getFirstColumn(sql, Long.class, para);
     }
 
     default Double getDouble(String sql, Object... para) {
-        return this.getFistColumn(sql, Double.class, para);
+        return this.getFirstColumn(sql, Double.class, para);
     }
 
     default List<String> getStrList(String sql, Object... para) {

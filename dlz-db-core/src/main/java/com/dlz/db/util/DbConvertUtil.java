@@ -57,7 +57,7 @@ public class DbConvertUtil {
     }
 
     public static <T> List<T> getColumnList(List<ResultMap> r, Class<T> tClass) {
-        return r.stream().map((m) -> tClass == null ? (T) m : DbConvertUtil.getFistColumn(m, tClass)).collect(Collectors.toList());
+        return r.stream().map((m) -> tClass == null ? (T) m : DbConvertUtil.getFirstColumn(m, tClass)).collect(Collectors.toList());
     }
 
     /**
@@ -66,7 +66,7 @@ public class DbConvertUtil {
      * @param m
      * @author dk 2015-04-09
      */
-    public static Object getFistColumn(ResultMap m) {
+    public static Object getFirstColumn(ResultMap m) {
         if (m == null) {
             return null;
         }
@@ -84,8 +84,8 @@ public class DbConvertUtil {
      * @param m
      * @author dk 2015-04-09
      */
-    public static <T> T getFistColumn(ResultMap m, Class<T> clazz) {
-        return ValUtil.toObj(getFistColumn(m), clazz);
+    public static <T> T getFirstColumn(ResultMap m, Class<T> clazz) {
+        return ValUtil.toObj(getFirstColumn(m), clazz);
     }
 
     /**
