@@ -31,7 +31,7 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: target/reports/jacoco
+          files: ./dlz-db-core/target/reports/jacoco/jacoco.xml,./dlz-db-spring-boot-starter/target/reports/jacoco/jacoco.xml,./dlz-db-solon-plugin/target/reports/jacoco/jacoco.xml
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
