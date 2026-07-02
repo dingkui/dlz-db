@@ -1,4 +1,4 @@
-package com.dlz.test.db.config;
+package com.dlz.test.config;
 
 import com.dlz.db.spring.config.SpringDlzDbConfig;
 import com.dlz.db.spring.config.SpringDlzDbProperties;

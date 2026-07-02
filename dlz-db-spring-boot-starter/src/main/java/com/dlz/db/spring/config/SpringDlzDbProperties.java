@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "dlz.db")
 public class SpringDlzDbProperties extends DlzDbProperties {
 }

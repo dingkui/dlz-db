@@ -1,25 +1,25 @@
-package com.dlz.test.db.config;
+package com.dlz.test.config;
 
 import com.dlz.db.support.DBHolder;
 import com.dlz.kit.util.id.TraceUtil;
 import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = Starter.class)
 @Slf4j
 public abstract class BaseDBTest {
-    @Before
+    @BeforeEach
     public void before() {
         DBHolder.getSqlExecutor();
         TraceUtil.setTraceId(this.getClass().getSimpleName());
     }
-    @After
+    @AfterEach
     public void after() {
         TraceUtil.clearTraceId();
     }

@@ -4,15 +4,15 @@ import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DBTx;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.BaseDBTest;
+import com.dlz.test.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 测试 {@link DBDynamic#use} 与 {@link DBTx#run} 的拆分语义：
@@ -29,7 +29,7 @@ public class DynamicAndTxTest extends BaseDBTest {
     private static final String TEST_DS_NAME = "tx_test_ds";
     private static final String DB_FILE = "./test/tx_test.sqlite3";
 
-    @Before
+    @BeforeEach
     public void setup() {
         // 清理已有数据源
         try {
@@ -51,7 +51,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         });
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         DB.Dynamic.removeDataSource(TEST_DS_NAME);
     }
@@ -77,8 +77,8 @@ public class DynamicAndTxTest extends BaseDBTest {
             fail("应抛出异常：数据源不存在");
         } catch (Exception e) {
             String msg = e.getMessage();
-            assertTrue("异常信息应包含'数据源不存在'，实际: " + msg,
-                    msg.contains("数据源不存在") || (e.getCause() != null && e.getCause().getMessage().contains("数据源不存在")));
+            assertTrue(msg.contains("数据源不存在") || (e.getCause() != null && e.getCause().getMessage().contains("数据源不存在")),
+                    "异常信息应包含'数据源不存在'，实际: " + msg);
         }
     }
 
@@ -108,7 +108,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         long count = DB.Dynamic.use(TEST_DS_NAME, () ->
                 DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 100).count()
         );
-        assertEquals("事务提交后应能查到数据", 1, count);
+        assertEquals(1, count, "事务提交后应能查到数据");
     }
 
     @Test
@@ -116,7 +116,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         long count1 = DB.Dynamic.use(TEST_DS_NAME, () ->
                 DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
-        assertEquals("异常应触发回滚，数据不应持久化", 0, count1);
+        assertEquals(0, count1, "异常应触发回滚，数据不应持久化");
         try {
             DB.Tx.run(TEST_DS_NAME, () -> {
                 DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 200, "rollback");
@@ -125,14 +125,14 @@ public class DynamicAndTxTest extends BaseDBTest {
             fail("应抛出异常");
         } catch (Exception e) {
             // 框架会包装为 DbException，原始消息保留在 message 中
-            assertTrue("异常应包含 '模拟业务异常'，实际: " + e.getMessage(),
-                    e.getMessage().contains("模拟业务异常"));
+            assertTrue(e.getMessage().contains("模拟业务异常"),
+                    "异常应包含 '模拟业务异常'，实际: " + e.getMessage());
         }
 
         long count2 = DB.Dynamic.use(TEST_DS_NAME, () ->
             DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
-        assertEquals("异常应触发回滚，数据不应持久化", 0, count2);
+        assertEquals(0, count2, "异常应触发回滚，数据不应持久化");
     }
 
     @Test

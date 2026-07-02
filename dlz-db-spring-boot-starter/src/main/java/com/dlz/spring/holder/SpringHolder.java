@@ -10,10 +10,11 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.util.Map;
 
@@ -98,15 +99,10 @@ public class SpringHolder {
      */
     public static <T> T getBeanWithRegister(Class<T> clazz) {
         checkApplicationContext();
-        try {
-            if (!beanFactory.getBeansOfType(clazz).isEmpty()) {
-                return beanFactory.getBean(clazz);
-            }
-            return registerBean(clazz);
-        } catch (NoSuchBeanDefinitionException e) {
-            log.warn("NoSuchBeanDefinition" + clazz.getName());
-            return null;
+        if (!beanFactory.getBeansOfType(clazz).isEmpty()) {
+            return beanFactory.getBean(clazz);
         }
+        return registerBean(clazz);
     }
 
     /**
@@ -214,35 +210,28 @@ public class SpringHolder {
         getBeanDefinitionRegistry().removeBeanDefinition(beanId);
     }
 
-
-
-    public static ApplicationContext getApplicationContext() {
-        if (beanFactory != null && beanFactory instanceof ApplicationContext) {
-            return (ApplicationContext) beanFactory;
-        }
-        return null;
-    }
     /**
      * 发布事件
      *
      * @param event 事件
      */
     public static void publishEvent(ApplicationEvent event) {
-        ApplicationContext applicationContext = getApplicationContext();
+        ConfigurableListableBeanFactory applicationContext = getBeanFactory();
         if (applicationContext == null) {
             return;
         }
         try {
-            applicationContext.publishEvent(event);
+            if(beanFactory instanceof ApplicationEventPublisher){
+                ((ApplicationEventPublisher)applicationContext).publishEvent(event);
+            }
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
     }
     public static Resource getResource(String resourceLocation) {
-        ApplicationContext applicationContext = getApplicationContext();
-        if (applicationContext == null) {
-            return null;
+        if(beanFactory instanceof ResourcePatternResolver){
+            return ((ResourcePatternResolver)beanFactory).getResource(resourceLocation);
         }
-        return applicationContext.getResource(resourceLocation);
+        return null;
     }
 }
