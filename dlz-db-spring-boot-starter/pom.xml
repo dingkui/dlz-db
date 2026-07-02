@@ -63,10 +63,6 @@
                     <artifactId>assertj-core</artifactId>
                     <groupId>org.assertj</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>junit-jupiter</artifactId>
-                    <groupId>org.junit.jupiter</groupId>
-                </exclusion>
             </exclusions>
             <version>2.6.12</version>
         </dependency>

@@ -31,12 +31,6 @@ public class DynamicAndTxTest extends BaseDBTest {
 
     @BeforeEach
     public void setup() {
-        // 清理已有数据源
-        try {
-            DB.Dynamic.removeDataSource(TEST_DS_NAME);
-        } catch (Exception ignore) {
-        }
-
         // 注册 SQLite 文件数据源
         DataSourceProperty properties = new DataSourceProperty();
         properties.setName(TEST_DS_NAME);

@@ -8,10 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.annotation.DependsOn;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,13 +33,11 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author dlz-db-test
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 @Slf4j
+@DependsOn("initDbAdapter")
 public class SpringTransactionIntegrationTest extends BaseDBTest {
-
     @Autowired
-    private TransactionTestService transactionTestService;
+    protected TransactionTestService transactionTestService;
 
     /**
      * 测试前置方法 - 初始化测试环境

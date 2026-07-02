@@ -1,10 +1,6 @@
 package com.dlz.test.db.config;
 
-import com.dlz.db.inf.ISqlPara;
-import com.dlz.db.modal.items.JdbcItem;
-import com.dlz.db.modal.para.AParaPojo;
-import com.dlz.db.modal.para.ParaMap;
-import com.dlz.db.util.SqlUtil;
+import com.dlz.db.support.DBHolder;
 import com.dlz.kit.util.id.TraceUtil;
 import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,37 +16,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 public abstract class BaseDBTest {
     @Before
     public void before() {
+        DBHolder.getSqlExecutor();
         TraceUtil.setTraceId(this.getClass().getSimpleName());
     }
-
     @After
     public void after() {
         TraceUtil.clearTraceId();
-    }
-
-    private String clearSql(String sql) {
-        return sql.replaceAll("\\s+", " ").trim();
-    }
-
-    public void showSql(ISqlPara paraMap, String fn, String re) {
-        JdbcItem jdbcSql = paraMap.jdbcSql();
-        String runSqlByJdbc = SqlUtil.getRunSqlByJdbc(jdbcSql.sql, jdbcSql.paras).trim();
-        if (re == null) {
-            log.info(runSqlByJdbc);
-        } else if (clearSql(re).equalsIgnoreCase(clearSql(runSqlByJdbc))) {
-            log.info("sucess:" + runSqlByJdbc);
-        } else {
-            log.error("error:" + runSqlByJdbc);
-            log.error("target:" + re);
-            assert false;
-        }
-    }
-
-    public void showSql(ParaMap paraMap, String fn) {
-        showSql(paraMap, fn, null);
-    }
-
-    public void showSql(AParaPojo wrapper, String fn) {
-        showSql(wrapper, fn, null);
     }
 }

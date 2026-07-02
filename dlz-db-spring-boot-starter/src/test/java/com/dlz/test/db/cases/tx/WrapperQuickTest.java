@@ -14,7 +14,6 @@ public class WrapperQuickTest extends BaseDBTest {
 
     @Test
     public void getUseDbById1() {
-
         final DataSourceProperty properties = new DataSourceProperty();
         properties.setName("test");
         properties.setDriverClassName("org.sqlite.JDBC");

@@ -23,6 +23,7 @@ public class DlzDbConfigs extends SpringDlzDbConfig {
      */
     @Bean
     public static BeanFactoryPostProcessor myBeanFactory1() {
+        log.info("init DlzDbConfigs");
         return beanFactory -> {
             File dir = new File("./test");
             if (!dir.exists()) {

@@ -64,7 +64,6 @@ public abstract class BaseDBTest {
                             JdbcSqlExecutor::new,
                             JdbcTxExecutor::new);
 
-
                     DBHolder.getSqlExecutor();
 
                     log.info("---------------------------------------------------------");
