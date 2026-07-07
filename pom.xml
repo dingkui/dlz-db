@@ -28,6 +28,7 @@
         <solon.version>3.0.6</solon.version>
         <jedis.version>4.4.3</jedis.version>
         <sqlite.version>3.43.0.0</sqlite.version>
+        <jackson-databind.version>2.13.4.2</jackson-databind.version>
         
         <!-- 质量阈值 -->
         <jacoco.line.coverage>0.70</jacoco.line.coverage>
@@ -43,13 +44,15 @@
         <!-- Spring Boot -->
         <!-- 测试 -->
         <dependency>
-            <groupId>c3p0</groupId>
+            <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
+            <version>0.10.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>8.0.33</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -86,9 +89,38 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.12</version>
+            <version>1.2.13</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- CVE-2022-42003: jackson-databind < 2.13.4.1 资源耗尽漏洞 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+            <!-- CVE-2026-27830: c3p0 < 0.12.0 远程代码执行 -->
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>0.10.1</version>
+            </dependency>
+            <!-- mysql-connector-java 已弃用，迁移到 mysql-connector-j -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>8.0.33</version>
+            </dependency>
+            <!-- logback-core 与 logback-classic 保持同版本 -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.2.13</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     
     <build>
         <plugins>
