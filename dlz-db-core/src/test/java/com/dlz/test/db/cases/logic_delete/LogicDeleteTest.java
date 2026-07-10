@@ -31,35 +31,35 @@ public class LogicDeleteTest extends BaseDBTest {
 
     @Test
     public void query_without_deleted() {
-        assertEquals(2, DB.Pojo.selectW(User.class).eq(User::getDeleted, "0").count());
-        assertEquals(2, DB.Pojo.selectW(User.class).count());
+        assertEquals(2, DB.Pojo.select(User.class).eq(User::getDeleted, "0").count());
+        assertEquals(2, DB.Pojo.select(User.class).count());
     }
 
     @Test
     public void query_with_deleted() {
-        assertEquals(1, DB.Pojo.selectW(User.class).eq(User::getDeleted, "1").count());
+        assertEquals(1, DB.Pojo.select(User.class).eq(User::getDeleted, "1").count());
     }
 
     @Test
     public void soft_delete_by_update() {
-        User u = DB.Pojo.selectW(User.class).eq(User::getName, "alice").queryBean();
-        DB.Pojo.updateW(User.class).set(User::getDeleted, "1").eq(User::getId, u.getId()).execute();
-        assertEquals(2, DB.Pojo.selectW(User.class).eq(User::getDeleted, "1").count());
-        assertEquals(1, DB.Pojo.selectW(User.class).eq(User::getDeleted, "0").count());
-        assertEquals(1, DB.Pojo.selectW(User.class).count());
+        User u = DB.Pojo.select(User.class).eq(User::getName, "alice").queryBean();
+        DB.Pojo.update(User.class).set(User::getDeleted, "1").eq(User::getId, u.getId()).execute();
+        assertEquals(2, DB.Pojo.select(User.class).eq(User::getDeleted, "1").count());
+        assertEquals(1, DB.Pojo.select(User.class).eq(User::getDeleted, "0").count());
+        assertEquals(1, DB.Pojo.select(User.class).count());
     }
 
     @Test
     public void restore_by_update() {
-        User u = DB.Pojo.selectW(User.class).eq(User::getName, "deleted_user").eq(User::getDeleted, "1").queryBean();
-        DB.Pojo.updateW(User.class).set(User::getDeleted, "0").eq(User::getId, u.getId()).eq(User::getDeleted, "1").execute();
-        assertEquals(0, DB.Pojo.selectW(User.class).eq(User::getDeleted, "1").count());
-        assertEquals(3, DB.Pojo.selectW(User.class).eq(User::getDeleted, "0").count());
+        User u = DB.Pojo.select(User.class).eq(User::getName, "deleted_user").eq(User::getDeleted, "1").queryBean();
+        DB.Pojo.update(User.class).set(User::getDeleted, "0").eq(User::getId, u.getId()).eq(User::getDeleted, "1").execute();
+        assertEquals(0, DB.Pojo.select(User.class).eq(User::getDeleted, "1").count());
+        assertEquals(3, DB.Pojo.select(User.class).eq(User::getDeleted, "0").count());
     }
 
     @Test
     public void physical_delete() {
-        DB.Pojo.deleteW(User.class).ignoreLogicDelete(true).eq(User::getName, "deleted_user").execute();
+        DB.Pojo.delete(User.class).ignoreLogicDelete(true).eq(User::getName, "deleted_user").execute();
         assertEquals(0, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "deleted_user").count());
     }
 }

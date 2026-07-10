@@ -282,7 +282,7 @@ class ICondAddByKeyTest {
     @Test
     @DisplayName("测试 isNotNull() - 不为空")
     void testIsNotNull() {
-        Condition result = condition.isNotNull("email");
+        Condition result = condition.isNotNull("EMAIL");
         
         assertNotNull(result);
         assertEquals("where EMAIL is not null", getSql(result));
@@ -291,7 +291,7 @@ class ICondAddByKeyTest {
     @Test
     @DisplayName("测试 isNotNull() - 动态条件")
     void testIsNotNullDynamic() {
-        Condition result = condition.isNotNull(true, "email");
+        Condition result = condition.isNotNull(true, "EMAIL");
         
         assertNotNull(result);
         assertEquals("where EMAIL is not null", getSql(result));

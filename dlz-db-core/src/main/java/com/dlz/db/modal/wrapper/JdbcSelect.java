@@ -15,13 +15,13 @@ import java.io.Serializable;
  * @author dingkui
  */
 @Slf4j
-public class JdbcQuery extends ParaJdbc implements Serializable, ISqlPara, ISqlPage<JdbcQuery>, IExecutorQuery<JdbcQuery> {
+public class JdbcSelect extends ParaJdbc implements Serializable, ISqlPara, ISqlPage<JdbcSelect>, IExecutorQuery<JdbcSelect> {
     private static final long serialVersionUID = 8374167270612933157L;
-    public JdbcQuery(String sql, Object... paras) {
+    public JdbcSelect(String sql, Object... paras) {
         super(sql, paras);
     }
     @Override
-    public JdbcQuery page(Page page) {
+    public JdbcSelect page(Page page) {
         if (page != null) {
             this.setPage(page);
         }
@@ -29,7 +29,7 @@ public class JdbcQuery extends ParaJdbc implements Serializable, ISqlPara, ISqlP
     }
 
     @Override
-    public JdbcQuery me() {
+    public JdbcSelect me() {
         return this;
     }
 }

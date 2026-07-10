@@ -52,7 +52,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void pojo_queryPage() {
-        Page<User> page = DB.Pojo.selectW(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
                 .page(Page.build(1, 2, Order.asc("age"))).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(2, page.getRecords().size());
@@ -60,7 +60,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void page_without_order() {
-        Page<User> page = DB.Pojo.selectW(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
                 .page(1, 2).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(2, page.getRecords().size());
@@ -68,7 +68,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void page_last_page() {
-        Page<User> page = DB.Pojo.selectW(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
                 .page(2, 2, Order.asc("age")).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(1, page.getRecords().size());
@@ -76,7 +76,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void pojo_page_with_order() {
-        Page<User> page = DB.Pojo.selectW(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
                 .page(1, 2).orderByAsc(User::getAge).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(2, page.getRecords().size());

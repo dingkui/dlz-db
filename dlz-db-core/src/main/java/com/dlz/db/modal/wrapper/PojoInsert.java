@@ -6,8 +6,8 @@ import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.modal.para.AParaPojo;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.support.bean.IdInfo;
+import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
@@ -20,11 +20,9 @@ import java.util.stream.Collectors;
  * @author dk
  */
 public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecutorUDI {
-    public static <T> PojoInsert<T> wrapper(T valueBean) {
-        return new PojoInsert(valueBean);
-    }
-
-    public PojoInsert(T valueBean) {
+    // 插入时字段是否忽略
+    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null;
+    public PojoInsert(Class<T> valueBean) {
         super(valueBean);
         setPm(new TableInsert(getTableName()));
     }
@@ -33,10 +31,26 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
     protected void wrapValues(List<Field> fields, T bean) {
         fields.forEach(field -> {
             Object value = FieldReflections.getValue(bean, field);
-            if (value != null) {
-                getPm().value(PojoCache.getColumnName(field), value);
+            final String columnName = PojoCache.getColumnName(field);
+            if (ignore.apply(columnName, value)) {
+                return;
             }
+            getPm().value(columnName, value);
         });
+    }
+
+    @Override
+    protected void wrapQuery(List<Field> fields, T bean) {
+
+    }
+
+    public PojoInsert<T> value(T bean) {
+        this.valueBean = bean;
+        return this;
+    }
+    public PojoInsert<T> ignore(DlzFn2<String, Object,Boolean> ignore) {
+        this.ignore = ignore;
+        return this;
     }
 
     public boolean batch(List<T> valueBeans) {

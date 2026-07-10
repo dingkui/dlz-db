@@ -4,6 +4,8 @@ import com.dlz.db.inf.ICondAuto;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
+import com.dlz.kit.exception.ValidateException;
+import com.dlz.kit.json.JSONMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -301,6 +303,8 @@ class ICondAutoTest {
         String sql = getSql();
         assertTrue(sql.contains("AGE > 18"));
         assertFalse(sql.contains("PASSWORD"));
+        //异常key
+        assertThrows(ValidateException.class,()-> stub.auto(new JSONMap("_errorOp_xx",1)));
     }
 
     // ========== auto(Map, Set) 排除集测试 ==========

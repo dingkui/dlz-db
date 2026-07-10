@@ -112,23 +112,7 @@ public enum DbOperateEnum {
             case notIn:
                 return paraIn(dbn, value,tableName);
             default:
-//            case eq:
-//            case ne:
-//            case gt:
-//            case ge:
-//            case lt:
-//            case le:
-//                return paraOne(dbn, value, tableName);
                 return paraOne(dbn, value, tableName);
         }
-    }
-
-    public static DbOperateEnum getDbOperateEnum(String operate) {
-        for (DbOperateEnum dbOperateEnum : DbOperateEnum.values()) {
-            if (dbOperateEnum.toString().equals(operate)) {
-                return dbOperateEnum;
-            }
-        }
-        return null;
     }
 }

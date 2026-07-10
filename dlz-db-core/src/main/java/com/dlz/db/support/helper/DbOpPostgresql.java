@@ -2,6 +2,7 @@ package com.dlz.db.support.helper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
+import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class DbOpPostgresql extends SqlHelper {
     @Override
     public void createTable(String tableName, Class<?> clazz) {
+        final String schema = DB.Dynamic.getCurrentConfig().getSchema();
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
                     String columnName = PojoCache.getColumnName(field);
                     String column = null;
@@ -46,11 +48,11 @@ public class DbOpPostgresql extends SqlHelper {
                 }).filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
 
-        String sql = "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" (" + columns + ")";
+        String sql = "CREATE TABLE IF NOT EXISTS "+schema+"." + tableName + " (" + columns + ")";
         DBHolder.getSqlExecutor().update(sql);
         String columnComment = PojoCache.getTableComment(clazz);
         if (StringUtils.isNotEmpty(columnComment)) {
-            sql = "COMMENT ON TABLE \"public\".\"" + tableName + "\" IS '" + columnComment + "'";
+            sql = "COMMENT ON TABLE "+schema+". IS '" + columnComment + "'";
             DBHolder.getSqlExecutor().update(sql);
         }
     }
@@ -58,10 +60,10 @@ public class DbOpPostgresql extends SqlHelper {
     @Override
     public Set<String> getTableColumnNames(String tableName) {
         // 获取表所有字段
-        String sql = "SELECT column_name as name FROM information_schema.columns WHERE table_schema='public' AND table_name='" + tableName.toLowerCase() + "'";
-        List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql);
+        String sql = "SELECT column_name as name FROM information_schema.columns WHERE table_schema=? AND table_name=?";
+        List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql,DB.Dynamic.getCurrentConfig().getSchema(),tableName.toLowerCase());
         Set<String> re = new HashSet();
-        maps.forEach(item -> re.add(ValUtil.toStr(item.get("name"), "").toUpperCase()));
+        maps.forEach(item -> re.add(ValUtil.toStr(item.get("name"), "")));
         return re;
     }
 

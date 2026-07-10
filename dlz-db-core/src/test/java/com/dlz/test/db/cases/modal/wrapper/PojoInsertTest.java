@@ -1,6 +1,5 @@
 package com.dlz.test.db.cases.modal.wrapper;
 
-import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
@@ -20,7 +19,7 @@ public class PojoInsertTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setId(123L);
         dict.setSqlKey("xxx");
-        PojoInsert<SysSql> insert = new PojoInsert(dict);
+        PojoInsert<SysSql> insert = new PojoInsert(SysSql.class).value(dict);
         assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',123,0)", toSql(insert));
     }
 
@@ -30,7 +29,7 @@ public class PojoInsertTest extends BaseDBTest {
         dict.setId(666L);
         dict.setSqlKey("xxx");
         dict.setDeleted(0);
-        PojoInsert<SysSql> insert = new PojoInsert(dict);
+        PojoInsert<SysSql> insert = new PojoInsert(SysSql.class).value(dict);
         assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',666,0)", toSql(insert));
     }
 
@@ -38,7 +37,7 @@ public class PojoInsertTest extends BaseDBTest {
     public void insertWrapperTest2() {
         SysSql dict = new SysSql();
         dict.setSqlKey("xxx");
-        PojoInsert<SysSql> insert = new PojoInsert(dict);
+        PojoInsert<SysSql> insert = new PojoInsert(SysSql.class).value(dict);
         showSql(insert, "insertWrapperTest2", "insert into SYS_SQL(SQL_KEY,DELETED) values('xxx',0)");
     }
 }

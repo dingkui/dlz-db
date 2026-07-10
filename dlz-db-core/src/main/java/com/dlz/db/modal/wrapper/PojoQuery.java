@@ -11,7 +11,10 @@ import com.dlz.db.modal.para.APojoQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.system.FieldReflections;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
@@ -25,25 +28,38 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
         ICondAddByLamda<PojoQuery<T>, T>,
         ISqlPage<PojoQuery<T>>,
         IExecutorQuery<PojoQuery<T>> {
-
     public static <T> PojoQuery<T> wrapper(T conditionBean) {
-        return new PojoQuery(conditionBean);
+        return new PojoQuery(conditionBean.getClass());
     }
 
     public static <T> PojoQuery<T> wrapper(Class<T> beanClass) {
         return new PojoQuery(beanClass);
     }
 
-    private PojoQuery(Class<T> beanClass) {
+    public PojoQuery(Class<T> beanClass) {
         super(beanClass);
         setPm(new TableQuery(getTableName()));
         setAllowFullQuery(true);
     }
 
-    private PojoQuery(T conditionBean) {
-        super(conditionBean);
-        setPm(new TableQuery(getTableName()));
-        setAllowFullQuery(true);
+    @Override
+    protected void wrapValues(List<Field> fields, T bean) {
+        fields.forEach(field->{
+            Object value = FieldReflections.getValue(bean, field);
+            if (StringUtils.isNotEmpty(value)) {
+                getPm().eq(PojoCache.getColumnName(field), value);
+            }
+        });
+    }
+
+    @Override
+    protected void wrapQuery(List<Field> fields, T bean) {
+        fields.forEach(field->{
+            Object value = FieldReflections.getValue(bean, field);
+            if (StringUtils.isNotEmpty(value)) {
+                getPm().eq(PojoCache.getColumnName(field), value);
+            }
+        });
     }
 
     public PojoQuery<T> select(String... columns) {
@@ -73,7 +89,7 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
 
     @Override
     public JdbcItem jdbcCnt() {
-        generatWithBean(bean);
+        generatWithBean();
         return getPm().jdbcCnt();
     }
 

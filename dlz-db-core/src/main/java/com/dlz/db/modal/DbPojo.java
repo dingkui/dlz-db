@@ -7,45 +7,54 @@ import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.function.Function;
 
 @Slf4j
 public class DbPojo {
-    public <T> PojoQuery<T> selectW(Class<T> re) {
+    public <T> PojoQuery<T> select(Class<T> re) {
         return PojoQuery.wrapper(re);
     }
-    public <T> PojoDelete<T> deleteW(Class<T> beanClass) {
-        return PojoDelete.wrapper(beanClass);
+    public <T> PojoQuery<T> select(Class<T> re, DlzFn<T, ?>... columns) {
+        return new PojoQuery(re).select(columns);
+    }
+    public <T> PojoDelete<T> delete(Class<T> beanClass) {
+        return new PojoDelete(beanClass);
     }
 
-    public <T> PojoUpdate<T> updateW(Class<T> beanClass) {
-        return new PojoUpdate(beanClass);
+    /**
+     *  默认忽略空字段
+     * @param value
+     * @param <T>
+     */
+    public <T> PojoUpdate<T> update(T value) {
+        return new PojoUpdate(value.getClass()).set(value);
     }
     /**
-     *
+     *  完整更新（包含空字段）
      * @param value
-     * @param ignore 字段忽略规则
      * @param <T>
-     * @return
      */
-    public <T> PojoUpdate<T> updateW(T value, Function<String, Boolean> ignore) {
-        return new PojoUpdate((Class<T>) value.getClass()).set(value, ignore);
+    public <T> PojoUpdate<T> updateIntact(T value) {
+        return new PojoUpdate(value.getClass()).ignore((name, val) -> false).set(value);
     }
-    public <T> PojoUpdate<T> updateW(T value) {
-        return new PojoUpdate((Class<T>) value.getClass()).set(value);
+    public <T> PojoUpdate<T> update(Class<T> beanClass) {
+        return new PojoUpdate(beanClass);
+    }
+    public <T> PojoInsert<T> insert(T value) {
+        return new PojoInsert(value.getClass()).value(value);
     }
 
     //以下都是直接操作执行
-    public <T> T insert(T bean) {
-        new PojoInsert(bean).execute();
+    public <T> T add(T bean) {
+        insert(bean).execute();
         return bean;
     }
 
-    public <T> T insertOrUpdate(T obj) {
+    public <T> T save(T obj) {
         final Class<T> aClass = (Class<T>) obj.getClass();
         final IdInfo idInfo = PojoCache.getIdInfo(aClass);
         if (idInfo == null) {
@@ -53,7 +62,7 @@ public class DbPojo {
         }
         final Object id = idInfo.getValue(obj);
         if (StringUtils.isEmpty(id)) {
-            return insert(obj);
+            return add(obj);
         }
         return updateById(obj, id, aClass, idInfo);
     }
@@ -63,7 +72,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(idValue)) {
             throw new SystemException(idName + "不能为空");
         }
-        final int execute = updateW(aClass).set(obj, name -> name.equalsIgnoreCase(idName)).eq(idName, idValue).execute();
+        final int execute = update(aClass).ignore((name, val) -> val == null||name.equalsIgnoreCase(idName)).set(obj).eq(idName, idValue).execute();
         if (execute == 1) {
             return obj;
         }
@@ -83,7 +92,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return selectW(c).eq(idName, id).queryBean();
+        return select(c).eq(idName, id).queryBean();
     }
 
     public <T> List<T> selectByIds(Class<T> c, Object id) {
@@ -91,7 +100,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return selectW(c).in(idName, id).queryBeanList();
+        return select(c).in(idName, id).queryBeanList();
     }
 
     public <T> int deleteByIds(Class<T> c, String ids) {
@@ -99,7 +108,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
-        return deleteW(c).in(idName, ids).execute();
+        return delete(c).in(idName, ids).execute();
     }
 
     public <T> int deleteByIds(Class<T> c, List<?> ids) {
@@ -107,7 +116,7 @@ public class DbPojo {
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
-        return deleteW(c).in(idName, ids).execute();
+        return delete(c).in(idName, ids).execute();
     }
 
     public <T> int deleteById(Class<T> c, Object id) {
@@ -115,6 +124,6 @@ public class DbPojo {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return deleteW(c).eq(idName, id).execute();
+        return delete(c).eq(idName, id).execute();
     }
 }

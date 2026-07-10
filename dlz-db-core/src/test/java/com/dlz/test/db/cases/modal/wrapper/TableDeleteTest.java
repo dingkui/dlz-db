@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 public class TableDeleteTest extends BaseDBTest {
     @Test
     public void tableDeleteTest1() {
-        TableDelete delete = DB.Table.deleteW("t_b_dict")
+        TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1")
                 .sql("[id<#{id}]", new JSONMap("id", 123));
         showSql(delete, "tableDeleteTest1", "delete from t_b_dict where (id<123) and DELETED = 0");
@@ -22,21 +22,21 @@ public class TableDeleteTest extends BaseDBTest {
 
     @Test
     public void tableDeleteTest3() {
-        TableDelete delete = DB.Table.deleteW("t_b_dict")
+        TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1");
         showSql(delete, "tableDeleteTest3", "delete from t_b_dict where DELETED = 0");
     }
 
     @Test
     public void tableDeleteTest31() {
-        TableDelete delete = DB.Table.deleteW("sys_menu")
+        TableDelete delete = DB.Table.delete("sys_menu")
                 .addPara(Dict::getA2, "1");
         showSql(delete, "tableDeleteTest3", "delete from sys_menu where DELETED = 0");
     }
 
     @Test
     public void tableDeleteConditionTest1() {
-        TableDelete delete = DB.Table.deleteW("t_b_dict")
+        TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1")
                 .where(Condition.where()
                         .ne(Dict::getA2, "3")
@@ -51,7 +51,7 @@ public class TableDeleteTest extends BaseDBTest {
 
     @Test
     public void tableDeleteConditionTest2() {
-        TableDelete delete = DB.Table.deleteW("t_b_dict")
+        TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1")
                 .ors(o -> o
                         .in(Dict::getA2, "3,4,5,6")
@@ -63,7 +63,7 @@ public class TableDeleteTest extends BaseDBTest {
 
     @Test
     public void tableDeleteConditionTest3() {
-        TableDelete delete = DB.Table.deleteW("dh_room")
+        TableDelete delete = DB.Table.delete("dh_room")
                 .where(Condition.where()
                         .eq("equipment_id", 1)
                         .eq("equipment_id2", 2)

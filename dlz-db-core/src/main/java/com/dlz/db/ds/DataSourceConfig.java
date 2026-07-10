@@ -121,4 +121,7 @@ public class DataSourceConfig {
     public String getName() {
         return property.getName();
     }
+    public String getSchema() {
+        return property.getSchema();
+    }
 }

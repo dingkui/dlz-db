@@ -37,7 +37,7 @@ public class IdStrategyTest extends BaseDBTest {
         AutoIdEntity e = new AutoIdEntity();
         e.setName("auto_test");
         assertNull(e.getId());
-        DB.Pojo.insert(e);
+        DB.Pojo.add(e);
         assertNotNull(e.getId());
         assertTrue(e.getId() > 0);
     }
@@ -49,7 +49,7 @@ public class IdStrategyTest extends BaseDBTest {
         u.setAge(22);
         u.setStatus("1");
         u.setDeleted("0");
-        DB.Pojo.insert(u);
+        DB.Pojo.add(u);
         assertNotNull(u.getId());
         assertTrue(u.getId() > 0);
     }
@@ -73,7 +73,7 @@ public class IdStrategyTest extends BaseDBTest {
         u.setAge(40);
         u.setStatus("1");
         u.setDeleted("0");
-        DB.Pojo.insert(u);
+        DB.Pojo.add(u);
         assertEquals(Long.valueOf(999L), u.getId());
         assertEquals(Long.valueOf(999L), DB.Pojo.selectById(User.class, 999L).getId());
     }

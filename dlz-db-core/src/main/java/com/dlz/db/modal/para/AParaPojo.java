@@ -16,9 +16,10 @@ import java.util.List;
  *
  * @author dk
  */
-public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara {
+public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara{
     private final Class<T> beanClass;
-    protected T bean;
+    protected T valueBean;
+    protected T queryBean;
     private final String tableName;
     private final List<Field> fields;
     private boolean isGenerator = false;
@@ -31,31 +32,28 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara {
         if(beanClass == Class.class){
             throw new DbException("bean需要为实体对象",1002);
         }
-        this.bean=null;
+        this.valueBean =null;
         tableName= PojoCache.getTableName(beanClass);
         fields= PojoCache.getBeanFields(beanClass);
     }
-    public AParaPojo(T bean) {
-        this.bean = bean;
-        if(bean == null){
-            throw new DbException("bean不能为空",1002);
-        }
-        this.beanClass = (Class<T>) bean.getClass();
-        tableName= PojoCache.getTableName(beanClass);
-        fields= PojoCache.getBeanFields(beanClass);
-    }
+
     /** 当前构造器持有的 bean（从 Class 构造时为 null）。 */
-    public T getBean() {
-        return bean;
+    public T getValueBean() {
+        return valueBean;
     }
 
     public String getTableName() {
         return tableName;
     }
 
-    protected void generatWithBean(T bean) {
-        if (!isGenerator && bean != null) {
-            wrapValues(fields, bean);
+    protected void generatWithBean() {
+        if (!isGenerator) {
+            if(valueBean != null){
+                wrapValues(fields, valueBean);
+            }
+            if(queryBean != null){
+                wrapQuery(fields, valueBean);
+            }
             isGenerator = true;
         }
     }
@@ -67,6 +65,13 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara {
      * @param bean
      */
     protected abstract void wrapValues(List<Field> fields, T bean) ;
+    /**
+     * 自动构建参数
+     *
+     * @param fields
+     * @param bean
+     */
+    protected abstract void wrapQuery(List<Field> fields, T bean) ;
 
     public Class<T> getBeanClass() {
         return beanClass;
@@ -75,7 +80,7 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara {
 
     @Override
     public JdbcItem jdbcSql() {
-        generatWithBean(bean);
+        generatWithBean();
         return pm.jdbcSql();
     }
 

@@ -64,11 +64,11 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         int i = 20;
         AutoIdEntity autoIdEntity = new AutoIdEntity();
         autoIdEntity.setName("test");
-        long maxId1 = DB.Pojo.insertOrUpdate(autoIdEntity).getId();
+        long maxId1 = DB.Pojo.save(autoIdEntity).getId();
         while (i-- > 0) {
             AutoIdEntity autoIdEntity2 = new AutoIdEntity();
             autoIdEntity2.setName("test");
-            long maxId2 = DB.Pojo.insertOrUpdate(autoIdEntity2).getId();
+            long maxId2 = DB.Pojo.save(autoIdEntity2).getId();
             Assertions.assertEquals(maxId1 + 1, maxId2, "单次取号应连续递增");
             maxId1 = maxId2;
         }
@@ -78,7 +78,7 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
     void testSingleIdGeneration3() {
         NoIdEntity autoIdEntity = new NoIdEntity();
         autoIdEntity.setName("test");
-        Assertions.assertThrowsExactly(SystemException.class, () -> DB.Pojo.insertOrUpdate(autoIdEntity));
+        Assertions.assertThrowsExactly(SystemException.class, () -> DB.Pojo.save(autoIdEntity));
     }
 
     @Test

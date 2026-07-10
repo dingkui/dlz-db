@@ -104,7 +104,7 @@ public class PojoCache {
         if (map == null) {
             return false;
         }
-        return map.containsKey(DbConvertUtil.toDbColumnName(columnName.replaceAll("`", "")).toUpperCase());
+        return map.containsKey(DbConvertUtil.toDbColumnName(columnName.replaceAll("`", "")));
     }
     /**
      * 判断字段是否存在

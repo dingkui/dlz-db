@@ -40,7 +40,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 测试 convert() 方法 ==========");
         
         // 使用驼峰转换器（默认）
-        List<ResultMap> results = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> results = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(2)
                 .convert(new ColumnNameCamel())
@@ -66,7 +66,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 测试 convertNative() 方法 ==========");
         
         // 使用原生转换器（保持数据库原始字段名）
-        List<ResultMap> results = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> results = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(2)
                 .convertNative()
@@ -92,7 +92,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 测试 convertUpper() 方法 ==========");
         
         // 使用大写转换器
-        List<ResultMap> results = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> results = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(2)
                 .convertUpper()
@@ -119,7 +119,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 测试链式调用 ==========");
         
         // 先设置为原生，再改为驼峰
-        List<ResultMap> results = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> results = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertNative()  // 第一次设置
@@ -145,7 +145,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 测试 queryOne() 配合转换器 ==========");
         
         // 使用原生转换器查询单条
-        ResultMap result = DB.Table.selectW("Sys_Sql")
+        ResultMap result = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .eq("ID", 1)
                 .convertNative()
@@ -167,7 +167,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 测试 queryPage() 配合转换器 ==========");
         
         // 使用驼峰转换器分页查询
-        Page<ResultMap> page = DB.Table.selectW("Sys_Sql")
+        Page<ResultMap> page = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .page(1, 5)
                 .convert(new ColumnNameCamel())
@@ -191,21 +191,21 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 比较不同转换器的效果 ==========");
         
         // 使用原生转换器
-        List<ResultMap> nativeResults = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> nativeResults = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertNative()
                 .queryList();
         
         // 使用驼峰转换器
-        List<ResultMap> camelResults = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> camelResults = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convert(new ColumnNameCamel())
                 .queryList();
         
         // 使用大写转换器
-        List<ResultMap> upperResults = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> upperResults = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertUpper()
@@ -233,14 +233,14 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         log.info("========== 测试线程隔离性 ==========");
         
         // 第一次查询：使用原生转换器
-        List<ResultMap> results1 = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> results1 = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertNative()
                 .queryList();
         
         // 第二次查询：不使用转换器（应该恢复默认）
-        List<ResultMap> results2 = DB.Table.selectW("Sys_Sql")
+        List<ResultMap> results2 = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .queryList();

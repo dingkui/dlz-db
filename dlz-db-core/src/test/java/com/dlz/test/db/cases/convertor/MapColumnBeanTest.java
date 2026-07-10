@@ -70,7 +70,7 @@ class MapColumnBeanTest extends BaseDBTest {
         bean.setT1(testBean);
 
         // 插入
-        MapColumnBean inserted = DB.Pojo.insert(bean);
+        MapColumnBean inserted = DB.Pojo.add(bean);
         assertNotNull(inserted, "插入后应返回对象");
         assertNotNull(inserted.getId(), "ID 应自动回填");
         log.info("插入成功, id={}", inserted.getId());
@@ -94,7 +94,7 @@ class MapColumnBeanTest extends BaseDBTest {
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(null);
 
-        MapColumnBean inserted = DB.Pojo.insert(bean);
+        MapColumnBean inserted = DB.Pojo.add(bean);
         assertNotNull(inserted.getId(), "ID 应自动回填");
 
         MapColumnBean found = DB.Pojo.selectById(MapColumnBean.class, inserted.getId());
@@ -114,7 +114,7 @@ class MapColumnBeanTest extends BaseDBTest {
 
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(testBean);
-        MapColumnBean inserted = DB.Pojo.insert(bean);
+        MapColumnBean inserted = DB.Pojo.add(bean);
 
         // 修改 Bean 属性
         TestBean newBean = new TestBean();
@@ -147,7 +147,7 @@ class MapColumnBeanTest extends BaseDBTest {
 
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(testBean);
-        MapColumnBean inserted = DB.Pojo.insert(bean);
+        MapColumnBean inserted = DB.Pojo.add(bean);
 
         // 修改 Bean 属性
         TestBean newBean = new TestBean();
@@ -164,12 +164,12 @@ class MapColumnBeanTest extends BaseDBTest {
         newMap2.put("namexxx", "updated");
 
         // 更新
-       DB.Pojo.updateW(MapColumnBean.class)
+       DB.Pojo.update(MapColumnBean.class)
                 .set(MapColumnBean::getT2, newMap2)
                 .eq(MapColumnBean::getId, inserted.getId())
                 .execute();
 
-        final ResultMap map = DB.Pojo.selectW(MapColumnBean.class).eq(MapColumnBean::getId, inserted.getId()).queryOne();
+        final ResultMap map = DB.Pojo.select(MapColumnBean.class).eq(MapColumnBean::getId, inserted.getId()).queryOne();
         final MapColumnBean mapColumnBean = map.as(MapColumnBean.class);
 
         // 查询验证

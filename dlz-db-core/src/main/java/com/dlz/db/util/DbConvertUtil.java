@@ -101,7 +101,7 @@ public class DbConvertUtil {
         if(beanKey==null || beanKey.isEmpty()){
             return beanKey;
         }
-        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey).toUpperCase(Locale.ROOT);
+        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey);
     }
 
     /**

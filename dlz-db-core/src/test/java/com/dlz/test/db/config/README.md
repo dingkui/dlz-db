@@ -48,14 +48,14 @@ public class MyTest extends BaseDBTest {
 
 ```java
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.db.modal.wrapper.JdbcQuery;
+import com.dlz.db.modal.wrapper.JdbcSelect;
 import org.junit.jupiter.api.Test;
 
 public class MyDatabaseTest extends BaseDBTest {
 
     @Test
     void testQuery() {
-        JdbcQuery query = new JdbcQuery("SELECT * FROM user");
+        JdbcSelect query = new JdbcSelect("SELECT * FROM user");
         List<ResultMap> list = query.queryList();
 
         assertNotNull(list);

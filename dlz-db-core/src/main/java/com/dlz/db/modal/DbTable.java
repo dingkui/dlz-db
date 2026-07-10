@@ -15,17 +15,17 @@ import java.util.List;
 
 @Slf4j
 public class DbTable {
-    public TableInsert insertW(String tableName) {
+    public TableInsert insert(String tableName) {
         return new TableInsert(tableName);
     }
-    public TableDelete deleteW(String tableName) {
+    public TableDelete delete(String tableName) {
         return new TableDelete(tableName);
     }
 
-    public TableUpdate updateW(String tableName) {
+    public TableUpdate update(String tableName) {
         return new TableUpdate(tableName);
     }
-    public TableQuery selectW(String tableName) {
+    public TableQuery select(String tableName) {
         return new TableQuery(tableName);
     }
 
@@ -45,7 +45,7 @@ public class DbTable {
             return insert(tableName,value);
         }
         value.remove(idName);
-        final int updateResult = updateW(tableName).set(value).eq(idName, id).execute();
+        final int updateResult = update(tableName).set(value).eq(idName, id).execute();
         value.put(idName, id);
         return updateResult;
     }
@@ -57,7 +57,7 @@ public class DbTable {
             throw new SystemException(idName + "不能为空");
         }
         value.remove(idName);
-        final int updateResult = updateW(tableName).set(value).eq(idName, id).execute();
+        final int updateResult = update(tableName).set(value).eq(idName, id).execute();
         value.put(idName, id);
         if (updateResult == 1) {
             return updateResult;
@@ -67,14 +67,14 @@ public class DbTable {
     }
     public ResultMap selectById(String tableName, Object id) {
         final String idName = PojoCache.getIdName(tableName);
-        return selectW(tableName).eq(idName, id).queryOne();
+        return select(tableName).eq(idName, id).queryOne();
     }
     public List<ResultMap> selectByIds(String tableName, Object ids) {
         final String idName = PojoCache.getIdName(tableName);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
-        return selectW(tableName).in(idName, ids).queryList();
+        return select(tableName).in(idName, ids).queryList();
     }
 
     public int deleteByIds(String tableName, Object ids) {
@@ -82,7 +82,7 @@ public class DbTable {
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
-        return deleteW(tableName).in(idName, ids).execute();
+        return delete(tableName).in(idName, ids).execute();
     }
 
     public int deleteByIds(String tableName, List<?> ids) {
@@ -90,7 +90,7 @@ public class DbTable {
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
-        return deleteW(tableName).in(idName, ids).execute();
+        return delete(tableName).in(idName, ids).execute();
     }
 
     public int deleteById(String tableName, Object id) {
@@ -98,6 +98,6 @@ public class DbTable {
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
-        return deleteW(tableName).eq(idName, id).execute();
+        return delete(tableName).eq(idName, id).execute();
     }
 }

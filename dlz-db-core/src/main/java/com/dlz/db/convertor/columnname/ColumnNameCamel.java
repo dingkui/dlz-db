@@ -72,7 +72,7 @@ public class ColumnNameCamel implements IColumnNameConvertor {
 ////  			.replaceAll(" (?i)exists ", " exists ")
 ////  			.replaceAll(" (?i)join ", " join ")
 //  			.replaceAll("([A-Z])", "_$1").toUpperCase();
-		return toUnder.matcher(beanKey).replaceAll("_$1").toUpperCase(Locale.ROOT);
+		return toUnder.matcher(beanKey).replaceAll("_$1");
 	}
 
 }

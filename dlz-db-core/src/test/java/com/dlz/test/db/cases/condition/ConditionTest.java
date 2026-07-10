@@ -31,130 +31,130 @@ public class ConditionTest extends BaseDBTest {
 
     @Test
     public void pojo_eq() {
-        assertEquals(3, DB.Pojo.selectW(User.class).eq(User::getDeleted, "0").queryBeanList().size());
+        assertEquals(3, DB.Pojo.select(User.class).eq(User::getDeleted, "0").queryBeanList().size());
     }
 
     @Test
     public void pojo_ne() {
-        assertEquals(2, DB.Pojo.selectW(User.class).ne(User::getStatus, "0").queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).ne(User::getStatus, "0").queryBeanList().size());
     }
 
     @Test
     public void pojo_gt() {
-        assertEquals(2, DB.Pojo.selectW(User.class).gt(User::getAge, 28).queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).gt(User::getAge, 28).queryBeanList().size());
     }
 
     @Test
     public void pojo_ge() {
-        assertEquals(3, DB.Pojo.selectW(User.class).ge(User::getAge, 25).queryBeanList().size());
+        assertEquals(3, DB.Pojo.select(User.class).ge(User::getAge, 25).queryBeanList().size());
     }
 
     @Test
     public void pojo_lt() {
-        assertEquals(1, DB.Pojo.selectW(User.class).lt(User::getAge, 30).queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).lt(User::getAge, 30).queryBeanList().size());
     }
 
     @Test
     public void pojo_le() {
-        assertEquals(2, DB.Pojo.selectW(User.class).le(User::getAge, 30).queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).le(User::getAge, 30).queryBeanList().size());
     }
 
     @Test
     public void pojo_lk() {
-        assertEquals(2, DB.Pojo.selectW(User.class).like(User::getName, "a").queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).like(User::getName, "a").queryBeanList().size());
     }
 
     @Test
     public void pojo_ll() {
-        assertEquals(2, DB.Pojo.selectW(User.class).likeLeft(User::getName, "e").queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).likeLeft(User::getName, "e").queryBeanList().size());
     }
 
     @Test
     public void pojo_lr() {
-        assertEquals(1, DB.Pojo.selectW(User.class).likeRight(User::getName, "a").queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).likeRight(User::getName, "a").queryBeanList().size());
     }
 
     @Test
     public void pojo_nl() {
-        assertEquals(1, DB.Pojo.selectW(User.class).notLike(User::getName, "a").queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).notLike(User::getName, "a").queryBeanList().size());
     }
 
     @Test
     public void pojo_in() {
-        assertEquals(2, DB.Pojo.selectW(User.class).in(User::getAge, "25, 30").queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).in(User::getAge, "25, 30").queryBeanList().size());
     }
 
     @Test
     public void pojo_ni() {
-        assertEquals(1, DB.Pojo.selectW(User.class).notIn(User::getAge, "25, 30").queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).notIn(User::getAge, "25, 30").queryBeanList().size());
     }
 
     @Test
     public void pojo_bt() {
-        assertEquals(2, DB.Pojo.selectW(User.class).between(User::getAge, 25, 30).queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).between(User::getAge, 25, 30).queryBeanList().size());
     }
 
     @Test
     public void pojo_nb() {
-        assertEquals(1, DB.Pojo.selectW(User.class).notBetween(User::getAge, 25, 30).queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).notBetween(User::getAge, 25, 30).queryBeanList().size());
     }
 
     @Test
     public void pojo_and() {
-        assertEquals(1, DB.Pojo.selectW(User.class)
+        assertEquals(1, DB.Pojo.select(User.class)
                 .ands(a -> a.eq(User::getStatus, "1").eq(User::getName, "alice"))
                 .queryBeanList().size());
     }
 
     @Test
     public void pojo_or() {
-        assertEquals(2, DB.Pojo.selectW(User.class)
+        assertEquals(2, DB.Pojo.select(User.class)
                 .ors(q->q.eq(User::getName, "alice").eq(User::getName, "bob"))
                 .queryBeanList().size());
     }
 
     @Test
     public void pojo_queryCount() {
-        assertEquals(2, DB.Pojo.selectW(User.class).eq(User::getStatus, "1").count());
+        assertEquals(2, DB.Pojo.select(User.class).eq(User::getStatus, "1").count());
     }
 
     @Test
     public void pojo_queryList() {
-        assertEquals(2, DB.Pojo.selectW(User.class).eq(User::getStatus, "1").queryList().size());
+        assertEquals(2, DB.Pojo.select(User.class).eq(User::getStatus, "1").queryList().size());
     }
 
     @Test
     public void table_eq() {
-        assertEquals(3, DB.Table.selectW("user").eq("DELETED", 0).queryList().size());
+        assertEquals(3, DB.Table.select("user").eq("DELETED", 0).queryList().size());
     }
 
     @Test
     public void table_and() {
-        assertEquals(1, DB.Table.selectW("user").eq("status", "1").ands(a->a.eq("name", "alice")).queryList().size());
+        assertEquals(1, DB.Table.select("user").eq("status", "1").ands(a->a.eq("name", "alice")).queryList().size());
     }
 
     @Test
     public void pojo_dynamic_eq() {
         String name = null;
-        assertEquals(3, DB.Pojo.selectW(User.class).eq(name != null, User::getName, name).queryBeanList().size());
+        assertEquals(3, DB.Pojo.select(User.class).eq(name != null, User::getName, name).queryBeanList().size());
         name = "alice";
-        assertEquals(1, DB.Pojo.selectW(User.class).eq(name != null, User::getName, name).queryBeanList().size());
+        assertEquals(1, DB.Pojo.select(User.class).eq(name != null, User::getName, name).queryBeanList().size());
     }
 
     @Test
     public void pojo_dynamic_in() {
         Integer[] ages = {25, 30};
-        assertEquals(2, DB.Pojo.selectW(User.class).in(true, User::getAge, ages).queryBeanList().size());
-        assertEquals(3, DB.Pojo.selectW(User.class).in(false, User::getAge, ages).queryBeanList().size());
+        assertEquals(2, DB.Pojo.select(User.class).in(true, User::getAge, ages).queryBeanList().size());
+        assertEquals(3, DB.Pojo.select(User.class).in(false, User::getAge, ages).queryBeanList().size());
     }
 
     @Test
     public void table_lk() {
-        assertEquals(2, DB.Table.selectW("user").like("name", "a").queryList().size());
+        assertEquals(2, DB.Table.select("user").like("name", "a").queryList().size());
     }
 
     @Test
     public void table_in() {
-        assertEquals(2, DB.Table.selectW("user").in("age", "25,30").queryList().size());
+        assertEquals(2, DB.Table.select("user").in("age", "25,30").queryList().size());
     }
 }

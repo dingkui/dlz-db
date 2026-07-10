@@ -9,6 +9,7 @@ import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
@@ -27,23 +28,36 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         ISqlQuery<PojoUpdate<T>>,
         ICondAddByLamda<PojoUpdate<T>, T>,
         IExecutorUDI {
+    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null;
     public PojoUpdate(Class<T> beanClass) {
         super(beanClass);
         setPm(new TableUpdate(getTableName()));
     }
 
+    @Override
+    protected void wrapValues(List<Field> fields, T bean) {
+        for (Field field : fields) {
+            final Object fieldValue = FieldReflections.getValue(bean, field);
+            final String columnName = PojoCache.getColumnName(field);
+            if (this.ignore.apply(columnName, fieldValue)) {
+                continue;
+            }
+            getPm().set(columnName, fieldValue);
+        }
+    }
+
+
     public PojoUpdate<T> set(DlzFn<T, ?> column, Object value) {
         getPm().set(column, value);
         return this;
     }
-
     public PojoUpdate<T> set(String column, Object value) {
         getPm().set(column, value);
         return this;
     }
 
-    public PojoUpdate<T> set(Map<String, Object> setValues) {
-        getPm().set(setValues);
+    public PojoUpdate<T> set(T bean) {
+        this.queryBean = bean;
         return this;
     }
 
@@ -66,28 +80,16 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         }
         String col = sqlFragment.substring(0, eq).trim();
         String expr = sqlFragment.substring(eq + 1).trim();
-        return set(col, "sql:" + expr);
-    }
-
-    public PojoUpdate<T> set(T bean, Function<String, Boolean> ignore) {
-        List<Field> fields = FieldReflections.getFields(bean.getClass());
-        for (Field field : fields) {
-            Object fieldValue = FieldReflections.getValue(bean, field);
-            if (fieldValue != null) {
-                final String columnName = PojoCache.getColumnName(field);
-                if (ignore != null && ignore.apply(columnName)) {
-                    continue;
-                }
-                getPm().set(columnName, fieldValue);
-            }
-        }
+        getPm().set(col, "sql:" + expr);
         return this;
     }
 
-    public PojoUpdate<T> set(T bean) {
-        final IdInfo idInfo = PojoCache.getIdInfo(getBeanClass());
-        return set(bean, name -> name.equals(idInfo.getName()));
+    public PojoUpdate<T> ignore(DlzFn2<String, Object,Boolean> ignore) {
+        this.ignore = ignore;
+        return this;
     }
+
+
 
     @Override
     public PojoUpdate<T> me() {

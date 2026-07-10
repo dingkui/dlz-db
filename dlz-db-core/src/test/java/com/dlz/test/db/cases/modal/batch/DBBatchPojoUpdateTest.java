@@ -3,11 +3,8 @@ package com.dlz.test.db.cases.modal.batch;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.test.db.entity.Orders;
 import com.dlz.test.db.entity.TestUser;
 import com.dlz.test.db.entity.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -68,8 +64,8 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     @Test
     @DisplayName("测试 update - 空参数列表")
     void testPojoUpdateWithEmptyBeans() {
-        final User insert1 = DB.Pojo.insert(new User());
-        final User insert2 = DB.Pojo.insert(new User());
+        final User insert1 = DB.Pojo.add(new User());
+        final User insert2 = DB.Pojo.add(new User());
         List<User> users = Arrays.asList(insert1, insert2);
         insert1.setAge(12);
         insert2.setAge(6);

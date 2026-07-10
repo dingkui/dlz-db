@@ -148,21 +148,6 @@ class DbOperateEnumTest {
     }
 
     @Test
-    @DisplayName("测试 getDbOperateEnum - 找到操作符")
-    void testGetDbOperateEnum_Found() {
-        assertNotNull(DbOperateEnum.getDbOperateEnum("eq"));
-        assertNotNull(DbOperateEnum.getDbOperateEnum("like"));
-        assertNotNull(DbOperateEnum.getDbOperateEnum("in"));
-    }
-
-    @Test
-    @DisplayName("测试 getDbOperateEnum - 未找到操作符")
-    void testGetDbOperateEnum_NotFound() {
-        assertNull(DbOperateEnum.getDbOperateEnum("invalid"));
-        assertNull(DbOperateEnum.getDbOperateEnum(null));
-    }
-
-    @Test
     @DisplayName("测试所有枚举值数量")
     void testAllEnumValues() {
         assertEquals(16, DbOperateEnum.values().length);

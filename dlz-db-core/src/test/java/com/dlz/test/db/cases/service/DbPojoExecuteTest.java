@@ -46,12 +46,12 @@ class DbPojoExecuteTest extends BaseDBTest {
 
     @Test
     @DisplayName("插入操作 - 应成功插入并返回对象")
-    void testInsertSuccess() {
+    void testAddSuccess() {
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("张三");
         entity.setAge(25);
 
-        TestAutoEntity result = DB.Pojo.insert(entity);
+        TestAutoEntity result = DB.Pojo.add(entity);
 
         assertNotNull(result, "插入后应返回对象");
         assertNotNull(result.getId(), "实体ID应被自动回填");
@@ -61,12 +61,12 @@ class DbPojoExecuteTest extends BaseDBTest {
 
     @Test
     @DisplayName("插入操作 - 插入后应能查询到数据")
-    void testInsertThenSelectW() {
+    void testAddThenSelect() {
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("王五");
         entity.setAge(30);
 
-        DB.Pojo.insert(entity);
+        DB.Pojo.add(entity);
 
         // 查询验证
         TestAutoEntity found = DB.Pojo.selectById(TestAutoEntity.class, entity.getId());
@@ -80,12 +80,12 @@ class DbPojoExecuteTest extends BaseDBTest {
 
     @Test
     @DisplayName("更新操作 - 应根据ID更新记录")
-    void testUpdateWById() {
+    void testUpdateById() {
         // 先插入
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("原始名称");
         entity.setAge(25);
-        DB.Pojo.insert(entity);
+        DB.Pojo.add(entity);
 
         // 修改并更新
         entity.setName("新名称");
@@ -104,12 +104,12 @@ class DbPojoExecuteTest extends BaseDBTest {
 
     @Test
     @DisplayName("删除操作 - 应根据ID删除记录")
-    void testDeleteWById() {
+    void testDeleteById() {
         // 先插入
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("待删除");
         entity.setAge(25);
-        DB.Pojo.insert(entity);
+        DB.Pojo.add(entity);
 
         // 删除
         int rows = DB.Pojo.deleteById(TestAutoEntity.class, entity.getId());
@@ -123,13 +123,13 @@ class DbPojoExecuteTest extends BaseDBTest {
 
     @Test
     @DisplayName("批量删除 - 应成功删除多条记录")
-    void testDeleteWByIds() {
+    void testDeleteByIds() {
         // 插入多条
         List<Long> ids = new ArrayList<>();
         for (int i = 1; i <= 3; i++) {
             TestAutoEntity entity = new TestAutoEntity();
             entity.setName("批量删除" + i);
-            DB.Pojo.insert(entity);
+            DB.Pojo.add(entity);
             ids.add(entity.getId());
         }
 
@@ -149,15 +149,15 @@ class DbPojoExecuteTest extends BaseDBTest {
 
     @Test
     @DisplayName("条件查询 - 应根据条件查询记录")
-    void testSelectWByCondition() {
+    void testSelectByCondition() {
         // 插入测试数据
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("条件测试");
         entity.setAge(25);
-        DB.Pojo.insert(entity);
+        DB.Pojo.add(entity);
 
         // 条件查询
-        PojoQuery<TestAutoEntity> wrapper = DB.Pojo.selectW(TestAutoEntity.class);
+        PojoQuery<TestAutoEntity> wrapper = DB.Pojo.select(TestAutoEntity.class);
         wrapper.eq("name", "条件测试");
         
         List<TestAutoEntity> list = wrapper.queryBeanList();
@@ -171,12 +171,12 @@ class DbPojoExecuteTest extends BaseDBTest {
 
     @Test
     @DisplayName("插入操作 - 字段为null应正常处理")
-    void testInsertWithNullFields() {
+    void testAddWithNullFields() {
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("null测试");
         entity.setAge(null);
 
-        TestAutoEntity result = DB.Pojo.insert(entity);
+        TestAutoEntity result = DB.Pojo.add(entity);
 
         assertNotNull(result, "即使有null字段也应成功插入");
     }

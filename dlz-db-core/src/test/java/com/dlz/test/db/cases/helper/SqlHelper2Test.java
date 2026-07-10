@@ -42,11 +42,11 @@ public class SqlHelper2Test extends BaseDBTest {
         user.setCreateTime(new java.util.Date());
         user.setSex("1");
         DB.Table.insert("crete_user_test", new JSONMap(user));
-        final User user1 = DB.Table.selectW("crete_user_test").setAllowFullQuery(true).queryOne(User.class);
+        final User user1 = DB.Table.select("crete_user_test").setAllowFullQuery(true).queryOne(User.class);
         assertEquals(1L, user1.getId(), "userId 应该为1");
 
         DB.Batch.tableInsert("crete_user_test", Arrays.asList(new JSONMap(user),new JSONMap(user)));
-        final long count = DB.Table.selectW("crete_user_test").setAllowFullQuery(true).count();
+        final long count = DB.Table.select("crete_user_test").setAllowFullQuery(true).count();
         assertEquals(3L, count, "crete_user_test 应该为3");
     }
     @Test

@@ -43,7 +43,7 @@ class DbTableTest extends BaseDBTest {
     @Test
     @DisplayName("insert - Wrapper execute 插入并返回影响行数")
     void testInsertExecute() {
-        int rows = DB.Table.insertW("user")
+        int rows = DB.Table.insert("user")
                 .value("name", "测试用户")
                 .value("age", 25)
                 .execute();
@@ -53,7 +53,7 @@ class DbTableTest extends BaseDBTest {
     @Test
     @DisplayName("insert - insertWithAutoKey 返回自增主键")
     void testInsertWithAutoKey() {
-        Long key = DB.Table.insertW("user")
+        Long key = DB.Table.insert("user")
                 .value("name", "自增用户")
                 .insertWithAutoKey();
         assertNotNull(key);
@@ -123,7 +123,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "待删Wrapper"));
 
-        int rows = DB.Table.deleteW("user").eq("id", id).execute();
+        int rows = DB.Table.delete("user").eq("id", id).execute();
         assertEquals(1, rows);
     }
 
@@ -170,7 +170,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "物理删"));
 
-        int rows = DB.Table.deleteW("user")
+        int rows = DB.Table.delete("user")
                 .eq("id", id)
                 .ignoreLogicDelete(true)
                 .execute();
@@ -185,7 +185,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "待更新").put("age", 18));
 
-        int rows = DB.Table.updateW("user").set("name", "已更新").eq("id", id).execute();
+        int rows = DB.Table.update("user").set("name", "已更新").eq("id", id).execute();
         assertEquals(1, rows);
 
         ResultMap r = DB.Table.selectById("user", id);
@@ -202,7 +202,7 @@ class DbTableTest extends BaseDBTest {
         JSONMap updates = new JSONMap();
         updates.put("name", "Map更新后");
         updates.put("age", 50);
-        int rows = DB.Table.updateW("user").set(updates).eq("id", id).execute();
+        int rows = DB.Table.update("user").set(updates).eq("id", id).execute();
         assertEquals(1, rows);
 
         ResultMap r = DB.Table.selectById("user", id);
@@ -222,7 +222,7 @@ class DbTableTest extends BaseDBTest {
             new JSONMap().put("id", id1).put("name", "batch新1").put("score", "12")
         );
 
-        boolean success = DB.Table.updateW("user").batch(updates);
+        boolean success = DB.Table.update("user").batch(updates);
         assertTrue(success);
 
         final ResultMap user = DB.Table.selectById("user", id1);
@@ -263,7 +263,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "Q1用户"));
 
-        ResultMap r = DB.Table.selectW("user").eq("id", id).queryOne();
+        ResultMap r = DB.Table.select("user").eq("id", id).queryOne();
         assertNotNull(r);
         assertEquals("Q1用户", r.get("name"));
     }
@@ -274,7 +274,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "Bean查询").put("age", 28));
 
-        User user = DB.Table.selectW("user").eq("id", id).queryOne(User.class);
+        User user = DB.Table.select("user").eq("id", id).queryOne(User.class);
         assertNotNull(user);
         assertEquals("Bean查询", user.getName());
         assertEquals(Integer.valueOf(28), user.getAge());
@@ -285,7 +285,7 @@ class DbTableTest extends BaseDBTest {
     void testQueryList() {
         DB.Table.insert("user", new JSONMap().put("name", "列表测试"));
 
-        List<ResultMap> list = DB.Table.selectW("user").queryList();
+        List<ResultMap> list = DB.Table.select("user").queryList();
         assertNotNull(list);
         assertTrue(list.size() >= 1, "列表应至少包含一条记录");
     }
@@ -298,7 +298,7 @@ class DbTableTest extends BaseDBTest {
         Long id2 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "Bean列表2"));
 
-        List<User> users = DB.Table.selectW("user")
+        List<User> users = DB.Table.select("user")
                 .in("id", id1 + "," + id2)
                 .queryList(User.class);
         assertEquals(2, users.size());
@@ -309,7 +309,7 @@ class DbTableTest extends BaseDBTest {
     void testQueryPage() {
         DB.Table.insert("user", new JSONMap().put("name", "分页数据"));
 
-        Page<ResultMap> page = DB.Table.selectW("user")
+        Page<ResultMap> page = DB.Table.select("user")
                 .page(1, 10, Order.asc("id"))
                 .queryPage();
         assertNotNull(page);
@@ -323,7 +323,7 @@ class DbTableTest extends BaseDBTest {
     void testQueryPageWithClass() {
         DB.Table.insert("user", new JSONMap().put("name", "Bean分页"));
 
-        Page<User> page = DB.Table.selectW("user")
+        Page<User> page = DB.Table.select("user")
                 .page(1, 10, Order.asc("id"))
                 .queryPage(User.class);
         assertNotNull(page);
@@ -336,7 +336,7 @@ class DbTableTest extends BaseDBTest {
     @Test
     @DisplayName("count - Wrapper 计数查询")
     void testCount() {
-        long count = DB.Table.selectW("user").count();
+        long count = DB.Table.select("user").count();
         assertTrue(count >= 0);
     }
 
@@ -346,7 +346,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "StrVal"));
 
-        String name = DB.Table.selectW("user")
+        String name = DB.Table.select("user")
                 .select("name")
                 .eq("id", id)
                 .queryStr();
@@ -361,7 +361,7 @@ class DbTableTest extends BaseDBTest {
         Long id2 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "s2"));
 
-        List<String> names = DB.Table.selectW("user")
+        List<String> names = DB.Table.select("user")
                 .select("name")
                 .in("id", id1 + "," + id2)
                 .orderByAsc("name")
@@ -377,7 +377,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "Long测试").put("age", 33));
 
-        Long age = DB.Table.selectW("user")
+        Long age = DB.Table.select("user")
                 .select("age")
                 .eq("id", id)
                 .queryLong();
@@ -392,7 +392,7 @@ class DbTableTest extends BaseDBTest {
         Long id2 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "L2").put("age", 30));
 
-        List<Long> ages = DB.Table.selectW("user")
+        List<Long> ages = DB.Table.select("user")
                 .select("age")
                 .in("id", id1 + "," + id2)
                 .orderByAsc("age")
@@ -406,7 +406,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "Int测试").put("age", 44));
 
-        Integer age = DB.Table.selectW("user")
+        Integer age = DB.Table.select("user")
                 .select("age")
                 .eq("id", id)
                 .queryInt();
@@ -421,7 +421,7 @@ class DbTableTest extends BaseDBTest {
         Long id2 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "I2").put("age", 35));
 
-        List<Integer> ages = DB.Table.selectW("user")
+        List<Integer> ages = DB.Table.select("user")
                 .select("age")
                 .in("id", id1 + "," + id2)
                 .orderByAsc("age")
@@ -434,12 +434,12 @@ class DbTableTest extends BaseDBTest {
     @Test
     @DisplayName("queryDouble - 指定列查询单值 Double（t_b_dict.a5 为 Float 列）")
     void testQueryDouble() {
-        final Long id = DB.Table.insertW("t_b_dict")
+        final Long id = DB.Table.insert("t_b_dict")
                 .value("dictStatus", "test")
                 .value("a5", 3.14d)
                 .insertWithAutoKey();
 
-        Double val = DB.Table.selectW("t_b_dict")
+        Double val = DB.Table.select("t_b_dict")
                 .select("a5")
                 .eq("id", id)
                 .queryDouble();
@@ -449,16 +449,16 @@ class DbTableTest extends BaseDBTest {
     @Test
     @DisplayName("queryDoubleList - 查询 Double 列表（单列多行）")
     void testQueryDoubleList() {
-        final Long id1 = DB.Table.insertW("t_b_dict")
+        final Long id1 = DB.Table.insert("t_b_dict")
                 .value("dictStatus", "test")
                 .value("a5", 1.1d)
                 .insertWithAutoKey();
-        final Long id2 = DB.Table.insertW("t_b_dict")
+        final Long id2 = DB.Table.insert("t_b_dict")
                 .value("dictStatus", "test")
                 .value("a5", 2.2d)
                 .insertWithAutoKey();
 
-        List<Double> vals = DB.Table.selectW("t_b_dict")
+        List<Double> vals = DB.Table.select("t_b_dict")
                 .select("a5")
                 .in("id", Arrays.asList(id1, id2))
                 .orderByAsc("a5")
@@ -478,7 +478,7 @@ class DbTableTest extends BaseDBTest {
         Long id2 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "a_first").put("age", 20));
 
-        List<String> names = DB.Table.selectW("user")
+        List<String> names = DB.Table.select("user")
                 .select("name")
                 .in("id", id1 + "," + id2)
                 .orderByDesc("name")
@@ -497,7 +497,7 @@ class DbTableTest extends BaseDBTest {
         Long id2 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "a_first").put("age", 20));
 
-        List<String> names = DB.Table.selectW("user")
+        List<String> names = DB.Table.select("user")
                 .select("name")
                 .in("id", id1 + "," + id2)
                 .orderByAsc("name")
@@ -515,7 +515,7 @@ class DbTableTest extends BaseDBTest {
         Long id2 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "a_first").put("age", 20));
 
-        List<String> names = DB.Table.selectW("user")
+        List<String> names = DB.Table.select("user")
                 .select("name")
                 .in("id", id1 + "," + id2)
                 .sort(Order.asc("name"))
@@ -533,7 +533,7 @@ class DbTableTest extends BaseDBTest {
         DB.Table.insert("user", new JSONMap().put("name", "limit2"));
         DB.Table.insert("user", new JSONMap().put("name", "limit3"));
 
-        List<ResultMap> list = DB.Table.selectW("user")
+        List<ResultMap> list = DB.Table.select("user")
                 .limit(2)
                 .queryList();
         assertTrue(list.size() <= 2, "limit(2) 应限制结果不超过 2 条");
@@ -551,7 +551,7 @@ class DbTableTest extends BaseDBTest {
         Long id3 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "gt3").put("age", 60));
 
-        List<Integer> ages = DB.Table.selectW("user")
+        List<Integer> ages = DB.Table.select("user")
                 .select("age")
                 .in("id", id1 + "," + id2 + "," + id3)
                 .gt("age", 20)
@@ -573,7 +573,7 @@ class DbTableTest extends BaseDBTest {
         Long id4 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "ge4").put("age", 40));
 
-        List<Integer> ages = DB.Table.selectW("user")
+        List<Integer> ages = DB.Table.select("user")
                 .select("age")
                 .in("id", id1 + "," + id2 + "," + id3 + "," + id4)
                 .ge("age", 20)
@@ -595,7 +595,7 @@ class DbTableTest extends BaseDBTest {
         Long id3 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "other_world"));
 
-        List<String> names = DB.Table.selectW("user")
+        List<String> names = DB.Table.select("user")
                 .select("name")
                 .in("id", id1 + "," + id2 + "," + id3)
                 .like("name", "like_he")
@@ -614,7 +614,7 @@ class DbTableTest extends BaseDBTest {
         Long id3 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "in_c"));
 
-        List<ResultMap> list = DB.Table.selectW("user")
+        List<ResultMap> list = DB.Table.select("user")
                 .in("id", id1 + "," + id3)
                 .queryList();
         assertEquals(2, list.size(), "in 应匹配 id1 和 id3 两条记录");
@@ -632,7 +632,7 @@ class DbTableTest extends BaseDBTest {
         Long id4 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "bw4").put("age", 60));
 
-        List<Integer> ages = DB.Table.selectW("user")
+        List<Integer> ages = DB.Table.select("user")
                 .select("age")
                 .in("id", id1 + "," + id2 + "," + id3 + "," + id4)
                 .between("age", 20, 50)
@@ -647,7 +647,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "isnull_test"));
 
-        List<ResultMap> list = DB.Table.selectW("user")
+        List<ResultMap> list = DB.Table.select("user")
                 .eq("id", id)
                 .eq("deleted",0)
                 .queryList();
@@ -662,7 +662,7 @@ class DbTableTest extends BaseDBTest {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "多列限定").put("age", 25).put("sex", "男"));
 
-        ResultMap r = DB.Table.selectW("user")
+        ResultMap r = DB.Table.select("user")
                 .select("id", "name")
                 .eq("id", id)
                 .queryOne();
@@ -710,7 +710,7 @@ class DbTableTest extends BaseDBTest {
     void testAllowFullQuery() {
         DB.Table.insert("user", new JSONMap().put("name", "全表测试"));
 
-        List<ResultMap> list = DB.Table.selectW("user")
+        List<ResultMap> list = DB.Table.select("user")
                 .setAllowFullQuery(true)
                 .queryList();
         assertNotNull(list);

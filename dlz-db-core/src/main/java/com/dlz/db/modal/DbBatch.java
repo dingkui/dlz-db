@@ -17,7 +17,7 @@ public class DbBatch {
 
     public <T> boolean pojoInsert(List<T> bean, int batchSize) {
         if (!bean.isEmpty()) {
-            return new PojoInsert(bean.get(0)).batch(bean, batchSize);
+            return new PojoInsert(bean.get(0).getClass()).batch(bean, batchSize);
         }
         return false;
     }

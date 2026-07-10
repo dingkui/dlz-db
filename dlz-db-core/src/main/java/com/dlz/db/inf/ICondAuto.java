@@ -1,6 +1,7 @@
 package com.dlz.db.inf;
 
 import com.dlz.db.enums.DbOperateEnum;
+import com.dlz.kit.exception.ValidateException;
 
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +61,11 @@ public interface ICondAuto<ME extends ICondAuto> extends ICondBase<ME> {
                     if (key.isEmpty()) {
                         continue;
                     }
-                    oprate = DbOperateEnum.getDbOperateEnum(op);
+                    try {
+                        oprate = DbOperateEnum.valueOf(op);
+                    } catch (Exception e) {
+                        throw new ValidateException("无效的操作符：" + op + " key="+key);
+                    }
                 }
                 if (fillter != null && !fillter.apply(key)) {
                     continue;

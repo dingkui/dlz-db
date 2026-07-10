@@ -139,7 +139,7 @@ public interface ISqlExecutor {
                         // 兜底：如果 getColumnLabel 返回空，使用 getColumnName
                         columnName = md.getColumnName(i);
                     }
-                    infos.put(columnName.toUpperCase(Locale.ROOT), md.getColumnType(i));
+                    infos.put(columnName, md.getColumnType(i));
                 }
                 return infos;
             }

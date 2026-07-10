@@ -15,7 +15,7 @@ public class TableColumnMapper implements ITableColumnMapper {
     public Object converObj4Db(String tableName, String columnName, Object value) {
         Map<String, Integer> map = PojoCache.getTableColumnsInfo(tableName);
         if (map != null) {
-            Integer dbClass = map.get(columnName.toUpperCase(Locale.ROOT));
+            Integer dbClass = map.get(columnName);
             if(dbClass==null){
                 return value;
             }

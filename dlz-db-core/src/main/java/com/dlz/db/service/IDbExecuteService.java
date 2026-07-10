@@ -3,15 +3,10 @@ package com.dlz.db.service;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.inf.IExecutorInsert;
 import com.dlz.db.inf.IExecutorUDI;
-import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.support.bean.IdInfo;
-import com.dlz.kit.util.system.FieldReflections;
-
-import java.lang.reflect.Field;
 
 /**
  * 从数据库中取得单条map类型数据：{adEnddate=2015-04-08 13:47:12.0}
@@ -43,7 +38,7 @@ public interface IDbExecuteService extends IDbBaseService{
     default int execute(IExecutorUDI paraMap) {
         if (paraMap instanceof PojoInsert) {
             PojoInsert p = (PojoInsert) paraMap;
-            Object bean = p.getBean();
+            Object bean = p.getValueBean();
             final Class<?> beanClass = bean.getClass();
             final IdInfo idField = PojoCache.getIdInfo(beanClass);
             final String tableName = PojoCache.getTableName(beanClass);

@@ -19,7 +19,7 @@ class TableQueryTest extends BaseDBTest {
     @Test
     @DisplayName("测试 insert 方法")
     void testInsertW() {
-        TableInsert insert = DB.Table.insertW("user");
+        TableInsert insert = DB.Table.insert("user");
         
         assertNotNull(insert);
         assertTrue(insert instanceof TableInsert);
@@ -28,7 +28,7 @@ class TableQueryTest extends BaseDBTest {
     @Test
     @DisplayName("测试 delete 方法")
     void testDeleteW() {
-        TableDelete delete = DB.Table.deleteW("user");
+        TableDelete delete = DB.Table.delete("user");
         
         assertNotNull(delete);
         assertTrue(delete instanceof TableDelete);
@@ -37,7 +37,7 @@ class TableQueryTest extends BaseDBTest {
     @Test
     @DisplayName("测试 update 方法")
     void testUpdateW() {
-        TableUpdate update = DB.Table.updateW("user");
+        TableUpdate update = DB.Table.update("user");
         
         assertNotNull(update);
         assertTrue(update instanceof TableUpdate);
@@ -46,7 +46,7 @@ class TableQueryTest extends BaseDBTest {
     @Test
     @DisplayName("测试 select 方法")
     void testSelectW() {
-        TableQuery query = DB.Table.selectW("user");
+        TableQuery query = DB.Table.select("user");
         
         assertNotNull(query);
         assertTrue(query instanceof TableQuery);
@@ -55,9 +55,9 @@ class TableQueryTest extends BaseDBTest {
     @Test
     @DisplayName("测试不同表名")
     void testDifferentTableNames() {
-        TableInsert insert1 = DB.Table.insertW("user");
-        TableInsert insert2 = DB.Table.insertW("order");
-        TableInsert insert3 = DB.Table.insertW("product_category");
+        TableInsert insert1 = DB.Table.insert("user");
+        TableInsert insert2 = DB.Table.insert("order");
+        TableInsert insert3 = DB.Table.insert("product_category");
         
         assertNotNull(insert1);
         assertNotNull(insert2);
@@ -69,7 +69,7 @@ class TableQueryTest extends BaseDBTest {
     void testEmptyTableName() {
         // 空表名可能会触发 WrapperBuildUtil 初始化错误
         assertThrows(Throwable.class, () -> {
-            DB.Table.insertW("");
+            DB.Table.insert("");
         });
     }
 
@@ -78,7 +78,7 @@ class TableQueryTest extends BaseDBTest {
     void testNullTableName() {
         // null 表名可能会触发 ValidateException 初始化错误
         assertThrows(Throwable.class, () -> {
-            DB.Table.insertW(null);
+            DB.Table.insert(null);
         });
     }
 }

@@ -3,7 +3,7 @@ package com.dlz.test.db.cases.inf;
 import com.dlz.db.convertor.columnname.ColumnNameCamel;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
-import com.dlz.db.modal.wrapper.JdbcQuery;
+import com.dlz.db.modal.wrapper.JdbcSelect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,17 +23,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("ISqlPage 分页排序测试")
 class ISqlPageTest {
 
-    private JdbcQuery query;
+    private JdbcSelect query;
 
     @BeforeEach
     void setUp() {
-        query = new JdbcQuery("SELECT * FROM user");
+        query = new JdbcSelect("SELECT * FROM user");
     }
 
     @Test
     @DisplayName("测试 limit() 方法 - 仅设置分页大小")
     void testLimit() {
-        JdbcQuery result = query.limit(10);
+        JdbcSelect result = query.limit(10);
         
         assertNotNull(result, "返回值不应为 null");
         assertSame(query, result, "应该返回同一个对象（链式调用）");
@@ -47,7 +47,7 @@ class ISqlPageTest {
     @Test
     @DisplayName("测试 page() 方法 - 设置分页参数")
     void testPage_WithParameters() {
-        JdbcQuery result = query.page(2, 20);
+        JdbcSelect result = query.page(2, 20);
         
         assertNotNull(result, "返回值不应为 null");
         assertSame(query, result, "应该返回同一个对象");
@@ -66,7 +66,7 @@ class ISqlPageTest {
                 Order.desc("create_time")
         );
         
-        JdbcQuery result = query.page(1, 10, orders);
+        JdbcSelect result = query.page(1, 10, orders);
         
         assertNotNull(result, "返回值不应为 null");
         
@@ -79,7 +79,7 @@ class ISqlPageTest {
     @Test
     @DisplayName("测试 page() 方法 - 可变参数排序")
     void testPage_WithVarargsOrders() {
-        JdbcQuery result = query.page(1, 10, Order.asc("id"), Order.desc("name"));
+        JdbcSelect result = query.page(1, 10, Order.asc("id"), Order.desc("name"));
         
         assertNotNull(result, "返回值不应为 null");
         
@@ -91,7 +91,7 @@ class ISqlPageTest {
     @Test
     @DisplayName("测试 page() 方法 - 空排序列表")
     void testPage_WithEmptyOrders() {
-        JdbcQuery result = query.page(1, 10, Collections.emptyList());
+        JdbcSelect result = query.page(1, 10, Collections.emptyList());
         
         assertNotNull(result, "返回值不应为 null");
         
@@ -104,7 +104,7 @@ class ISqlPageTest {
     @Test
     @DisplayName("测试 page() 方法 - null 排序列表")
     void testPage_WithNullOrders() {
-        JdbcQuery result = query.page(1, 10, (List<Order>) null);
+        JdbcSelect result = query.page(1, 10, (List<Order>) null);
         
         assertNotNull(result, "返回值不应为 null");
         
@@ -145,7 +145,7 @@ class ISqlPageTest {
     @Test
     @DisplayName("测试 orderByAsc() 方法")
     void testOrderByAsc() {
-        JdbcQuery result = query.orderByAsc("name", "age");
+        JdbcSelect result = query.orderByAsc("name", "age");
         
         assertNotNull(result, "返回值不应为 null");
         
@@ -162,7 +162,7 @@ class ISqlPageTest {
     @Test
     @DisplayName("测试 orderByDesc() 方法")
     void testOrderByDesc() {
-        JdbcQuery result = query.orderByDesc("create_time", "update_time");
+        JdbcSelect result = query.orderByDesc("create_time", "update_time");
         
         assertNotNull(result, "返回值不应为 null");
         
@@ -213,7 +213,7 @@ class ISqlPageTest {
     @DisplayName("测试 convert() 方法配合分页")
     void testConvert_WithPagination() {
         // 这个方法主要测试 convert 不会影响分页设置
-        JdbcQuery result = query
+        JdbcSelect result = query
                 .page(1, 10)
                 .convert(new ColumnNameCamel());
         
@@ -227,7 +227,7 @@ class ISqlPageTest {
     @Test
     @DisplayName("测试链式调用 - 完整场景")
     void testChainedCalls_FullScenario() {
-        JdbcQuery result = query
+        JdbcSelect result = query
                 .page(1, 20)
                 .orderByAsc("name")
                 .orderByDesc("create_time")

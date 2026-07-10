@@ -198,7 +198,7 @@ class ConditionTest {
         Condition result = condition.isNull("delete_time");
         
         assertNotNull(result);
-        assertEquals("where DELETE_TIME is null", getSql(result));
+        assertEquals("where delete_time is null", getSql(result));
     }
 
     @Test
@@ -207,7 +207,7 @@ class ConditionTest {
         Condition result = condition.isNotNull("email");
         
         assertNotNull(result);
-        assertEquals("where EMAIL is not null", getSql(result));
+        assertEquals("where email is not null", getSql(result));
     }
 
     // ========== AND/OR 嵌套测试 ==========
