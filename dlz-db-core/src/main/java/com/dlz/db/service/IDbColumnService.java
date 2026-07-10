@@ -16,35 +16,35 @@ import java.util.List;
 public interface IDbColumnService extends IDbBaseService {
 
     default String getStr(IExecutorQuery paraMap) {
-        return getFistColumn(paraMap, String.class);
+        return getFirstColumn(paraMap, String.class);
     }
 
     default <T> List<T> getColumnList(IExecutorQuery paraMap, Class<T> tClass) {
         return doDb(paraMap, jdbcSql -> DbConvertUtil.getColumnList(getSqlExecutor().getList(jdbcSql.sql, jdbcSql.paras), tClass));
     }
 
-    default <T> T getFistColumn(IExecutorQuery paraMap, Class<T> tClass) {
-        return doDb(paraMap, jdbcSql -> getSqlExecutor().getFistColumn(jdbcSql.sql, tClass, jdbcSql.paras));
+    default <T> T getFirstColumn(IExecutorQuery paraMap, Class<T> tClass) {
+        return doDb(paraMap, jdbcSql -> getSqlExecutor().getFirstColumn(jdbcSql.sql, tClass, jdbcSql.paras));
     }
 
     default BigDecimal getBigDecimal(IExecutorQuery paraMap) {
-        return getFistColumn(paraMap, BigDecimal.class);
+        return getFirstColumn(paraMap, BigDecimal.class);
     }
 
     default Float getFloat(IExecutorQuery paraMap) {
-        return getFistColumn(paraMap, Float.class);
+        return getFirstColumn(paraMap, Float.class);
     }
 
     default Integer getInt(IExecutorQuery paraMap) {
-        return getFistColumn(paraMap, Integer.class);
+        return getFirstColumn(paraMap, Integer.class);
     }
 
     default Long getLong(IExecutorQuery paraMap) {
-        return getFistColumn(paraMap, Long.class);
+        return getFirstColumn(paraMap, Long.class);
     }
 
     default Double getDouble(IExecutorQuery paraMap) {
-        return getFistColumn(paraMap, Double.class);
+        return getFirstColumn(paraMap, Double.class);
     }
 
     default List<String> getStrList(IExecutorQuery paraMap) {

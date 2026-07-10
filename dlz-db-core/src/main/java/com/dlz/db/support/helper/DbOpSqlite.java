@@ -62,7 +62,7 @@ public class DbOpSqlite extends SqlHelper {
     public TableInfo getTableInfo(String tableName) {
         // 获取表注释
 //        String sql = "SELECT table_comment FROM table_comments WHERE table_name = ?";
-//        String tableComment = DBHolder.getDao().getFistColumn(sql, String.class, tableName);
+//        String tableComment = DBHolder.getDao().getFirstColumn(sql, String.class, tableName);
 
         // 构建查询主键的SQL语句
         String sql = "PRAGMA table_info(`" + tableName + "`)";

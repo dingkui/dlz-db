@@ -1,13 +1,13 @@
 package com.dlz.test.db.cases.tx;
 
 import com.dlz.db.modal.DB;
-import com.dlz.test.db.config.BaseDBTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import com.dlz.test.config.BaseDBTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * 事务专题测试
@@ -15,14 +15,14 @@ import static org.junit.Assert.fail;
  */
 public class TransactionTest extends BaseDBTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         DB.Jdbc.execute("delete from user");
         // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted INTEGER DEFAULT 0)");
         DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "alice", 25, "1", 0);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         DB.Jdbc.execute("delete from user");
     }

@@ -2,19 +2,17 @@ package com.dlz.test.db.cases.tx;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.test.db.config.BaseDBTest;
+import com.dlz.test.config.BaseDBTest;
 import com.dlz.test.db.service.TransactionTestService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.annotation.DependsOn;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Spring 事务与 dlz-db 事务集成测试套件
@@ -35,13 +33,11 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author dlz-db-test
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 @Slf4j
+@DependsOn("initDbAdapter")
 public class SpringTransactionIntegrationTest extends BaseDBTest {
-
     @Autowired
-    private TransactionTestService transactionTestService;
+    protected TransactionTestService transactionTestService;
 
     /**
      * 测试前置方法 - 初始化测试环境
@@ -58,21 +54,21 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
      * </ul>
      * </p>
      */
-    @Before
+    @BeforeEach
     public void setup() {
         log.info("=== 测试前置：初始化测试表 ===");
-        
+
         // 删除旧表（如果存在）
         DB.Jdbc.execute("DROP TABLE IF EXISTS tx_test_user");
         log.info("已删除旧的 tx_test_user 表");
-        
+
         // 创建新表
         DB.Jdbc.execute("CREATE TABLE tx_test_user (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
         log.info("已创建新的 tx_test_user 表");
-        
+
         // 验证表为空
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("测试开始时表应该为空", 0, count);
+        assertEquals(0, count, "测试开始时表应该为空");
         log.info("验证通过：表为空，记录数 = 0");
     }
 
@@ -83,10 +79,10 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
      * 确保测试用例之间的数据隔离，避免相互影响。
      * </p>
      */
-    @After
+    @AfterEach
     public void teardown() {
         log.info("=== 测试后置：清理测试数据 ===");
-        
+
         try {
             // 清理测试数据
             DB.Jdbc.execute("DELETE FROM tx_test_user");
@@ -110,28 +106,28 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testSetupAndTeardown() {
         log.info("=== 测试：验证测试环境配置 ===");
-        
+
         // 验证表为空
         long countBefore = DB.Jdbc.select("SELECT * FROM tx_test_user").count();
-        assertEquals("测试开始时应该没有数据", 0, countBefore);
+        assertEquals(0, countBefore, "测试开始时应该没有数据");
         log.info("验证通过：测试开始时记录数 = 0");
-        
+
         // 插入测试数据
         DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 1, "test_user", 25);
         log.info("已插入测试数据：id=1, name=test_user, age=25");
-        
+
         // 验证数据已插入
         long countAfter = DB.Jdbc.select("SELECT * FROM tx_test_user").count();
-        assertEquals("数据应该已插入", 1, countAfter);
+        assertEquals(1, countAfter, "数据应该已插入");
         log.info("验证通过：插入后记录数 = 1");
-        
+
         // 验证数据内容
         ResultMap user = DB.Jdbc.select("SELECT * FROM tx_test_user WHERE id = ?", 1).queryOne();
-        assertNotNull("应该能查询到用户数据", user);
-        assertEquals("用户名称应该正确", "test_user", user.getStr("name"));
-        assertEquals("用户年龄应该正确", Integer.valueOf(25), user.getInt("age"));
+        assertNotNull(user, "应该能查询到用户数据");
+        assertEquals("test_user", user.getStr("name"), "用户名称应该正确");
+        assertEquals(Integer.valueOf(25), user.getInt("age"), "用户年龄应该正确");
         log.info("验证通过：数据内容正确");
-        
+
         log.info("=== 测试完成：环境配置正常 ===");
     }
 
@@ -169,12 +165,12 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
             throw new AssertionError("应该抛出异常");
         } catch (RuntimeException e) {
             log.info("捕获到预期异常: {}", e.getMessage());
-            assertEquals("异常消息应该正确", "1003:[事务执行失败：DLZ inner exception]", e.getMessage());
+            assertEquals("1003:[事务执行失败：DLZ inner exception]", e.getMessage(), "异常消息应该正确");
         }
 
         // 验证两层的数据都已回滚
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count);
+        assertEquals(0, count, "两层事务的数据都应该被回滚");
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
 
         log.info("=== 测试完成 ===");
@@ -211,12 +207,12 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
             throw new AssertionError("应该抛出异常");
         } catch (RuntimeException e) {
             log.info("捕获到预期异常: {}", e.getMessage());
-            assertEquals("异常消息应该正确", "Spring outer exception", e.getMessage());
+            assertEquals("Spring outer exception", e.getMessage(), "异常消息应该正确");
         }
 
         // 验证两层的数据都已回滚
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count);
+        assertEquals(0, count, "两层事务的数据都应该被回滚");
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
 
         log.info("=== 测试完成 ===");
@@ -252,17 +248,17 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
 
         // 验证两层的数据都已提交
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被提交", 2, count);
+        assertEquals(2, count, "两层事务的数据都应该被提交");
         log.info("验证通过：记录数 = 2，两层事务都已提交");
 
         // 验证数据内容
         ResultMap user1 = DB.Jdbc.select("SELECT * FROM tx_test_user WHERE id = ?", 1).queryOne();
-        assertNotNull("应该能查询到外层数据", user1);
-        assertEquals("外层数据名称应该正确", "spring_outer", user1.getStr("name"));
+        assertNotNull(user1, "应该能查询到外层数据");
+        assertEquals("spring_outer", user1.getStr("name"), "外层数据名称应该正确");
 
         ResultMap user2 = DB.Jdbc.select("SELECT * FROM tx_test_user WHERE id = ?", 2).queryOne();
-        assertNotNull("应该能查询到内层数据", user2);
-        assertEquals("内层数据名称应该正确", "dlz_inner", user2.getStr("name"));
+        assertNotNull(user2, "应该能查询到内层数据");
+        assertEquals("dlz_inner", user2.getStr("name"), "内层数据名称应该正确");
         log.info("验证通过：数据内容正确");
 
         log.info("=== 测试完成 ===");
@@ -296,32 +292,32 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testDlzContainsSpring_InnerException_BothRollback() {
         log.info("=== 测试：DLZ 包含 Spring - 内层异常 - 两层回滚 ===");
-        
+
         try {
             // 外层 DLZ 事务
             DB.Tx.run(() -> {
                 // 外层插入数据
-                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 
+                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                                 1, "dlz_outer", 30);
                 log.info("外层 DLZ 事务：已插入数据 id=1");
-                
+
                 // 内层 Spring 事务：插入数据并抛出异常
                 transactionTestService.insertUserInSpringTxWithException(2, "spring_inner", 25);
             });
-            
+
             // 不应该执行到这里
             throw new AssertionError("应该抛出异常");
-            
+
         } catch (RuntimeException e) {
             log.info("捕获到预期异常: {}", e.getMessage());
-            assertEquals("异常消息应该正确", "1003:[事务执行失败：Spring transaction exception]", e.getMessage());
+            assertEquals("1003:[事务执行失败：Spring transaction exception]", e.getMessage(), "异常消息应该正确");
         }
-        
+
         // 验证两层的数据都已回滚
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count);
+        assertEquals(0, count, "两层事务的数据都应该被回滚");
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
-        
+
         log.info("=== 测试完成 ===");
     }
 
@@ -350,36 +346,36 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testDlzContainsSpring_OuterException_BothRollback() {
         log.info("=== 测试：DLZ 包含 Spring - 外层异常 - 两层回滚 ===");
-        
+
         try {
             // 外层 DLZ 事务
             DB.Tx.run(() -> {
                 // 外层插入数据
-                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 
+                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                                 1, "dlz_outer", 30);
                 log.info("外层 DLZ 事务：已插入数据 id=1");
-                
+
                 // 内层 Spring 事务：插入数据（不抛出异常）
                 transactionTestService.insertUserInSpringTx(2, "spring_inner", 25);
                 log.info("内层 Spring 事务：已插入数据 id=2");
-                
+
                 // 外层抛出异常触发回滚
                 throw new RuntimeException("DLZ outer exception");
             });
-            
+
             // 不应该执行到这里
             throw new AssertionError("应该抛出异常");
-            
+
         } catch (RuntimeException e) {
             log.info("捕获到预期异常: {}", e.getMessage());
-            assertEquals("异常消息应该正确", "1003:[事务执行失败：DLZ outer exception]", e.getMessage());
+            assertEquals("1003:[事务执行失败：DLZ outer exception]", e.getMessage(), "异常消息应该正确");
         }
-        
+
         // 验证两层的数据都已回滚
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被回滚", 0, count);
+        assertEquals(0, count, "两层事务的数据都应该被回滚");
         log.info("验证通过：记录数 = 0，两层事务都已回滚");
-        
+
         log.info("=== 测试完成 ===");
     }
 
@@ -408,34 +404,34 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testDlzContainsSpring_NoException_BothCommit() {
         log.info("=== 测试：DLZ 包含 Spring - 无异常 - 两层提交 ===");
-        
+
         // 外层 DLZ 事务
         DB.Tx.run(() -> {
             // 外层插入数据
-            DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 
+            DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                             1, "dlz_outer", 30);
             log.info("外层 DLZ 事务：已插入数据 id=1");
-            
+
             // 内层 Spring 事务：插入数据
             transactionTestService.insertUserInSpringTx(2, "spring_inner", 25);
             log.info("内层 Spring 事务：已插入数据 id=2");
         });
         log.info("外层 DLZ 事务：正常完成");
-        
+
         // 验证两层的数据都已提交
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("两层事务的数据都应该被提交", 2, count);
+        assertEquals(2, count, "两层事务的数据都应该被提交");
         log.info("验证通过：记录数 = 2，两层事务都已提交");
-        
+
         // 验证数据内容
         ResultMap user1 = DB.Jdbc.select("SELECT * FROM tx_test_user WHERE id = ?", 1).queryOne();
-        assertNotNull("应该能查询到外层数据", user1);
-        assertEquals("外层数据名称应该正确", "dlz_outer", user1.getStr("name"));
-        
+        assertNotNull(user1, "应该能查询到外层数据");
+        assertEquals("dlz_outer", user1.getStr("name"), "外层数据名称应该正确");
+
         ResultMap user2 = DB.Jdbc.select("SELECT * FROM tx_test_user WHERE id = ?", 2).queryOne();
-        assertNotNull("应该能查询到内层数据", user2);
-        assertEquals("内层数据名称应该正确", "spring_inner", user2.getStr("name"));
-        
+        assertNotNull(user2, "应该能查询到内层数据");
+        assertEquals("spring_inner", user2.getStr("name"), "内层数据名称应该正确");
+
         log.info("=== 测试完成 ===");
     }
 
@@ -466,31 +462,31 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testRollback_RuntimeException() {
         log.info("=== 测试：RuntimeException 触发回滚 ===");
-        
+
         try {
             DB.Tx.run(() -> {
                 // 插入数据
-                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 
+                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                                 1, "test_user", 20);
                 log.info("已插入数据 id=1");
-                
+
                 // 抛出 RuntimeException
                 throw new RuntimeException("业务异常");
             });
-            
+
             // 不应该执行到这里
             throw new AssertionError("应该抛出异常");
-            
+
         } catch (RuntimeException e) {
             log.info("捕获到预期异常: {}", e.getMessage());
-            assertEquals("异常消息应该正确", "1003:[事务执行失败：业务异常]", e.getMessage());
+            assertEquals("1003:[事务执行失败：业务异常]", e.getMessage(), "异常消息应该正确");
         }
-        
+
         // 验证数据已回滚
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("数据应该被回滚", 0, count);
+        assertEquals(0, count, "数据应该被回滚");
         log.info("验证通过：记录数 = 0，事务已回滚");
-        
+
         log.info("=== 测试完成 ===");
     }
 
@@ -517,24 +513,24 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testRollback_CheckedException() {
         log.info("=== 测试：Checked Exception 触发回滚 ===");
-        
+
         try {
             // 调用会抛出 Checked Exception 的方法
             transactionTestService.insertUserWithCheckedException(1, "test_user", 20);
-            
+
             // 不应该执行到这里
             throw new AssertionError("应该抛出异常");
-            
+
         } catch (Exception e) {
             log.info("捕获到预期异常: {}", e.getMessage());
-            assertEquals("异常消息应该正确", "Checked exception", e.getMessage());
+            assertEquals("Checked exception", e.getMessage(), "异常消息应该正确");
         }
-        
+
         // 验证数据已回滚
         long count = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("数据应该被回滚", 0, count);
+        assertEquals(0, count, "数据应该被回滚");
         log.info("验证通过：记录数 = 0，事务已回滚");
-        
+
         log.info("=== 测试完成 ===");
     }
 
@@ -566,45 +562,45 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testConnectionState_AfterException() {
         log.info("=== 测试：异常后连接状态验证 ===");
-        
+
         // 第一次操作：抛出异常
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 
+                DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                                 1, "test1", 20);
                 log.info("第一次操作：已插入数据 id=1");
-                
+
                 throw new RuntimeException("异常");
             });
-            
+
             throw new AssertionError("应该抛出异常");
-            
+
         } catch (RuntimeException e) {
             log.info("第一次操作：捕获到预期异常: {}", e.getMessage());
         }
-        
+
         // 验证第一次操作的数据已回滚
         long countAfterFirst = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("第一次操作的数据应该被回滚", 0, countAfterFirst);
+        assertEquals(0, countAfterFirst, "第一次操作的数据应该被回滚");
         log.info("验证通过：第一次操作已回滚");
-        
+
         // 第二次操作：正常执行
         DB.Tx.run(() -> {
-            DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 
+            DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                             2, "test2", 30);
             log.info("第二次操作：已插入数据 id=2");
         });
-        
+
         // 验证第二次操作成功
         long countAfterSecond = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("第二次操作应该成功", 1, countAfterSecond);
+        assertEquals(1, countAfterSecond, "第二次操作应该成功");
         log.info("验证通过：第二次操作成功，记录数 = 1");
-        
+
         // 验证数据内容
         ResultMap user = DB.Jdbc.select("SELECT * FROM tx_test_user WHERE id = ?", 2).queryOne();
-        assertNotNull("应该能查询到第二次操作的数据", user);
-        assertEquals("数据名称应该正确", "test2", user.getStr("name"));
-        
+        assertNotNull(user, "应该能查询到第二次操作的数据");
+        assertEquals("test2", user.getStr("name"), "数据名称应该正确");
+
         log.info("=== 测试完成：连接状态正常 ===");
     }
 
@@ -633,27 +629,27 @@ public class SpringTransactionIntegrationTest extends BaseDBTest {
     @Test
     public void testDataIsolation_BetweenTests() {
         log.info("=== 测试：数据隔离验证 ===");
-        
+
         // 验证测试开始时数据库为空
         long countBefore = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("测试开始时应该没有数据", 0, countBefore);
+        assertEquals(0, countBefore, "测试开始时应该没有数据");
         log.info("验证通过：测试开始时记录数 = 0");
-        
+
         // 插入测试数据
-        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 
+        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                         1, "isolation_test", 20);
         log.info("已插入测试数据 id=1");
-        
+
         // 验证数据已插入
         long countAfter = DB.Jdbc.select("SELECT COUNT(*) FROM tx_test_user").count();
-        assertEquals("数据应该已插入", 1, countAfter);
+        assertEquals(1, countAfter, "数据应该已插入");
         log.info("验证通过：插入后记录数 = 1");
-        
+
         // 验证数据内容
         ResultMap user = DB.Jdbc.select("SELECT * FROM tx_test_user WHERE id = ?", 1).queryOne();
-        assertNotNull("应该能查询到数据", user);
-        assertEquals("数据名称应该正确", "isolation_test", user.getStr("name"));
-        
+        assertNotNull(user, "应该能查询到数据");
+        assertEquals("isolation_test", user.getStr("name"), "数据名称应该正确");
+
         log.info("=== 测试完成：数据隔离正常（@After 方法将清理数据）===");
     }
 }

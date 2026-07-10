@@ -57,36 +57,12 @@ public class BaseDBTest {
     }
 
     @BeforeEach
-    public void before() {
+    public void beforeBase() {
         TraceUtil.setTraceId(this.getClass().getSimpleName());
     }
 
     @AfterEach
-    public void after() {
+    public void afterBase() {
         TraceUtil.clearTraceId();
-    }
-
-    private String clearSql(String sql) {
-        return sql.replaceAll("[\\s]+", " ").trim();
-    }
-
-    public void showSql(ISqlPara paraMap, String fn, String re) {
-        log.debug("-------------------  {}  -------------------", fn);
-        JdbcItem jdbcSql = paraMap.jdbcSql();
-        String runSqlByJdbc = SqlUtil.getRunSqlByJdbc(jdbcSql.sql, jdbcSql.paras).trim();
-        if (re == null) {
-            log.info(runSqlByJdbc);
-        } else if (clearSql(re).equalsIgnoreCase(clearSql(runSqlByJdbc))) {
-            log.info("ok:{}", runSqlByJdbc);
-        } else {
-            log.error("error:{}", runSqlByJdbc);
-            log.error("target:{}", re);
-            assert false;
-        }
-    }
-
-    public String toSql(AParaPojo wrapper) {
-        JdbcItem jdbcSql = wrapper.jdbcSql();
-        return SqlUtil.getRunSqlByJdbc(jdbcSql.sql, jdbcSql.paras).trim();
     }
 }

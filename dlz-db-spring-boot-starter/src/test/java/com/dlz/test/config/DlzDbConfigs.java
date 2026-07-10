@@ -1,4 +1,4 @@
-package com.dlz.test.db.config;
+package com.dlz.test.config;
 
 import com.dlz.db.spring.config.SpringDlzDbConfig;
 import com.dlz.db.spring.config.SpringDlzDbProperties;
@@ -23,6 +23,7 @@ public class DlzDbConfigs extends SpringDlzDbConfig {
      */
     @Bean
     public static BeanFactoryPostProcessor myBeanFactory1() {
+        log.info("init DlzDbConfigs");
         return beanFactory -> {
             File dir = new File("./test");
             if (!dir.exists()) {

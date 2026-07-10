@@ -49,7 +49,7 @@ public abstract class SqlHelper {
      */
     public void updateDefaultValue(String tableName, String columnName, String value){
         String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE `" + columnName + "` IS NULL";
-        Long count = DBHolder.getSqlExecutor().getFistColumn(sql, Long.class);
+        Long count = DBHolder.getSqlExecutor().getFirstColumn(sql, Long.class);
         if (count > 0) {
             sql = "UPDATE " + tableName + " SET `" + columnName + "` = ? WHERE `" + columnName + "` IS NULL";
             DBHolder.getSqlExecutor().update(sql, value);

@@ -99,8 +99,8 @@ public interface ISqlExecutor {
         return list.get(0);
     }
 
-    default <T> T getFistColumn(String sql, Class<T> requiredType, Object... args) {
-        return DbConvertUtil.getFistColumn(getOne(sql, false, args), requiredType);
+    default <T> T getFirstColumn(String sql, Class<T> requiredType, Object... args) {
+        return DbConvertUtil.getFirstColumn(getOne(sql, false, args), requiredType);
     }
     default int[] batch(String sql, List<Object[]> batchArgs) {
         return doDb(conn -> {

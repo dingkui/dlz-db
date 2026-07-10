@@ -57,6 +57,7 @@ public class DlzDbAdapter{
                         log.info("dlzHelper autoUpdate ...");
                         HelperScan.scan(sqlConfig.getHelper().getPackageName());
                     }
+                    log.info("dlzHelper init finish.");
                 }
             }
         }

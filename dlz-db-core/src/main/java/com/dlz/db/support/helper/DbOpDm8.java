@@ -84,7 +84,7 @@ public class DbOpDm8 extends SqlHelper {
 
         // 查询表注释
         String sql = "SELECT COMMENTS FROM ALL_TAB_COMMENTS WHERE OWNER = USER AND TABLE_NAME = ?";
-        tableInfo.setTableComment(DBHolder.getSqlExecutor().getFistColumn(sql, String.class, tableName.toUpperCase()));
+        tableInfo.setTableComment(DBHolder.getSqlExecutor().getFirstColumn(sql, String.class, tableName.toUpperCase()));
 
         // 查询主键信息
         sql = "SELECT COLUMN_NAME" +

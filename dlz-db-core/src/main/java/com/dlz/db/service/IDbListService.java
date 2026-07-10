@@ -39,7 +39,7 @@ public interface IDbListService extends IDbBaseService{
         return getBeanList(wrapper,wrapper.getBeanClass());
     }
     default long getCnt(IExecutorQuery paraMap) {
-        return doCnt(paraMap, jdbcSql -> getSqlExecutor().getFistColumn(jdbcSql.sql, Long.class, jdbcSql.paras));
+        return doCnt(paraMap, jdbcSql -> getSqlExecutor().getFirstColumn(jdbcSql.sql, Long.class, jdbcSql.paras));
     }
     /**
      * 取得分页数据

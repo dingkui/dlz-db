@@ -87,7 +87,7 @@ public class DbOpMysql extends SqlHelper {
         // 执行查询并获取结果
         TableInfo tableInfo = new TableInfo();
         tableInfo.setTableName(tableName);
-        tableInfo.setTableComment(DBHolder.getSqlExecutor().getFistColumn(sql, String.class, tableName));
+        tableInfo.setTableComment(DBHolder.getSqlExecutor().getFirstColumn(sql, String.class, tableName));
 
         // 获取主键信息
         // 构建查询主键的SQL语句

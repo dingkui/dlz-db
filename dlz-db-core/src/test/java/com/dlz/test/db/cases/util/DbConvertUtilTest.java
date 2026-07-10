@@ -116,56 +116,56 @@ class DbConvertUtilTest {
         assertNotNull(result);
     }
 
-    // ==================== getFistColumn ====================
+    // ==================== getFirstColumn ====================
 
     @Test
-    @DisplayName("getFistColumn - 正常返回第一个非特殊列")
-    void testGetFistColumn_Normal() {
+    @DisplayName("getFirstColumn - 正常返回第一个非特殊列")
+    void testGetFirstColumn_Normal() {
         ResultMap map = new ResultMap();
         map.put("id", 1);
-        Object result = DbConvertUtil.getFistColumn(map);
+        Object result = DbConvertUtil.getFirstColumn(map);
         assertEquals(1, result);
     }
 
     @Test
-    @DisplayName("getFistColumn - 跳过 ROWNUM_ 和 rownum 列")
-    void testGetFistColumn_SkipRownum() {
+    @DisplayName("getFirstColumn - 跳过 ROWNUM_ 和 rownum 列")
+    void testGetFirstColumn_SkipRownum() {
         ResultMap map = new ResultMap();
         map.put("ROWNUM_", 1);
         map.put("name", "test");
-        assertEquals("test", DbConvertUtil.getFistColumn(map));
+        assertEquals("test", DbConvertUtil.getFirstColumn(map));
     }
 
     @Test
-    @DisplayName("getFistColumn - null 返回 null")
-    void testGetFistColumn_Null() {
-        assertNull(DbConvertUtil.getFistColumn((ResultMap) null));
+    @DisplayName("getFirstColumn - null 返回 null")
+    void testGetFirstColumn_Null() {
+        assertNull(DbConvertUtil.getFirstColumn((ResultMap) null));
     }
 
     @Test
-    @DisplayName("getFistColumn - 只有 ROWNUM_ 列应返回 null（覆盖仅 rownum 分支）")
-    void testGetFistColumn_OnlyRownum() {
+    @DisplayName("getFirstColumn - 只有 ROWNUM_ 列应返回 null（覆盖仅 rownum 分支）")
+    void testGetFirstColumn_OnlyRownum() {
         ResultMap map = new ResultMap();
         map.put("ROWNUM_", 1);
-        assertNull(DbConvertUtil.getFistColumn(map));
+        assertNull(DbConvertUtil.getFirstColumn(map));
     }
 
-    // ==================== getFistColumn with type ====================
+    // ==================== getFirstColumn with type ====================
 
     @Test
-    @DisplayName("getFistColumn(Class) - 映射为 String")
-    void testGetFistColumnWithType_String() {
+    @DisplayName("getFirstColumn(Class) - 映射为 String")
+    void testGetFirstColumnWithType_String() {
         ResultMap map = new ResultMap();
         map.put("name", "test");
-        assertEquals("test", DbConvertUtil.getFistColumn(map, String.class));
+        assertEquals("test", DbConvertUtil.getFirstColumn(map, String.class));
     }
 
     @Test
-    @DisplayName("getFistColumn(Class) - 映射为 Integer")
-    void testGetFistColumnWithType_Integer() {
+    @DisplayName("getFirstColumn(Class) - 映射为 Integer")
+    void testGetFirstColumnWithType_Integer() {
         ResultMap map = new ResultMap();
         map.put("id", "123");
-        assertEquals(123, DbConvertUtil.getFistColumn(map, Integer.class));
+        assertEquals(123, DbConvertUtil.getFirstColumn(map, Integer.class));
     }
 
     // ==================== getColumnList ====================

@@ -23,6 +23,5 @@ import lombok.EqualsAndHashCode;
  * @since 7.0.0
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 public class SolonDbProperties extends DlzDbProperties {
 }
