@@ -2,16 +2,14 @@ package com.dlz.db.convertor.columnname;
 
 import java.util.Locale;
 
-public class ColumnNameToUper implements IColumnNameConvertor {
-
-
+public class NameConvertToUper implements INameConverter {
 	@Override
 	public String toFieldName(String dbKey) {
 		return dbKey.toUpperCase(Locale.ROOT);
 	}
 
 	@Override
-	public String toDbColumnName(String beanKey) {
-		return beanKey;
+	public String toDbName(String beanKey) {
+		return beanKey.toLowerCase(Locale.ROOT);
 	}
 }

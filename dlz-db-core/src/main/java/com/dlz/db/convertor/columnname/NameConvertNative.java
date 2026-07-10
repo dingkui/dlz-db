@@ -1,6 +1,6 @@
 package com.dlz.db.convertor.columnname;
 
-public class ColumnNameNative implements IColumnNameConvertor {
+public class NameConvertNative implements INameConverter {
 
 	@Override
 	public String toFieldName(String dbKey) {
@@ -8,7 +8,7 @@ public class ColumnNameNative implements IColumnNameConvertor {
 	}
 
 	@Override
-	public String toDbColumnName(String beanKey) {
+	public String toDbName(String beanKey) {
 		return beanKey;
 	}
 }

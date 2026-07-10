@@ -34,14 +34,14 @@ public class SolonCompatibilityService {
 
     @Tran
     public List<User> solonTranQuery(String namePrefix) {
-        return DB.Pojo.selectW(User.class)
+        return DB.Pojo.select(User.class)
                 .like(User::getName, namePrefix)
                 .queryBeanList();
     }
 
     @Tran
     public void solonTranUpdate(Long userId, String newName) {
-        DB.Pojo.updateW(User.class)
+        DB.Pojo.update(User.class)
                 .set(User::getName, newName)
                 .eq(User::getId, userId)
                 .execute();
@@ -49,7 +49,7 @@ public class SolonCompatibilityService {
 
     @Tran
     public void solonTranDelete(Long userId) {
-        DB.Pojo.deleteW(User.class)
+        DB.Pojo.delete(User.class)
                 .eq(User::getId, userId)
                 .execute();
     }
@@ -106,10 +106,10 @@ public class SolonCompatibilityService {
     }
 
     private void doTransfer(String fromName, String toName, int amount) {
-        User fromUser = DB.Pojo.selectW(User.class)
+        User fromUser = DB.Pojo.select(User.class)
                 .eq(User::getName, fromName)
                 .queryBean();
-        User toUser = DB.Pojo.selectW(User.class)
+        User toUser = DB.Pojo.select(User.class)
                 .eq(User::getName, toName)
                 .queryBean();
 
@@ -123,12 +123,12 @@ public class SolonCompatibilityService {
             throw new RuntimeException("单笔转账金额不能超过100");
         }
 
-        DB.Pojo.updateW(User.class)
+        DB.Pojo.update(User.class)
                 .set(User::getAge, fromUser.getAge() - amount)
                 .eq(User::getName, fromName)
                 .execute();
 
-        DB.Pojo.updateW(User.class)
+        DB.Pojo.update(User.class)
                 .set(User::getAge, toUser.getAge() + amount)
                 .eq(User::getName, toName)
                 .execute();
@@ -156,6 +156,6 @@ public class SolonCompatibilityService {
         user.setName(name);
         user.setAge(age);
         user.setEmail(email);
-        DB.Pojo.insert(user);
+        DB.Pojo.add(user);
     }
 }

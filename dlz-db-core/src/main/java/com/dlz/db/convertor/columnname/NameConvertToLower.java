@@ -2,7 +2,7 @@ package com.dlz.db.convertor.columnname;
 
 import java.util.Locale;
 
-public class ColumnNameToLower implements IColumnNameConvertor {
+public class NameConvertToLower implements INameConverter {
 
 	@Override
 	public String toFieldName(String dbKey) {
@@ -10,7 +10,7 @@ public class ColumnNameToLower implements IColumnNameConvertor {
 	}
 
 	@Override
-	public String toDbColumnName(String beanKey) {
-		return beanKey;
+	public String toDbName(String beanKey) {
+		return beanKey.toLowerCase(Locale.ROOT);
 	}
 }

@@ -63,7 +63,7 @@ public class SolonTxTestService {
         user.setName("返回值测试用户");
         user.setAge(25);
         user.setEmail("ret@example.com");
-        DB.Pojo.insert(user);
+        DB.Pojo.add(user);
         return user.getId();
     }
 
@@ -76,14 +76,14 @@ public class SolonTxTestService {
 
     @Tran
     public List<User> testReadOnlyQuery(String namePrefix) {
-        return DB.Pojo.selectW(User.class)
+        return DB.Pojo.select(User.class)
                 .like(User::getName, namePrefix)
                 .queryBeanList();
     }
 
     @Tran
     public void testUpdateTransaction(Long userId, String newName, int newAge) {
-        DB.Pojo.updateW(User.class)
+        DB.Pojo.update(User.class)
                 .set(User::getName, newName)
                 .set(User::getAge, newAge)
                 .eq(User::getId, userId)
@@ -92,17 +92,17 @@ public class SolonTxTestService {
 
     @Tran
     public void testDeleteTransaction(Long userId) {
-        DB.Pojo.deleteW(User.class)
+        DB.Pojo.delete(User.class)
                 .eq(User::getId, userId)
                 .execute();
     }
 
     @Tran
     public void testTransfer(String fromName, String toName, int amount) {
-        User fromUser = DB.Pojo.selectW(User.class)
+        User fromUser = DB.Pojo.select(User.class)
                 .eq(User::getName, fromName)
                 .queryBean();
-        User toUser = DB.Pojo.selectW(User.class)
+        User toUser = DB.Pojo.select(User.class)
                 .eq(User::getName, toName)
                 .queryBean();
 
@@ -116,12 +116,12 @@ public class SolonTxTestService {
             throw new RuntimeException("单笔转账金额不能超过100");
         }
 
-        DB.Pojo.updateW(User.class)
+        DB.Pojo.update(User.class)
                 .set(User::getAge, fromUser.getAge() - amount)
                 .eq(User::getName, fromName)
                 .execute();
 
-        DB.Pojo.updateW(User.class)
+        DB.Pojo.update(User.class)
                 .set(User::getAge, toUser.getAge() + amount)
                 .eq(User::getName, toName)
                 .execute();
@@ -137,6 +137,6 @@ public class SolonTxTestService {
         user.setName(name);
         user.setAge(age);
         user.setEmail(email);
-        DB.Pojo.insert(user);
+        DB.Pojo.add(user);
     }
 }

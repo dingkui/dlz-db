@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.convertor.columnname.ColumnNameCamel;
+import com.dlz.db.convertor.columnname.NameConvertCamel;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.JdbcSelect;
@@ -215,7 +215,7 @@ class ISqlPageTest {
         // 这个方法主要测试 convert 不会影响分页设置
         JdbcSelect result = query
                 .page(1, 10)
-                .convert(new ColumnNameCamel());
+                .convert(new NameConvertCamel());
         
         assertNotNull(result, "返回值不应为 null");
         

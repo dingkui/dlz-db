@@ -388,11 +388,11 @@ DB.Pojo.select(User.class)
 
 | 变更 | 旧 API (7.0.x) | 新 API (7.1.0) | 说明 |
 |------|----------------|----------------|------|
-| **DbPojo 方法重命名** | `DB.Pojo.select(User.class)` | `DB.Pojo.selectW(User.class)` | `select` / `delete` / `update` → `selectW` / `deleteW` / `updateW` |
-| | `DB.Pojo.select(conditionBean)` | 移除 | 请改用 `selectW(Class)` + 条件链 |
+| **DbPojo 方法重命名** | `DB.Pojo.select(User.class)` | `DB.Pojo.select(User.class)` | `select` / `delete` / `update` → `select` / `delete` / `updateW` |
+| | `DB.Pojo.select(conditionBean)` | 移除 | 请改用 `select(Class)` + 条件链 |
 | | `DB.Pojo.delete(conditionBean)` | 移除 | 同上 |
-| | `DB.Pojo.update(Class)` | `DB.Pojo.updateW(Class)` | 同上 |
-| **DbTable 方法重命名** | `DB.Table.select("user")` | `DB.Table.selectW("user")` | `select` / `insert` / `delete` / `update` → `selectW` / `insertW` / `deleteW` / `updateW` |
+| | `DB.Pojo.update(Class)` | `DB.Pojo.update(Class)` | 同上 |
+| **DbTable 方法重命名** | `DB.Table.select("user")` | `DB.Table.select("user")` | `select` / `insert` / `delete` / `update` → `select` / `insertW` / `delete` / `updateW` |
 | **DbBatch 方法重命名** | `DB.Batch.insert(list)` | `DB.Batch.pojoInsert(list)` | 区分 Pojo / Table / Jdbc 三种模式 |
 | | `DB.Batch.update(list)` | `DB.Batch.pojoUpdate(list)` | 同上 |
 | | — | `DB.Batch.tableInsert/tableUpdate/jdbcExecute` | 新增 Table/Jdbc 批量 API |
@@ -412,7 +412,7 @@ DB.Pojo.select(User.class)
 - `NativeJdbcSupport.java`（已废弃两年）
 - `DbJdbc.insert/update/delete`（统一为 `execute`）
 - `DbSql.insert/update/delete`（统一为 `execute`）
-- `DbPojo.select(conditionBean)` / `delete(conditionBean)`（重命名为 `selectW/deleteW`）
+- `DbPojo.select(conditionBean)` / `delete(conditionBean)`（重命名为 `select/delete`）
 - `SqlHelper.getTableIndexs()`（未使用，替代方案为 JDBC `DatabaseMetaData.getIndexInfo()`）
 - 测试用废弃实体类：`Department` / `GoodsPrice` / `Room` / `Smoke` / `Vip`
 

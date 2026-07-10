@@ -1,6 +1,7 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.ColumnNameNative;
+import com.dlz.db.convertor.columnname.NameConvertNative;
+import com.dlz.db.convertor.columnname.INameConverter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("ColumnNameNative 原生列名转换测试")
 class ColumnNameNativeTest {
 
-    private final ColumnNameNative convertor = new ColumnNameNative();
+    private final NameConvertNative convertor = new NameConvertNative();
 
     @Test
     @DisplayName("toFieldName - 原样返回")
@@ -21,15 +22,15 @@ class ColumnNameNativeTest {
 
     @Test
     @DisplayName("toDbColumnName - 原样返回")
-    void testToDbColumnName() {
-        assertEquals("userName", convertor.toDbColumnName("userName"));
-        assertEquals("ID", convertor.toDbColumnName("ID"));
-        assertEquals("", convertor.toDbColumnName(""));
+    void testToDbName() {
+        assertEquals("userName", convertor.toDbName("userName"));
+        assertEquals("ID", convertor.toDbName("ID"));
+        assertEquals("", convertor.toDbName(""));
     }
 
     @Test
     @DisplayName("实现IColumnNameConvertor接口")
     void testImplementsInterface() {
-        assertTrue(convertor instanceof com.dlz.db.convertor.columnname.IColumnNameConvertor);
+        assertTrue(convertor instanceof INameConverter);
     }
 }

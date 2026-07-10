@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.support;
 
-import com.dlz.db.convertor.columnname.IColumnNameConvertor;
+import com.dlz.db.convertor.columnname.INameConverter;
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.ds.DataSourceConfig;
@@ -60,27 +60,27 @@ class SqlRunThreadHolderTest {
     @Test
     @DisplayName("ColumnNameConvertor - 未设置时返回默认值")
     void testColumnNameConvertorDefault() {
-        IColumnNameConvertor defaultConvertor = new IColumnNameConvertor() {
+        INameConverter defaultConvertor = new INameConverter() {
             @Override public String toFieldName(String dbKey) { return dbKey; }
-            @Override public String toDbColumnName(String beanKey) { return beanKey; }
+            @Override public String toDbName(String beanKey) { return beanKey; }
         };
-        IColumnNameConvertor result = SqlRunThreadHolder.getColumnNameConvertor(defaultConvertor);
+        INameConverter result = SqlRunThreadHolder.getColumnNameConvertor(defaultConvertor);
         assertSame(defaultConvertor, result);
     }
 
     @Test
     @DisplayName("ColumnNameConvertor - set/remove")
     void testColumnNameConvertorSetRemove() {
-        IColumnNameConvertor convertor = new IColumnNameConvertor() {
+        INameConverter convertor = new INameConverter() {
             @Override public String toFieldName(String dbKey) { return dbKey; }
-            @Override public String toDbColumnName(String beanKey) { return beanKey; }
+            @Override public String toDbName(String beanKey) { return beanKey; }
         };
         SqlRunThreadHolder.setColumnNameConvertor(convertor);
         SqlRunThreadHolder.removeColumnNameConvertor();
         // After remove, should return default
-        IColumnNameConvertor def = new IColumnNameConvertor() {
+        INameConverter def = new INameConverter() {
             @Override public String toFieldName(String dbKey) { return "def"; }
-            @Override public String toDbColumnName(String beanKey) { return "def"; }
+            @Override public String toDbName(String beanKey) { return "def"; }
         };
         assertSame(def, SqlRunThreadHolder.getColumnNameConvertor(def));
     }

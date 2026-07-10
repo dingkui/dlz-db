@@ -89,6 +89,6 @@ public class SolonPropagationService {
         user.setName(name);
         user.setAge(age);
         user.setEmail(email);
-        DB.Pojo.insert(user);
+        DB.Pojo.add(user);
     }
 }

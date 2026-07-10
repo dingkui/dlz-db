@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.util;
 
-import com.dlz.db.convertor.columnname.ColumnNameCamel;
+import com.dlz.db.convertor.columnname.NameConvertCamel;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ class DbConvertUtilTest {
 
     @BeforeEach
     void setUp() {
-        DbConvertUtil.defaultColumnMapper = new ColumnNameCamel();
+        DbConvertUtil.defaultColumnMapper = new NameConvertCamel();
     }
 
     // ==================== toFieldName ====================

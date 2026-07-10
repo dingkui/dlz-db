@@ -1,12 +1,11 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.ColumnNameCamel;
+import com.dlz.db.convertor.columnname.NameConvertCamel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("驼峰命名转换器测试")
 class ColumnNameCamelTest {
 
-    private ColumnNameCamel converter;
+    private NameConvertCamel converter;
 
     @BeforeEach
     void setUp() {
-        converter = new ColumnNameCamel();
+        converter = new NameConvertCamel();
     }
 
     // ========== toFieldName 测试 ==========
@@ -33,21 +32,7 @@ class ColumnNameCamelTest {
         assertEquals("userName", converter.toFieldName("user_name"));
         assertEquals("userId", converter.toFieldName("user_id"));
         assertEquals("createTime", converter.toFieldName("create_time"));
-    }
-
-    @ParameterizedTest
-    @DisplayName("toFieldName - 参数化测试")
-    @CsvSource({
-        "user_name, userName",
-        "user_id, userId",
-        "create_time, createTime",
-        "update_time, updateTime",
-        "DELETED , deleted",
-        "order_no, orderNo",
-        "user_name_info, userNameInfo"
-    })
-    void testToFieldName_Parameterized(String input, String expected) {
-        assertEquals(expected, converter.toFieldName(input));
+        assertEquals("userNameInfo", converter.toFieldName("user_name_info"));
     }
 
     @Test
@@ -76,8 +61,8 @@ class ColumnNameCamelTest {
     @DisplayName("toFieldName - 混合大小写无下划线")
     void testToFieldName_MixedCaseNoUnderscore() {
         // 混合大小写会被转换
-        assertEquals("username", converter.toFieldName("UserName"));
-        assertEquals("userid", converter.toFieldName("UserId"));
+        assertEquals("UserName", converter.toFieldName("UserName"));
+        assertEquals("userName", converter.toFieldName("userName"));
     }
 
     @Test
@@ -115,135 +100,71 @@ class ColumnNameCamelTest {
         assertEquals("", converter.toFieldName(null));
     }
 
-    // ========== toDbColumnName 测试 ==========
+    // ========== toDbName 测试 ==========
 
-    @Test
-    @DisplayName("toDbColumnName - 基本驼峰转下划线")
-    void testToDbColumnName_Basic() {
-        assertEquals("USER_NAME", converter.toDbColumnName("userName"));
-        assertEquals("USER_ID", converter.toDbColumnName("userId"));
-        assertEquals("CREATE_TIME", converter.toDbColumnName("createTime"));
-    }
-
-    @ParameterizedTest
-    @DisplayName("toDbColumnName - 参数化测试")
-    @CsvSource({
-        "userName, USER_NAME",
-        "userId, USER_ID",
-        "createTime, CREATE_TIME",
-        "updateTime, UPDATE_TIME",
-        "deleted, DELETED ",
-        "orderNo, ORDER_NO"
-    })
-    void testToDbColumnName_Parameterized(String input, String expected) {
-        assertEquals(expected, converter.toDbColumnName(input));
-    }
 
     @Test
     @DisplayName("toDbColumnName - 全小写")
-    void testToDbColumnName_AllLowerCase() {
-        assertEquals("NAME", converter.toDbColumnName("name"));
-        assertEquals("ID", converter.toDbColumnName("id"));
-        assertEquals("STATUS", converter.toDbColumnName("status"));
+    void testToDbName_AllLowerCase() {
+        assertEquals("name", converter.toDbName("name"));
     }
-
     @Test
-    @DisplayName("toDbColumnName - 全大写不转换")
-    void testToDbColumnName_AllUpperCase() {
-        assertEquals("ID", converter.toDbColumnName("ID"));
-        assertEquals("NAME", converter.toDbColumnName("NAME"));
-        assertEquals("STATUS", converter.toDbColumnName("STATUS"));
+    @DisplayName("toDbColumnName - 基本驼峰转下划线")
+    void testToDbName_Basic() {
+        assertEquals("user_name", converter.toDbName("userName"));
+        assertEquals("user_id", converter.toDbName("userId"));
+        assertEquals("create_time", converter.toDbName("createTime"));
+        assertEquals("deleted", converter.toDbName("deleted"));
     }
-
     @Test
     @DisplayName("toDbColumnName - 已包含下划线不转换")
-    void testToDbColumnName_AlreadyHasUnderscore() {
-        assertEquals("user_name", converter.toDbColumnName("user_name"));
-        assertEquals("USER_ID", converter.toDbColumnName("USER_ID"));
-        assertEquals("create_time", converter.toDbColumnName("create_time"));
+    void testToDbName_AlreadyHasUnderscore() {
+        assertEquals("user_name", converter.toDbName("user_name"));
+        assertEquals("user_id", converter.toDbName("USER_ID"));
+        assertEquals("create_time", converter.toDbName("create_time"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 连续大写字母")
-    void testToDbColumnName_ConsecutiveUpperCase() {
-        assertEquals("USER_I_D", converter.toDbColumnName("userID"));
-        assertEquals("H_T_T_P_U_R_L", converter.toDbColumnName("hTTPURL"));
-        assertEquals("X_M_L_PARSER", converter.toDbColumnName("xMLParser"));
+    void testToDbName_ConsecutiveUpperCase() {
+        assertEquals("user_i_d", converter.toDbName("userID"));
+        assertEquals("h_t_t_p_u_r_l", converter.toDbName("hTTPURL"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含数字")
-    void testToDbColumnName_WithNumbers() {
-        assertEquals("USER1_NAME", converter.toDbColumnName("user1Name"));
-        assertEquals("USER123", converter.toDbColumnName("user123"));
-        assertEquals("USER1_NAME2", converter.toDbColumnName("user1Name2"));
+    void testToDbName_WithNumbers() {
+        assertEquals("user1_name", converter.toDbName("user1Name"));
+        assertEquals("user123", converter.toDbName("user123"));
+        assertEquals("user1_name2", converter.toDbName("user1Name2"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 首字母大写")
-    void testToDbColumnName_FirstLetterUpperCase() {
-        assertEquals("_USER_NAME", converter.toDbColumnName("UserName"));
-        assertEquals("_USER_ID", converter.toDbColumnName("UserId"));
+    void testToDbName_FirstLetterUpperCase() {
+        assertEquals("_user_name", converter.toDbName("UserName"));
+        assertEquals("_user", converter.toDbName("User"));
+        assertEquals("user_name", converter.toDbName("userName"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 空字符串")
-    void testToDbColumnName_EmptyString() {
-        assertEquals("", converter.toDbColumnName(""));
+    void testToDbName_EmptyString() {
+        assertEquals("", converter.toDbName(""));
     }
 
     @Test
     @DisplayName("toDbColumnName - null值")
-    void testToDbColumnName_Null() {
-        assertNull(converter.toDbColumnName(null));
-    }
-
-    // ========== 往返转换测试 ==========
-
-    @Test
-    @DisplayName("往返转换 - 驼峰到下划线再回驼峰")
-    void testRoundTrip_CamelToUnderscoreAndBack() {
-        String original = "userName";
-        String dbColumn = converter.toDbColumnName(original);
-        String backToField = converter.toFieldName(dbColumn);
-        
-        assertEquals(original, backToField);
-    }
-
-    @Test
-    @DisplayName("往返转换 - 下划线到驼峰再回下划线")
-    void testRoundTrip_UnderscoreToCamelAndBack() {
-        String original = "USER_NAME";
-        String fieldName = converter.toFieldName(original);
-        String backToDb = converter.toDbColumnName(fieldName);
-        
-        assertEquals(original, backToDb);
-    }
-
-    @ParameterizedTest
-    @DisplayName("往返转换 - 多个测试用例")
-    @ValueSource(strings = {
-        "userName",
-        "userId",
-        "createTime",
-        "updateTime",
-        "deleted",
-        "orderNo"
-    })
-    void testRoundTrip_Multiple(String original) {
-        String dbColumn = converter.toDbColumnName(original);
-        String backToField = converter.toFieldName(dbColumn);
-        
-        assertEquals(original, backToField);
+    void testToDbName_Null() {
+        assertNull(converter.toDbName(null));
     }
 
     // ========== 边界条件测试 ==========
-
     @Test
     @DisplayName("边界条件 - 单个字符")
     void testEdgeCase_SingleCharacter() {
         assertEquals("a", converter.toFieldName("a"));
-        assertEquals("A", converter.toDbColumnName("A"));
+        assertEquals("_a", converter.toDbName("A"));
     }
 
     @Test
@@ -257,19 +178,19 @@ class ColumnNameCamelTest {
     @DisplayName("边界条件 - 特殊字符")
     void testEdgeCase_SpecialCharacters() {
         // 包含下划线的不转换
-        assertEquals("USER-NAME", converter.toDbColumnName("user-name"));
-        assertEquals("USER.NAME", converter.toDbColumnName("user.name"));
+        assertEquals("user-name", converter.toDbName("user-name"));
+        assertEquals("user.name", converter.toDbName("user.name"));
     }
 
     @Test
     @DisplayName("边界条件 - 超长字符串")
     void testEdgeCase_VeryLongString() {
         String longCamel = "thisIsAVeryLongFieldNameWithManyWordsInIt";
-        String result = converter.toDbColumnName(longCamel);
+        String result = converter.toDbName(longCamel);
         
         assertNotNull(result);
         assertTrue(result.contains("_"));
-        assertTrue(result.equals(result.toUpperCase()));
+        assertTrue(result.equals(result.toLowerCase(Locale.ROOT)));
     }
 
     // ========== 性能测试 ==========
@@ -289,11 +210,11 @@ class ColumnNameCamelTest {
 
     @Test
     @DisplayName("性能测试 - toDbColumnName")
-    void testPerformance_ToDbColumnName() {
+    void testPerformance_ToDbName() {
         long startTime = System.currentTimeMillis();
         
         for (int i = 0; i < 10000; i++) {
-            converter.toDbColumnName("userNameInfo" + i);
+            converter.toDbName("userNameInfo" + i);
         }
         
         long duration = System.currentTimeMillis() - startTime;

@@ -1,8 +1,8 @@
 package com.dlz.db.inf;
 
-import com.dlz.db.convertor.columnname.ColumnNameNative;
-import com.dlz.db.convertor.columnname.ColumnNameToLower;
-import com.dlz.db.convertor.columnname.ColumnNameToUper;
+import com.dlz.db.convertor.columnname.NameConvertNative;
+import com.dlz.db.convertor.columnname.NameConvertToLower;
+import com.dlz.db.convertor.columnname.NameConvertToUper;
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
@@ -40,17 +40,17 @@ public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,ICh
     }
 
     default ME convertNative() {
-        SqlRunThreadHolder.setConvertorToFieldName(new ColumnNameNative());
+        SqlRunThreadHolder.setConvertorToFieldName(new NameConvertNative());
         return me();
     }
 
     default ME convertUpper() {
-        SqlRunThreadHolder.setConvertorToFieldName(new ColumnNameToUper());
+        SqlRunThreadHolder.setConvertorToFieldName(new NameConvertToUper());
         return me();
     }
 
     default ME convertLower() {
-        SqlRunThreadHolder.setConvertorToFieldName(new ColumnNameToLower());
+        SqlRunThreadHolder.setConvertorToFieldName(new NameConvertToLower());
         return me();
     }
 

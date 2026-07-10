@@ -1,7 +1,7 @@
 package com.dlz.db.util;
 
-import com.dlz.db.convertor.columnname.ColumnNameCamel;
-import com.dlz.db.convertor.columnname.IColumnNameConvertor;
+import com.dlz.db.convertor.columnname.NameConvertCamel;
+import com.dlz.db.convertor.columnname.INameConverter;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.convertor.dbtype.TableColumnMapper;
 import com.dlz.db.modal.dto.ResultMap;
@@ -9,7 +9,6 @@ import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.kit.util.ValUtil;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +26,7 @@ public class DbConvertUtil {
     /**
      * 数据库字段名转换器
      */
-    public static IColumnNameConvertor defaultColumnMapper = new ColumnNameCamel();
+    public static INameConverter defaultColumnMapper = new NameConvertCamel();
 
     /**
      * 将值转换成数据库字段对应的数据类型。
@@ -101,7 +100,7 @@ public class DbConvertUtil {
         if(beanKey==null || beanKey.isEmpty()){
             return beanKey;
         }
-        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey);
+        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbName(beanKey);
     }
 
     /**
@@ -110,6 +109,6 @@ public class DbConvertUtil {
      * @param beanKey
      */
     public static String toDbColumnNames(String beanKey) {
-        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbColumnName(beanKey.replaceAll("\\s+", " "));
+        return SqlRunThreadHolder.getColumnNameConvertor(defaultColumnMapper).toDbName(beanKey.replaceAll("\\s+", " "));
     }
 }

@@ -171,7 +171,7 @@ public class SolonTxPropagationTest extends BaseDBTest {
     }
 
     private long countByName(String name) {
-        return DB.Pojo.selectW(User.class)
+        return DB.Pojo.select(User.class)
                 .eq(User::getName, name)
                 .count();
     }

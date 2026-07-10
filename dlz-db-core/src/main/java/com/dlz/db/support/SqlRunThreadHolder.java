@@ -1,6 +1,6 @@
 package com.dlz.db.support;
 
-import com.dlz.db.convertor.columnname.IColumnNameConvertor;
+import com.dlz.db.convertor.columnname.INameConverter;
 import com.dlz.db.convertor.columnname.IConvertorToFieldName;
 import com.dlz.db.convertor.dbtype.ITableColumnMapper;
 import com.dlz.db.ds.DataSourceConfig;
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SqlRunThreadHolder {
     public static final ThreadLocal<DataSourceConfig> HOLDER_config = new ThreadLocal<>();
     public static final ThreadLocal<IConvertorToFieldName> HOLDER_ConvertorToFieldName = new ThreadLocal<>();
-    public static final ThreadLocal<IColumnNameConvertor> HOLDER_ColumnNameConvertor = new ThreadLocal<>();
+    public static final ThreadLocal<INameConverter> HOLDER_ColumnNameConvertor = new ThreadLocal<>();
     public static final ThreadLocal<ITableColumnMapper> HOLDER_TableColumnMapper = new ThreadLocal<>();
     public static final ThreadLocal<Boolean> HOLDER_IgnoreLogicDelete = new ThreadLocal<>();
     public static DataSourceConfig getConfig() {
@@ -40,15 +40,15 @@ public class SqlRunThreadHolder {
     public static void removeConvertorToFieldName() {
         HOLDER_ConvertorToFieldName.remove();
     }
-    public static IColumnNameConvertor getColumnNameConvertor(IColumnNameConvertor defaultColumnNameConvertor) {
-        final IColumnNameConvertor iColumnNameConvertor = HOLDER_ColumnNameConvertor.get();
+    public static INameConverter getColumnNameConvertor(INameConverter defaultColumnNameConvertor) {
+        final INameConverter iColumnNameConvertor = HOLDER_ColumnNameConvertor.get();
         if(iColumnNameConvertor == null){
             HOLDER_ColumnNameConvertor.set(defaultColumnNameConvertor);
             return defaultColumnNameConvertor;
         }
         return iColumnNameConvertor;
     }
-    public static void setColumnNameConvertor(IColumnNameConvertor convertor) {
+    public static void setColumnNameConvertor(INameConverter convertor) {
         HOLDER_ColumnNameConvertor.set(convertor);
     }
     public static void removeColumnNameConvertor() {

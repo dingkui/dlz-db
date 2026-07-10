@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.ColumnNameCamel;
+import com.dlz.db.convertor.columnname.NameConvertCamel;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
@@ -43,7 +43,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         List<ResultMap> results = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(2)
-                .convert(new ColumnNameCamel())
+                .convert(new NameConvertCamel())
                 .queryList();
         
         assertNotNull("查询结果不应为 null", results);
@@ -123,7 +123,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertNative()  // 第一次设置
-                .convert(new ColumnNameCamel())  // 第二次覆盖
+                .convert(new NameConvertCamel())  // 第二次覆盖
                 .queryList();
         
         assertNotNull("查询结果不应为 null", results);
@@ -170,7 +170,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         Page<ResultMap> page = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .page(1, 5)
-                .convert(new ColumnNameCamel())
+                .convert(new NameConvertCamel())
                 .queryPage();
         
         assertNotNull("分页结果不应为 null", page);
@@ -201,7 +201,7 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         List<ResultMap> camelResults = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
-                .convert(new ColumnNameCamel())
+                .convert(new NameConvertCamel())
                 .queryList();
         
         // 使用大写转换器
