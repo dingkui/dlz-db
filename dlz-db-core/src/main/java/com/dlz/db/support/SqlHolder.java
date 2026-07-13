@@ -12,7 +12,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +28,6 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 public class SqlHolder {
-    private final static String STR_SQL_FILE = "file:";
     // 通用的sql
     static final Map<String, String> m_comm_sql = new ConcurrentHashMap<>();
     // 方言sql
@@ -42,27 +42,6 @@ public class SqlHolder {
 
     public static void init() {
         load();
-    }
-
-
-    private static void readSqlPath(File file) {
-        try {
-            if (file.isDirectory()) {
-                File[] files = file.listFiles();
-                for (File fi : files) {
-                    readSqlPath(fi);
-                }
-            } else {
-                if (file.getAbsolutePath().endsWith(".sql")) {
-                    log.info(file.getPath());
-                    readSqlXml(new FileInputStream(file));
-                }
-            }
-        } catch (FileNotFoundException e) {
-            log.error(ExceptionUtils.getStackTrace(file.getAbsolutePath() + " 文件找不到！",e));
-        } catch (Exception e) {
-            log.error(ExceptionUtils.getStackTrace(file.getAbsolutePath() + " 加载异常！",e));
-        }
     }
 
     private static void readSqlXml(InputStream is) {
@@ -140,12 +119,6 @@ public class SqlHolder {
             log.error(ExceptionUtils.getStackTrace(e));
         }
         DBHolder.getSqlConfig().getSqllist().forEach(name->{
-            if (name.startsWith(STR_SQL_FILE)) {
-                final String sqlRoot = SqlHolder.class.getClassLoader().getResource("sql/").getPath();
-                String path = name.substring(STR_SQL_FILE.length());
-                readSqlPath(new File(sqlRoot + path));
-                return;
-            }
             try {
                 loadResources(name);
             } catch (Exception e) {
