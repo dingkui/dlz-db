@@ -19,39 +19,40 @@ public class DbPojo {
         return PojoQuery.wrapper(re);
     }
     public <T> PojoQuery<T> select(Class<T> re, DlzFn<T, ?>... columns) {
-        return new PojoQuery(re).select(columns);
+        return new PojoQuery<>(re).select(columns);
     }
     public <T> PojoDelete<T> delete(Class<T> beanClass) {
-        return new PojoDelete(beanClass);
+        return new PojoDelete<>(beanClass);
     }
 
     /**
-     *  默认忽略空字段
-     * @param value
-     * @param <T>
+     * 默认忽略空字段
+     * @param value 要更新的实体
+     * @param <T>   实体类型
      */
+    @SuppressWarnings("unchecked")
     public <T> PojoUpdate<T> update(T value) {
         if (value == null) {
             return null;
         }
-        final Class<?> aClass = value.getClass();
-
-
-        return new PojoUpdate(aClass).set(value);
+        final Class<T> aClass = (Class<T>) value.getClass();
+        return new PojoUpdate<>(aClass).set(value);
     }
     /**
-     *  完整更新（包含空字段）
-     * @param value
-     * @param <T>
+     * 完整更新（包含空字段）
+     * @param value 要更新的实体
+     * @param <T>   实体类型
      */
+    @SuppressWarnings("unchecked")
     public <T> PojoUpdate<T> updateIntact(T value) {
-        return new PojoUpdate(value.getClass()).ignore((name, val) -> false).set(value);
+        return new PojoUpdate<>((Class<T>) value.getClass()).ignore((name, val) -> false).set(value);
     }
     public <T> PojoUpdate<T> update(Class<T> beanClass) {
-        return new PojoUpdate(beanClass);
+        return new PojoUpdate<>(beanClass);
     }
+    @SuppressWarnings("unchecked")
     public <T> PojoInsert<T> insert(T value) {
-        return new PojoInsert(value.getClass()).value(value);
+        return new PojoInsert<>((Class<T>) value.getClass()).value(value);
     }
 
     //以下都是直接操作执行

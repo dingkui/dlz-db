@@ -62,15 +62,12 @@ public class PojoCache {
 
             if (StringUtils.isEmpty(columnName)) {
                 TableField name = field.getAnnotation(TableField.class);
-                if (name != null && name.exist()) {
-                    columnName = name.value();
-                }
-            }
-            if (StringUtils.isEmpty(columnName)) {
-                TableField name = field.getAnnotation(TableField.class);
                 if (name != null) {
                     if (name.exist() && StringUtils.isNotEmpty(name.value())) {
                         columnName = name.value();
+                    } else if (!name.exist()) {
+                        // exist=false 表示该字段不对应数据库列，返回空串让上层过滤
+                        columnName = "";
                     }
                 } else {
                     if (ValUtil.toBoolean(AnnoProxies.MybatisPlusTableField.exist(field), true)) {

@@ -1,6 +1,5 @@
 package com.dlz.db.modal.dto;
 
-import com.dlz.db.exception.DbException;
 import com.dlz.db.inf.IChained;
 import com.dlz.db.util.DbConvertUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Getter

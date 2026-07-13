@@ -126,20 +126,20 @@ public class DbPlugin {
         return logicDeleteInterceptor.doLogicDelete(maker);
     }
     /**
+     * 获取指定表的逻辑删除字段（Bean Field 形式）。
+     * <p>若未注册 {@link LogicDeleteInterceptor} 或表不含逻辑删除字段，则返回 null。
      */
     public static Field getLogicDeleteField(String tableName, Class<?> beanClass) {
-        // 调用插件：逻辑删除/租户 等自动注入插入字段
-        // 调用插件链：逻辑删除插件会在此将 DELETE 改写为 UPDATE deleted=1
         if(logicDeleteInterceptor == null){
             return null;
         }
         return logicDeleteInterceptor.getLogicDeleteField(tableName, beanClass);
     }
     /**
+     * 获取指定表的逻辑删除字段名（字符串形式）。
+     * <p>若未注册 {@link LogicDeleteInterceptor} 或表不含逻辑删除字段，则返回 null。
      */
     public static String getLogicDeleteField(String tableName) {
-        // 调用插件：逻辑删除/租户 等自动注入插入字段
-        // 调用插件链：逻辑删除插件会在此将 DELETE 改写为 UPDATE deleted=1
         if(logicDeleteInterceptor == null){
             return null;
         }
