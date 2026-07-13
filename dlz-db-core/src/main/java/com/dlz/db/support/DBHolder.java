@@ -4,7 +4,6 @@ import com.dlz.db.core.*;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.interceptor.LogicDeleteInterceptor;
-import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.service.ICommService;
 import com.dlz.db.service.impl.CommServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +17,10 @@ import java.util.function.Supplier;
  */
 @Slf4j
 public class DBHolder {
-    private static ISqlExecutor sqlExecutor;
-    private static ICommService service;
-    private static DlzDbProperties properties;
-    private static DlzDbAdapter dbAdapter;
+    private static volatile ISqlExecutor sqlExecutor;
+    private static volatile ICommService service;
+    private static volatile DlzDbProperties properties;
+    private static volatile DlzDbAdapter dbAdapter;
     private static SegmentIdGenerator segmentIdGenerator = new SegmentIdGenerator(1000);
 
     /**
