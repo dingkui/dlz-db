@@ -150,7 +150,8 @@ public class WrapperBuildUtil {
         if (value instanceof String) {
             String v = (String) value;
             if (v.startsWith("sql:")) {
-                sbSets.append(DbConvertUtil.toDbColumnNames(v.substring(4)));
+                sbSets.append(DbConvertUtil.requireSqlExpression(
+                        DbConvertUtil.toDbNames(v.substring(4))));
                 return true;
             }
         }
@@ -160,11 +161,13 @@ public class WrapperBuildUtil {
 
 
     public static String buildInsertSql(String dbName, List<Field> fields) {
+        DbConvertUtil.validateDbName(dbName, "表名");
         List<String> fieldsPart = new ArrayList<>();
         List<String> placeHolder = new ArrayList<>();
         for (Field field : fields) {
             String dbColumnName = PojoCache.getDbName(field);
             if (!dbColumnName.equals("")) {
+                DbConvertUtil.validateDbName(dbColumnName, "字段名");
                 fieldsPart.add(dbColumnName);
                 placeHolder.add("?");
             }
@@ -172,10 +175,12 @@ public class WrapperBuildUtil {
         return "INSERT INTO " + dbName + " (" + StringUtils.join(",", fieldsPart) + ") VALUES (" + StringUtils.join(",", placeHolder) + ")";
     }
     public static String buildInsertSql(String dbName, HashMap<String, Integer> fields) {
+        DbConvertUtil.validateDbName(dbName, "表名");
         List<String> fieldsPart = new ArrayList<>();
         List<String> placeHolder = new ArrayList<>();
         for (String dbColumnName : fields.keySet()) {
             if (!dbColumnName.equals("")) {
+                DbConvertUtil.validateDbName(dbColumnName, "字段名");
                 fieldsPart.add(dbColumnName);
                 placeHolder.add("?");
             }
@@ -203,10 +208,13 @@ public class WrapperBuildUtil {
     }
 
     public static String buildUpdateSql(String dbName, List<Field> fields, String idName) {
+        DbConvertUtil.validateDbName(dbName, "表名");
+        DbConvertUtil.validateDbName(idName, "主键字段");
         List<String> fieldsPart = new ArrayList<>();
         for (Field field : fields) {
             String dbColumnName = PojoCache.getDbName(field);
             if (!dbColumnName.equals(idName) && !dbColumnName.equals("")) {
+                DbConvertUtil.validateDbName(dbColumnName, "字段名");
                 fieldsPart.add(dbColumnName + "=?");
             }
         }
@@ -230,9 +238,12 @@ public class WrapperBuildUtil {
 
 
     public static String buildUpdateSql(String dbName, HashMap<String, Integer> fields, String idName) {
+        DbConvertUtil.validateDbName(dbName, "表名");
+        DbConvertUtil.validateDbName(idName, "主键字段");
         List<String> fieldsPart = new ArrayList<>();
         for (String dbColumnName : fields.keySet()) {
             if (!dbColumnName.equals(idName) && !dbColumnName.equals("")) {
+                DbConvertUtil.validateDbName(dbColumnName, "字段名");
                 fieldsPart.add(dbColumnName + "=?");
             }
         }

@@ -35,7 +35,7 @@ public class Order implements Serializable {
         return new Order(column, asc);
     }
     public static Order build(String column, String sort) {
-        return new Order(column, "asc".equalsIgnoreCase(sort));
+        return new Order(column, "ASC".equalsIgnoreCase(sort));
     }
     public static Order buildWithSql(String sql) {
         String[] split = sql.split(" ");

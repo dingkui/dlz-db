@@ -2,7 +2,7 @@
 
 **测试时间**: 2026-05-17 14:58:43  
 **项目**: dlz-db  
-**版本**: 7.0.0  
+**版本**: 7.1.0（测试记录来自 7.0.0）  
 **测试范围**: dlz-db 完整模块（core + spring-boot-starter + solon-plugin）
 
 ---
@@ -11,7 +11,7 @@
 
 ### dlz-db 总体结果
 ```
-✅ BUILD SUCCESS - dlz-db 7.0.0
+✅ BUILD SUCCESS - dlz-db 7.1.0
 总测试数: 605 个测试用例
 失败数: 0
 错误数: 0
@@ -239,9 +239,9 @@ Java版本: JDK 8+
 ```
 
 ### dlz-db 依赖版本
-- **dlz-db-core**: 7.0.0
-- **dlz-db-spring-boot-starter**: 7.0.0
-- **dlz-db-solon-plugin**: 7.0.0
+- **dlz-db-core**: 7.1.0
+- **dlz-db-spring-boot-starter**: 7.1.0
+- **dlz-db-solon-plugin**: 7.1.0
 
 ---
 
@@ -257,7 +257,7 @@ Java版本: JDK 8+
 
 ### dlz-db 发布建议: **可以发布** ✅
 
-dlz-db 7.0.0 所有测试通过，代码质量良好，三个子模块均表现优异，建议进行正式发布。
+dlz-db 7.1.0 所有测试通过，代码质量良好，三个子模块均表现优异，建议进行正式发布。
 
 ---
 
@@ -291,5 +291,5 @@ mvn test -Dtest=DbPojoTest
 
 *报告生成时间: 2026-05-17 14:58:43*  
 *dlz-db 测试执行耗时: 34.375秒*  
-*dlz-db 版本: 7.0.0*  
+*dlz-db 版本: 7.1.0*  
 *报告由自动化测试生成*

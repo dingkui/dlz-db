@@ -1,9 +1,7 @@
 package com.dlz.db.modal.para;
 
 import com.dlz.db.inf.ISqlPara;
-import com.dlz.kit.exception.ValidateException;
-
-import java.util.regex.Pattern;
+import com.dlz.db.util.DbConvertUtil;
 
 /**
  * 构造单表的增删改查操作sql
@@ -12,12 +10,9 @@ import java.util.regex.Pattern;
  */
 public abstract class AParaTable<T extends AParaTable> extends ParaMap<T> implements ISqlPara {
     private static final long serialVersionUID = 8374167270612933157L;
-    private static final Pattern TABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
     private final String tableName;
     protected AParaTable(String tableName) {
-        if (tableName == null || !TABLE_NAME_PATTERN.matcher(tableName).matches()) {
-            throw new ValidateException("非法表名: " + tableName);
-        }
+        DbConvertUtil.validateDbName(tableName,"表名");
         this.tableName = tableName;
     }
     public String getTableName() {

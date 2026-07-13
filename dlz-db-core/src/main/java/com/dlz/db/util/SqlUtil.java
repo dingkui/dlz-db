@@ -100,11 +100,17 @@ public class SqlUtil {
         if (jdbcSql == null) {
             throw new DbException("jdbcSql不应该为空", 1002);
         }
+        if (paraList == null) {
+            paraList = new Object[0];
+        }
         StringBuilder sbRunSql = new StringBuilder();
         int beginIndex = 0;
         Matcher mat = PATTERN_PARA.matcher(jdbcSql);
         int index = 0;
         while (mat.find()) {
+            if (index >= paraList.length) {
+                throw new DbException("SQL 参数数量不足", 1002);
+            }
             String _startStr = jdbcSql.substring(beginIndex, mat.start());
             Object jdbcParaItem = paraList[index++];
             beginIndex = mat.end();
@@ -112,16 +118,23 @@ public class SqlUtil {
             if (jdbcParaItem instanceof Number) {
                 sbRunSql.append(jdbcParaItem);
             } else if (jdbcParaItem instanceof Date) {
-                sbRunSql.append("'" + DateUtil.DATETIME.format((Date) jdbcParaItem) + "'");
+                sbRunSql.append("'").append(DateUtil.DATETIME.format((Date) jdbcParaItem)).append("'");
             } else if (jdbcParaItem instanceof TemporalAccessor) {
-                sbRunSql.append("'" + DateUtil.DATETIME.format((TemporalAccessor) jdbcParaItem) + "'");
+                sbRunSql.append("'").append(DateUtil.DATETIME.format((TemporalAccessor) jdbcParaItem)).append("'");
+            } else if (jdbcParaItem == null) {
+                sbRunSql.append("'null'");
             } else {
                 try {
-                    sbRunSql.append("'" + ValUtil.toStr(jdbcParaItem) + "'");
+                    sbRunSql.append("'")
+                            .append(ValUtil.toStr(jdbcParaItem).replace("'", "''"))
+                            .append("'");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
+        }
+        if (index != paraList.length) {
+            throw new DbException("SQL 参数数量过多", 1002);
         }
         sbRunSql.append(jdbcSql.substring(beginIndex));
         return sbRunSql.toString();

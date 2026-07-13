@@ -4,6 +4,7 @@
         <groupId>top.dlzio</groupId>
         <artifactId>dlz.parent</artifactId>
         <version>6.6.4</version>
+        <relativePath>../dlz.parent/pom.xml</relativePath>
     </parent>
     <name>dlz-db</name>
 	<artifactId>dlz-db</artifactId>
@@ -141,6 +142,33 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.line.coverage}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.branch.coverage}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 
@@ -154,7 +182,7 @@
                     <threshold>Low</threshold>
                     <xmlOutput>true</xmlOutput>
                     <htmlOutput>true</htmlOutput>
-                    <failOnError>false</failOnError>
+                    <failOnError>true</failOnError>
                     <outputDirectory>${project.build.directory}/reports/spotbugs</outputDirectory>
                     <excludeFilterFile>${project.basedir}/../spotbugs-exclude.xml</excludeFilterFile>
                     <plugins>
@@ -165,6 +193,15 @@
                         </plugin>
                     </plugins>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- PMD 代码质量 -->
@@ -173,11 +210,20 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${pmd.version}</version>
                 <configuration>
-                    <failOnViolation>false</failOnViolation>
+                    <failOnViolation>true</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
                     <targetJdk>1.8</targetJdk>
                     <outputDirectory>${project.build.directory}/reports/pmd</outputDirectory>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>pmd-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- OWASP Dependency-Check 依赖安全扫描 -->

@@ -10,6 +10,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
@@ -159,12 +163,36 @@ public class DynamicAndTxTest extends BaseDBTest {
     }
 
     @Test
-    public void testTxRun_runnableOverload() {
-        AtomicInteger executed = new AtomicInteger(0);
-        DB.Tx.run(TEST_DS_NAME, () -> {
-            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 500, "runnable");
-            executed.incrementAndGet();
-        });
-        assertEquals(1, executed.get());
+    public void testDynamicUse_concurrentTransactions() throws Exception {
+        int taskCount = 8;
+        ExecutorService executor = Executors.newFixedThreadPool(taskCount);
+        CountDownLatch start = new CountDownLatch(1);
+        AtomicInteger completed = new AtomicInteger();
+        try {
+            for (int i = 0; i < taskCount; i++) {
+                final int id = 600 + i;
+                executor.submit(() -> {
+                    try {
+                        start.await(5, TimeUnit.SECONDS);
+                        DB.Tx.run(TEST_DS_NAME, () -> {
+                            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", id, "concurrent");
+                        });
+                        completed.incrementAndGet();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+            start.countDown();
+            executor.shutdown();
+            assertTrue("并发事务应在超时前完成", executor.awaitTermination(30, TimeUnit.SECONDS));
+            assertEquals(taskCount, completed.get());
+            long count = DB.Dynamic.use(TEST_DS_NAME, () ->
+                    DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id >= ?", 600).count());
+            assertEquals(taskCount, count);
+        } finally {
+            executor.shutdownNow();
+        }
     }
 }
+

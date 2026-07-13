@@ -109,14 +109,14 @@ class DbConvertUtilTest_Extended {
     @Test
     @DisplayName("测试 toDbColumnNames - 多个字段名")
     void testToDbNames_Multiple() {
-        String result = DbConvertUtil.toDbColumnNames("userName userId");
+        String result = DbConvertUtil.toDbNames("userName userId");
         assertEquals("user_name user_id", result);
     }
 
     @Test
     @DisplayName("测试 toDbColumnNames - 空字符串")
     void testToDbNames_Empty() {
-        String result = DbConvertUtil.toDbColumnNames("");
+        String result = DbConvertUtil.toDbNames("");
         assertEquals("", result);
     }
 

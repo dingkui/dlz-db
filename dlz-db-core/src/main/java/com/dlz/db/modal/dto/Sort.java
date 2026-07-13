@@ -1,5 +1,6 @@
 package com.dlz.db.modal.dto;
 
+import com.dlz.db.exception.DbException;
 import com.dlz.db.inf.IChained;
 import com.dlz.db.util.DbConvertUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Getter
@@ -31,11 +33,15 @@ public class Sort<T extends Sort> implements Serializable, IChained<T> {
     }
     @JsonIgnore
     public String getSortSql() {
-        if(orders ==null|| orders.isEmpty()){
+        if (orders == null || orders.isEmpty()) {
             return null;
         }
-        return " order by "+orders.stream()
-                .map(o-> DbConvertUtil.toDbColumnNames(o.getColumn())+(o.isAsc()?" asc":" desc"))
+        return " ORDER BY " + orders.stream()
+                .map(o -> {
+                    final String column = o.getColumn();
+                    DbConvertUtil.validateDbName(column,"排序字段");
+                    return DbConvertUtil.toDbNames(column) + (o.isAsc() ? " ASC" : " DESC");
+                })
                 .collect(Collectors.joining(","));
     }
 

@@ -50,8 +50,7 @@ class SortTest extends BaseDBTest {
         Sort<Sort> sort = new Sort<>(Order.asc("name"));
         String sql = sort.getSortSql();
         assertNotNull(sql);
-        assertTrue(sql.contains("order by"));
-        assertTrue(sql.contains("asc"));
+        assertEquals(" ORDER BY name ASC",sql);
     }
 
     @Test
@@ -60,7 +59,7 @@ class SortTest extends BaseDBTest {
         Sort<Sort> sort = new Sort<>(Order.desc("age"));
         String sql = sort.getSortSql();
         assertNotNull(sql);
-        assertTrue(sql.contains("desc"));
+        assertEquals(" ORDER BY age DESC",sql);
     }
 
     @Test
@@ -69,7 +68,7 @@ class SortTest extends BaseDBTest {
         Sort<Sort> sort = new Sort<>(Order.asc("name"), Order.desc("age"));
         String sql = sort.getSortSql();
         assertNotNull(sql);
-        assertTrue(sql.contains(","));
+        assertEquals(" ORDER BY name ASC,age DESC",sql);
     }
 
     @Test

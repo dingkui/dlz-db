@@ -1,6 +1,9 @@
 package com.dlz.test.db.cases.modal.dto;
 
+import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.dto.Order;
+import com.dlz.db.modal.dto.Sort;
+import com.dlz.kit.exception.ValidateException;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,15 +32,13 @@ class OrderTest extends BaseDBTest {
     @Test
     @DisplayName("build(column, String) - asc字符串")
     void testBuildStringAsc() {
-        Order order = Order.build("name", "asc");
-        assertTrue(order.isAsc());
+        assertTrue(Order.build("name", "asc").isAsc());
     }
 
     @Test
     @DisplayName("build(column, String) - desc字符串")
     void testBuildStringDesc() {
-        Order order = Order.build("name", "desc");
-        assertFalse(order.isAsc());
+        assertFalse(Order.build("name", "desc").isAsc());
     }
 
     @Test
@@ -84,8 +85,8 @@ class OrderTest extends BaseDBTest {
     void testAscsMultiple() {
         Order[] orders = Order.ascs("name", "age", "id");
         assertEquals(3, orders.length);
-        for (Order o : orders) {
-            assertTrue(o.isAsc());
+        for (Order order : orders) {
+            assertTrue(order.isAsc());
         }
         assertEquals("name", orders[0].getColumn());
         assertEquals("age", orders[1].getColumn());
@@ -97,8 +98,8 @@ class OrderTest extends BaseDBTest {
     void testDescsMultiple() {
         Order[] orders = Order.descs("name", "age");
         assertEquals(2, orders.length);
-        for (Order o : orders) {
-            assertFalse(o.isAsc());
+        for (Order order : orders) {
+            assertFalse(order.isAsc());
         }
     }
 
@@ -127,5 +128,26 @@ class OrderTest extends BaseDBTest {
         Order order = new Order("field", false);
         assertEquals("field", order.getColumn());
         assertFalse(order.isAsc());
+    }
+
+    @Test
+    @DisplayName("Sort - 拒绝非法排序字段")
+    void testRejectUnsafeSortColumn() {
+        Sort sort = new Sort(Order.asc("name DESC"));
+        assertThrows(ValidateException.class, sort::getSortSql);
+    }
+
+    @Test
+    @DisplayName("Sort - 允许普通字段")
+    void testAllowSafeSortColumn() {
+        Sort sort = new Sort(Order.desc("user_name"));
+        assertEquals(" ORDER BY user_name DESC", sort.getSortSql());
+    }
+
+    @Test
+    @DisplayName("Sort - 允许限定字段")
+    void testAllowQualifiedSortColumn() {
+        Sort sort = new Sort(Order.asc("user.name"));
+        assertEquals(" ORDER BY user.name ASC", sort.getSortSql());
     }
 }

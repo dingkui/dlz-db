@@ -97,7 +97,7 @@ class DbConvertUtilTest {
     @Test
     @DisplayName("toDbColumnNames - 带空格的多字段名转换")
     void testToDbNames_WithSpaces() {
-        String result = DbConvertUtil.toDbColumnNames("userName   userId");
+        String result = DbConvertUtil.toDbNames("userName   userId");
         assertEquals("user_name user_id", result);
     }
 

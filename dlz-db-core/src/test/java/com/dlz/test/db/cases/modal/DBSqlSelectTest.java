@@ -22,7 +22,6 @@ public class DBSqlSelectTest extends BaseDBTest {
         ump2.setPage(Page.build(1, 2, Order.asc("id")));
 
         showSql(ump2, "sqlSelectTest1", "SELECT * FROM bb WHERE 1=1 AND a='a1' AND b='b1' AND c=2 AND d=d1 AND d=ddd ^d1 AND d='d1' AND d1='null' AND d2='null' AND c='c1' order by id asc LIMIT 0,2");
-
     }
 
     @Test
@@ -35,7 +34,7 @@ public class DBSqlSelectTest extends BaseDBTest {
         ump2.addPara("c", "c1");
         ump2.addPara("_sql", "_sql${a}");
         ump2.setPage(Page.build(1, 2, Order.asc("id")));
-        showSql(ump2, "sqlSelectTest2", "SELECT * FROM from dual xxx order by id asc LIMIT 0,2");
+        showSql(ump2, "sqlSelectTest2", "SELECT * FROM dual xxx ORDER BY id ASC LIMIT 0,2");
     }
 
     @Test

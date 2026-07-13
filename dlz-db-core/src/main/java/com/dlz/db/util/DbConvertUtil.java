@@ -1,14 +1,17 @@
 package com.dlz.db.util;
 
+import com.dlz.db.exception.DbException;
 import com.dlz.db.mapper.name.NameConvertCamel;
 import com.dlz.db.mapper.name.INameConverter;
 import com.dlz.db.mapper.dbtype.ITableColumnMapper;
 import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.SqlRunThreadHolder;
+import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.util.ValUtil;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -108,7 +111,40 @@ public class DbConvertUtil {
      *
      * @param beanKey
      */
-    public static String toDbColumnNames(String beanKey) {
+    private static final Pattern SQL_IDENTIFIER =Pattern.compile("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*");
+
+    /**
+     * 校验并返回 SQL 标识符。
+     *
+     * @param name 标识符
+     * @param description 标识符说明
+     * @return 原始标识符
+     */
+    public static String validateDbName(String name, String description) {
+        if (name == null || !SQL_IDENTIFIER.matcher(name).matches()) {
+            throw new ValidateException(description + "不合法: " + name);
+        }
+        return name;
+    }
+
+    private static final Pattern SQL_EXPRESSION = Pattern.compile(
+            "[A-Za-z_][A-Za-z0-9_]*(\\s*[+\\-*/]\\s*(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+(?:\\.[0-9]+)?))*");
+
+    /**
+     * 校验更新表达式中的列名和简单 SQL 表达式。
+     *
+     * @param expression 原生表达式
+     * @return 规范化表达式
+     */
+    public static String requireSqlExpression(String expression) {
+        String value = expression == null ? null : expression.trim();
+        if (value == null || !SQL_EXPRESSION.matcher(value).matches()) {
+            throw new DbException("SQL表达式不合法: " + expression, 1002);
+        }
+        return value;
+    }
+
+    public static String toDbNames(String beanKey) {
         return SqlRunThreadHolder.getNameConvertor(defaultNameConvert).toDbName(beanKey.replaceAll("\\s+", " "));
     }
 }

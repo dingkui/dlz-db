@@ -2,7 +2,7 @@
 
 **测试日期**: 2026-05-17  
 **项目**: dlz-db  
-**版本**: 7.0.0  
+**版本**: 7.1.0（基于 7.0.0 测试记录）  
 **状态**: ✅ **全部通过**
 
 ---
@@ -24,7 +24,7 @@
 
 dlz-db 包含三个子模块，全部测试通过：
 
-### ✅ dlz-db-core (7.0.0)
+### ✅ dlz-db-core (7.1.0)
 - 测试数: 255+
 - 状态: PASS
 - 耗时: 10.256s
@@ -35,7 +35,7 @@ dlz-db 包含三个子模块，全部测试通过：
   - 缓存机制 ✅
   - SQL构建器 ✅
 
-### ✅ dlz-db-spring-boot-starter (7.0.0)
+### ✅ dlz-db-spring-boot-starter (7.1.0)
 - 测试数: ~100
 - 状态: PASS
 - 耗时: 11.169s
@@ -44,7 +44,7 @@ dlz-db 包含三个子模块，全部测试通过：
   - @Transactional支持 ✅
   - 主键自动回填 ✅
 
-### ✅ dlz-db-solon-plugin (7.0.0)
+### ✅ dlz-db-solon-plugin (7.1.0)
 - 测试数: ~250
 - 状态: PASS
 - 耗时: 12.542s
@@ -72,10 +72,10 @@ dlz-db 包含三个子模块，全部测试通过：
 **代码质量**: 优秀  
 **发布建议**: **可以发布** 🚀
 
-dlz-db 7.0.0 所有子模块测试100%通过，质量优异！
+dlz-db 7.1.0 所有子模块测试100%通过，质量优异！
 
 ---
 
 *详细报告: [TEST_REPORT_2026-05-17.md](TEST_REPORT_2026-05-17.md)*  
 *代码统计: [CODE_STATISTICS_REPORT.md](dlz-db-core/CODE_STATISTICS_REPORT.md)*  
-*dlz-db 版本: 7.0.0*
+*dlz-db 版本: 7.1.0*

@@ -17,25 +17,19 @@
 		测试
 	-->
 	<sql sqlId="key.test"><![CDATA[
-	    select * from from dual xxx
+	    SELECT * from dual xxx
  	]]></sql>
 	<!--
 		测试
 	-->
 	<sql sqlId="key.test22"><![CDATA[
-	    select * from from dual xxx
- 	]]></sql>
-	<!--
-		测试
-	-->
-	<sql sqlId="key.sqlTest.getStr"><![CDATA[
-	   select to_char(AD_ENDDATE,'yyyy') as AD_ENDDATE from JOB_AD t where 1 IN (${ad_id}) 222
+	    SELECT * from dual xxx
  	]]></sql>
 	<!--
 		测试
 	-->
 	<sql sqlId="key.sqlTest.update"><![CDATA[
-	   update JOB_AD set AD_text=#{adText} where ad_id IN (${ad_id})
+	   UPDATE JOB_AD set AD_text=#{adText} WHERE  ad_id IN (${ad_id})
  	]]></sql>
 	<!--
 		测试
@@ -47,7 +41,7 @@
 		测试
 	-->
 	<sql sqlId="key.sqlTest.sqlUtilTest"><![CDATA[
-	   where 1=1
+	   WHERE  1=1
 	   [and a=#{a}]   --a参数存在则添加该条件:"and a=#{a}"
 	   [and b=#{b}]   --a参数存在则添加该条件:"and b=#{a}"
 	   [and c=2 ^#{c}]   --a参数存在则添加该条件:"and b=#{a}"
@@ -67,7 +61,7 @@
 		测试
 	-->
 	<sql sqlId="key.sqlTest.sqlUtil"><![CDATA[
-	   select * from bb ${key.sqlTest.sqlUtilTest}
+	   SELECT * from bb ${key.sqlTest.sqlUtilTest}
  	]]></sql>
  	<!--
 		测试4_6_2
