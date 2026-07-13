@@ -35,7 +35,7 @@ class TableQueryTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update 方法")
+    @DisplayName("测试  UPDATE 方法")
     void testUpdateW() {
         TableUpdate update = DB.Table.update("user");
         

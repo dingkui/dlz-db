@@ -1,4 +1,4 @@
-package com.dlz.db.convertor.columnname;
+package com.dlz.db.mapper.name;
 
 public class NameConvertNative implements INameConverter {
 

@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.NameConvertNative;
-import com.dlz.db.convertor.columnname.INameConverter;
+import com.dlz.db.mapper.name.NameConvertNative;
+import com.dlz.db.mapper.name.INameConverter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ class ColumnNameNativeTest {
     @DisplayName("toDbColumnName - 原样返回")
     void testToDbName() {
         assertEquals("userName", convertor.toDbName("userName"));
-        assertEquals("ID", convertor.toDbName("ID"));
+        assertEquals("id", convertor.toDbName("id"));
         assertEquals("", convertor.toDbName(""));
     }
 

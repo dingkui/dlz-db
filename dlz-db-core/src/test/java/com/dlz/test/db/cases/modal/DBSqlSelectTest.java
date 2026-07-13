@@ -21,7 +21,7 @@ public class DBSqlSelectTest extends BaseDBTest {
         ump2.addPara("_sql", "_sql${a}");
         ump2.setPage(Page.build(1, 2, Order.asc("id")));
 
-        showSql(ump2, "sqlSelectTest1", "select * from bb where 1=1 and a='a1' and b='b1' and c=2 and d=d1 and d=ddd ^d1 and d='d1' and d1='null' and d2='null' and c='c1' order by ID asc LIMIT 0,2");
+        showSql(ump2, "sqlSelectTest1", "SELECT * FROM bb WHERE 1=1 AND a='a1' AND b='b1' AND c=2 AND d=d1 AND d=ddd ^d1 AND d='d1' AND d1='null' AND d2='null' AND c='c1' order by id asc LIMIT 0,2");
 
     }
 
@@ -35,15 +35,15 @@ public class DBSqlSelectTest extends BaseDBTest {
         ump2.addPara("c", "c1");
         ump2.addPara("_sql", "_sql${a}");
         ump2.setPage(Page.build(1, 2, Order.asc("id")));
-        showSql(ump2, "sqlSelectTest2", "select * from from dual xxx order by ID asc LIMIT 0,2");
+        showSql(ump2, "sqlSelectTest2", "SELECT * FROM from dual xxx order by id asc LIMIT 0,2");
     }
 
     @Test
     public void sqlSelectTest3(){
-        final SqlQuery sqlQuery = DB.Sql.select("select t.* from PTN t where t.id=${key.comm.pageSql} and t.cc=${a} and c=${b} and ccc")
+        final SqlQuery sqlQuery = DB.Sql.select("SELECT t.* FROM PTN t WHERE t.id=${key.comm.pageSql} AND t.cc=${a} AND c=${b} AND ccc")
                 .addPara("a", "a${b}")
                 .addPara("b", "b${c}")
                 .addPara("_sql", "_sql${a}");
-        showSql(sqlQuery, "sqlSelectTest3", "select t.* from PTN t where t.id= _sqlab and t.cc=ab and c=b and ccc");
+        showSql(sqlQuery, "sqlSelectTest3", "SELECT t.* FROM PTN t WHERE t.id= _sqlab AND t.cc=ab AND c=b AND ccc");
     }
 }

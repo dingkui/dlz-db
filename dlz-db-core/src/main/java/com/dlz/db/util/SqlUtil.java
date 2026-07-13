@@ -140,19 +140,19 @@ public class SqlUtil {
         if (sqlItem.getSqlKey() == null && paraMap instanceof AParaTable) {
             WrapperBuildUtil.buildSql((AParaTable) paraMap);
         }
-        if (sqlItem.getSqlKey() != null) {
-            String sql = sqlItem.getSqlDeal();
-            String sqlInput = sqlItem.getSqlKey();
-            if (sql == null && sqlInput != null) {
-                sql = createSqlDeal(paraMap.getPara(), sqlInput);
-                sqlItem.setSqlDeal(sql);
-            }
+        String sql = sqlItem.getSqlDeal();
+        String sqlInput = sqlItem.getSqlKey();
+        if (sql == null && sqlInput != null) {
+            sql = createSqlDeal(paraMap.getPara(), sqlInput);
+            sqlItem.setSqlDeal(sql);
+        }
+        if (sql!=null) {
             switch (dealType) {
                 case 1:
-                    sqlItem.setSqlRun(sqlItem.getSqlDeal());
+                    sqlItem.setSqlRun(sql);
                     break;
                 case 2:
-                    sqlItem.setSqlRun(SqlUtil.getCntSql(sqlItem.getSqlDeal()));
+                    sqlItem.setSqlRun(SqlUtil.getCntSql(sql));
                     break;
                 case 3:
                     sqlItem.setSqlRun(SqlUtil.getPageSql(paraMap));
@@ -291,11 +291,11 @@ public class SqlUtil {
      * @throws Exception
      */
     public static String getCntSql(String sql) {
-        int from = sql.toLowerCase(Locale.ROOT).indexOf(" from ");
+        int from = sql.indexOf(" FROM ");
         if (from == -1) {
-            throw new DbException("sql语句无from：" + sql, 1002);
+            throw new DbException("sql语句无FROM：" + sql, 1002);
         }
-        return "select count(1) from" + sql.substring(from + 5);
+        return "SELECT COUNT(*) FROM" + sql.substring(from + 5);
     }
 
     /**

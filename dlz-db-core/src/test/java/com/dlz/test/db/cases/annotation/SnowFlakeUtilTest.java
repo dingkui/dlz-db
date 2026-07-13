@@ -60,7 +60,7 @@ class SnowFlakeUtilTest extends BaseDBTest {
         long prev = Long.parseLong(callNextId(snowFlake));
         for (int i = 0; i < 50; i++) {
             long curr = Long.parseLong(callNextId(snowFlake));
-            assertTrue(curr > prev, "ID should be increasing");
+            assertTrue(curr > prev, "id should be increasing");
             prev = curr;
         }
     }

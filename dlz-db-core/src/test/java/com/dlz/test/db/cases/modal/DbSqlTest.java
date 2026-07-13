@@ -74,27 +74,27 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 execute 方法")
     void testExecute() {
-        assertNotNull(DB.Sql.execute("delete from user where id=#{id}", new JSONMap("id", 1)));
+        assertNotNull(DB.Sql.execute("DELETE FROM user WHERE id=#{id}", new JSONMap("id", 1)));
         assertThrows(DbException.class, () -> DB.Sql.execute("SELECT 1", new JSONMap()));
     }
 
     @Test
     public void PageTest() {
-        DB.Sql.select("select t.* from Goods t where t.goods_id=310")
+        DB.Sql.select("SELECT t.* FROM Goods t WHERE t.goods_id=310")
                 .page(Page.build(1, 2, Order.asc("id")))
                 .queryPage();
     }
 
     @Test
     public void PageTest2() {
-        DB.Sql.select("select t.* from GOODS_PRICE t where t.goods_id=#{goodsId}")
+        DB.Sql.select("SELECT t.* FROM GOODS_PRICE t WHERE t.goods_id=#{goodsId}")
                 .page(Page.build(1, 2, Order.asc("id"), Order.desc("xx2")))
                 .addPara("goodsId", 123).queryOne();
     }
 
     @Test
     public void PageTest3() {
-        DB.Sql.select("select t.* from GOODS_PRICE t where t.goods_id=#{goodsId}")
+        DB.Sql.select("SELECT t.* FROM goods_price t WHERE t.goods_id=#{goodsId}")
                 .page(null)
                 .addPara("goodsId", 123).queryOne();
     }

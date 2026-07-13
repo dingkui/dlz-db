@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * 基于数据库号段模式的分布式 ID 生成器，支持零浪费拼接。
+ * 基于数据库号段模式的分布式 id 生成器，支持零浪费拼接。
  *
  * <p>核心设计：
  * <ul>
@@ -23,7 +23,7 @@ public class NativeSqlUtil {
     public static final Pattern TABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
 
     /**
-     * 根据连接所属数据库的方言返回最后插入的自增 ID。
+     * 根据连接所属数据库的方言返回最后插入的自增 id。
      * <p>仅作为 {@link PreparedStatement#getGeneratedKeys()} 不可用时的兜底。</p>
      */
     public static Long queryLastInsertIdByDialect(Connection conn) {

@@ -16,7 +16,7 @@ public class Doc00AllTest extends BaseDBTest {
     public void addSql() {
         SysSql SysSql = new SysSql();
         SysSql.setSqlKey("test");
-        SysSql.setSqlValue("SELECT * FROM user WHERE and status = #{status}");
+        SysSql.setSqlValue("SELECT * FROM user WHERE AND status = #{status}");
         try {
             DB.Pojo.add(SysSql);
             fail("应该抛出 SystemException");

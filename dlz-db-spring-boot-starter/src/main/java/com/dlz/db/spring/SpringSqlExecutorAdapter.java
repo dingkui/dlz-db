@@ -118,7 +118,7 @@ public class SpringSqlExecutorAdapter extends JdbcSqlExecutor {
 //            throw new ValidateException("非法表名: " + tableName);
 //        }
 //        // 使用 WHERE 1=0 而非 LIMIT 0，确保跨数据库兼容性（Oracle不支持LIMIT语法）
-//        String sql = "select * from " + tableName + " where 1=0";
+//        String sql = "SELECT * FROM " + tableName + " WHERE 1=0";
 //        ResultSetExtractor<HashMap<String, Integer>> extractor = rs -> {
 //            HashMap<String, Integer> infos = new HashMap<>();
 //            ResultSetMetaData rsmd = rs.getMetaData();

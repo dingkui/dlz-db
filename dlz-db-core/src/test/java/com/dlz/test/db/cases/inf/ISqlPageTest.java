@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.convertor.columnname.NameConvertCamel;
+import com.dlz.db.mapper.name.NameConvertCamel;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.JdbcSelect;

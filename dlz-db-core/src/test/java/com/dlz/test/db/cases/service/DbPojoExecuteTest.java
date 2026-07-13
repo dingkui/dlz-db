@@ -27,7 +27,7 @@ class DbPojoExecuteTest extends BaseDBTest {
     static void initTestTable() throws Exception {
         // 为内部类 TestAutoEntity 预置表字段信息到缓存中
         HashMap<String, Integer> tableColumns = new HashMap<>();
-        tableColumns.put("ID", -5);      // BIGINT
+        tableColumns.put("id", -5);      // BIGINT
         tableColumns.put("NAME", 12);    // VARCHAR
         tableColumns.put("AGE", 4);      // INTEGER
 

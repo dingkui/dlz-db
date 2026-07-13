@@ -1,12 +1,11 @@
-package com.dlz.db.convertor.columnname;
+package com.dlz.db.mapper.name;
 
 import java.util.Locale;
 
-public class NameConvertToLower implements INameConverter {
-
+public class NameConvertToUper implements INameConverter {
 	@Override
 	public String toFieldName(String dbKey) {
-		return dbKey.toLowerCase(Locale.ROOT);
+		return dbKey.toUpperCase(Locale.ROOT);
 	}
 
 	@Override

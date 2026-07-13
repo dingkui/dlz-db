@@ -14,8 +14,6 @@ import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -28,9 +26,11 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         ISqlQuery<PojoUpdate<T>>,
         ICondAddByLamda<PojoUpdate<T>, T>,
         IExecutorUDI {
-    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null;
+    IdInfo idInfo;
+    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null || (idInfo!=null && name.equals(idInfo.getDbName())) ;
     public PojoUpdate(Class<T> beanClass) {
         super(beanClass);
+        idInfo = PojoCache.getIdInfo(beanClass);
         setPm(new TableUpdate(getTableName()));
     }
 
@@ -38,7 +38,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
     protected void wrapValues(List<Field> fields, T bean) {
         for (Field field : fields) {
             final Object fieldValue = FieldReflections.getValue(bean, field);
-            final String columnName = PojoCache.getColumnName(field);
+            final String columnName = PojoCache.getDbName(field);
             if (this.ignore.apply(columnName, fieldValue)) {
                 continue;
             }
@@ -57,7 +57,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
     }
 
     public PojoUpdate<T> set(T bean) {
-        this.queryBean = bean;
+        this.valueBean = bean;
         return this;
     }
 
@@ -108,7 +108,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         String dbName = PojoCache.getTableName(beanClass);
         final IdInfo idInfo = PojoCache.getIdInfo(beanClass);
         final List<Field> fields = PojoCache.getBeanFields(getBeanClass());
-        String sql = WrapperBuildUtil.buildUpdateSql(dbName, fields, idInfo.getName());
+        String sql = WrapperBuildUtil.buildUpdateSql(dbName, fields, idInfo.getDbName());
         while (!valueBeans.isEmpty() && batchSize > 0) {
             if (batchSize > valueBeans.size()) {
                 batchSize = valueBeans.size();

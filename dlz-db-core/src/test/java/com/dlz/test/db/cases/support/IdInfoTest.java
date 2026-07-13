@@ -24,7 +24,7 @@ class IdInfoTest extends BaseDBTest {
     void testConstructor() throws Exception {
         Field field = TestEntity.class.getDeclaredField("id");
         IdInfo info = new IdInfo(field, "id");
-        assertEquals("id", info.getName());
+        assertEquals("id", info.getDbName());
         assertSame(field, info.getField());
     }
 
@@ -90,7 +90,7 @@ class IdInfoTest extends BaseDBTest {
     void testNameSetterGetter() throws Exception {
         Field field = TestEntity.class.getDeclaredField("id");
         IdInfo info = new IdInfo(field, "id");
-        info.setName("user_id");
-        assertEquals("user_id", info.getName());
+        info.setDbName("user_id");
+        assertEquals("user_id", info.getDbName());
     }
 }

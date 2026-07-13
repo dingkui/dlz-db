@@ -29,7 +29,7 @@
 			[select * from ( ^#{_orderBy}]
 				${_sql}
 			[) ${_orderBy}]
-		[) a1 where rownum <=#{_end} ) [where rownum_> #{_begin}]]
+		[) a1 WHERE rownum <=#{_end} ) [WHERE rownum_> #{_begin}]]
     ]]></sql>
 
     <!-- sqlserver数据库翻页语句 -->

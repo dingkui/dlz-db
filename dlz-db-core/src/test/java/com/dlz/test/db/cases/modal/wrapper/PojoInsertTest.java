@@ -20,7 +20,7 @@ public class PojoInsertTest extends BaseDBTest {
         dict.setId(123L);
         dict.setSqlKey("xxx");
         PojoInsert<SysSql> insert = new PojoInsert(SysSql.class).value(dict);
-        assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',123,0)", toSql(insert));
+        assertEquals("INSERT INTO sys_sql(sql_key,deleted,id) VALUES('xxx',0,123)", toSql(insert));
     }
 
     @Test
@@ -30,7 +30,7 @@ public class PojoInsertTest extends BaseDBTest {
         dict.setSqlKey("xxx");
         dict.setDeleted(0);
         PojoInsert<SysSql> insert = new PojoInsert(SysSql.class).value(dict);
-        assertEquals("insert into SYS_SQL(SQL_KEY,ID,DELETED) values('xxx',666,0)", toSql(insert));
+        assertEquals("INSERT INTO sys_sql(sql_key,deleted,id) VALUES('xxx',0,666)", toSql(insert));
     }
 
     @Test
@@ -38,6 +38,6 @@ public class PojoInsertTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setSqlKey("xxx");
         PojoInsert<SysSql> insert = new PojoInsert(SysSql.class).value(dict);
-        showSql(insert, "insertWrapperTest2", "insert into SYS_SQL(SQL_KEY,DELETED) values('xxx',0)");
+        showSql(insert, "insertWrapperTest2", "INSERT INTO sys_sql(SQL_KEY,deleted) VALUES('xxx',0)");
     }
 }

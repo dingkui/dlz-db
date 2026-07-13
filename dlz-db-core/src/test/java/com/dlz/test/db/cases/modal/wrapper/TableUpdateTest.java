@@ -21,6 +21,6 @@ public class TableUpdateTest extends BaseDBTest {
 						.eq("equipment_id2", 1)
 				);
 //		where.execute();
-		showSql(where,"UpdateParaMapTest","update Sys_Sql set sql_key='1' where equipment_id = 1 and equipment_id2 = 1 and DELETED = 0");
+		showSql(where,"UpdateParaMapTest"," UPDATE Sys_Sql SET sql_key='1' where equipment_id = 1 AND equipment_id2 = 1 AND deleted = 0");
 	}
 }

@@ -95,7 +95,7 @@ public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
      * .ands(a -> a.eq(User::getStatus, 1).gt(User::getAge, 18))
      * // SQL: (status = 1 AND age > 18)
      *
-     * // 在 or 内部使用，构造  (A AND B) OR (C AND D)
+     * // 在 OR 内部使用，构造  (A AND B) OR (C AND D)
      * .ors(o -> o
      *     .ands(a -> a.eq(User::getType, 1).gt(User::getAge, 18))
      *     .ands(a -> a.eq(User::getType, 2).lt(User::getAge, 60)))
@@ -126,7 +126,7 @@ public interface ICondAndOr<ME extends ICondAndOr> extends ICondBase<ME> {
      * .ors(o -> o.like(User::getName, kw).like(User::getMobile, kw))
      * // SQL: status = 1 AND (name LIKE ? OR mobile LIKE ?)
      *
-     * // 并列多个 or 组：(A OR B) AND (C OR D)
+     * // 并列多个 OR 组：(A OR B) AND (C OR D)
      * .ors(o -> o.eq(User::getType, 1).eq(User::getType, 2))
      * .ors(o -> o.gt(User::getAge, 60).lt(User::getAge, 18))
      * // SQL: (type = 1 OR type = 2) AND (age > 60 OR age < 18)

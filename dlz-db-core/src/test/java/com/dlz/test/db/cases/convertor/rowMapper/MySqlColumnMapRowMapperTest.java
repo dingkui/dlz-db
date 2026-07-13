@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor.rowMapper;
 
-import com.dlz.db.convertor.rowMapper.MySqlColumnMapRowMapper;
+import com.dlz.db.mapper.rowMapper.MySqlColumnMapRowMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

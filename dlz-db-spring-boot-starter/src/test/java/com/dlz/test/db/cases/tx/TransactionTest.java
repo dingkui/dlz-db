@@ -17,14 +17,14 @@ public class TransactionTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {
-        DB.Jdbc.execute("delete from user");
+        DB.Jdbc.execute("DELETE FROM user");
         // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted INTEGER DEFAULT 0)");
         DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted) VALUES(?,?,?,?)", "alice", 25, "1", 0);
     }
 
     @AfterEach
     public void tearDown() {
-        DB.Jdbc.execute("delete from user");
+        DB.Jdbc.execute("DELETE FROM user");
     }
 
     @Test

@@ -61,7 +61,7 @@ public class SolonNativeTxService {
     public int countByName(String name) throws Exception {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(
-                 "SELECT COUNT(*) FROM USER WHERE NAME LIKE ?")) {
+                 "SELECT COUNT(*) FROM USER WHERE name LIKE ?")) {
             ps.setString(1, "%" + name + "%");
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

@@ -10,7 +10,7 @@ import com.dlz.db.support.bean.IdInfo;
 
 /**
  * 从数据库中取得单条map类型数据：{adEnddate=2015-04-08 13:47:12.0}
- * sql语句，可以带参数如：select AD_ENDDATE from JOB_AD t where ad_id=#{ad_id}
+ * sql语句，可以带参数如：select AD_ENDDATE FROMJOB_AD t WHERE ad_id=#{ad_id}
  * paraMap ：Map<String,Object> m=new HashMap<String,Object>();m.put("ad_id", "47");
  *
   * @throws Exception
@@ -19,7 +19,7 @@ public interface IDbExecuteService extends IDbBaseService{
 
     /**
      * 插入数据库
-     * sql语句，可以带参数如：update JOB_AD set AD_text=#{adText} where ad_id in (${ad_id})
+     * sql语句，可以带参数如： UPDATE JOB_AD SET AD_text=#{adText} WHERE ad_id IN (${ad_id})
      *
      * @param paraMap ：Map<String,Object> m=new HashMap<String,Object>();m.put("ad_id", "47");
           * @throws Exception
@@ -30,7 +30,7 @@ public interface IDbExecuteService extends IDbBaseService{
 
     /**
      * 更新或插入数据库
-     * sql语句，可以带参数如：update JOB_AD set AD_text=#{adText} where ad_id in (${ad_id})
+     * sql语句，可以带参数如： UPDATE JOB_AD SET AD_text=#{adText} WHERE ad_id IN (${ad_id})
      *
      * @param paraMap ：Map<String,Object> m=new HashMap<String,Object>();m.put("ad_id", "47");
      * @return 影响行数

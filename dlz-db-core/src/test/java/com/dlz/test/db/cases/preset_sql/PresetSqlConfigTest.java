@@ -24,7 +24,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
         DB.Jdbc.execute("DELETE FROM user");
 
         // 插入测试数据
-        DB.Batch.jdbcExecute("INSERT INTO user(name, age, status, DELETED ) VALUES(?, ?, ?, ?)",
+        DB.Batch.jdbcExecute("INSERT INTO user(name, age, status, deleted ) VALUES(?, ?, ?, ?)",
                 Arrays.asList(new Object[]{"张三", 25, "1", 0},
                         new Object[]{"李四", 30, "1", 0},
                         new Object[]{"王五", 35, "0", 0},

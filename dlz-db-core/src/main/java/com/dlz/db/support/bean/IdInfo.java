@@ -17,13 +17,13 @@ import java.lang.reflect.Type;
 @Setter
 public class IdInfo {
     private Field field;
-    private String name;
+    private String dbName;
     private IdType type;
     private Type genericType;
 
-    public IdInfo(Field field, String name) {
+    public IdInfo(Field field, String dbName) {
         this.field = field;
-        this.name = name;
+        this.dbName = dbName;
     }
 
     public void setId(Object o, Object id) {

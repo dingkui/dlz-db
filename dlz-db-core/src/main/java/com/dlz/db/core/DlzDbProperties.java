@@ -32,7 +32,7 @@ public class DlzDbProperties {
     /**
      * 从数据库中取得sql配置的sql
      **/
-    private String sql = "select sql_key as k ,sql_value as s from sys_sql";
+    private String sql = "SELECT sql_key as k ,sql_value as s FROM sys_sql";
     /**
      * 从数据库中取得sql配置是否开启,默认关闭
      **/

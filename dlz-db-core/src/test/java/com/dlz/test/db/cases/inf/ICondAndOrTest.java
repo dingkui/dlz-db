@@ -39,7 +39,7 @@ class ICondAndOrTest {
     void testAndSimple() {
         Condition result = condition.ands(c -> c.eq("status", 1).gt("age", 18));
         assertNotNull(result);
-        assertEquals("where (STATUS = 1 and AGE > 18)", getSql(result));
+        assertEquals("WHERE (status = 1 AND age > 18)", getSql(result));
     }
 
     @Test
@@ -48,7 +48,7 @@ class ICondAndOrTest {
         Condition result = condition.ands(c -> c.eq("status", 1));
         
         assertNotNull(result);
-        assertEquals("where STATUS = 1", getSql(result));
+        assertEquals("WHERE status = 1", getSql(result));
     }
 
     @Test
@@ -60,7 +60,7 @@ class ICondAndOrTest {
                 .ands(c -> c.like("name", "张").isNotNull("email"));
         
         assertNotNull(result);
-        assertEquals("where TENANT_ID = 100 and (STATUS = 1 and AGE > 18) and (NAME like '%张%' and EMAIL is not null)", getSql(result));
+        assertEquals("WHERE tenant_id = 100 AND (status = 1 AND age > 18) AND (name LIKE '%张%' AND email IS NOT NULL)", getSql(result));
     }
 
     // ========== OR 嵌套测试 ==========
@@ -71,7 +71,7 @@ class ICondAndOrTest {
         Condition result = condition.ors(c -> c.eq("status", 1).eq("status", 2));
         
         assertNotNull(result);
-        assertEquals("where (STATUS = 1 or STATUS = 2)", getSql(result));
+        assertEquals("WHERE (status = 1 OR status = 2)", getSql(result));
     }
 
     @Test
@@ -80,7 +80,7 @@ class ICondAndOrTest {
         Condition result = condition.ors(c -> c.eq("status", 1));
         
         assertNotNull(result);
-        assertEquals("where STATUS = 1", getSql(result));
+        assertEquals("WHERE status = 1", getSql(result));
     }
 
     @Test
@@ -91,7 +91,7 @@ class ICondAndOrTest {
                 .ors(c -> c.gt("age", 60).lt("age", 18));
         
         assertNotNull(result);
-        assertEquals("where (TYPE = 1 or TYPE = 2) and (AGE > 60 or AGE < 18)", getSql(result));
+        assertEquals("WHERE (type = 1 OR type = 2) AND (age > 60 OR age < 18)", getSql(result));
     }
 
     // ========== AND/OR 混合嵌套测试 ==========
@@ -104,7 +104,7 @@ class ICondAndOrTest {
                 .ors(c -> c.like("name", "张").like("mobile", "138"));
         
         assertNotNull(result);
-        assertEquals("where STATUS = 1 and (NAME like '%张%' or MOBILE like '%138%')", getSql(result));
+        assertEquals("WHERE status = 1 AND (name LIKE '%张%' OR mobile LIKE '%138%')", getSql(result));
     }
 
     @Test
@@ -116,7 +116,7 @@ class ICondAndOrTest {
         );
         
         assertNotNull(result);
-        assertEquals("where ((TYPE = 1 and AGE > 18) or (TYPE = 2 and AGE < 60))", getSql(result));
+        assertEquals("WHERE ((type = 1 AND age > 18) OR (type = 2 AND age < 60))", getSql(result));
     }
 
     @Test
@@ -133,7 +133,7 @@ class ICondAndOrTest {
                 );
         
         assertNotNull(result);
-        assertEquals("where TENANT_ID = 100 and (STATUS = 1 and (AGE > 18 or EMAIL is not null))", getSql(result));
+        assertEquals("WHERE tenant_id = 100 AND (status = 1 AND (age > 18 OR email IS NOT NULL))", getSql(result));
     }
 
     @Test
@@ -147,7 +147,7 @@ class ICondAndOrTest {
                 );
         
         assertNotNull(result);
-        assertEquals("where STATUS = 1 and ((AGE > 18 and AGE < 60) or (VIP_LEVEL is not null or LEVEL = 3))", getSql(result));
+        assertEquals("WHERE status = 1 AND ((age > 18 AND age < 60) OR (vip_level IS NOT NULL OR level = 3))", getSql(result));
     }
 
     // ========== 边界情况测试 ==========
@@ -179,7 +179,7 @@ class ICondAndOrTest {
                 .like("name", "张");
         
         assertNotNull(result);
-        assertEquals("where STATUS = 1 and AGE > 18 and NAME like '%张%'", getSql(result));
+        assertEquals("WHERE status = 1 AND age > 18 AND name LIKE '%张%'", getSql(result));
     }
 
     @Test
@@ -191,6 +191,6 @@ class ICondAndOrTest {
                 .isNotNull("email");
         
         assertNotNull(result);
-        assertEquals("where TYPE = 1 and STATUS = 1 and EMAIL is not null", getSql(result));
+        assertEquals("WHERE type = 1 AND status = 1 AND email IS NOT NULL", getSql(result));
     }
 }

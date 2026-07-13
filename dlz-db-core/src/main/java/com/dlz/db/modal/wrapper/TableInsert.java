@@ -8,7 +8,6 @@ import com.dlz.db.support.PojoCache;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.json.JSONMap;
-import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public class TableInsert extends AParaTable implements IExecutorInsert {
     }
 
     public TableInsert value(String key, Object value) {
-        String paraName = DbConvertUtil.toDbColumnName(key);
+        String paraName = DbConvertUtil.toDbName(key);
         if (!PojoCache.isColumnExists(getTableName(), paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;

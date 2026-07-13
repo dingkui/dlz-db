@@ -31,7 +31,13 @@ public class DbPojo {
      * @param <T>
      */
     public <T> PojoUpdate<T> update(T value) {
-        return new PojoUpdate(value.getClass()).set(value);
+        if (value == null) {
+            return null;
+        }
+        final Class<?> aClass = value.getClass();
+
+
+        return new PojoUpdate(aClass).set(value);
     }
     /**
      *  完整更新（包含空字段）
@@ -68,7 +74,7 @@ public class DbPojo {
     }
 
     private <T> T updateById(T obj, Object idValue, Class<T> aClass, IdInfo idInfo) {
-        final String idName = idInfo.getName();
+        final String idName = idInfo.getDbName();
         if (StringUtils.isEmpty(idValue)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -88,7 +94,7 @@ public class DbPojo {
     }
 
     public <T> T selectById(Class<T> c, Object id) {
-        final String idName = PojoCache.getIdName(c);
+        final String idName = PojoCache.getIdDbName(c);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -96,7 +102,7 @@ public class DbPojo {
     }
 
     public <T> List<T> selectByIds(Class<T> c, Object id) {
-        final String idName = PojoCache.getIdName(c);
+        final String idName = PojoCache.getIdDbName(c);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -104,7 +110,7 @@ public class DbPojo {
     }
 
     public <T> int deleteByIds(Class<T> c, String ids) {
-        final String idName = PojoCache.getIdName(c);
+        final String idName = PojoCache.getIdDbName(c);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -112,7 +118,7 @@ public class DbPojo {
     }
 
     public <T> int deleteByIds(Class<T> c, List<?> ids) {
-        final String idName = PojoCache.getIdName(c);
+        final String idName = PojoCache.getIdDbName(c);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -120,7 +126,7 @@ public class DbPojo {
     }
 
     public <T> int deleteById(Class<T> c, Object id) {
-        final String idName = PojoCache.getIdName(c);
+        final String idName = PojoCache.getIdDbName(c);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }

@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.NameConvertCamel;
-import com.dlz.db.convertor.columnname.NameConvertToLower;
-import com.dlz.db.convertor.columnname.NameConvertToUper;
+import com.dlz.db.mapper.name.NameConvertCamel;
+import com.dlz.db.mapper.name.NameConvertToLower;
+import com.dlz.db.mapper.name.NameConvertToUper;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -26,20 +26,20 @@ class DbConvertUtilTest_Extended {
     @BeforeEach
     void setUp() {
         // 确保使用默认的转换器
-        DbConvertUtil.defaultColumnMapper = new NameConvertCamel();
+        DbConvertUtil.defaultNameConvert = new NameConvertCamel();
     }
 
     @AfterEach
     void tearDown() {
         // 恢复默认值
-        DbConvertUtil.defaultColumnMapper = new NameConvertCamel();
+        DbConvertUtil.defaultNameConvert = new NameConvertCamel();
     }
 
     @Test
     @DisplayName("测试 toFieldName - 使用 ColumnNameToLower")
     void testToFieldName_WithToLowerConverter() {
         NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultColumnMapper = converter;
+        DbConvertUtil.defaultNameConvert = converter;
         
         assertEquals("username", DbConvertUtil.toFieldName("USERNAME"));
         assertEquals("userName", DbConvertUtil.toFieldName("USER_NAME"));
@@ -49,7 +49,7 @@ class DbConvertUtilTest_Extended {
     @DisplayName("测试 toFieldName - 使用 ColumnNameToUper")
     void testToFieldName_WithToUperConverter() {
         NameConvertToUper converter = new NameConvertToUper();
-        DbConvertUtil.defaultColumnMapper = converter;
+        DbConvertUtil.defaultNameConvert = converter;
         
         assertEquals("username", DbConvertUtil.toFieldName("username"));
         assertEquals("userName", DbConvertUtil.toFieldName("user_name"));
@@ -59,27 +59,27 @@ class DbConvertUtilTest_Extended {
     @DisplayName("测试 toDbColumnName - 使用 ColumnNameToLower")
     void testToDbColumnName_WithToLowerConverter() {
         NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultColumnMapper = converter;
+        DbConvertUtil.defaultNameConvert = converter;
         
-        assertEquals("USER_NAME", DbConvertUtil.toDbColumnName("userName"));
-        assertEquals("USER_NAME", DbConvertUtil.toDbColumnName("USER_NAME"));
+        assertEquals("user_name", DbConvertUtil.toDbName("userName"));
+        assertEquals("user_name", DbConvertUtil.toDbName("USER_NAME"));
     }
 
     @Test
     @DisplayName("测试 toDbColumnName - 使用 ColumnNameToUper")
     void testToDbColumnName_WithToUperConverter() {
         NameConvertToUper converter = new NameConvertToUper();
-        DbConvertUtil.defaultColumnMapper = converter;
+        DbConvertUtil.defaultNameConvert = converter;
         
-        assertEquals("USER_NAME", DbConvertUtil.toDbColumnName("userName"));
-        assertEquals("USER_NAME", DbConvertUtil.toDbColumnName("USER_NAME"));
+        assertEquals("user_name", DbConvertUtil.toDbName("userName"));
+        assertEquals("user_name", DbConvertUtil.toDbName("USER_NAME"));
     }
 
     @Test
     @DisplayName("测试 getFirstColumn - 使用自定义转换器")
     void testGetFirstColumn_WithCustomConverter() {
         NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultColumnMapper = converter;
+        DbConvertUtil.defaultNameConvert = converter;
         
         ResultMap map = new ResultMap();
         map.put("id", 1);
@@ -93,7 +93,7 @@ class DbConvertUtilTest_Extended {
     @DisplayName("测试 getColumnList - 使用自定义转换器")
     void testGetColumnList_WithCustomConverter() {
         NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultColumnMapper = converter;
+        DbConvertUtil.defaultNameConvert = converter;
         
         List<ResultMap> list = new ArrayList<>();
         ResultMap map1 = new ResultMap();
@@ -108,14 +108,14 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试 toDbColumnNames - 多个字段名")
-    void testToDbColumnNames_Multiple() {
+    void testToDbNames_Multiple() {
         String result = DbConvertUtil.toDbColumnNames("userName userId");
-        assertEquals("USER_NAME USER_ID", result);
+        assertEquals("user_name user_id", result);
     }
 
     @Test
     @DisplayName("测试 toDbColumnNames - 空字符串")
-    void testToDbColumnNames_Empty() {
+    void testToDbNames_Empty() {
         String result = DbConvertUtil.toDbColumnNames("");
         assertEquals("", result);
     }
@@ -221,20 +221,20 @@ class DbConvertUtilTest_Extended {
 
     @Test
     @DisplayName("测试往返转换 - toFieldName 然后 toDbColumnName")
-    void testRoundTrip_ToFieldNameThenToDbColumnName() {
+    void testRoundTrip_ToFieldNameThenToDbName() {
         String original = "user_name";
         String fieldName = DbConvertUtil.toFieldName(original);
-        String dbColumn = DbConvertUtil.toDbColumnName(fieldName);
+        String dbColumn = DbConvertUtil.toDbName(fieldName);
         
         // 驼峰转下划线再回驼峰再回下划线
-        assertEquals("USER_NAME", dbColumn);
+        assertEquals("user_name", dbColumn);
     }
 
     @Test
     @DisplayName("测试往返转换 - toDbColumnName 然后 toFieldName")
     void testRoundTrip_ToDbColumnNameThenToFieldName() {
         String original = "userName";
-        String dbColumn = DbConvertUtil.toDbColumnName(original);
+        String dbColumn = DbConvertUtil.toDbName(original);
         String fieldName = DbConvertUtil.toFieldName(dbColumn);
         
         // 驼峰转下划线再回驼峰
@@ -248,8 +248,8 @@ class DbConvertUtilTest_Extended {
         String result = DbConvertUtil.toFieldName("user_name_info");
         assertEquals("userNameInfo", result);
         
-        result = DbConvertUtil.toDbColumnName("userNameInfo");
-        assertEquals("USER_NAME_INFO", result);
+        result = DbConvertUtil.toDbName("userNameInfo");
+        assertEquals("user_name_info", result);
     }
 
     @Test
@@ -259,7 +259,7 @@ class DbConvertUtilTest_Extended {
         String result = DbConvertUtil.toFieldName("user1_name2");
         assertEquals("user1Name2", result);
         
-        result = DbConvertUtil.toDbColumnName("user1Name2");
-        assertEquals("USER1_NAME2", result);
+        result = DbConvertUtil.toDbName("user1Name2");
+        assertEquals("user1_name2", result);
     }
 }

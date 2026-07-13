@@ -3,7 +3,6 @@ package com.dlz.db.modal.para;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.support.PojoCache;
 import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.util.system.FieldReflections;
@@ -29,7 +28,7 @@ public abstract class APojoQuery<ME extends APojoQuery, T, PM extends AQuery>
     protected void wrapQuery(List<Field> fields, T bean) {
         fields.forEach(field -> {
             Object value = FieldReflections.getValue(bean, field);
-            final String columnName = PojoCache.getColumnName(field);
+            final String columnName = PojoCache.getDbName(field);
             if (this.queryIgnore.apply(columnName, value)) {
                 return;
             }

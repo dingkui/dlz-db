@@ -1,12 +1,9 @@
-package com.dlz.db.convertor.dbtype;
+package com.dlz.db.mapper.dbtype;
 
-import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.support.PojoCache;
 import com.dlz.kit.util.ValUtil;
-import lombok.AllArgsConstructor;
 
 import java.sql.Types;
-import java.util.Locale;
 import java.util.Map;
 
 @SuppressWarnings("unused") // sqlExecutor 保留供未来扩展使用
@@ -21,7 +18,7 @@ public class TableColumnMapper implements ITableColumnMapper {
             }
             return cover(dbClass, value);
         }
-//		final List<ResultMap> list = dao.getList("select * from information_schema.columns where table_name = '" + tableName + "'", new ResultMapRowMapper(new ColumnNameCamel()));
+//		final List<ResultMap> list = dao.getList("SELECT * FROMinformation_schema.columns WHERE table_name = '" + tableName + "'", new ResultMapRowMapper(new ColumnNameCamel()));
         return value;
     }
 

@@ -9,6 +9,7 @@ import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
 import com.dlz.db.support.bean.TableInfo;
 import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.VAL;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,7 @@ public class DbOpPostgresql extends SqlHelper {
     public void createTable(String tableName, Class<?> clazz) {
         final String schema = DB.Dynamic.getCurrentConfig().getSchema();
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
-                    String columnName = PojoCache.getColumnName(field);
+                    String columnName = PojoCache.getDbName(field);
                     String column = null;
                     if (columnName.equals("")) {
                         return column;
@@ -58,15 +59,11 @@ public class DbOpPostgresql extends SqlHelper {
     }
 
     @Override
-    public Set<String> getTableColumnNames(String tableName) {
-        // 获取表所有字段
+    public VAL<String,String[]> getTableColumnSql(String tableName) {
+        // 达梦系统表查询字段信息
         String sql = "SELECT column_name as name FROM information_schema.columns WHERE table_schema=? AND table_name=?";
-        List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql,DB.Dynamic.getCurrentConfig().getSchema(),tableName.toLowerCase());
-        Set<String> re = new HashSet();
-        maps.forEach(item -> re.add(ValUtil.toStr(item.get("name"), "")));
-        return re;
+        return VAL.of(sql, new String[]{DB.Dynamic.getCurrentConfig().getSchema(),tableName.toLowerCase()});
     }
-
 
     @Override
     public TableInfo getTableInfo(String tableName) {

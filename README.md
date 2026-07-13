@@ -336,7 +336,7 @@ List<User> users = DB.Sql.select("key.user.find")
 
 ```java
 // 原生 SQL
-DB.Jdbc.select("复杂的SQL语句 where id=?", id).queryList();
+DB.Jdbc.select("复杂的SQL语句 WHERE id=?", id).queryList();
 
 // 预设 SQL
 DB.Sql.select("key.复杂查询").addPara("x", 1).queryList();

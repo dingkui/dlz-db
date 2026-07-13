@@ -1,8 +1,8 @@
 package com.dlz.db.support;
 
-import com.dlz.db.convertor.columnname.INameConverter;
-import com.dlz.db.convertor.columnname.IConvertorToFieldName;
-import com.dlz.db.convertor.dbtype.ITableColumnMapper;
+import com.dlz.db.mapper.name.INameConverter;
+import com.dlz.db.mapper.name.IConvertorToFieldName;
+import com.dlz.db.mapper.dbtype.ITableColumnMapper;
 import com.dlz.db.ds.DataSourceConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SqlRunThreadHolder {
     public static final ThreadLocal<DataSourceConfig> HOLDER_config = new ThreadLocal<>();
     public static final ThreadLocal<IConvertorToFieldName> HOLDER_ConvertorToFieldName = new ThreadLocal<>();
-    public static final ThreadLocal<INameConverter> HOLDER_ColumnNameConvertor = new ThreadLocal<>();
+    public static final ThreadLocal<INameConverter> HOLDER_NameConvertor = new ThreadLocal<>();
     public static final ThreadLocal<ITableColumnMapper> HOLDER_TableColumnMapper = new ThreadLocal<>();
     public static final ThreadLocal<Boolean> HOLDER_IgnoreLogicDelete = new ThreadLocal<>();
     public static DataSourceConfig getConfig() {
@@ -40,19 +40,19 @@ public class SqlRunThreadHolder {
     public static void removeConvertorToFieldName() {
         HOLDER_ConvertorToFieldName.remove();
     }
-    public static INameConverter getColumnNameConvertor(INameConverter defaultColumnNameConvertor) {
-        final INameConverter iColumnNameConvertor = HOLDER_ColumnNameConvertor.get();
+    public static INameConverter getNameConvertor(INameConverter defaultNameConvertor) {
+        final INameConverter iColumnNameConvertor = HOLDER_NameConvertor.get();
         if(iColumnNameConvertor == null){
-            HOLDER_ColumnNameConvertor.set(defaultColumnNameConvertor);
-            return defaultColumnNameConvertor;
+            HOLDER_NameConvertor.set(defaultNameConvertor);
+            return defaultNameConvertor;
         }
         return iColumnNameConvertor;
     }
     public static void setColumnNameConvertor(INameConverter convertor) {
-        HOLDER_ColumnNameConvertor.set(convertor);
+        HOLDER_NameConvertor.set(convertor);
     }
     public static void removeColumnNameConvertor() {
-        HOLDER_ColumnNameConvertor.remove();
+        HOLDER_NameConvertor.remove();
     }
     public static ITableColumnMapper getTableColumnMapper(ITableColumnMapper defaultTableColumnMapper) {
         final ITableColumnMapper iTableColumnMapper = HOLDER_TableColumnMapper.get();

@@ -29,7 +29,7 @@ class ISqlExecutorTest extends BaseDBTest {
     void testGetTableColumnsInfo_Valid() {
         HashMap<String, Integer> info = getRealExecutor().getTableColumnsInfo("user");
         assertNotNull(info);
-        assertTrue(info.containsKey("ID"));
+        assertTrue(info.containsKey("id"));
         assertTrue(info.containsKey("NAME"));
     }
 
@@ -46,9 +46,9 @@ class ISqlExecutorTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("update - 简单更新执行")
+    @DisplayName(" UPDATE - 简单更新执行")
     void testUpdate() {
-        int rows = getRealExecutor().update("delete from user");
+        int rows = getRealExecutor().update("DELETE FROM user");
         assertTrue(rows >= 0);
     }
 
@@ -62,7 +62,7 @@ class ISqlExecutorTest extends BaseDBTest {
     @Test
     @DisplayName("getOne - 查到一条数据")
     void testGetOne_Single() {
-        DBHolder.getSqlExecutor().update("delete from user");
+        DBHolder.getSqlExecutor().update("DELETE FROM user");
         getRealExecutor().update("INSERT INTO user(id,name) VALUES(999,'test')");
 
         ResultMap result = getRealExecutor().getOne("SELECT * FROM user WHERE id=999", false);

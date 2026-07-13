@@ -35,7 +35,7 @@ public class SegmentIdGenerator {
         private final String tableName;
         private final int step;
         private volatile long max;        // 当前号段在 DB 中的 max_id 值（号段上限）
-        private final AtomicLong current; // 下一个将要分配的 ID
+        private final AtomicLong current; // 下一个将要分配的 id
 
         SegmentBuffer(String tableName, int step) {
             this.tableName = tableName;
@@ -169,10 +169,10 @@ public class SegmentIdGenerator {
             }
         }
 
-        // ==================== ID 分发（核心重构） ====================
+        // ==================== id 分发（核心重构） ====================
 
         /**
-         * 批量获取 N 个连续 ID 的终止值。
+         * 批量获取 N 个连续 id 的终止值。
          */
         long nextIds(long count) {
             while (true) {

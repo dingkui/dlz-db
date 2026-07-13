@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DBBatchTableUpdateTest extends BaseDBTest {
     @Test
-    @DisplayName("测试 update - 空列表返回 false")
+    @DisplayName("测试  UPDATE - 空列表返回 false")
     void testPojoUpdateEmptyList() {
         List<JSONMap> users = Collections.emptyList();
         assertFalse(DB.Batch.tableUpdate("Test_User",users));
@@ -32,7 +32,7 @@ public class DBBatchTableUpdateTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - 带批次大小参数")
+    @DisplayName("测试  UPDATE - 带批次大小参数")
     void testPojoUpdateWithBatchSize() {
         List<JSONMap> users = Arrays.asList(new JSONMap(), new JSONMap());
         assertThrows(SystemException.class, () -> {
@@ -44,7 +44,7 @@ public class DBBatchTableUpdateTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - 空参数列表")
+    @DisplayName("测试  UPDATE - 空参数列表")
     void testPojoUpdateWithEmptyBeans() {
         final User insert1 = new User();
         final User insert2 = new User();

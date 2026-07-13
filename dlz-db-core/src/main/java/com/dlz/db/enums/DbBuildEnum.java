@@ -13,13 +13,13 @@ import java.util.regex.Pattern;
 
 @AllArgsConstructor
 public enum DbBuildEnum {
-    ands("and #s"),//and多条件语句,
-    ors("or #s"),//or多条件语句,
-    muOr("#s"),//多条件语句 or 拼接
-    muAnd("#s"),//多条件语句 and 拼接,
+    ands("AND #s"),//and多条件语句,
+    ors("OR #s"),//or多条件语句,
+    muOr("#s"),//多条件语句 OR 拼接
+    muAnd("#s"),//多条件语句 AND 拼接,
     sql("(#s)"),//自定义sql,
 //    apply("(#s)"),//自定义sql,
-    where("where #s");//自定义sql,
+    where("WHERE #s");//自定义sql,
     private final String _sql;
 
 //    private static final Pattern PATTERN_INDEX = Pattern.compile("\\{(\\d+)\\}");

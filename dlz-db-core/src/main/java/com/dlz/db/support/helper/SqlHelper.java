@@ -4,12 +4,14 @@ import com.dlz.db.core.anno.SqlAction;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.bean.TableInfo;
+import com.dlz.kit.util.VAL;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +27,24 @@ public abstract class SqlHelper {
      * 获取表所有字段
      * @param tableName
           */
-    public abstract Set<String> getTableColumnNames(String tableName);
+    public abstract VAL<String,String[]> getTableColumnSql(String tableName);
+
+    public Set<String> getTableColumnNames(String tableName) {
+        // 构建查询字段信息的SQL语句
+        final VAL<String, String[]> val = getTableColumnSql(tableName);
+
+        // 获取表所有字段
+        Set<String> re = new HashSet();
+        DBHolder.getSqlExecutor().getList(val.v1, val.v2).forEach(item -> {
+            final String name = item.getStr("name");
+            if(name!=null){
+                re.add(name.toLowerCase());
+                re.add(name);
+            }
+        });
+        // 执行查询并获取结果
+        return re;
+    }
 
     /**
      * 获取表详细信息（含字段、主键、注释）

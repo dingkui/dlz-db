@@ -1,12 +1,11 @@
 package com.dlz.test.db.cases.convertor.columnname;
 
-import com.dlz.db.convertor.columnname.NameConvertToLower;
+import com.dlz.db.mapper.name.NameConvertToLower;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * ColumnNameToLower 测试类
@@ -34,8 +33,8 @@ class ColumnNameToLowerTest {
     @Test
     @DisplayName("toDbColumnName - 不转换")
     void testToDbName() {
-        assertEquals("userName", converter.toDbName("userName"));
-        assertEquals("USER_NAME", converter.toDbName("USER_NAME"));
+        assertEquals("username", converter.toDbName("userName"));
+        assertEquals("user_name", converter.toDbName("USER_NAME"));
         assertEquals("user_name", converter.toDbName("user_name"));
     }
 
@@ -43,7 +42,7 @@ class ColumnNameToLowerTest {
     @Test
     @DisplayName("toDbColumnName - null 值")
     void testToDbName_Null() {
-        assertNull(converter.toDbName(null));
+        assertThrows(NullPointerException.class, () -> converter.toDbName(null));
     }
 
     @Test

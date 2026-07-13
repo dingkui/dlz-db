@@ -40,7 +40,7 @@ public class HelperScan {
             // 建立字段
             List<Field> fields = FieldReflections.getFields(clazz);
             for (Field field : fields) {
-                String columnName = PojoCache.getColumnName(field);
+                String columnName = PojoCache.getDbName(field);
                 if (columnName.equals("")
                         || columns.contains(columnName)
                         || columnName.equalsIgnoreCase("id")

@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.dbtype.TableColumnMapper;
+import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.Test;
 
@@ -64,15 +64,15 @@ public class TableColumnMapperTest extends BaseDBTest {
     public void converObj4Db_unknownColumnReturnsOriginal() {
         TableColumnMapper mapper = new TableColumnMapper();
         Object value = "keep_me";
-        Object result = mapper.converObj4Db("SYS_SQL", "NOT_EXIST_COLUMN", value);
+        Object result = mapper.converObj4Db("sys_sql", "NOT_EXIST_COLUMN", value);
         assertEquals("表中不存在的字段应保持原值", value, result);
     }
 
     @Test
     public void converObj4Db_integerColumnToLong() {
         TableColumnMapper mapper = new TableColumnMapper();
-        Object result = mapper.converObj4Db("SYS_SQL", "DELETED", "1");
-        assertTrue("SYS_SQL.DELETED  为 INTEGER 类型，字符串数字应转为 Long", result instanceof Long);
+        Object result = mapper.converObj4Db("sys_sql", "deleted", "1");
+        assertTrue("sys_sql.deleted  为 INTEGER 类型，字符串数字应转为 Long", result instanceof Long);
         assertEquals(1L, result);
     }
 }

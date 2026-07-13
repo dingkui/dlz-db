@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 /**
- * 智能号段 ID 生成器测试用例
+ * 智能号段 id 生成器测试用例
  */
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -24,7 +24,7 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         // 清理测试数据，确保每次测试环境干净
         // 清理号段记录
         DB.Jdbc.execute("DROP TABLE IF EXISTS sys_seq");
-        DB.Jdbc.execute("delete from TEST_AUTO_ID");
+        DB.Jdbc.execute("DELETE FROM TEST_AUTO_ID");
         final DataSourceProperty properties = new DataSourceProperty();
         properties.setName("test");
         properties.setDriverClassName("org.sqlite.JDBC");
@@ -55,7 +55,7 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         long maxId1 = DBHolder.sequence(TEST_TABLE, 1);
         long maxId2 = DBHolder.sequence(TEST_TABLE, 1);
         Assertions.assertEquals(maxId1 + 1, maxId2, "单次取号应连续递增");
-        log.info("Single ID generation: {} -> {}", maxId1, maxId2);
+        log.info("Single id generation: {} -> {}", maxId1, maxId2);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
     @Test
     @Order(3)
     void testBatchIdGeneration() {
-        // 一次性取 50 个 ID
+        // 一次性取 50 个 id
         long maxId = DBHolder.sequence(TEST_TABLE, 50);
 
         // 验证返回的是终止值
@@ -93,13 +93,13 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
 
         // 再取一个，应该是 maxId + 1
         long nextMaxId = DBHolder.sequence(TEST_TABLE, 1);
-        Assertions.assertEquals(maxId + 1, nextMaxId, "批量取号后下一个 ID 应紧接着");
+        Assertions.assertEquals(maxId + 1, nextMaxId, "批量取号后下一个 id 应紧接着");
     }
 
     @Test
     @Order(4)
     void testLargeBatchGeneration() {
-        // 一次性取 2000 个 ID
+        // 一次性取 2000 个 id
         long maxId = DBHolder.sequence(TEST_TABLE, 2000);
 
         Assertions.assertTrue(maxId >= 2000, "大批量取号应成功");
@@ -131,7 +131,7 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         }
 
         latch.await();
-        Assertions.assertEquals(threadCount * 100, allIds.size(), "并发产生的 ID 必须唯一且数量正确");
+        Assertions.assertEquals(threadCount * 100, allIds.size(), "并发产生的 id 必须唯一且数量正确");
         log.info("Concurrency test passed: {} unique IDs generated", allIds.size());
     }
 
@@ -158,12 +158,12 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         long dsB_id1 = DBHolder.sequence(sharedTableName, 1);
         long dsB_id2 = DBHolder.sequence(sharedTableName, 1);
 
-        // 验证：不同数据源的 ID 应该是独立的
-        Assertions.assertEquals(dsA_id1 + 1, dsA_id2, "同一数据源内 ID 应连续");
-        Assertions.assertEquals(dsB_id1 + 1, dsB_id2, "同一数据源内 ID 应连续");
+        // 验证：不同数据源的 id 应该是独立的
+        Assertions.assertEquals(dsA_id1 + 1, dsA_id2, "同一数据源内 id 应连续");
+        Assertions.assertEquals(dsB_id1 + 1, dsB_id2, "同一数据源内 id 应连续");
 
-        // 验证：不同数据源的起始 ID 应该相同（因为都是新表/新记录）
-        Assertions.assertEquals(dsA_id1, dsB_id1, "不同数据源的初始 ID 应一致");
+        // 验证：不同数据源的起始 id 应该相同（因为都是新表/新记录）
+        Assertions.assertEquals(dsA_id1, dsB_id1, "不同数据源的初始 id 应一致");
 
         log.info("Multi-DS Test Passed: DS_A=[{}, {}], DS_B=[{}, {}]", dsA_id1, dsA_id2, dsB_id1, dsB_id2);
     }

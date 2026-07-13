@@ -2,12 +2,12 @@ package com.dlz.db.support.helper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
-import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
 import com.dlz.db.support.bean.TableInfo;
 import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.VAL;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
 
@@ -25,7 +25,7 @@ public class DbOpDm8 extends SqlHelper {
     public void createTable(String tableName, Class<?> clazz) {
         // 达梦数据库表名需大写
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
-                    String columnName = PojoCache.getColumnName(field);
+                    String columnName = PojoCache.getDbName(field);
                     String column = null;
                     if (columnName.equals("")) {
                         return column;
@@ -50,7 +50,7 @@ public class DbOpDm8 extends SqlHelper {
         }
 
         final String columnsComment = FieldReflections.getFields(clazz).stream().map(field -> {
-                    String columnName = PojoCache.getColumnName(field);
+                    String columnName = PojoCache.getDbName(field);
                     String columnComment = PojoCache.getColumnComment(field);
                     String column = null;
                     if (columnName.equals("") && StringUtils.isEmpty(columnComment)) {
@@ -68,13 +68,10 @@ public class DbOpDm8 extends SqlHelper {
     }
 
     @Override
-    public Set<String> getTableColumnNames(String tableName) {
+    public VAL<String,String[]> getTableColumnSql(String tableName) {
         // 达梦系统表查询字段信息
-        String sql = "SELECT COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE OWNER = USER AND TABLE_NAME = ?";
-        return DBHolder.getSqlExecutor().getList(sql, tableName.toUpperCase())
-                .stream()
-                .map(item -> item.getStr("columnName"))
-                .collect(Collectors.toSet());
+        String sql = "SELECT column_name as name FROM ALL_TAB_COLUMNS WHERE OWNER = USER AND TABLE_NAME = ?";
+        return VAL.of(sql, new String[]{tableName.toUpperCase()});
     }
 
     @Override

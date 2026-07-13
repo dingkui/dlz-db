@@ -1,6 +1,6 @@
 package com.dlz.db.service;
 
-import com.dlz.db.convertor.rowMapper.IRowMapper;
+import com.dlz.db.mapper.rowMapper.IRowMapper;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.dto.ResultMap;
@@ -15,7 +15,7 @@ import java.util.concurrent.Callable;
 
 /**
  * 从数据库中取得单条map类型数据：{adEnddate=2015-04-08 13:47:12.0}
- * sql语句，可以带参数如：select AD_ENDDATE from JOB_AD t where ad_id=#{ad_id}
+ * sql语句，可以带参数如：select AD_ENDDATE FROM JOB_AD t WHERE ad_id=#{ad_id}
  * paraMap ：Map<String,Object> m=new HashMap<String,Object>();m.put("ad_id", "47");
 
   * @throws Exception
@@ -54,7 +54,7 @@ public interface IDbJdbcService {
     /**
      * 新的一套操作api,用于比较简单的sql,直接用问号传参
      *
-     * @param sql  sql语句，可以用问号传参数如：update JOB_AD set AD_text=? where ad_id = ?
+     * @param sql  sql语句，可以用问号传参数如： UPDATE JOB_AD SET AD_text=? WHERE ad_id = ?
      * @param para ：参数数组
      */
     default int executeSql(String sql, Object... para) {

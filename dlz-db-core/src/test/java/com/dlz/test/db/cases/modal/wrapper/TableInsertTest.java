@@ -29,7 +29,7 @@ public class TableInsertTest extends BaseDBTest {
                 .value("dict_name", "测试")
                 .value("dict_code", "test_code")
                 .value("dictStatus", 1);
-        showSql(insert, "tableInsertTest2", "insert into t_b_dict(DICT_STATUS,DELETED) values('1',0)");
+        showSql(insert, "tableInsertTest2", "INSERT INTO t_b_dict(deleted,dict_status) VALUES(0,'1') ");
     }
 
     @Test
@@ -39,10 +39,10 @@ public class TableInsertTest extends BaseDBTest {
         data.put("dict_code", "test_code");
         data.put("dictStatus", 1);
         TableInsert insert = DB.Table.insert("t_b_dict").value(data);
-        showSql(insert, "tableInsertTest3", "insert into t_b_dict(DICT_STATUS,DELETED) values('1',0)");
+        showSql(insert, "tableInsertTest3", "INSERT INTO t_b_dict(deleted,dict_status) VALUES(0,'1') ");
 
         TableInsert insert2 = DB.Table.insert("t_b_dict").value(data);
-        showSql(insert2, "tableInsertTest3", "insert into t_b_dict(DICT_STATUS,DELETED) values('1',0)");
+        showSql(insert2, "tableInsertTest3", "INSERT INTO t_b_dict(deleted,dict_status) VALUES(0,'1') ");
     }
 
 }

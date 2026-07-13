@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *                 / queryStr / queryLong / queryInt / queryDouble
  *                 / queryStrList / queryLongList / queryIntList / queryDoubleList
  *                 / count / limit / orderByAsc / orderByDesc / sort
- * COND    (5)  : gt+lt / ge+le / like / in / between / isNull
+ * COND    (5)  : gt+lt / ge+le / LIKE / in / BETWEEN / isNull
  * COL     (1)  : select 多列限定
  * </pre>
  */
@@ -78,7 +78,7 @@ class DbTableTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("insertOrUpdate - 插入新记录（无 ID）")
+    @DisplayName("insertOrUpdate - 插入新记录（无 id）")
     void testInsertOrUpdateNew() {
         int rows = DB.Table.insertOrUpdate("user",
                 new JSONMap().put("name", "upsert新").put("age", 35));
@@ -86,7 +86,7 @@ class DbTableTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("insertOrUpdate - 更新已有记录（有 ID）")
+    @DisplayName("insertOrUpdate - 更新已有记录（有 id）")
     void testInsertOrUpdateExisting() {
         Long id = DB.Table.insertWithAutoKey("user",new JSONMap().put("name", "upsert原").put("age", 18));
 
@@ -180,7 +180,7 @@ class DbTableTest extends BaseDBTest {
     // ==================== UPDATE 执行 ====================
 
     @Test
-    @DisplayName("update - Wrapper execute 条件更新并验证")
+    @DisplayName(" UPDATE - Wrapper execute 条件更新并验证")
     void testUpdateExecute() {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "待更新").put("age", 18));
@@ -194,7 +194,7 @@ class DbTableTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("update - Map 批量设置更新字段")
+    @DisplayName(" UPDATE - Map 批量设置更新字段")
     void testUpdateWithMap() {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "Map更新"));
@@ -211,7 +211,7 @@ class DbTableTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("update - batch 批量更新")
+    @DisplayName(" UPDATE - batch 批量更新")
     void testBatchUpdate() {
         Long id1 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "batch原1"));
@@ -586,7 +586,7 @@ class DbTableTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("条件 - like 模糊查询")
+    @DisplayName("条件 - LIKE 模糊查询")
     void testLikeCondition() {
         Long id1 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "like_hello"));
@@ -621,7 +621,7 @@ class DbTableTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("条件 - between 范围查询（age BETWEEN 20 AND 50）")
+    @DisplayName("条件 - BETWEEN 范围查询（age BETWEEN 20 AND 50）")
     void testBetweenCondition() {
         Long id1 = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "bw1").put("age", 10));
@@ -657,7 +657,7 @@ class DbTableTest extends BaseDBTest {
     // ==================== SELECT 执行 - 列限定 ====================
 
     @Test
-    @DisplayName("select - 多列限定（只返回所选列）")
+    @DisplayName("SELECT - 多列限定（只返回所选列）")
     void testSelectMultipleColumns() {
         Long id = DB.Table.insertWithAutoKey("user",
                 new JSONMap().put("name", "多列限定").put("age", 25).put("sex", "男"));
@@ -697,7 +697,7 @@ class DbTableTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("deleteById - 空 ID 应抛出异常")
+    @DisplayName("deleteById - 空 id 应抛出异常")
     void testDeleteByIdWithEmptyId() {
         assertThrows(SystemException.class, () -> DB.Table.deleteById("user", ""));
         assertThrows(SystemException.class, () -> DB.Table.deleteById("user", (Object) null));

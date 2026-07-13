@@ -6,7 +6,7 @@ import com.dlz.db.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("SYS_SQL")
+@TableName("sys_sql")
 public class SysSql {
     @TableId(value = "id",type = IdType.INPUT)
     private Long id;

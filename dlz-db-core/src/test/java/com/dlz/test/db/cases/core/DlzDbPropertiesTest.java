@@ -21,7 +21,7 @@ class DlzDbPropertiesTest {
         assertEquals("GBK", props.getBlob_charset());
         assertEquals(1, props.getSqllist().size());
         assertEquals("app/*", props.getSqllist().get(0));
-        assertEquals("select sql_key as k ,sql_value as s from sys_sql", props.getSql());
+        assertEquals("SELECT sql_key as k ,sql_value as s FROM sys_sql", props.getSql());
         assertFalse(props.isUseDbSql());
         assertEquals(-1, props.getTableCacheTime());
         assertEquals("deleted", props.getLogicDeleteField());
@@ -95,14 +95,14 @@ class DlzDbPropertiesTest {
         DlzDbProperties props = new DlzDbProperties();
         props.setDbSupport("mysql");
         props.setBlob_charset("UTF-8");
-        props.setSql("select * from sys");
+        props.setSql("SELECT * FROM sys");
         props.setUseDbSql(true);
         props.setTableCacheTime(600);
         props.setLogicDeleteField("is_deleted");
 
         assertEquals("mysql", props.getDbSupport());
         assertEquals("UTF-8", props.getBlob_charset());
-        assertEquals("select * from sys", props.getSql());
+        assertEquals("SELECT * FROM sys", props.getSql());
         assertTrue(props.isUseDbSql());
         assertEquals(600, props.getTableCacheTime());
         assertEquals("is_deleted", props.getLogicDeleteField());

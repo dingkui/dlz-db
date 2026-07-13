@@ -29,35 +29,35 @@
 		测试
 	-->
 	<sql sqlId="key.sqlTest.getStr"><![CDATA[
-	   select to_char(AD_ENDDATE,'yyyy') as AD_ENDDATE from JOB_AD t where 1 in (${ad_id}) 222
+	   select to_char(AD_ENDDATE,'yyyy') as AD_ENDDATE from JOB_AD t WHERE 1 IN (${ad_id}) 222
  	]]></sql>
 	<!--
 		测试
 	-->
 	<sql sqlId="key.sqlTest.update"><![CDATA[
-	   update JOB_AD set AD_text=#{adText} where ad_id in (${ad_id})
+	   update JOB_AD set AD_text=#{adText} WHERE ad_id IN (${ad_id})
  	]]></sql>
 	<!--
 		测试
 	-->
 	<sql sqlId="key.sqlTest.insert"><![CDATA[
-	   insert into JOB_AD (ad_id,ad_name,AD_text)values(SEQ_JOB_AD.NEXTVAL,#{adName},#{adText})
+	   INSERT INTO JOB_AD (ad_id,ad_name,AD_text)VALUES(SEQ_JOB_AD.NEXTVAL,#{adName},#{adText})
  	]]></sql>
 	<!--
 		测试
 	-->
 	<sql sqlId="key.sqlTest.sqlUtilTest"><![CDATA[
-	   where 1=1
-	   [and a=#{a}]   --a参数存在则添加该条件:"and a=#{a}"
-	   [and b=#{b}]   --a参数存在则添加该条件:"and b=#{a}"
-	   [and c=2 ^#{c}]   --a参数存在则添加该条件:"and b=#{a}"
-	   [and d=${d}]   --a参数存在则添加该条件:"and b=#{a}"
-	   [and d=ddd ^${d}]   --a参数存在则添加该条件:"and b=#{a}"
+	   WHERE 1=1
+	   [AND a=#{a}]   --a参数存在则添加该条件:"and a=#{a}"
+	   [AND b=#{b}]   --a参数存在则添加该条件:"and b=#{a}"
+	   [AND c=2 ^#{c}]   --a参数存在则添加该条件:"and b=#{a}"
+	   [AND d=${d}]   --a参数存在则添加该条件:"and b=#{a}"
+	   [AND d=ddd ^${d}]   --a参数存在则添加该条件:"and b=#{a}"
 	   [
-	   	and d=#{d}    --d或者c存在则添加该条件"and d=#{d}"
-	   	and d1=#{d1}    --d或者c存在则添加该条件"and d=#{d}"
-	   	and d2=#{d2}    --d或者c存在则添加该条件"and d=#{d}"
-	    [and c=#{c}]  --c存在则添加   "and d=#{d} and c=#{c}"
+	   	AND d=#{d}    --d或者c存在则添加该条件"and d=#{d}"
+	   	AND d1=#{d1}    --d或者c存在则添加该条件"and d=#{d}"
+	   	AND d2=#{d2}    --d或者c存在则添加该条件"and d=#{d}"
+	    [AND c=#{c}]  --c存在则添加   "and d=#{d} AND c=#{c}"
 	   ]  			  --d和c都不存在则不添加该条件
 	   ${xxxx}
  	]]></sql>

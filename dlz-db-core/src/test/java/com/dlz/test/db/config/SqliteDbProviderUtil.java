@@ -39,7 +39,7 @@ public class SqliteDbProviderUtil {
 
     static DlzDbProperties createTestConfig() {
         DlzDbProperties config = new DlzDbProperties();
-        config.setLogicDeleteField("DELETED");
+        config.setLogicDeleteField("deleted");
         config.setTableCacheTime(-1);
 
         config.getLog().setShowRunSql(true);

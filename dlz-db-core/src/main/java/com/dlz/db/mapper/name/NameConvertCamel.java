@@ -1,4 +1,4 @@
-package com.dlz.db.convertor.columnname;
+package com.dlz.db.mapper.name;
 
 import java.util.Locale;
 
@@ -38,7 +38,7 @@ public class NameConvertCamel implements INameConverter {
 	 * 2、全小写无下划线（原样返回）
 	 *   name             -> name
 	 * 3、全大写无下划线（整体转小写）
-	 *   DELETED          -> deleted
+	 *   deleted          -> deleted
 	 * 4、大写带下划线
 	 *   USER_NAME        -> userName
 	 * 5、混合大小写无下划线（含小写则原样返回）
@@ -70,7 +70,7 @@ public class NameConvertCamel implements INameConverter {
 		}
 
 		if (!name.contains("_")) {
-			//3、全大写无下划线（整体转小写）  DELETED  -> deleted
+			//3、全大写无下划线（整体转小写）  deleted  -> deleted
 			for (int i = 0; i < name.length(); i++) {
 				if (Character.isLowerCase(name.charAt(i))) {
 					return name;

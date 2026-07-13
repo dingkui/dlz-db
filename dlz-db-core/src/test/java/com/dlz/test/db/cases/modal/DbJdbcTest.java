@@ -99,35 +99,35 @@ class DbJdbcTest extends BaseDBTest {
 
     @Test
     public void jdbcPageTest1() {
-        final JdbcSelect page = DB.Jdbc.select("select 1 from dual where ?=1", 1)
+        final JdbcSelect page = DB.Jdbc.select("SELECT 1 FROM dual WHERE ?=1", 1)
                 .page(Page.build(1, 2));
-        showSql(page, "jdbcPageTest1", "select 1 from dual where 1=1 LIMIT 0,2");
+        showSql(page, "jdbcPageTest1", "SELECT 1 FROM dual WHERE 1=1 LIMIT 0,2");
     }
 
     @Test
     public void jdbcPageTest2() {
-        final JdbcSelect page = DB.Jdbc.select("select 1 from dual where ?=1", 1)
+        final JdbcSelect page = DB.Jdbc.select("SELECT 1 FROM dual WHERE ?=1", 1)
                 .page(Page.build(1, 2, Order.descs("x1", "x2")));
-        showSql(page, "jdbcPageTest2", "select 1 from dual where 1=1 order by X1 desc,X2 desc LIMIT 0,2");
+        showSql(page, "jdbcPageTest2", "SELECT 1 FROM dual WHERE 1=1 order by X1 desc,X2 desc LIMIT 0,2");
     }
 
     @Test
     public void jdbcPageTest3() {
-        final JdbcSelect page = DB.Jdbc.select("select 1 from dual where ?=1", 1)
+        final JdbcSelect page = DB.Jdbc.select("SELECT 1 FROM dual WHERE ?=1", 1)
                 .page(1, 20, Order.descs("x1", "x2"))
                 .page(Page.build(Order.descs("x1", "x2")));
-        showSql(page, "jdbcPageTest3", "select 1 from dual where 1=1 order by X1 desc,X2 desc");
+        showSql(page, "jdbcPageTest3", "SELECT 1 FROM dual WHERE 1=1 order by X1 desc,X2 desc");
     }
 
     @Test
     public void jdbcExecute() {
-        final int execute = DB.Jdbc.execute("delete from user");
+        final int execute = DB.Jdbc.execute("DELETE FROM user");
         Assert.assertNotNull("Jdbc 执行并返回影响行数", execute);
     }
 
     @Test
     public void jdbcDelete() {
-        final int execute = DB.Jdbc.execute("delete from user where id=?",1);
+        final int execute = DB.Jdbc.execute("DELETE FROM user where id=?",1);
         Assert.assertNotNull("Jdbc 执行并返回影响行数", execute);
     }
 }

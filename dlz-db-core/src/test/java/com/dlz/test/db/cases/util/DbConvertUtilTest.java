@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.util;
 
-import com.dlz.db.convertor.columnname.NameConvertCamel;
+import com.dlz.db.mapper.name.NameConvertCamel;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ class DbConvertUtilTest {
 
     @BeforeEach
     void setUp() {
-        DbConvertUtil.defaultColumnMapper = new NameConvertCamel();
+        DbConvertUtil.defaultNameConvert = new NameConvertCamel();
     }
 
     // ==================== toFieldName ====================
@@ -59,46 +59,46 @@ class DbConvertUtilTest {
 
     @ParameterizedTest
     @CsvSource({
-        "userName, USER_NAME",
-        "userId, USER_ID",
-        "createTime, CREATE_TIME",
-        "updateTime, UPDATE_TIME",
-        "deleted, DELETED ",
-        "orderNo, ORDER_NO"
+        "userName, user_name",
+        "userId, user_id",
+        "createTime, create_time",
+        "updateTime, update_time",
+        "deleted, deleted",
+        "orderNo, order_no"
     })
     @DisplayName("toDbColumnName - 驼峰转下划线大写")
-    void testToDbColumnName_Basic(String beanKey, String expected) {
-        assertEquals(expected.trim(), DbConvertUtil.toDbColumnName(beanKey));
+    void testToDbName_Basic(String beanKey, String expected) {
+        assertEquals(expected.trim(), DbConvertUtil.toDbName(beanKey));
     }
 
     @Test
     @DisplayName("toDbColumnName - 特殊情况")
-    void testToDbColumnName_Special() {
-        assertEquals("NAME", DbConvertUtil.toDbColumnName("name"));
-        assertEquals("USER_NAME", DbConvertUtil.toDbColumnName("user_name"));
-        assertEquals("ID", DbConvertUtil.toDbColumnName("ID"));
-        assertEquals("USER_I_D", DbConvertUtil.toDbColumnName("userID"));
+    void testToDbName_Special() {
+        assertEquals("name", DbConvertUtil.toDbName("name"));
+        assertEquals("user_name", DbConvertUtil.toDbName("user_name"));
+        assertEquals("id", DbConvertUtil.toDbName("id"));
+        assertEquals("user_i_d", DbConvertUtil.toDbName("userID"));
     }
 
     @Test
     @DisplayName("toDbColumnName - null 返回 null")
-    void testToDbColumnName_Null() {
-        assertNull(DbConvertUtil.toDbColumnName(null));
+    void testToDbName_Null() {
+        assertNull(DbConvertUtil.toDbName(null));
     }
 
     @Test
     @DisplayName("toDbColumnName - 空字符串返回空字符串（覆盖 isEmpty 分支）")
-    void testToDbColumnName_Empty() {
-        assertEquals("", DbConvertUtil.toDbColumnName(""));
+    void testToDbName_Empty() {
+        assertEquals("", DbConvertUtil.toDbName(""));
     }
 
     // ==================== toDbColumnNames ====================
 
     @Test
     @DisplayName("toDbColumnNames - 带空格的多字段名转换")
-    void testToDbColumnNames_WithSpaces() {
+    void testToDbNames_WithSpaces() {
         String result = DbConvertUtil.toDbColumnNames("userName   userId");
-        assertEquals("USER_NAME USER_ID", result);
+        assertEquals("user_name user_id", result);
     }
 
     // ==================== getVal4Db ====================
@@ -112,7 +112,7 @@ class DbConvertUtilTest {
     @Test
     @DisplayName("getVal4Db - 非 null 值正常转换")
     void testGetVal4Db_NonNullValue() {
-        Object result = DbConvertUtil.getVal4Db("user", "ID", 123);
+        Object result = DbConvertUtil.getVal4Db("user", "id", 123);
         assertNotNull(result);
     }
 
@@ -204,7 +204,7 @@ class DbConvertUtilTest {
     @DisplayName("toDbColumnName → toFieldName 往返可逆")
     void testRoundTrip() {
         String original = "userName";
-        String dbColumn = DbConvertUtil.toDbColumnName(original);
+        String dbColumn = DbConvertUtil.toDbName(original);
         String backToField = DbConvertUtil.toFieldName(dbColumn);
         assertEquals(original, backToField);
     }

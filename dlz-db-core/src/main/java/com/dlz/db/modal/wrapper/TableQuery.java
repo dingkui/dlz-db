@@ -1,6 +1,6 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.convertor.columnname.IConvertorToFieldName;
+import com.dlz.db.mapper.name.IConvertorToFieldName;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
 import com.dlz.db.modal.dto.Page;

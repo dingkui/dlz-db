@@ -14,22 +14,22 @@ import java.util.regex.Pattern;
 
 @AllArgsConstructor
 public enum DbOperateEnum {
-    isNull("#n is null"),//为空
-    isNotNull("#n is not null"),//不为空
+    isNull("#n IS NULL"),//为空
+    isNotNull("#n IS NOT NULL"),//不为空
     eq("#n = #{#k}"),
     lt("#n < #{#k}"),//小于
     le("#n <= #{#k}"),//小于等于
     gt("#n > #{#k}"),//大于
     ge("#n >= #{#k}"),//大于等于
     ne("#n <> #{#k}"),//不等于
-    in("#n in (${#k})"),
-    notIn("#n not in (${#k})"),
-    like("#n like #{#k}"),//like:%xxx%
-    likeLeft("#n like #{#k}"),//左like:xxx%
-    likeRight("#n like #{#k}"),//右like：%xxx
-    notLike("#n not like #{#k}"),//不like
-    between("#n between #{#k1} and #{#k2}"),//BETWEEN 值1 AND 值2
-    notBetween("#n not between #{#k1} and #{#k2}");//BETWEEN 值1 AND 值2
+    in("#n IN (${#k})"),
+    notIn("#n NOT IN (${#k})"),
+    like("#n LIKE #{#k}"),//like:%xxx%
+    likeLeft("#n LIKE #{#k}"),//左like:xxx%
+    likeRight("#n LIKE #{#k}"),//右like：%xxx
+    notLike("#n NOT LIKE #{#k}"),//不like
+    between("#n BETWEEN #{#k1} AND #{#k2}"),//BETWEEN 值1 AND 值2
+    notBetween("#n NOT BETWEEN #{#k1} AND #{#k2}");//BETWEEN 值1 AND 值2
     public final String _sql;
     private final static Pattern patternKey = Pattern.compile("#k");
     private final static Pattern patternColumnName = Pattern.compile("#n");
@@ -39,7 +39,7 @@ public enum DbOperateEnum {
         if (!COLUMN_NAME_PATTERN.matcher(dbn).matches()) {
             throw new ValidateException("非法列名: " + dbn);
         }
-        final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbColumnName(dbn));
+        final String dbnSql = patternColumnName.matcher(this._sql).replaceAll(DbConvertUtil.toDbName(dbn));
         return key == null ? dbnSql : patternKey.matcher(dbnSql).replaceAll(key);
     }
 

@@ -2,12 +2,14 @@ package com.dlz.db.support.helper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
+import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
 import com.dlz.db.support.bean.TableInfo;
 import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.VAL;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
 
@@ -22,7 +24,7 @@ public class DbOpSqlite extends SqlHelper {
     public void createTable(String tableName, Class<?> clazz) {
         String createSql = "CREATE TABLE IF NOT EXISTS `{}` ({})";
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
-            String columnName = PojoCache.getColumnName(field);
+            String columnName = PojoCache.getDbName(field);
             if (columnName.equals("")) {
                 return null;
             }
@@ -49,13 +51,9 @@ public class DbOpSqlite extends SqlHelper {
     }
 
     @Override
-    public Set<String> getTableColumnNames(String tableName) {
-        // 获取表所有字段
-        String sql = "PRAGMA TABLE_INFO(`" + tableName + "`)";
-        List<ResultMap> maps = DBHolder.doDao(w->w.getList(sql));
-        Set<String> re = new HashSet();
-        maps.forEach(item -> re.add(ValUtil.toStr(item.get("name"), "").toUpperCase()));
-        return re;
+    public VAL<String,String[]> getTableColumnSql(String tableName) {
+        // 达梦系统表查询字段信息
+        return VAL.of("PRAGMA TABLE_INFO(`" + tableName + "`)",new String[]{});
     }
 
     @Override
@@ -86,7 +84,7 @@ public class DbOpSqlite extends SqlHelper {
             ColumnInfo columnInfo = new ColumnInfo();
             columnInfo.setColumnName(ValUtil.toStr(map.get("name"), ""));
             columnInfo.setColumnType(ValUtil.toStr(map.get("type"), ""));
-            // SQLite doesn't support column comments directly, so set it to empty
+            // SQLite doesn't support column comments directly, so SET it to empty
             columnInfo.setColumnComment("");
             // 转换字段类型为Java类型
             columnInfo.setJavaType(getJavaType(columnInfo.getColumnType()));

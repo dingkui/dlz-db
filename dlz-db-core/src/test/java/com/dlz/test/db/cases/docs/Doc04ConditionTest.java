@@ -53,13 +53,13 @@ public class Doc04ConditionTest extends BaseDBTest {
         final List<User> users = DB.Pojo.select(User.class)
                 .isNull("deleteTime")  // delete_time IS NULL
                 .queryBeanList();
-        //条件sql: where DELETE_TIME is null
+        //条件sql: WHERE DELETE_TIME IS NULL
 
         //下划线字段
         final List<ResultMap> users2 = DB.Pojo.select(User.class)
                 .isNull("delete_time") // delete_time IS NULL
                 .queryList();
-        //条件sql: where DELETE_TIME is null
+        //条件sql: WHERE DELETE_TIME IS NULL
     }
     @Test
     public void conditionTest4_1_2_1() {
@@ -67,13 +67,13 @@ public class Doc04ConditionTest extends BaseDBTest {
         DB.Table.select("user")
                 .isNull("deleteTime")  // delete_time IS NULL
                 .queryList();
-        //条件sql: where DELETE_TIME is null
+        //条件sql: WHERE delete_time IS NULL
 
         //下划线字段
         DB.Table.select("user")
                 .isNull("delete_time") // delete_time IS NULL
                 .queryList();
-        //条件sql: where DELETE_TIME is null
+        //条件sql: WHERE DELETE_TIME IS NULL
     }
 
     @Test
@@ -82,14 +82,14 @@ public class Doc04ConditionTest extends BaseDBTest {
         DB.Pojo.select(User.class)
                 .like(!ValUtil.isEmpty(name), User::getName, name)  // name LIKE ?
                 .queryList();
-        //条件sql: where NAME like '%test%'
+        //条件sql: WHERE name LIKE '%test%'
 
         //条件不成立时，条件不输出
         name = "";
         DB.Pojo.select(User.class)
                 .like(!ValUtil.isEmpty(name), User::getName, name)  // 条件不输出
                 .queryList();
-        //sql:select * from USER t where DELETED = 0
+        //sql:select * FROM USER t WHERE deleted = 0
     }
 
     @Test
@@ -101,7 +101,7 @@ public class Doc04ConditionTest extends BaseDBTest {
             query.like(User::getName, name); // name LIKE ?
         }
         List<User> users = query.queryBeanList();
-        //条件sql: where NAME like '%test%'
+        //条件sql: WHERE name LIKE '%test%'
     }
 
     @Test
@@ -169,16 +169,16 @@ public class Doc04ConditionTest extends BaseDBTest {
                 .where(baseCondition)
                 .ors(w -> w.addChildren(vipCondition))
                 .queryList();
-        // 复用条件   STATUS = 1 and AGE > 18
-        //sql:select * from USER t where STATUS = 1 and AGE > 18 and (VIP = 1 or LEVEL > 5) and DELETED = 0
+        // 复用条件   status = 1 AND age > 18
+        //sql:select * FROM USER t WHERE status = 1 AND age > 18 AND (VIP = 1 OR LEVEL > 5) AND deleted = 0
 
         // 应用到更新
         DB.Pojo.update(User.class)
                 .set("flag", 1)
                 .where(baseCondition)
                 .execute();
-        // 复用条件   STATUS = 1 and AGE > 18
-        //sql:update USER t set FLAG=1 where STATUS = 1 and AGE > 18 and DELETED = 0
+        // 复用条件   status = 1 AND age > 18
+        //sql: UPDATE USER t SET FLAG=1 WHERE status = 1 AND age > 18 AND deleted = 0
     }
 
     @Test
@@ -202,13 +202,13 @@ public class Doc04ConditionTest extends BaseDBTest {
         DB.Pojo.select(User.class)
                 .like(!ValUtil.isEmpty(keyword), User::getName, keyword)// keyword 不为空时才添加 LIKE 条件
                 .queryList();
-        //sql:select * from USER t where NAME like '%x%' and DELETED = 0
+        //sql:select * FROM USER t WHERE name LIKE '%x%' AND deleted = 0
 
         keyword = null;
         DB.Pojo.select(User.class)
                 .like(!ValUtil.isEmpty(keyword), User::getName, keyword)// keyword 为空时不添加 LIKE 条件
                 .queryList();
-        //sql:select * from USER t where DELETED = 0
+        //sql:select * FROM USER t WHERE deleted = 0
     }
 
     @Test
@@ -217,11 +217,11 @@ public class Doc04ConditionTest extends BaseDBTest {
         DB.Pojo.select(User.class)
                 .in(User::getId, Arrays.asList(1, 2, 3, 4, 5))
                 .queryList();
-        // 条件sql: where id IN (1, 2, 3, 4, 5)
+        // 条件sql: WHERE id IN (1, 2, 3, 4, 5)
         DB.Pojo.select(User.class)
                 .in(User::getId, new Integer[]{1, 2, 3, 4, 5})
                 .queryList();
-        // 条件sql: where id IN (1, 2, 3, 4, 5)
+        // 条件sql: WHERE id IN (1, 2, 3, 4, 5)
 
         // 方式2：逗号分隔的数字
         DB.Pojo.select(User.class)
@@ -248,7 +248,7 @@ public class Doc04ConditionTest extends BaseDBTest {
         DB.Pojo.select(User.class)
                 .in(User::getDeptId, "sql:SELECT id FROM department WHERE status = 1")
                 .queryList();
-        // 条件sql: where DEPT_ID in (SELECT id FROM department WHERE status = 1)
+        // 条件sql: where DEPT_ID IN (SELECT id FROM department WHERE status = 1)
     }
 
     @Test
@@ -261,36 +261,36 @@ public class Doc04ConditionTest extends BaseDBTest {
     @Test
     public void conditionTest4_5_4() {
         DB.Pojo.select(User.class).between(User::getAge, 18, 30).queryList();
-        //条件sql: where AGE between 18 and 30
+        //条件sql: where age BETWEEN 18 AND 30
 
         DB.Pojo.select(User.class).between(User::getAge, Arrays.asList(18, 30)).queryList();
-        //条件sql: where AGE between 18 and 30
+        //条件sql: where age BETWEEN 18 AND 30
 
         DB.Pojo.select(User.class).between(User::getAge, Arrays.asList(18, 30)).queryList();
-        //条件sql: where AGE between 18 and 30
+        //条件sql: where age BETWEEN 18 AND 30
 
         DB.Pojo.select(User.class).between(User::getAge, new Integer[]{18, 30}).queryList();
-        //条件sql: where AGE between 18 and 30
+        //条件sql: where age BETWEEN 18 AND 30
 
         DB.Pojo.select(User.class).between(User::getAge, "18", "30").queryList();
-        //条件sql: where AGE between '18' and '30'
+        //条件sql: where age BETWEEN '18' AND '30'
 
         DB.Pojo.select(User.class).between(User::getAge, "18,30").queryList();
-        //条件sql: where AGE between '18' and '30'
+        //条件sql: where age BETWEEN '18' AND '30'
 
         DB.Pojo.select(User.class).between(User::getAge, new String[]{"18", "30"}).queryList();
-        //条件sql: where AGE between '18' and '30'
+        //条件sql: where age BETWEEN '18' AND '30'
 
         Date startDate = DateUtil.getDate("2020-01-01");
         Date endDate = DateUtil.getDate("2021-01-01");
         DB.Pojo.select(User.class).between(User::getCreateTime, startDate, endDate).queryList();
-        //条件sql: where CREATE_TIME between '2020-01-01 00:00:00' and '2021-01-01 00:00:00'
+        //条件sql: where CREATE_TIME BETWEEN '2020-01-01 00:00:00' AND '2021-01-01 00:00:00'
     }
 
     @Test
     public void conditionTest4_5_5() {
         DB.Pojo.select(User.class).notBetween(User::getScore, 0, 60).queryList();
-        //条件sql: where SCORE not between 0 and 60
+        //条件sql: where SCORE NOT BETWEEN 0 AND 60
     }
 
     @Test
@@ -301,7 +301,7 @@ public class Doc04ConditionTest extends BaseDBTest {
                 .between(User::getAge, 18, 60)
                 .in(User::getDeptId, "sql:SELECT id FROM DEPARTMENT WHERE type = 'tech'")
                 .queryList();
-        //条件sql: where ID in (1,2,3,4,5) and STATUS not in (0,-1) and AGE between 18 and 60 and DEPT_ID in (SELECT id FROM dept WHERE type = 'tech')
+        //条件sql: where id IN (1,2,3,4,5) AND status NOT IN (0,-1) AND age BETWEEN 18 AND 60 AND DEPT_ID IN (SELECT id FROM dept WHERE type = 'tech')
     }
     @Test
     public void conditionTest4_6_2() {
@@ -311,14 +311,14 @@ public class Doc04ConditionTest extends BaseDBTest {
                 .eq(User::getStatus, 1)
                 .sql("age > #{minAge} AND age < #{maxAge}", params)
                 .queryList();
-        //条件sql: where STATUS = 1 and (age > 18 AND age < 60)
+        //条件sql: where status = 1 AND (age > 18 AND age < 60)
 
         //带条件，参数值为空或不存在时，条件不生效
         DB.Pojo.select(User.class)
                 .eq(User::getStatus, 1)
                 .sql("age > #{minAge} [AND age < #{maxAge}]", new JSONMap("minAge", 18))
                 .queryList();
-        //条件sql: where STATUS = 1 and (age > 18 )
+        //条件sql: where status = 1 AND (age > 18 )
 
         //sql预设，支持数据库动态配置
         //<sql sqlId="key.conditionTest4_6_2"><![CDATA[
@@ -328,7 +328,7 @@ public class Doc04ConditionTest extends BaseDBTest {
                 .eq(User::getStatus, 1)
                 .sql("key.conditionTest4_6_2", new JSONMap("minAge", 18))
                 .queryList();
-        //条件sql: where STATUS = 1 and (age > 18 )
+        //条件sql: where status = 1 AND (age > 18 )
     }
 
 }

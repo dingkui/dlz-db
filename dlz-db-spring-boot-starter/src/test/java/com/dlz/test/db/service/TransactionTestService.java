@@ -56,7 +56,7 @@ public class TransactionTestService {
      * 在 Spring 事务中更新用户年龄
      * <p>
      * 使用 @Transactional 注解启用 Spring 声明式事务。
-     * 该方法会更新指定 ID 用户的年龄字段。
+     * 该方法会更新指定 id 用户的年龄字段。
      * </p>
      *
      * @param id     用户ID

@@ -26,13 +26,13 @@ public class DBBatchTableInsertTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {
-        DB.Jdbc.execute("delete from Orders");
+        DB.Jdbc.execute("DELETE FROM Orders");
        // DB.Jdbc.execute("CREATE TABLE Orders (id INTEGER PRIMARY KEY, user_id TEXT, amount INTEGER)");
     }
 
     @AfterEach
     public void tearDown() {
-        DB.Jdbc.execute("delete from Orders");
+        DB.Jdbc.execute("DELETE FROM Orders");
     }
 
     @Test

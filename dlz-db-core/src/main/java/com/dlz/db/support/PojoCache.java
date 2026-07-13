@@ -4,10 +4,7 @@ import com.dlz.db.annotation.TableField;
 import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.TableName;
 import com.dlz.db.annotation.proxy.AnnoProxies;
-import com.dlz.db.core.DlzDbProperties;
-import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.modal.DB;
-import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
@@ -35,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PojoCache {
     private static final CacheMap<Class<?>, String> tableNameCache = new CacheMap<>();
-    private static final CacheMap<Field, String> columnNameCache = new CacheMap<>();
+    private static final CacheMap<Field, String> dbNameCache = new CacheMap<>();
     private static final CacheMap<String, List<Field>> tableFieldCache = new CacheMap<>();
     private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCache = new CacheMap<>();
     private static final CacheMap<Class<?>, IdInfo> idFieldCache = new CacheMap<>();
@@ -51,8 +48,8 @@ public class PojoCache {
      *
      * @param field
      */
-    public static String getColumnName(Field field) {
-        return columnNameCache.getAndSet(field, () -> {
+    public static String getDbName(Field field) {
+        return dbNameCache.getAndSet(field, () -> {
             String columnName;
             String fieldName = field.getName();
             // 检查我们自己的 @TableId 注解
@@ -84,7 +81,7 @@ public class PojoCache {
             if (StringUtils.isEmpty(columnName)) {
                 columnName = fieldName;
             }
-            columnName = getColumnName(columnName);
+            columnName = getDbName(columnName);
             if (log.isDebugEnabled()) {
                 log.debug("字段：{} 对应数据库字段：{}", field.getDeclaringClass().getName() + "." + fieldName, columnName);
             }
@@ -104,7 +101,7 @@ public class PojoCache {
         if (map == null) {
             return false;
         }
-        return map.containsKey(DbConvertUtil.toDbColumnName(columnName.replaceAll("`", "")));
+        return map.containsKey(DbConvertUtil.toDbName(columnName.replaceAll("`", "")));
     }
     /**
      * 判断字段是否存在
@@ -127,8 +124,8 @@ public class PojoCache {
      *
      * @param field
      */
-    public static String getColumnName(String field) {
-        return DbConvertUtil.toDbColumnName(field);
+    public static String getDbName(String field) {
+        return DbConvertUtil.toDbName(field);
     }
 
     /**
@@ -189,7 +186,7 @@ public class PojoCache {
                 tName = clazz.getSimpleName();
             }
 
-            tName = getColumnName(tName).replaceAll("^_", "");
+            tName = getDbName(tName).replaceAll("^_", "");
             return tName;
         });
     }
@@ -224,7 +221,7 @@ public class PojoCache {
                 throw new SystemException("get tableColumnsInfo fail：" + beanClass.getName());
             }
             return FieldReflections.getFields(beanClass).stream()
-                    .filter(field -> tableColumnsInfo.containsKey(getColumnName(field.getName())))
+                    .filter(field -> tableColumnsInfo.containsKey(getDbName(field.getName())))
                     .collect(Collectors.toList());
         });
     }
@@ -250,12 +247,12 @@ public class PojoCache {
      * @return 主键信息
      * @throws SystemException 如果未设置可辨识的主键
      */
-    public static String getIdName(Class<?> clazz) {
+    public static String getIdDbName(Class<?> clazz) {
         final IdInfo idInfo = getIdInfo(clazz);
         if (idInfo == null) {
             throw new SystemException(clazz.getSimpleName() + "未设置可辨识的主键");
         }
-        return idInfo.getName();
+        return idInfo.getDbName();
     }
 
     /**
@@ -276,7 +273,7 @@ public class PojoCache {
             for (Field f : fields) {
                 final TableId annotation = f.getAnnotation(TableId.class);
                 if (annotation != null) {
-                    final IdInfo idInfo = new IdInfo(f, getColumnName(f));
+                    final IdInfo idInfo = new IdInfo(f, getDbName(f));
                     idInfo.setType(annotation.type());
                     return idInfo;
                 }
@@ -284,7 +281,7 @@ public class PojoCache {
             // 2) MyBatis-Plus @TableId（代理调用，未引入 MP 时返回空）
             for (Field f : fields) {
                 if (StringUtils.isNotEmpty(AnnoProxies.MybatisPlusIdType.value(f))) {
-                    final IdInfo idInfo = new IdInfo(f, getColumnName(f));
+                    final IdInfo idInfo = new IdInfo(f, getDbName(f));
                     idInfo.setType(AnnoProxies.MybatisPlusIdType.type(f));
                     return idInfo;
                 }
@@ -292,7 +289,7 @@ public class PojoCache {
             // 3) 名为 id 的字段
             for (Field f : fields) {
                 if ("id".equals(f.getName())) {
-                    return new IdInfo(f, getColumnName(f));
+                    return new IdInfo(f, getDbName(f));
                 }
             }
             return null;
@@ -308,7 +305,7 @@ public class PojoCache {
      * @param tableName bean 类
      * @return 主键 Field；若不存在返回 null
      */
-    public static String getIdName(String tableName) {
+    public static String getIdDbName(String tableName) {
         return idNameCache.getAndSet(tableName, () -> {
             final List<String> primaryKeys = DB.Dynamic.getSqlHelper().getTableInfo(tableName).getPrimaryKeys();
             if(primaryKeys == null || primaryKeys.isEmpty()){
@@ -328,7 +325,7 @@ public class PojoCache {
                 return null;
             }
             for (Field f : fields) {
-                if (logicDeleteFileName.equalsIgnoreCase(getColumnName(f))) {
+                if (logicDeleteFileName.equalsIgnoreCase(getDbName(f))) {
                     return f;
                 }
             }
@@ -344,6 +341,6 @@ public class PojoCache {
      * @param <T>
      */
     public static <T> String fnName(DlzFn<T, ?> column) {
-        return getColumnName(FieldReflections.getFn(column).v2);
+        return getDbName(FieldReflections.getFn(column).v2);
     }
 }

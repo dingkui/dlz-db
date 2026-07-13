@@ -31,7 +31,7 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
     protected void wrapValues(List<Field> fields, T bean) {
         fields.forEach(field -> {
             Object value = FieldReflections.getValue(bean, field);
-            final String columnName = PojoCache.getColumnName(field);
+            final String columnName = PojoCache.getDbName(field);
             if (ignore.apply(columnName, value)) {
                 return;
             }

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class DBBatchJdbcTest extends BaseDBTest {
     @Test
-    @DisplayName("测试 update - SQL 和参数列表带批次大小")
+    @DisplayName("测试  UPDATE - SQL 和参数列表带批次大小")
     void testUpdateWithSqlAndParamsAndBatchSize() {
         String sql = "UPDATE user SET name = ? WHERE id = ?";
         List<Object[]> params = Arrays.asList(
@@ -37,7 +37,7 @@ public class DBBatchJdbcTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - 空参数列表")
+    @DisplayName("测试  UPDATE - 空参数列表")
     void testUpdateWithEmptyParams() {
         String sql = "UPDATE user SET name = ? WHERE id = ?";
         List<Object[]> params = Collections.emptyList();
@@ -48,7 +48,7 @@ public class DBBatchJdbcTest extends BaseDBTest {
         assertTrue(result);
     }
     @Test
-    @DisplayName("测试 update - SQL 和参数列表")
+    @DisplayName("测试  UPDATE - SQL 和参数列表")
     void testUpdateWithSqlAndParams() {
         String sql = "UPDATE user SET name = ? WHERE id = ?";
         List<Object[]> params = Arrays.asList(

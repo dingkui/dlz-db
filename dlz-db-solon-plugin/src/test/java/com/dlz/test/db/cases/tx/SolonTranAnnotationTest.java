@@ -32,7 +32,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
     @BeforeAll
     public static void setupTable() {
         // 创建测试表
-        DB.Jdbc.execute("delete from USER");
+        DB.Jdbc.execute("DELETE FROM USER");
 //        DB.Jdbc.execute("CREATE TABLE USER (" +
 //                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 //                "name TEXT, " +

@@ -36,7 +36,6 @@
 //        }
 //    }
 //	/**
-//	 * from jFinal
 //	 * @param rs
 //	 * @throws SQLException
 //	 */
@@ -54,7 +53,6 @@
 //	}
 //
 //	/**
-//	 * from jFinal
 //	 * @param rs
 //	 * @throws SQLException
 //	 */
@@ -77,7 +75,6 @@
 //
 //
 //	/**
-//	 * from springJdbc
 //	 * @param rs
 //	 * @param index
 //	 * @throws SQLException

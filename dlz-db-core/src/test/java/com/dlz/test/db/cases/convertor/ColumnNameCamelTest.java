@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.NameConvertCamel;
+import com.dlz.db.mapper.name.NameConvertCamel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

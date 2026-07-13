@@ -60,7 +60,7 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
                .queryPage();
 
         // 生成 SQL：
-        // select count(1) from user WHERE status = 1 （自动生成count语句）
+        // select COUNT(*) FROM user WHERE status = 1 （自动生成count语句）
         // SELECT * FROM user WHERE status = 1 LIMIT 0, 10 （COUNT>0 时才执行）
     }
 
@@ -69,7 +69,7 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
         //方法1：预设模版
         /**
          <sql sqlId="key.pageAndOrderTest5_1_4"><![CDATA[
-         SELECT * FROM user WHERE and status = #{status}
+         SELECT * FROM user WHERE AND status = #{status}
          ]]></sql>
          */
         DB.Sql.select("key.pageAndOrderTest5_1_4")
@@ -84,8 +84,8 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
                 .queryPage();
 
         // 生成 SQL：
-        // select count(1) from user WHERE status = 1 （自动生成count语句）
-        // SELECT * FROM user WHERE status = 1 order by ID desc LIMIT 0,10  （COUNT>0 时才执行）
+        // select COUNT(*) FROM user WHERE status = 1 （自动生成count语句）
+        // SELECT * FROM user WHERE status = 1 order by id desc LIMIT 0,10  （COUNT>0 时才执行）
     }
 
     @Test
@@ -101,7 +101,7 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
             .queryList();
 
         // 生成 SQL：
-        // select * from USER t where DELETED = 0 order by create_time desc,ID desc
+        // select * FROM USER t WHERE deleted = 0 order by create_time desc,id desc
         // （无 LIMIT）
     }
 

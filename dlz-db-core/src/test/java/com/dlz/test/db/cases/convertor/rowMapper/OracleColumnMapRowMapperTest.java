@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor.rowMapper;
 
-import com.dlz.db.convertor.rowMapper.OracleColumnMapRowMapper;
+import com.dlz.db.mapper.rowMapper.OracleColumnMapRowMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -16,9 +16,9 @@ class DbBuildEnumTest extends BaseDBTest {
     @Test
     @DisplayName("buildSql - 替换#s占位符")
     void testBuildSql() {
-        assertEquals("and name='test'", DbBuildEnum.ands.buildSql("name='test'"));
-        assertEquals("or age>10", DbBuildEnum.ors.buildSql("age>10"));
-        assertEquals("(select 1)", DbBuildEnum.sql.buildSql("select 1"));
+        assertEquals("AND name='test'", DbBuildEnum.ands.buildSql("name='test'"));
+        assertEquals("OR age>10", DbBuildEnum.ors.buildSql("age>10"));
+        assertEquals("(SELECT 1)", DbBuildEnum.sql.buildSql("SELECT 1"));
     }
 
     @Test

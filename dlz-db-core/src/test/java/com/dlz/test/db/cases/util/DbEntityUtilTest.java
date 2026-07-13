@@ -26,7 +26,7 @@ class DbEntityUtilTest extends BaseDBTest {
         // 这里需要一个带有 @TableId 注解的实体类
         // 由于没有具体的实体类，这里只测试异常情况
         assertThrows(SystemException.class, () -> {
-            PojoCache.getIdName(String.class);
+            PojoCache.getIdDbName(String.class);
         });
     }
 
@@ -39,19 +39,19 @@ class DbEntityUtilTest extends BaseDBTest {
 
     @Test
     public void getIdName_withTableId() {
-        String idName = PojoCache.getIdName(SysSql.class);
-        assertEquals("ID", idName);
+        String idName = PojoCache.getIdDbName(SysSql.class);
+        assertEquals("id", idName);
     }
 
     @Test
     public void getIdName_noAnnotationButNamedId() {
-        String idName = PojoCache.getIdName(User.class);
-        assertEquals("ID", idName);
+        String idDbName = PojoCache.getIdDbName(User.class);
+        assertEquals("id", idDbName);
     }
     @Test
     public void getIdName_noAnnotationButNamedId2() {
-        String idName = PojoCache.getIdName(TestUser.class);
-        assertEquals("ID", idName);
+        String idName = PojoCache.getIdDbName(TestUser.class);
+        assertEquals("id", idName);
     }
 
     @Test
@@ -60,7 +60,7 @@ class DbEntityUtilTest extends BaseDBTest {
         assertNotNull(idInfo);
         assertNotNull(idInfo.getField());
         assertEquals("id", idInfo.getField().getName());
-        assertEquals("ID", idInfo.getName());
+        assertEquals("id", idInfo.getDbName());
     }
 
     @Test
@@ -68,6 +68,6 @@ class DbEntityUtilTest extends BaseDBTest {
         IdInfo idInfo1 = PojoCache.getIdInfo(Menu.class);
         IdInfo idInfo2 = PojoCache.getIdInfo(Menu.class);
         assertSame("Field 实例应来自缓存", idInfo1.getField(), idInfo2.getField());
-        assertEquals(idInfo1.getName(), idInfo2.getName());
+        assertEquals(idInfo1.getDbName(), idInfo2.getDbName());
     }
 }

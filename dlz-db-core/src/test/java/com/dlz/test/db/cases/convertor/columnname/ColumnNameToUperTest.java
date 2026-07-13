@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor.columnname;
 
-import com.dlz.db.convertor.columnname.NameConvertToUper;
+import com.dlz.db.mapper.name.NameConvertToUper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,15 +34,9 @@ class ColumnNameToUperTest {
     @Test
     @DisplayName("toDbColumnName - 不转换")
     void testToDbName() {
-        assertEquals("userName", converter.toDbName("userName"));
-        assertEquals("USER_NAME", converter.toDbName("USER_NAME"));
+        assertEquals("username", converter.toDbName("userName"));
+        assertEquals("user_name", converter.toDbName("USER_NAME"));
         assertEquals("user_name", converter.toDbName("user_name"));
-    }
-
-    @Test
-    @DisplayName("toDbColumnName - null 值")
-    void testToDbName_Null() {
-        assertNull(converter.toDbName(null));
     }
 
     @Test

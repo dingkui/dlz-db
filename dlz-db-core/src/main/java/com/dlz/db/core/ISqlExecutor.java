@@ -1,6 +1,6 @@
 package com.dlz.db.core;
 
-import com.dlz.db.convertor.rowMapper.IRowMapper;
+import com.dlz.db.mapper.rowMapper.IRowMapper;
 import com.dlz.db.core.anno.ConnectionSupplier;
 import com.dlz.db.core.anno.SqlAction;
 import com.dlz.db.exception.DbException;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Supplier;
 
 /**
  * SQL 执行器抽象：DLZ-DB 核心对 JDBC 操作的顶层接口。
@@ -77,7 +76,7 @@ public interface ISqlExecutor {
                     // 驱动不支持（如部分版本的 SQLite），走兜底
                     DbLogUtil.debug("无标准自动增长主键", ignore);
                 }
-                // 2. SQLite 等兜底：按方言查最后插入 ID
+                // 2. SQLite 等兜底：按方言查最后插入 id
                 Long id = NativeSqlUtil.queryLastInsertIdByDialect(conn);
                 if (id == null) {
                     throw new DbException("无自动增长主键", 1002);
@@ -121,7 +120,7 @@ public interface ISqlExecutor {
             throw new ValidateException("非法表名: " + tableName);
         }
         // 使用 WHERE 1=0 而非 LIMIT 0，确保跨数据库兼容性（Oracle不支持LIMIT语法）
-        String sql = "select * from " + tableName + " where 1=0";
+        String sql = "SELECT * FROM " + tableName + " WHERE 1=0";
         return doDb(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(sql);
                  ResultSet rs = ps.executeQuery()) {
@@ -139,6 +138,7 @@ public interface ISqlExecutor {
                         // 兜底：如果 getColumnLabel 返回空，使用 getColumnName
                         columnName = md.getColumnName(i);
                     }
+                    infos.put(columnName.toLowerCase(Locale.ROOT), md.getColumnType(i));
                     infos.put(columnName, md.getColumnType(i));
                 }
                 return infos;

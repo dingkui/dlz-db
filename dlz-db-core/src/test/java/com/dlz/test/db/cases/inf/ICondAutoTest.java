@@ -39,7 +39,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("status", 1);
         stub.auto(req);
-        assertEquals("where STATUS = 1", getSql());
+        assertEquals("WHERE status = 1", getSql());
     }
 
     @Test
@@ -50,8 +50,8 @@ class ICondAutoTest {
         req.put("age", 25);
         stub.auto(req);
         String sql = getSql();
-        assertTrue(sql.contains("STATUS = 1"));
-        assertTrue(sql.contains("AGE = 25"));
+        assertTrue(sql.contains("status = 1"));
+        assertTrue(sql.contains("age = 25"));
     }
 
     @Test
@@ -78,7 +78,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_gt_age", 18);
         stub.auto(req);
-        assertEquals("where AGE > 18", getSql());
+        assertEquals("WHERE age > 18", getSql());
     }
 
     @Test
@@ -87,7 +87,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_lt_age", 60);
         stub.auto(req);
-        assertEquals("where AGE < 60", getSql());
+        assertEquals("WHERE age < 60", getSql());
     }
 
     @Test
@@ -96,7 +96,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_ge_score", 80);
         stub.auto(req);
-        assertEquals("where SCORE >= 80", getSql());
+        assertEquals("WHERE score >= 80", getSql());
     }
 
     @Test
@@ -105,7 +105,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_le_score", 100);
         stub.auto(req);
-        assertEquals("where SCORE <= 100", getSql());
+        assertEquals("WHERE score <= 100", getSql());
     }
 
     @Test
@@ -114,7 +114,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_ne_status", 0);
         stub.auto(req);
-        assertEquals("where STATUS <> 0", getSql());
+        assertEquals("WHERE status <> 0", getSql());
     }
 
     @Test
@@ -123,7 +123,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_eq_status", 1);
         stub.auto(req);
-        assertEquals("where STATUS = 1", getSql());
+        assertEquals("WHERE status = 1", getSql());
     }
 
     @Test
@@ -132,7 +132,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_like_name", "张");
         stub.auto(req);
-        assertTrue(getSql().contains("NAME like"));
+        assertTrue(getSql().contains("name LIKE"));
     }
 
     @Test
@@ -141,7 +141,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_likeLeft_name", "张");
         stub.auto(req);
-        assertTrue(getSql().contains("NAME like"));
+        assertTrue(getSql().contains("name LIKE"));
     }
 
     @Test
@@ -150,7 +150,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_likeRight_email", "@qq.com");
         stub.auto(req);
-        assertTrue(getSql().contains("EMAIL like"));
+        assertTrue(getSql().contains("email LIKE"));
     }
 
     @Test
@@ -159,7 +159,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_notLike_name", "test");
         stub.auto(req);
-        assertTrue(getSql().contains("NAME not like"));
+        assertTrue(getSql().contains("name NOT LIKE"));
     }
 
     @Test
@@ -168,7 +168,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_in_status", "1,2,3");
         stub.auto(req);
-        assertTrue(getSql().contains("STATUS in"));
+        assertTrue(getSql().contains("status IN"));
     }
 
     @Test
@@ -177,7 +177,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_notIn_status", "1,2,3");
         stub.auto(req);
-        assertTrue(getSql().contains("STATUS not in"));
+        assertTrue(getSql().contains("status NOT IN"));
     }
 
     @Test
@@ -186,7 +186,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_isNull_email", null);
         stub.auto(req);
-        assertEquals("where EMAIL is null", getSql());
+        assertEquals("WHERE email IS NULL", getSql());
     }
 
     @Test
@@ -195,7 +195,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_isNotNull_email", null);
         stub.auto(req);
-        assertEquals("where EMAIL is not null", getSql());
+        assertEquals("WHERE email IS NOT NULL", getSql());
     }
 
     @Test
@@ -204,7 +204,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_between_age", "18,60");
         stub.auto(req);
-        assertTrue(getSql().contains("AGE between"));
+        assertTrue(getSql().contains("age BETWEEN"));
     }
 
     @Test
@@ -213,7 +213,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("_notBetween_age", "18,60");
         stub.auto(req);
-        assertTrue(getSql().contains("AGE not between"));
+        assertTrue(getSql().contains("age NOT BETWEEN"));
     }
 
     // ========== 前缀边界/异常 ==========
@@ -244,8 +244,8 @@ class ICondAutoTest {
         req.put("_gt_age", 18);
         stub.auto(req);
         String sql = getSql();
-        assertTrue(sql.contains("STATUS = 1"));
-        assertTrue(sql.contains("AGE > 18"));
+        assertTrue(sql.contains("status = 1"));
+        assertTrue(sql.contains("age > 18"));
     }
 
     // ========== auto(Map, Function) 过滤器测试 ==========
@@ -258,8 +258,8 @@ class ICondAutoTest {
         req.put("age", 25);
         stub.auto(req, col -> true);
         String sql = getSql();
-        assertTrue(sql.contains("STATUS = 1"));
-        assertTrue(sql.contains("AGE = 25"));
+        assertTrue(sql.contains("status = 1"));
+        assertTrue(sql.contains("age = 25"));
     }
 
     @Test
@@ -270,8 +270,8 @@ class ICondAutoTest {
         req.put("password", "secret");
         stub.auto(req, col -> !"password".equals(col));
         String sql = getSql();
-        assertTrue(sql.contains("STATUS = 1"));
-        assertFalse(sql.contains("PASSWORD"));
+        assertTrue(sql.contains("status = 1"));
+        assertFalse(sql.contains("password"));
     }
 
     @Test
@@ -290,7 +290,7 @@ class ICondAutoTest {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("status", 1);
         stub.auto(req, (java.util.function.Function<String, Boolean>) null);
-        assertEquals("where STATUS = 1", getSql());
+        assertEquals("WHERE status = 1", getSql());
     }
 
     @Test
@@ -301,8 +301,8 @@ class ICondAutoTest {
         req.put("_eq_password", "secret");
         stub.auto(req, col -> !"password".equals(col));
         String sql = getSql();
-        assertTrue(sql.contains("AGE > 18"));
-        assertFalse(sql.contains("PASSWORD"));
+        assertTrue(sql.contains("age > 18"));
+        assertFalse(sql.contains("password"));
         //异常key
         assertThrows(ValidateException.class,()-> stub.auto(new JSONMap("_errorOp_xx",1)));
     }
@@ -319,9 +319,9 @@ class ICondAutoTest {
         Set<String> exclude = new HashSet<>(Arrays.asList("password"));
         stub.auto(req, exclude);
         String sql = getSql();
-        assertTrue(sql.contains("STATUS = 1"));
-        assertTrue(sql.contains("AGE = 25"));
-        assertFalse(sql.contains("PASSWORD"));
+        assertTrue(sql.contains("status = 1"));
+        assertTrue(sql.contains("age = 25"));
+        assertFalse(sql.contains("password"));
     }
 
     @Test
@@ -331,7 +331,7 @@ class ICondAutoTest {
         req.put("status", 1);
         Set<String> exclude = new HashSet<>();
         stub.auto(req, exclude);
-        assertEquals("where STATUS = 1", getSql());
+        assertEquals("WHERE status = 1", getSql());
     }
 
     @Test
@@ -354,10 +354,10 @@ class ICondAutoTest {
         Set<String> exclude = new HashSet<>(Arrays.asList("password", "token"));
         stub.auto(req, exclude);
         String sql = getSql();
-        assertTrue(sql.contains("STATUS = 1"));
-        assertTrue(sql.contains("AGE = 25"));
-        assertFalse(sql.contains("PASSWORD"));
-        assertFalse(sql.contains("TOKEN"));
+        assertTrue(sql.contains("status = 1"));
+        assertTrue(sql.contains("age = 25"));
+        assertFalse(sql.contains("password"));
+        assertFalse(sql.contains("token"));
     }
 
     @Test
@@ -369,8 +369,8 @@ class ICondAutoTest {
         Set<String> exclude = new HashSet<>(Arrays.asList("password"));
         stub.auto(req, exclude);
         String sql = getSql();
-        assertTrue(sql.contains("AGE > 18"));
-        assertFalse(sql.contains("PASSWORD"));
+        assertTrue(sql.contains("age > 18"));
+        assertFalse(sql.contains("password"));
     }
 
     // ========== 链式调用测试 ==========

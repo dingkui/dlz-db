@@ -20,9 +20,8 @@ public class PojoUpdateTest extends BaseDBTest {
 		role.setRoleName("xx");
 		role.setRoleAlias("xx2");
 
-		final PojoUpdate<Role> id = DB.Pojo.update(role)
-                .eq("ID", role.getId());
-		showSql(id,"dbSqlTest2","update sys_role set ROLE_ALIAS='xx2',ROLE_NAME='xx' where ID = 11 and DELETED = 0");
+		final PojoUpdate<Role> id = DB.Pojo.update(Role.class).set(role).ignore((name,value)->"id".equals(name)||value==null).eq("id", role.getId());
+		showSql(id,"dbSqlTest2","UPDATE sys_role SET role_name='xx',role_alias='xx2' WHERE id = 11 AND deleted = 0");
 	}
 
 	@Test
@@ -31,9 +30,8 @@ public class PojoUpdateTest extends BaseDBTest {
 		dict.setId(123L);
 		dict.setName("123L");
 
-		PojoUpdate<SysSql> eq = DB.Pojo.update(dict)
-                .eq(SysSql::getId, 123);
-		showSql(eq,"updateWrapperTest1","update SYS_SQL set NAME='123L' where ID = 123 and DELETED = 0");
+		PojoUpdate<SysSql> eq = DB.Pojo.update(dict).eq(SysSql::getId, 123);
+		showSql(eq,"updateWrapperTest1","UPDATE sys_sql SET NAME='123L' where id = 123 AND deleted = 0");
 	}
 	@Test
 	public void updateWrapperTest2() {
@@ -42,6 +40,6 @@ public class PojoUpdateTest extends BaseDBTest {
 		dict.setName("123L");
 
 		PojoUpdate<SysSql> eq = DB.Pojo.update(dict);
-		showSql(eq,"updateWrapperTest2","update SYS_SQL set NAME='123L' where DELETED = 0");
+		showSql(eq,"updateWrapperTest2","UPDATE sys_sql SET name='123L' where deleted = 0");
 	}
 }

@@ -1,4 +1,4 @@
-package com.dlz.db.convertor.rowMapper;
+package com.dlz.db.mapper.rowMapper;
 
 import java.sql.*;
 

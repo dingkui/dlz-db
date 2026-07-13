@@ -28,10 +28,10 @@ class SnowFlakeUtil {
   
     public SnowFlakeUtil(long dataCenterId, long machineId) {
         if (dataCenterId > MAX_DATA_CENTER_NUM || dataCenterId < 0) {
-            throw new ValidateException("dataCenterId can't be greater than MAX_DATA_CENTER_NUM or less than 0");
+            throw new ValidateException("dataCenterId can't be greater than MAX_DATA_CENTER_NUM OR less than 0");
         }
         if (machineId > MAX_MACHINE_NUM || machineId < 0) {
-            throw new ValidateException("machineId can't be greater than MAX_MACHINE_NUM or less than 0");
+            throw new ValidateException("machineId can't be greater than MAX_MACHINE_NUM OR less than 0");
         }
         this.dataCenterId = dataCenterId;
         this.machineId = machineId;

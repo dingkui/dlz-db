@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.NameConvertCamel;
+import com.dlz.db.mapper.name.NameConvertCamel;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
@@ -26,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExecutorQueryConvertSolonTest extends BaseDBTest {
     @BeforeEach
     public void before() {
-        DB.Jdbc.execute("DELETE FROM SYS_SQL");
-        DB.Jdbc.execute("insert into SYS_SQL(DELETED ,SQL_KEY,ID) values(0,'xxx',666)");
+        DB.Jdbc.execute("DELETE FROM sys_sql");
+        DB.Jdbc.execute("INSERT INTO sys_sql(deleted ,sql_key,id) VALUES(0,'xxx',666)");
     }
     @AfterEach
     public void after() {
-        DB.Jdbc.execute("DELETE FROM SYS_SQL");
+        DB.Jdbc.execute("DELETE FROM sys_sql");
     }
     @Test
     @DisplayName("测试 convert() - 使用自定义转换器")
@@ -138,14 +138,14 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         // 使用原生转换器查询单条
         ResultMap result = DB.Table.select("Sys_Sql")
                 .setAllowFullQuery(true)
-                .eq("ID", 1)
+                .eq("id", 1)
                 .convertNative()
                 .queryOne();
         
         if (result != null) {
             log.info("单条记录字段名: {}", result.keySet());
             // 验证字段名保持原始格式
-            assertTrue(result.containsKey("SQL_KEY") || result.containsKey("ID"),
+            assertTrue(result.containsKey("SQL_KEY") || result.containsKey("id"),
                     "应该包含原始字段名");
         }
     }

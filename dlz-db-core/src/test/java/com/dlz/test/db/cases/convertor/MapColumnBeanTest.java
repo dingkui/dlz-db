@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class MapColumnBeanTest extends BaseDBTest {
     @BeforeEach
     void clear1() {
-        DB.Jdbc.execute("delete from MAP_COLUMN_BEAN");
+        DB.Jdbc.execute("DELETE FROM MAP_COLUMN_BEAN");
     }
 
     @AfterEach
     void clear2() {
-        DB.Jdbc.execute("delete from MAP_COLUMN_BEAN");
+        DB.Jdbc.execute("DELETE FROM MAP_COLUMN_BEAN");
     }
 
     // ========== 建表验证 ==========
@@ -48,7 +48,7 @@ class MapColumnBeanTest extends BaseDBTest {
         log.info("MAP_COLUMN_BEAN 表字段信息: {}", columns);
 
         // 验证核心字段存在
-        assertTrue(columns.containsKey("ID"), "应包含 ID 字段");
+        assertTrue(columns.containsKey("id"), "应包含 id 字段");
         assertTrue(columns.containsKey("T1"), "应包含 T1 字段（Bean 属性列）");
     }
 
@@ -72,7 +72,7 @@ class MapColumnBeanTest extends BaseDBTest {
         // 插入
         MapColumnBean inserted = DB.Pojo.add(bean);
         assertNotNull(inserted, "插入后应返回对象");
-        assertNotNull(inserted.getId(), "ID 应自动回填");
+        assertNotNull(inserted.getId(), "id 应自动回填");
         log.info("插入成功, id={}", inserted.getId());
 
         // 查询回来
@@ -95,7 +95,7 @@ class MapColumnBeanTest extends BaseDBTest {
         bean.setT1(null);
 
         MapColumnBean inserted = DB.Pojo.add(bean);
-        assertNotNull(inserted.getId(), "ID 应自动回填");
+        assertNotNull(inserted.getId(), "id 应自动回填");
 
         MapColumnBean found = DB.Pojo.selectById(MapColumnBean.class, inserted.getId());
         assertNotNull(found, "应能查询到插入的记录");

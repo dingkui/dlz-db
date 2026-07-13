@@ -20,22 +20,22 @@ import java.util.List;
 public class SolonSmokeTest extends BaseDBTest {
     @BeforeEach
     void clear1() {
-        DB.Jdbc.execute("delete from user");
-        DB.Jdbc.execute("delete from smoke");
+        DB.Jdbc.execute("DELETE FROM user");
+        DB.Jdbc.execute("DELETE FROM smoke");
     }
 
     @AfterEach
     void clear2() {
-        DB.Jdbc.execute("delete from user");
-        DB.Jdbc.execute("delete from smoke");
+        DB.Jdbc.execute("DELETE FROM user");
+        DB.Jdbc.execute("DELETE FROM smoke");
     }
 
     @Test
     void transactionCommit() {
         DB.Tx.run(() -> {
-            DB.Jdbc.execute("insert into smoke(name) values(?)", "alice");
+            DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "alice");
         });
-        long count = DB.Jdbc.select("select count(*) c from smoke where name=?", "alice").count();
+        long count = DB.Jdbc.select("SELECT COUNT(*) c FROM smoke where name=?", "alice").count();
         Assertions.assertEquals(1, count);
     }
 
@@ -44,14 +44,14 @@ public class SolonSmokeTest extends BaseDBTest {
     void transactionRollback() {
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.execute("insert into smoke(name) values(?)", "bob");
+                DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "bob");
                 throw new RuntimeException("force rollback");
             });
             Assertions.fail("应该抛异常");
         } catch (Exception ignore) {
             // 预期
         }
-        long count = DB.Jdbc.select("select count(*) c from smoke where name=?", "bob").count();
+        long count = DB.Jdbc.select("SELECT COUNT(*) c FROM smoke where name=?", "bob").count();
         Assertions.assertEquals(0, count, "异常应触发回滚");
     }
 
@@ -66,17 +66,17 @@ public class SolonSmokeTest extends BaseDBTest {
     void testSolonOuter_DlzInner_InnerException() {
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_in");
+                DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "s1_d1_in");
                 // 嵌套 DLZ 事务
                 DB.Tx.run(() -> {
-                    DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_in_nested");
+                    DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "s1_d1_in_nested");
                     throw new RuntimeException("DLZ inner exception");
                 });
             });
         } catch (Exception e) {
             log.info("Caught expected exception: {}", e.getMessage());
         }
-        long count = DB.Jdbc.select("select count(*) c from smoke where name like 's1_d1_in%'").count();
+        long count = DB.Jdbc.select("SELECT COUNT(*) c FROM smoke where name LIKE 's1_d1_in%'").count();
         Assertions.assertEquals(0, count, "Solon外层事务应捕获内层异常并整体回滚");
     }
 
@@ -89,16 +89,16 @@ public class SolonSmokeTest extends BaseDBTest {
     void testSolonOuter_DlzInner_OuterException() {
         try {
             DB.Tx.run(() -> {
-                DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_out");
+                DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "s1_d1_out");
                 DB.Tx.run(() -> {
-                    DB.Jdbc.execute("insert into smoke(name) values(?)", "s1_d1_out_nested");
+                    DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "s1_d1_out_nested");
                 });
                 throw new RuntimeException("Solon outer exception");
             });
         } catch (Exception e) {
             log.info("Caught expected exception: {}", e.getMessage());
         }
-        long count = DB.Jdbc.select("select count(*) c from smoke where name like 's1_d1_out%'").count();
+        long count = DB.Jdbc.select("SELECT COUNT(*) c FROM smoke where name LIKE 's1_d1_out%'").count();
         Assertions.assertEquals(0, count, "Solon外层异常应导致整体回滚");
     }
 
@@ -111,17 +111,17 @@ public class SolonSmokeTest extends BaseDBTest {
     void testDlzOuter_SolonInner_InnerException() {
         try {
             DBHolder.getTxExecutor(null).execute(() -> {
-                DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_in");
+                DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "d1_s1_in");
                 // 嵌套 Solon 事务
                 DB.Tx.run(() -> {
-                    DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_in_nested");
+                    DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "d1_s1_in_nested");
                     throw new RuntimeException("Solon inner exception");
                 });
             });
         } catch (Exception e) {
             log.info("Caught expected exception: {}", e.getMessage());
         }
-        long count = DB.Jdbc.select("select count(*) c from smoke where name like 'd1_s1_in%'").count();
+        long count = DB.Jdbc.select("SELECT COUNT(*) c FROM smoke where name LIKE 'd1_s1_in%'").count();
         Assertions.assertEquals(0, count, "DLZ外层事务应捕获内层异常并整体回滚");
     }
 
@@ -134,16 +134,16 @@ public class SolonSmokeTest extends BaseDBTest {
     void testDlzOuter_SolonInner_OuterException() {
         try {
             DBHolder.getTxExecutor(null).execute(() -> {
-                DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_out");
+                DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "d1_s1_out");
                 DB.Tx.run(() -> {
-                    DB.Jdbc.execute("insert into smoke(name) values(?)", "d1_s1_out_nested");
+                    DB.Jdbc.execute("INSERT INTO smoke(name) VALUES(?)", "d1_s1_out_nested");
                 });
                 throw new RuntimeException("DLZ outer exception");
             });
         } catch (Exception e) {
             log.info("Caught expected exception: {}", e.getMessage());
         }
-        long count = DB.Jdbc.select("select count(*) c from smoke where name like 'd1_s1_out%'").count();
+        long count = DB.Jdbc.select("SELECT COUNT(*) c FROM smoke where name LIKE 'd1_s1_out%'").count();
         Assertions.assertEquals(0, count, "DLZ外层异常应导致整体回滚");
     }
 
@@ -156,7 +156,7 @@ public class SolonSmokeTest extends BaseDBTest {
     @Order(9)
     void testPojoInsertAndSelect() {
         // 创建用户表
-        DB.Jdbc.execute("delete from test_user");
+        DB.Jdbc.execute("DELETE FROM test_user");
 
         // 插入单条记录
         User user = new User();
@@ -358,11 +358,11 @@ public class SolonSmokeTest extends BaseDBTest {
         
         // 忽略逻辑删除的查询应该能查到（使用 delete 操作的 ignoreLogicDelete）
         // 注意：ignoreLogicDelete 是 IExecutorDelete 接口的方法，用于删除操作
-        // 对于查询，逻辑删除会自动在 WHERE 中添加 DELETED = 0 条件
+        // 对于查询，逻辑删除会自动在 WHERE 中添加 deleted = 0 条件
         // 要查询已逻辑删除的数据，需要使用 DB.Table 或手动指定条件
         User foundIgnore = DB.Pojo.select(User.class)
                 .eq(User::getId, userId)
-                .eq("DELETED", 1)  // 手动添加条件查询已删除的记录
+                .eq("deleted", 1)  // 手动添加条件查询已删除的记录
                 .queryBean();
         Assertions.assertNotNull(foundIgnore, "手动指定条件后应能查到已逻辑删除的记录");
         Assertions.assertEquals("1", foundIgnore.getDeleted(), "deleted 应为 1");
@@ -387,7 +387,7 @@ public class SolonSmokeTest extends BaseDBTest {
             // 这里只是演示用法，实际需要根据配置的多数据源来测试
         });
 
-        long count = DB.Jdbc.select("select count(*) c from smoke where name=?", "tx_default").count();
+        long count = DB.Jdbc.select("SELECT COUNT(*) c FROM smoke where name=?", "tx_default").count();
         // 验证数据已提交
         Assertions.assertEquals(1, count, "事务提交后应能查到数据");
     }
@@ -430,10 +430,10 @@ public class SolonSmokeTest extends BaseDBTest {
         });
 
         long outerCount = DB.Jdbc.select(
-                "select count(*) c from smoke where name=?", "outer_tx"
+                "SELECT COUNT(*) c FROM smoke where name=?", "outer_tx"
         ).count();
         long innerCount = DB.Jdbc.select(
-                "select count(*) c from smoke where name=?", "inner_tx"
+                "SELECT COUNT(*) c FROM smoke where name=?", "inner_tx"
         ).count();
         
         Assertions.assertEquals(1, outerCount, "外层事务数据应提交");
@@ -470,13 +470,13 @@ public class SolonSmokeTest extends BaseDBTest {
         // before_exception 和 after_exception 应该都存在（如果外层没回滚）
         // will_rollback 应该不存在（内层回滚）
         long beforeCount = DB.Jdbc.select(
-                "select * from smoke where name=?", "before_exception"
+                "SELECT * FROM smoke where name=?", "before_exception"
         ).count();
         long willRollbackCount = DB.Jdbc.select(
-                "select * from smoke where name=?", "will_rollback"
+                "SELECT * FROM smoke where name=?", "will_rollback"
         ).count();
         long after_exception = DB.Jdbc.select(
-                "select * from smoke where name=?", "after_exception"
+                "SELECT * FROM smoke where name=?", "after_exception"
         ).count();
         
         // 根据实际的事务传播行为验证结果
@@ -508,8 +508,8 @@ public class SolonSmokeTest extends BaseDBTest {
 
         // before_exception 和 after_exception 应该都存在（如果外层没回滚）
         // will_rollback 应该不存在（内层回滚）
-        long test1 = DB.Jdbc.select("select * from smoke where name=?", "test1").count();
-        long test2 = DB.Jdbc.select("select * from smoke where name=?", "test2").count();
+        long test1 = DB.Jdbc.select("SELECT * FROM smoke where name=?", "test1").count();
+        long test2 = DB.Jdbc.select("SELECT * FROM smoke where name=?", "test2").count();
 
         // 根据实际的事务传播行为验证结果
         Assertions.assertEquals(0,test1, "内层异常的数据应回滚");

@@ -25,7 +25,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
 
 
     @Test
-    @DisplayName("测试 update - 空列表返回 false")
+    @DisplayName("测试  UPDATE - 空列表返回 false")
     void testPojoUpdateEmptyList() {
         List<TestUser> users = Collections.emptyList();
 
@@ -35,7 +35,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - null 列表抛出异常")
+    @DisplayName("测试  UPDATE - null 列表抛出异常")
     void testPojoUpdateNullList() {
         assertThrows(NullPointerException.class, () -> {
             DB.Batch.pojoUpdate(null);
@@ -43,7 +43,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - 带批次大小参数")
+    @DisplayName("测试  UPDATE - 带批次大小参数")
     void testPojoUpdateWithBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
         assertThrows(SystemException.class, () -> {
@@ -52,7 +52,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - 默认批次大小")
+    @DisplayName("测试  UPDATE - 默认批次大小")
     void testPojoUpdateDefaultBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
 
@@ -62,7 +62,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - 空参数列表")
+    @DisplayName("测试  UPDATE - 空参数列表")
     void testPojoUpdateWithEmptyBeans() {
         final User insert1 = DB.Pojo.add(new User());
         final User insert2 = DB.Pojo.add(new User());

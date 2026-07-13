@@ -1,14 +1,13 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
-import com.dlz.db.convertor.dbtype.TableColumnMapper;
+import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.SqlRunThreadHolder;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.exception.SystemException;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -32,10 +30,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Slf4j
 public class WrapperBuildUtil {
-    public static final String MAKER_SQL_INSERT = "insert into ${tableName}(${columns}) values(${values})";
-    public static final String MAKER_SQL_DELETE = "delete from ${tableName} ${where}";
-    public static final String MAKER_SQL_UPDATE = "update ${tableName} set ${sets} ${where}";
-    public static final String MAKER_SQL_SEARCH = "select ${columns} from ${tableName} t ${where} ${otherwhere}";
+    public static final String MAKER_SQL_INSERT = "INSERT INTO ${tableName}(${columns}) VALUES(${values})";
+    public static final String MAKER_SQL_DELETE = "DELETE FROM ${tableName} ${where}";
+    public static final String MAKER_SQL_UPDATE = "UPDATE ${tableName} SET ${sets} ${where}";
+    public static final String MAKER_SQL_SEARCH = "SELECT ${columns} FROM ${tableName} t ${where} ${otherwhere}";
 
     private static final String MAKER_TABLE_NAME = "tableName";
     private static final String MAKER_COLUMNS = "columns";
@@ -83,7 +81,7 @@ public class WrapperBuildUtil {
         DbPlugin.onBuildWhere( maker.getTableName(), maker.where());
         String where = maker.where().getRunsql(maker);
         if (!maker.isAllowFullQuery() && StringUtils.isEmpty(where)) {
-            where = "where false";
+            where = "WHERE false";
         }
         maker.addPara(MAKER_WHERE, where);
     }
@@ -165,7 +163,7 @@ public class WrapperBuildUtil {
         List<String> fieldsPart = new ArrayList<>();
         List<String> placeHolder = new ArrayList<>();
         for (Field field : fields) {
-            String dbColumnName = PojoCache.getColumnName(field);
+            String dbColumnName = PojoCache.getDbName(field);
             if (!dbColumnName.equals("")) {
                 fieldsPart.add(dbColumnName);
                 placeHolder.add("?");
@@ -188,7 +186,7 @@ public class WrapperBuildUtil {
     public static Object[] buildInsertParams(Object object, List<Field> fields) {
         List<Object> params = new ArrayList<>();
         for (Field field : fields) {
-            String dbColumnName = PojoCache.getColumnName(field);
+            String dbColumnName = PojoCache.getDbName(field);
             if (!dbColumnName.equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
@@ -207,7 +205,7 @@ public class WrapperBuildUtil {
     public static String buildUpdateSql(String dbName, List<Field> fields, String idName) {
         List<String> fieldsPart = new ArrayList<>();
         for (Field field : fields) {
-            String dbColumnName = PojoCache.getColumnName(field);
+            String dbColumnName = PojoCache.getDbName(field);
             if (!dbColumnName.equals(idName) && !dbColumnName.equals("")) {
                 fieldsPart.add(dbColumnName + "=?");
             }
@@ -222,7 +220,7 @@ public class WrapperBuildUtil {
         }
         List<Object> params = new ArrayList<>(fields.size());
         for (Field field : fields) {
-            if (idField != field && !PojoCache.getColumnName(field).equals("")) {
+            if (idField != field && !PojoCache.getDbName(field).equals("")) {
                 params.add(FieldReflections.getValue(object, field));
             }
         }
@@ -298,7 +296,7 @@ public class WrapperBuildUtil {
         int count = needIdList.size();
         
         if (idType == IdType.INPUT) {
-            throw new SystemException(obj.getClass().getSimpleName() + "." + idInfo.getName() + "为手动输入,不能为空");
+            throw new SystemException(obj.getClass().getSimpleName() + "." + idInfo.getDbName() + "为手动输入,不能为空");
         }
         
         if (idType == IdType.SEQ) {

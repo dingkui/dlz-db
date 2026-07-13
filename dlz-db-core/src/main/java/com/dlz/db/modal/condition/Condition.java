@@ -46,12 +46,12 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
 //                runsql = runsql.replace("sql", "false");
                 return;
             }
-            String join = builder == DbBuildEnum.muOr ? "or" : "and";
+            String join = builder == DbBuildEnum.muOr ? "OR" : "AND";
             String sub = children.stream()
                     .map(item -> item.getRunsql(pm))
                     .filter(item -> item != null && !item.isEmpty())
                     .collect(Collectors.joining(" " + join + " "));
-            sub = sub.replaceAll(join + " and", "and").replaceAll(join + " or", "or");
+            sub = sub.replaceAll(join + " AND", "AND").replaceAll(join + " OR", "OR");
             if (children.size() > 1 && builder != DbBuildEnum.where) {
                 sub = "(" + sub + ")";
             }

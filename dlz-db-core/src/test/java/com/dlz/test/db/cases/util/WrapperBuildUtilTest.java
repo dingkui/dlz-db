@@ -16,9 +16,9 @@ public class WrapperBuildUtilTest extends BaseDBTest {
     @Test
     public void buildUpdateSql_withCustomIdName() {
         List<Field> fields = PojoCache.getBeanFields(SysSql.class);
-        String sql = WrapperBuildUtil.buildUpdateSql("SYS_SQL", fields, "ID");
-        assertTrue("动态 idName 应出现在 WHERE 条件", sql.contains("WHERE ID = ?"));
-        assertFalse("SET 中不应包含主键", sql.contains("SET ID="));
+        String sql = WrapperBuildUtil.buildUpdateSql("sys_sql", fields, "id");
+        assertTrue("动态 idName 应出现在 WHERE 条件", sql.contains("WHERE id = ?"));
+        assertFalse("SET 中不应包含主键", sql.contains("SET id="));
     }
 
     @Test

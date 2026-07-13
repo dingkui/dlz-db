@@ -4,6 +4,8 @@ import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -15,16 +17,17 @@ import static org.junit.Assert.assertNull;
  */
 public class MultiDataSourceTest extends BaseDBTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        DB.Jdbc.execute("delete from user");
-        // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, DELETED  INTEGER DEFAULT 0)");
+        DB.Jdbc.execute("DELETE FROM user");
+        DB.Jdbc.execute("DELETE FROM dyn_t");
+        // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
-        DB.Jdbc.execute("delete from user");
-        DB.Jdbc.execute("delete from dyn_t");
+        DB.Jdbc.execute("DELETE FROM user");
+        DB.Jdbc.execute("DELETE FROM dyn_t");
     }
 
     @Test
@@ -36,7 +39,7 @@ public class MultiDataSourceTest extends BaseDBTest {
         });
         assertEquals("default", ds);
         assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM dyn_t WHERE id=1").count());
-        DB.Jdbc.execute("delete from dyn_t");
+        DB.Jdbc.execute("DELETE FROM dyn_t");
     }
 
     @Test

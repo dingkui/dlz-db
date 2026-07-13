@@ -22,7 +22,7 @@ public class PojoQueryTest extends BaseDBTest {
                 .ors(w -> w
                         .eq(Menu::getCode, menu.getCode())
                         .ands(s -> s.eq(Menu::getName, menu.getName()).eq(Menu::getCategory, "1")));
-        showSql(wrapper, "conditionWhereTest3_2", "select * from SYS_MENU t where (CODE = 'qsm' or (NAME = '全生命周期项目' and CATEGORY = 1)) and DELETED = 0");
+        showSql(wrapper, "conditionWhereTest3_2", "SELECT * FROM SYS_MENU t where (CODE = 'qsm' OR (NAME = '全生命周期项目' AND CATEGORY = 1)) AND deleted = 0");
     }
 
     @Test
@@ -36,7 +36,7 @@ public class PojoQueryTest extends BaseDBTest {
                 .ors(w -> w
                         .eq(Menu::getCode, menu.getCode())
                         .eq(Menu::getName, "1"));
-        showSql(menuQueryWrapper, "conditionWhereTest3_3", "select * from SYS_MENU t where CATEGORY = 1 and (CODE = 'qsm' or NAME = '1') and DELETED = 0");
+        showSql(menuQueryWrapper, "conditionWhereTest3_3", "SELECT * FROM SYS_MENU t where CATEGORY = 1 AND (CODE = 'qsm' OR name = '1') AND deleted = 0");
     }
 
     @Test
@@ -50,7 +50,7 @@ public class PojoQueryTest extends BaseDBTest {
                 .ors(xx -> xx
                         .eq(Menu::getCode, menu.getCode())
                         .eq(Menu::getName, "1"));
-        showSql(menuQueryWrapper, "conditionWhereTest3_4", "select * from SYS_MENU t where CATEGORY = 1 and (CODE = 'qsm' or NAME = '1') and DELETED = 0");
+        showSql(menuQueryWrapper, "conditionWhereTest3_4", "SELECT * FROM SYS_MENU t where CATEGORY = 1 AND (CODE = 'qsm' OR name = '1') AND deleted = 0");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class PojoQueryTest extends BaseDBTest {
                         .ands(xx1 -> xx1
                                 .eq(Menu::getName, menu.getName())
                                 .eq(Menu::getCategory, "1")));
-        showSql(menuQueryWrapper, "conditionWhereTest3_5", "select * from SYS_MENU t where (CODE = 'qsm' or (NAME = '全生命周期项目' and CATEGORY = 1)) and DELETED = 0");
+        showSql(menuQueryWrapper, "conditionWhereTest3_5", "SELECT * FROM SYS_MENU t where (CODE = 'qsm' OR (NAME = '全生命周期项目' AND CATEGORY = 1)) AND deleted = 0");
     }
 
     @Test
@@ -76,8 +76,8 @@ public class PojoQueryTest extends BaseDBTest {
         menu.setName("全生命周期项目");
         final PojoQuery<Menu> menuQueryWrapper = DB.Pojo.select(Menu.class)
                 .ne(menu.getId() != null, Menu::getId, menu.getId())
-                .sql("xx in (select x from dual where 1=#{a} and 2=#{b})", new JSONMap("a", 1, "b", 2));
-        showSql(menuQueryWrapper, "conditionWhereTest4_2", "select * from SYS_MENU t where ID <> 1 and (xx in (select x from dual where 1=1 and 2=2)) and DELETED = 0");
+                .sql("xx IN (select x FROM dual where 1=#{a} AND 2=#{b})", new JSONMap("a", 1, "b", 2));
+        showSql(menuQueryWrapper, "conditionWhereTest4_2", "SELECT * FROM SYS_MENU t where id <> 1 AND (xx IN (select x FROM dual where 1=1 AND 2=2)) AND deleted = 0");
     }
 
 
@@ -87,7 +87,7 @@ public class PojoQueryTest extends BaseDBTest {
         dict.setId(123L);
         PojoQuery select = DB.Pojo.select(SysSql.class)
                 .select(SysSql::getId);
-        showSql(select, "searchWrapperTest1", "select ID from SYS_SQL t where DELETED = 0");
+        showSql(select, "searchWrapperTest1", "SELECT id FROM sys_sql t where deleted = 0");
     }
 
     @Test
@@ -95,7 +95,7 @@ public class PojoQueryTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setId(123L);
         PojoQuery<SysSql> query = DB.Pojo.select(SysSql.class);
-        showSql(query, "searchWrapperTest2", "select * from SYS_SQL t where DELETED = 0");
+        showSql(query, "searchWrapperTest2", "SELECT * FROM sys_sql t where deleted = 0");
     }
 
     @Test
@@ -104,7 +104,7 @@ public class PojoQueryTest extends BaseDBTest {
         dict.setId(123L);
         PojoQuery<SysSql> query = DB.Pojo.select(SysSql.class)
                 .eq(SysSql::getId, 123);
-        showSql(query, "searchWrapperTest3", "select * from SYS_SQL t where ID = 123 and DELETED = 0");
+        showSql(query, "searchWrapperTest3", "SELECT * FROM sys_sql t where id = 123 AND deleted = 0");
     }
 
 
@@ -114,7 +114,7 @@ public class PojoQueryTest extends BaseDBTest {
                 .select(Role::getRoleAlias)
                 .in(Role::getId, "11,22")
                 .eq(Role::getDeleted, 0);
-        showSql(eq, "dbSqlTest1", "select ROLE_ALIAS from sys_role t where ID in (11,22) and DELETED = 0");
+        showSql(eq, "dbSqlTest1", "SELECT ROLE_ALIAS FROM sys_role t where id IN (11,22) AND deleted = 0");
     }
 
 
@@ -124,7 +124,7 @@ public class PojoQueryTest extends BaseDBTest {
                 .select(Role::getRoleAlias)
                 .in(Role::getId, "a11,x22")
                 .eq(Role::getDeleted, 0);
-        showSql(eq, "dbSqlTest2", "select ROLE_ALIAS from sys_role t where ID in ('a11','x22') and DELETED = 0");
+        showSql(eq, "dbSqlTest2", "SELECT ROLE_ALIAS FROM sys_role t where id IN ('a11','x22') AND deleted = 0");
     }
 
     @Test
@@ -133,6 +133,6 @@ public class PojoQueryTest extends BaseDBTest {
                 .select(Role::getId)
                 .in(Role::getId, "a11,x22")
                 .eq(Role::getDeleted, 0);
-        showSql(eq, "dbSqlTest2", "select ID from sys_role t where ID in ('a11','x22') and DELETED = 0");
+        showSql(eq, "dbSqlTest2", "SELECT id FROM sys_role t where id IN ('a11','x22') AND deleted = 0");
     }
 }

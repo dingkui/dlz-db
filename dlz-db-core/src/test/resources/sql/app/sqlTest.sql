@@ -29,19 +29,19 @@
 		测试
 	-->
 	<sql sqlId="key.sqlTest.getStr"><![CDATA[
-	   select to_char(AD_ENDDATE,'yyyy') as AD_ENDDATE from JOB_AD t where 1 in (${ad_id}) 222
+	   select to_char(AD_ENDDATE,'yyyy') as AD_ENDDATE from JOB_AD t where 1 IN (${ad_id}) 222
  	]]></sql>
 	<!--
 		测试
 	-->
 	<sql sqlId="key.sqlTest.update"><![CDATA[
-	   update JOB_AD set AD_text=#{adText} where ad_id in (${ad_id})
+	   update JOB_AD set AD_text=#{adText} where ad_id IN (${ad_id})
  	]]></sql>
 	<!--
 		测试
 	-->
 	<sql sqlId="key.sqlTest.insert"><![CDATA[
-	   insert into JOB_AD (ad_id,ad_name,AD_text)values(SEQ_JOB_AD.NEXTVAL,#{adName},#{adText})
+	   INSERT INTO JOB_AD (ad_id,ad_name,AD_text)VALUES(SEQ_JOB_AD.NEXTVAL,#{adName},#{adText})
  	]]></sql>
 	<!--
 		测试

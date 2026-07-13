@@ -47,7 +47,7 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
         fields.forEach(field->{
             Object value = FieldReflections.getValue(bean, field);
             if (StringUtils.isNotEmpty(value)) {
-                getPm().eq(PojoCache.getColumnName(field), value);
+                getPm().eq(PojoCache.getDbName(field), value);
             }
         });
     }
@@ -57,7 +57,7 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
         fields.forEach(field->{
             Object value = FieldReflections.getValue(bean, field);
             if (StringUtils.isNotEmpty(value)) {
-                getPm().eq(PojoCache.getColumnName(field), value);
+                getPm().eq(PojoCache.getDbName(field), value);
             }
         });
     }

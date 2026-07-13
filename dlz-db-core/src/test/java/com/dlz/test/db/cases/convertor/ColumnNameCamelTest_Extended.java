@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.convertor.columnname.NameConvertCamel;
+import com.dlz.db.mapper.name.NameConvertCamel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -190,157 +190,157 @@ class ColumnNameCamelTest_Extended {
     @DisplayName("toDbColumnName - 包含连字符")
     void testToDbName_WithHyphen() {
         // 连字符不会被转换
-        assertEquals("USER-NAME", converter.toDbName("user-name"));
+        assertEquals("user-name", converter.toDbName("user-name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含点号")
     void testToDbName_WithDot() {
         // 点号不会被转换
-        assertEquals("USER.NAME", converter.toDbName("user.name"));
+        assertEquals("user.name", converter.toDbName("user.name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含斜杠")
     void testToDbName_WithSlash() {
         // 斜杠不会被转换
-        assertEquals("USER/NAME", converter.toDbName("user/name"));
+        assertEquals("user/name", converter.toDbName("user/name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含反斜杠")
     void testToDbName_WithBackslash() {
         // 反斜杠不会被转换
-        assertEquals("USER\\NAME", converter.toDbName("user\\name"));
+        assertEquals("user\\name", converter.toDbName("user\\name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含括号")
     void testToDbName_WithParentheses() {
         // 括号不会被转换
-        assertEquals("USER(NAME)", converter.toDbName("user(name)"));
+        assertEquals("user(name)", converter.toDbName("user(name)"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含方括号")
     void testToDbName_WithBrackets() {
         // 方括号不会被转换
-        assertEquals("USER[NAME]", converter.toDbName("user[name]"));
+        assertEquals("user[name]", converter.toDbName("user[name]"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含花括号")
     void testToDbName_WithBraces() {
         // 花括号不会被转换
-        assertEquals("USER{NAME}", converter.toDbName("user{name}"));
+        assertEquals("user{name}", converter.toDbName("user{name}"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含特殊符号")
     void testToDbName_WithSpecialSymbols() {
         // 特殊符号不会被转换
-        assertEquals("USER@NAME", converter.toDbName("user@name"));
-        assertEquals("USER#NAME", converter.toDbName("user#name"));
-        assertEquals("USER$NAME", converter.toDbName("user$name"));
+        assertEquals("user@name", converter.toDbName("user@name"));
+        assertEquals("user#name", converter.toDbName("user#name"));
+        assertEquals("user$name", converter.toDbName("user$name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含管道符")
     void testToDbName_WithPipe() {
         // 管道符不会被转换
-        assertEquals("USER|NAME", converter.toDbName("user|name"));
+        assertEquals("user|name", converter.toDbName("user|name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含问号")
     void testToDbName_WithQuestionMark() {
         // 问号不会被转换
-        assertEquals("USER?NAME", converter.toDbName("user?name"));
+        assertEquals("user?name", converter.toDbName("user?name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含感叹号")
     void testToDbName_WithExclamation() {
         // 感叹号不会被转换
-        assertEquals("USER!NAME", converter.toDbName("user!name"));
+        assertEquals("user!name", converter.toDbName("user!name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含百分号")
     void testToDbName_WithPercent() {
         // 百分号不会被转换
-        assertEquals("USER%NAME", converter.toDbName("user%name"));
+        assertEquals("user%name", converter.toDbName("user%name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含和号")
     void testToDbName_WithAmpersand() {
         // 和号不会被转换
-        assertEquals("USER&NAME", converter.toDbName("user&name"));
+        assertEquals("user&name", converter.toDbName("user&name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含星号")
     void testToDbName_WithAsterisk() {
         // 星号不会被转换
-        assertEquals("USER*NAME", converter.toDbName("user*name"));
+        assertEquals("user*name", converter.toDbName("user*name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含加号")
     void testToDbName_WithPlus() {
         // 加号不会被转换
-        assertEquals("USER+NAME", converter.toDbName("user+name"));
+        assertEquals("user+name", converter.toDbName("user+name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含等号")
     void testToDbName_WithEquals() {
         // 等号不会被转换
-        assertEquals("USER=NAME", converter.toDbName("user=name"));
+        assertEquals("user=name", converter.toDbName("user=name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含分号")
     void testToDbName_WithSemicolon() {
         // 分号不会被转换
-        assertEquals("USER;NAME", converter.toDbName("user;name"));
+        assertEquals("user;name", converter.toDbName("user;name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含冒号")
     void testToDbName_WithColon() {
         // 冒号不会被转换
-        assertEquals("USER:NAME", converter.toDbName("user:name"));
+        assertEquals("user:name", converter.toDbName("user:name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含引号")
     void testToDbName_WithQuotes() {
         // 引号不会被转换
-        assertEquals("USER'NAME", converter.toDbName("user'name"));
-        assertEquals("USER\"NAME", converter.toDbName("user\"name"));
+        assertEquals("user'name", converter.toDbName("user'name"));
+        assertEquals("user\"name", converter.toDbName("user\"name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含尖括号")
     void testToDbName_WithAngleBrackets() {
         // 尖括号不会被转换
-        assertEquals("USER<NAME>", converter.toDbName("user<name>"));
+        assertEquals("user<name>", converter.toDbName("user<name>"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含波浪号")
     void testToDbName_WithTilde() {
         // 波浪号不会被转换
-        assertEquals("USER~NAME", converter.toDbName("user~name"));
+        assertEquals("user~name", converter.toDbName("user~name"));
     }
 
     @Test
     @DisplayName("toDbColumnName - 包含反引号")
     void testToDbName_WithBacktick() {
         // 反引号不会被转换
-        assertEquals("USER`NAME", converter.toDbName("user`name"));
+        assertEquals("user`name", converter.toDbName("user`name"));
     }
 
     // ========== 边界条件扩展测试 ==========
@@ -398,15 +398,15 @@ class ColumnNameCamelTest_Extended {
     @Test
     @DisplayName("边界条件 - 混合 Unicode 和字母")
     void testEdgeCase_MixedUnicodeAndLetters() {
-        assertEquals("测试username", converter.toFieldName("测试userName"));
-        assertEquals("测试USER_NAME", converter.toDbName("测试userName"));
+        assertEquals("测试userName", converter.toFieldName("测试userName"));
+        assertEquals("测试user_name", converter.toDbName("测试userName"));
     }
 
     @Test
     @DisplayName("边界条件 - 混合 emoji 和字母")
     void testEdgeCase_MixedEmojiAndLetters() {
-        assertEquals("😀username", converter.toFieldName("😀userName"));
-        assertEquals("😀USER_NAME", converter.toDbName("😀userName"));
+        assertEquals("😀userName", converter.toFieldName("😀userName"));
+        assertEquals("😀user_name", converter.toDbName("😀userName"));
     }
 
 }

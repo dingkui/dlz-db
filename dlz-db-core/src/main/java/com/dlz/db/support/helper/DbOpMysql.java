@@ -8,16 +8,14 @@ import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
 import com.dlz.db.support.bean.TableInfo;
 import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.VAL;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DbOpMysql extends SqlHelper {
@@ -39,7 +37,7 @@ public class DbOpMysql extends SqlHelper {
     public void createTable(String tableName, Class<?> clazz) {
         String createSql = "CREATE TABLE IF NOT EXISTS `{}` ({}){}";
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
-            String columnName = PojoCache.getColumnName(field);
+            String columnName = PojoCache.getDbName(field);
             String column = null;
             if (columnName.equals("")) {
                 return column;
@@ -71,13 +69,11 @@ public class DbOpMysql extends SqlHelper {
 
         DBHolder.getSqlExecutor().update(sql);
     }
-
     @Override
-    public Set<String> getTableColumnNames(String tableName) {
-        // 构建查询字段信息的SQL语句
-        String sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
-        // 执行查询并获取结果
-        return DBHolder.getSqlExecutor().getList(sql, tableName).stream().map(item -> item.getStr("columnName")).collect(Collectors.toSet());
+    public VAL<String,String[]> getTableColumnSql(String tableName) {
+        // 达梦系统表查询字段信息
+        String sql = "SELECT column_name as name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
+        return VAL.of(sql, new String[]{tableName} );
     }
 
     @Override
@@ -91,7 +87,7 @@ public class DbOpMysql extends SqlHelper {
 
         // 获取主键信息
         // 构建查询主键的SQL语句
-        sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY'";
+        sql = "SELECT column_name FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND CONSTRAINT_NAME = 'PRIMARY'";
         // 执行查询并获取结果
         List<String> primaryKeys = DBHolder.getSqlExecutor().getList(sql, tableName).stream().map(map -> map.getStr("columnName", "")).collect(Collectors.toList());
         tableInfo.setPrimaryKeys(primaryKeys);

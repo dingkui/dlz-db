@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.support;
 
-import com.dlz.db.convertor.columnname.INameConverter;
-import com.dlz.db.convertor.columnname.IConvertorToFieldName;
-import com.dlz.db.convertor.dbtype.ITableColumnMapper;
+import com.dlz.db.mapper.name.INameConverter;
+import com.dlz.db.mapper.name.IConvertorToFieldName;
+import com.dlz.db.mapper.dbtype.ITableColumnMapper;
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.support.SqlRunThreadHolder;
@@ -64,7 +64,7 @@ class SqlRunThreadHolderTest {
             @Override public String toFieldName(String dbKey) { return dbKey; }
             @Override public String toDbName(String beanKey) { return beanKey; }
         };
-        INameConverter result = SqlRunThreadHolder.getColumnNameConvertor(defaultConvertor);
+        INameConverter result = SqlRunThreadHolder.getNameConvertor(defaultConvertor);
         assertSame(defaultConvertor, result);
     }
 
@@ -82,7 +82,7 @@ class SqlRunThreadHolderTest {
             @Override public String toFieldName(String dbKey) { return "def"; }
             @Override public String toDbName(String beanKey) { return "def"; }
         };
-        assertSame(def, SqlRunThreadHolder.getColumnNameConvertor(def));
+        assertSame(def, SqlRunThreadHolder.getNameConvertor(def));
     }
 
     @Test

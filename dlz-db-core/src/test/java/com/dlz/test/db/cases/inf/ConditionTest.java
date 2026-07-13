@@ -42,7 +42,7 @@ class ConditionTest {
 
         assertNotNull(result);
         assertSame(condition, result, "应该返回同一个对象");
-        assertEquals("where STATUS = 1", getSql(result));
+        assertEquals("WHERE status = 1", getSql(result));
     }
 
     @Test
@@ -51,7 +51,7 @@ class ConditionTest {
         Condition result = condition.eq(true, "status", 1);
         
         assertNotNull(result);
-        assertEquals("where STATUS = 1", getSql(result));
+        assertEquals("WHERE status = 1", getSql(result));
     }
 
     @Test
@@ -69,7 +69,7 @@ class ConditionTest {
         Condition result = condition.ne("status", 0);
         
         assertNotNull(result);
-        assertEquals("where STATUS <> 0", getSql(result));
+        assertEquals("WHERE status <> 0", getSql(result));
     }
 
     // ========== 大小比较测试 ==========
@@ -78,36 +78,36 @@ class ConditionTest {
     @DisplayName("测试 gt() 方法")
     void testGt() {
         Condition result = condition.gt("age", 18);
-        
+
         assertNotNull(result);
-        assertEquals("where AGE > 18", getSql(result));
+        assertEquals("WHERE age > 18", getSql(result));
     }
 
     @Test
     @DisplayName("测试 ge() 方法")
     void testGe() {
         Condition result = condition.ge("age", 18);
-        
+
         assertNotNull(result);
-        assertEquals("where AGE >= 18", getSql(result));
+        assertEquals("WHERE age >= 18", getSql(result));
     }
 
     @Test
     @DisplayName("测试 lt() 方法")
     void testLt() {
         Condition result = condition.lt("age", 60);
-        
+
         assertNotNull(result);
-        assertEquals("where AGE < 60", getSql(result));
+        assertEquals("WHERE age < 60", getSql(result));
     }
 
     @Test
     @DisplayName("测试 le() 方法")
     void testLe() {
         Condition result = condition.le("age", 60);
-        
+
         assertNotNull(result);
-        assertEquals("where AGE <= 60", getSql(result));
+        assertEquals("WHERE age <= 60", getSql(result));
     }
 
     // ========== LIKE 测试 ==========
@@ -118,34 +118,34 @@ class ConditionTest {
         Condition result = condition.like("name", "%张三%");
 
         assertNotNull(result);
-        assertEquals("where NAME like '%%张三%%'", getSql(result));
+        assertEquals("WHERE name LIKE '%%张三%%'", getSql(result));
     }
 
     @Test
     @DisplayName("测试 likeLeft() 方法")
     void testLikeLeft() {
         Condition result = condition.likeLeft("name", "张三%");
-        
+
         assertNotNull(result);
-        assertEquals("where NAME like '%张三%'", getSql(result));
+        assertEquals("WHERE name LIKE '%张三%'", getSql(result));
     }
 
     @Test
     @DisplayName("测试 likeRight() 方法")
     void testLikeRight() {
         Condition result = condition.likeRight("name", "%张三");
-        
+
         assertNotNull(result);
-        assertEquals("where NAME like '%张三%'", getSql(result));
+        assertEquals("WHERE name LIKE '%张三%'", getSql(result));
     }
 
     @Test
     @DisplayName("测试 notLike() 方法")
     void testNotLike() {
         Condition result = condition.notLike("name", "%测试%");
-        
+
         assertNotNull(result);
-        assertEquals("where NAME not like '%%测试%%'", getSql(result));
+        assertEquals("WHERE name NOT LIKE '%%测试%%'", getSql(result));
     }
 
     // ========== IN / NOT IN 测试 ==========
@@ -156,7 +156,7 @@ class ConditionTest {
         Condition result = condition.in("status", "1,2,3");
         
         assertNotNull(result);
-        assertEquals("where STATUS in (1,2,3)", getSql(result));
+        assertEquals("WHERE status IN (1,2,3)", getSql(result));
     }
 
 
@@ -167,27 +167,27 @@ class ConditionTest {
     @DisplayName("测试 between() 方法 - 两个参数")
     void testBetweenTwoParams() {
         Condition result = condition.between("age", 18, 60);
-        
+
         assertNotNull(result);
-        assertEquals("where AGE between 18 and 60", getSql(result));
+        assertEquals("WHERE age BETWEEN 18 AND 60", getSql(result));
     }
 
     @Test
     @DisplayName("测试 between() 方法 - 单值字符串")
     void testBetweenSingleValue() {
         Condition result = condition.between("age", "18,60");
-        
+
         assertNotNull(result);
-        assertEquals("where AGE between '18' and '60'", getSql(result));
+        assertEquals("WHERE age BETWEEN '18' AND '60'", getSql(result));
     }
 
     @Test
     @DisplayName("测试 notBetween() 方法")
     void testNotBetween() {
         Condition result = condition.notBetween("age", 18, 60);
-        
+
         assertNotNull(result);
-        assertEquals("where AGE not between 18 and 60", getSql(result));
+        assertEquals("WHERE age NOT BETWEEN 18 AND 60", getSql(result));
     }
 
     // ========== IS NULL / IS NOT NULL 测试 ==========
@@ -198,7 +198,7 @@ class ConditionTest {
         Condition result = condition.isNull("delete_time");
         
         assertNotNull(result);
-        assertEquals("where delete_time is null", getSql(result));
+        assertEquals("WHERE delete_time IS NULL", getSql(result));
     }
 
     @Test
@@ -207,7 +207,7 @@ class ConditionTest {
         Condition result = condition.isNotNull("email");
         
         assertNotNull(result);
-        assertEquals("where email is not null", getSql(result));
+        assertEquals("WHERE email IS NOT NULL", getSql(result));
     }
 
     // ========== AND/OR 嵌套测试 ==========
@@ -218,7 +218,7 @@ class ConditionTest {
         Condition result = condition.ands(c -> c.eq("status", 1).gt("age", 18));
         
         assertNotNull(result);
-        assertEquals("where (STATUS = 1 and AGE > 18)", getSql(result));
+        assertEquals("WHERE (status = 1 AND age > 18)", getSql(result));
     }
 
     @Test
@@ -227,7 +227,7 @@ class ConditionTest {
         Condition result = condition.ors(c -> c.eq("status", 1).eq("status", 2));
         
         assertNotNull(result);
-        assertEquals("where (STATUS = 1 or STATUS = 2)", getSql(result));
+        assertEquals("WHERE (status = 1 OR status = 2)", getSql(result));
     }
     // ========== auto() 自动条件测试 ==========
 
@@ -242,15 +242,15 @@ class ConditionTest {
         Condition result = condition.sql("AND status = 1", paras);
         
         assertNotNull(result);
-        assertEquals("where (AND status = 1)", getSql(result));
+        assertEquals("WHERE (AND status = 1)", getSql(result));
 
-        result = Condition.where().sql("exists(select 1 from dual where x=#{x})",new JSONMap("x",1));
+        result = Condition.where().sql("exists(select 1 FROM dual WHERE x=#{x})",new JSONMap("x",1));
         assertNotNull(result);
-        assertEquals("where (exists(select 1 from dual where x=1))", getSql(result));
-        result = Condition.where().sql("exists(select 1 from dual where x=#{x})",new JSONMap());
-        assertEquals("where (exists(select 1 from dual where x='null'))", getSql(result));
-        result = Condition.where().sql("exists(select 1 from dual where x=#{x})",null);
-        assertEquals("where (exists(select 1 from dual where x='null'))", getSql(result));
+        assertEquals("WHERE (exists(select 1 FROM dual WHERE x=1))", getSql(result));
+        result = Condition.where().sql("exists(select 1 FROM dual WHERE x=#{x})",new JSONMap());
+        assertEquals("WHERE (exists(select 1 FROM dual WHERE x='null'))", getSql(result));
+        result = Condition.where().sql("exists(select 1 FROM dual WHERE x=#{x})",null);
+        assertEquals("WHERE (exists(select 1 FROM dual WHERE x='null'))", getSql(result));
     }
     @Test
     @DisplayName("测试 sql()null 方法")
@@ -275,7 +275,7 @@ class ConditionTest {
         
         assertNotNull(result);
         assertSame(condition, result);
-        assertEquals("where STATUS = 1 and AGE > 18 and NAME like '%张%' and ROLE in ('admin','user')", getSql(result));
+        assertEquals("WHERE status = 1 AND age > 18 AND name LIKE '%张%' AND role IN ('admin','user')", getSql(result));
     }
 
     @Test
@@ -292,7 +292,7 @@ class ConditionTest {
                 );
         
         assertNotNull(result);
-        assertEquals("where TENANT_ID = 100 and (STATUS = 1 and (AGE > 18 or EMAIL is not null))", getSql(result));
+        assertEquals("WHERE tenant_id = 100 AND (status = 1 AND (age > 18 OR email IS NOT NULL))", getSql(result));
     }
 
     // ========== clone 测试 ==========

@@ -20,16 +20,16 @@ public class IdStrategyTest extends BaseDBTest {
 
     @Before
     public void setUp() {
-        DB.Jdbc.execute("delete from user");
-        // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, DELETED  INTEGER DEFAULT 0)");
-        DB.Jdbc.execute("delete from test_auto_id");
+        DB.Jdbc.execute("DELETE FROM user");
+        // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
+        DB.Jdbc.execute("DELETE FROM test_auto_id");
         // DB.Jdbc.execute("CREATE TABLE test_auto_id (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
     }
 
     @After
     public void tearDown() {
-        DB.Jdbc.execute("delete from user");
-        DB.Jdbc.execute("delete from test_auto_id");
+        DB.Jdbc.execute("DELETE FROM user");
+        DB.Jdbc.execute("DELETE FROM test_auto_id");
     }
 
     @Test

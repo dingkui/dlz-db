@@ -58,7 +58,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - Class 参数")
+    @DisplayName("测试  UPDATE - Class 参数")
     void testUpdateWithClass() {
         PojoUpdate<TestUser> update = DB.Pojo.update(TestUser.class);
         assertNotNull(update);
@@ -66,7 +66,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - Bean 参数")
+    @DisplayName("测试  UPDATE - Bean 参数")
     void testUpdateWithBean() {
         TestUser user = new TestUser();
         user.setId(1L);
@@ -77,7 +77,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - Bean 参数带忽略规则")
+    @DisplayName("测试  UPDATE - Bean 参数带忽略规则")
     void testUpdateWithBeanAndIgnore() {
         TestUser user = new TestUser();
         user.setId(1L);
@@ -88,7 +88,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 update - null 忽略规则")
+    @DisplayName("测试  UPDATE - null 忽略规则")
     void testUpdateWithNullIgnore() {
         TestUser user = new TestUser();
         user.setId(1L);
@@ -177,7 +177,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("insertOrUpdate - ID 为空时执行 insert")
+    @DisplayName("insertOrUpdate - id 为空时执行 insert")
     void testAddOrUpdateWithNullId() {
         TestUser user = new TestUser();
         user.setName("张三");
@@ -185,7 +185,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("insertOrUpdate - ID 不为空时执行 update")
+    @DisplayName("insertOrUpdate - id 不为空时执行 update")
     void testAddOrUpdateWithId() {
         TestUser user = new TestUser();
         user.setId(1L);
@@ -223,7 +223,7 @@ class DbPojoTest extends BaseDBTest {
         }
     }
 
-    // ========== UPDATE BY ID 测试 ==========
+    // ========== UPDATE BY id 测试 ==========
 
     @Test
     public void updateByIdSysSqlTest() {
@@ -234,7 +234,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("updateById - ID 为空抛出异常")
+    @DisplayName("updateById - id 为空抛出异常")
     void testUpdateByIdWithNullId() {
         TestUser user = new TestUser();
         user.setName("张三");
@@ -242,7 +242,7 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("updateById - ID 不为空")
+    @DisplayName("updateById - id 不为空")
     void testUpdateByIdWithId() {
         TestUser user = new TestUser();
         user.setId(1L);
@@ -250,7 +250,7 @@ class DbPojoTest extends BaseDBTest {
         DB.Pojo.updateById(user);
     }
 
-    // ========== SELECT BY ID 测试 ==========
+    // ========== SELECT BY id 测试 ==========
 
     @Test
     public void selectByIdSysSqlTest() {
@@ -258,19 +258,19 @@ class DbPojoTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("selectById - ID 为空抛出异常")
+    @DisplayName("selectById - id 为空抛出异常")
     void testSelectByIdWithNullId() {
         assertThrows(SystemException.class, () -> DB.Pojo.selectById(TestUser.class, null));
     }
 
     @Test
-    @DisplayName("selectById - ID 不为空")
+    @DisplayName("selectById - id 不为空")
     void testSelectByIdWithId() {
         DB.Pojo.selectById(TestUser.class, 1L);
     }
 
     @Test
-    @DisplayName("selectById - 字符串 ID")
+    @DisplayName("selectById - 字符串 id")
     void testSelectByIdWithStringId() {
         DB.Pojo.selectById(TestUser.class, "1");
     }
@@ -289,16 +289,16 @@ class DbPojoTest extends BaseDBTest {
         DB.Pojo.selectByIds(TestUser.class, "1,2,3");
     }
 
-    // ========== DELETE BY ID 测试 ==========
+    // ========== DELETE BY id 测试 ==========
 
     @Test
-    @DisplayName("deleteById - ID 为空抛出异常")
+    @DisplayName("deleteById - id 为空抛出异常")
     void testDeleteByIdWithNullId() {
         assertThrows(SystemException.class, () -> DB.Pojo.deleteById(TestUser.class, null));
     }
 
     @Test
-    @DisplayName("deleteById - ID 不为空")
+    @DisplayName("deleteById - id 不为空")
     void testDeleteByIdWithId() {
         DB.Pojo.deleteById(TestUser.class, 1L);
     }

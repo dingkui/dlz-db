@@ -18,9 +18,9 @@ public class DB {
     /**
      * 预设sql语句操作,支持复杂自定义sql，支持参数设置，支持动态判断
      * sql:
-     *   1.直接写：select * from user where id=#{id}
-     *   2.xml预设sql：<sql id="key.selectUser">select * from user where id=#{id}</sql>
-     *   3.db 预设sql：selectUser= select * from user where id=#{id}
+     *   1.直接写：select * FROM user WHERE id=#{id}
+     *   2.xml预设sql：<sql id="key.selectUser">select * FROM user WHERE id=#{id}</sql>
+     *   3.db 预设sql：selectUser= select * FROM user WHERE id=#{id}
      */
     public final static DbSql Sql = new DbSql();
     /**

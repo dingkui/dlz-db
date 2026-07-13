@@ -28,14 +28,14 @@
 | `isNull / isNotNull`                    | `IS NULL / IS NOT NULL`                              |
 | `in / notIn`                            | `IN / NOT IN`                                        |
 | `between / notBetween`                  | `BETWEEN / NOT BETWEEN`                              |
-| `like / likeLeft / likeRight / notLike` | `like '%key%' / 'key%' / '%key' / not like '%key%'` |
+| `like / likeLeft / likeRight / notLike` | `like '%key%' / 'key%' / '%key' / NOT LIKE '%key%'` |
 
 ### 复合条件
 
 | 方法    | 用法                             | 效果                  |
 |-------|--------------------------------|---------------------|
 | `or`  | `.or(o -> o.eq(a,1).eq(a,2))`  | `and (a=1 or a=2)`  |
-| `and` | `.and(a -> a.eq(a,1).eq(b,2))` | `and (a=1 and b=2)` |
+| `and` | `.and(a -> a.eq(a,1).eq(b,2))` | `and (a=1 AND b=2)` |
 | `sql` | `.sql("col = #{k}", map)`      | `and (col = #{k})`  |
 
 ## 三、执行返回
@@ -139,8 +139,8 @@ List<User> r = DB.Sql.select("key.demo.user.find").addPara("status", "1,2,3".spl
     <sql sqlId="key.demo.user.find"><![CDATA[
       SELECT * FROM user 
       WHERE 1=1
-       [and name like concat('%',#{name},'%')]  --支持注释 name为空时，该条件自动忽略
-       [and status in (${status})]  --status 支持是集合时自动拼接：(1,2,3)/('ok','ng')。
+       [and name LIKE concat('%',#{name},'%')]  --支持注释 name为空时，该条件自动忽略
+       [and status IN (${status})]  --status 支持是集合时自动拼接：(1,2,3)/('ok','ng')。
     ]]></sql>
 </sqlList>
 ```

@@ -39,7 +39,7 @@ public class DbTable {
 
 
     public int insertOrUpdate(String tableName, JSONMap value) {
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         final Object id = value.get(idName);
         if (StringUtils.isEmpty(id)) {
             return insert(tableName,value);
@@ -51,7 +51,7 @@ public class DbTable {
     }
 
     private int updateById(String tableName, JSONMap value) {
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         final Object id = value.getLong(idName);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
@@ -66,11 +66,11 @@ public class DbTable {
         return updateResult;
     }
     public ResultMap selectById(String tableName, Object id) {
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         return select(tableName).eq(idName, id).queryOne();
     }
     public List<ResultMap> selectByIds(String tableName, Object ids) {
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -78,7 +78,7 @@ public class DbTable {
     }
 
     public int deleteByIds(String tableName, Object ids) {
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -86,7 +86,7 @@ public class DbTable {
     }
 
     public int deleteByIds(String tableName, List<?> ids) {
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         if (StringUtils.isEmpty(ids)) {
             throw new SystemException(idName + "不能为空");
         }
@@ -94,7 +94,7 @@ public class DbTable {
     }
 
     public int deleteById(String tableName, Object id) {
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         if (StringUtils.isEmpty(id)) {
             throw new SystemException(idName + "不能为空");
         }

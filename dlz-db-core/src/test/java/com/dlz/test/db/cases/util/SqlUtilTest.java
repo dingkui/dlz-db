@@ -91,14 +91,14 @@ class SqlUtilTest extends BaseDBTest {
     @Test
     @DisplayName("getCntSql - 基本转换")
     void testGetCntSql_Basic() {
-        assertEquals("select count(1) from user WHERE id = 1",
+        assertEquals("SELECT COUNT(*) FROM user WHERE id = 1",
                 SqlUtil.getCntSql("SELECT * FROM user WHERE id = 1"));
     }
 
     @Test
     @DisplayName("getCntSql - 大写 SQL")
     void testGetCntSql_UpperCase() {
-        assertTrue(SqlUtil.getCntSql("SELECT * FROM USER").toLowerCase().startsWith("select count(1) from"));
+        assertEquals("SELECT COUNT(*) FROM user",SqlUtil.getCntSql("SELECT * FROM user"));
     }
 
     @Test
@@ -264,7 +264,7 @@ class SqlUtilTest extends BaseDBTest {
         para.put("id", 1);
         // 第一个条件满足（id 存在），第二个条件不满足（name 不存在）
         String result = SqlUtil.getConditionStr(
-                "SELECT * FROM user WHERE 1=1 [and id = #{id}] [AND name = #{name}]", para);
+                "SELECT * FROM user WHERE 1=1 [AND id = #{id}] [AND name = #{name}]", para);
         assertTrue(result.contains("id = #{id}"));
         assertFalse(result.contains("name = #{name}"));
     }
@@ -294,7 +294,7 @@ class SqlUtilTest extends BaseDBTest {
         ParaJdbc pj = new ParaJdbc("SELECT * FROM user WHERE id = ?", new Object[]{1});
         JdbcItem item = SqlUtil.dealJdbc(pj, 2);
         assertNotNull(item);
-        assertTrue(item.sql.contains("count"));
+        assertEquals("SELECT COUNT(*) FROM user WHERE id = ?",item.sql);
     }
 
     @Test

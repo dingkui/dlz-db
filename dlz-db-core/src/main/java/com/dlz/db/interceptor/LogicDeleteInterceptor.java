@@ -6,7 +6,6 @@ import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.db.modal.wrapper.TableUpdate;
-import com.dlz.db.modal.wrapper.WrapperBuildUtil;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.SqlRunThreadHolder;
@@ -14,6 +13,7 @@ import com.dlz.db.util.DbConvertUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -54,8 +54,9 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
     private final String fieldName;
 
     public LogicDeleteInterceptor(String fieldName) {
+        fieldName = fieldName.toLowerCase(Locale.ROOT);
         this.fieldName = DbConvertUtil.toFieldName(fieldName);
-        this.dbColumnName = DbConvertUtil.toDbColumnName(fieldName);
+        this.dbColumnName = DbConvertUtil.toDbName(fieldName);
     }
 
     @Override

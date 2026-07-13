@@ -2,23 +2,16 @@ package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.interceptor.DbPlugin;
-import com.dlz.db.modal.DB;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.json.JSONMap;
-import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,7 +31,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
     }
 
     public TableUpdate set(String paraName, Object value) {
-        paraName = DbConvertUtil.toDbColumnName(paraName);
+        paraName = DbConvertUtil.toDbName(paraName);
         if (!PojoCache.isColumnExists(getTableName(),paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;
@@ -90,13 +83,15 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
             return false;
         }
         final String tableName = getTableName();
-        final String idName = PojoCache.getIdName(tableName);
+        final String idName = PojoCache.getIdDbName(tableName);
         final HashMap<String, Integer> dbColumns = PojoCache.getTableColumnsInfo(tableName);
         final HashMap<String, Integer> dbColumnsF = new LinkedHashMap<>(dbColumns.size());
-        dbColumns.entrySet().forEach(entry -> dbColumnsF.put(entry.getKey(), entry.getValue()));
-        String sql = WrapperBuildUtil.buildUpdateSql(tableName, dbColumnsF, DbConvertUtil.toDbColumnName(idName));
+        dbColumns.entrySet().forEach(entry -> dbColumnsF.put(entry.getKey().toLowerCase(Locale.ROOT), entry.getValue()));
+
+
+        String sql = WrapperBuildUtil.buildUpdateSql(tableName, dbColumnsF, DbConvertUtil.toDbName(idName));
         final HashMap<String, Integer> fields = new LinkedHashMap<>(dbColumns.size());
-        dbColumns.entrySet().forEach(entry -> fields.put(DbConvertUtil.toFieldName(entry.getKey()), entry.getValue()));
+        dbColumns.entrySet().forEach(entry -> fields.put(DbConvertUtil.toFieldName(entry.getKey().toLowerCase(Locale.ROOT)), entry.getValue()));
         // Pojo 批量插入走原生 JDBC（buildInsertSql(dbColumns) + batch），不经过 TableInsert.buildInsertSql
         final String logicDeleteField = DbPlugin.getLogicDeleteField(tableName);
 

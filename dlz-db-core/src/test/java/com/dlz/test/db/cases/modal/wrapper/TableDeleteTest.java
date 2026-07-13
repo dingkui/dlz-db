@@ -17,21 +17,21 @@ public class TableDeleteTest extends BaseDBTest {
         TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1")
                 .sql("[id<#{id}]", new JSONMap("id", 123));
-        showSql(delete, "tableDeleteTest1", "delete from t_b_dict where (id<123) and DELETED = 0");
+        showSql(delete, "tableDeleteTest1", "DELETE FROM t_b_dict where (id<123) AND deleted = 0");
     }
 
     @Test
     public void tableDeleteTest3() {
         TableDelete delete = DB.Table.delete("t_b_dict")
                 .addPara(Dict::getA2, "1");
-        showSql(delete, "tableDeleteTest3", "delete from t_b_dict where DELETED = 0");
+        showSql(delete, "tableDeleteTest3", "DELETE FROM t_b_dict where deleted = 0");
     }
 
     @Test
     public void tableDeleteTest31() {
         TableDelete delete = DB.Table.delete("sys_menu")
                 .addPara(Dict::getA2, "1");
-        showSql(delete, "tableDeleteTest3", "delete from sys_menu where DELETED = 0");
+        showSql(delete, "tableDeleteTest3", "DELETE FROM sys_menu where deleted = 0");
     }
 
     @Test
@@ -44,9 +44,9 @@ public class TableDeleteTest extends BaseDBTest {
                         .le(Dict::getA6, "10")
                         .ors(o -> o.eq(Dict::getA6, "10").eq(Dict::getA6, "10"))
                         .ands(a -> a.eq(Dict::getA6, "10").eq(Dict::getA6, "10"))
-                        .sql("exists (select 1 from dual where t_b_dict where 1=#{xx}) ", new JSONMap("xx", 999)));
+                        .sql("exists (select 1 FROM dual where t_b_dict where 1=#{xx}) ", new JSONMap("xx", 999)));
 
-        showSql(delete, "tableDeleteConditionTest1", "delete from t_b_dict where XXSS <> '3' and A4 = '2' and A6 <= '10' and (A6 = '10' or A6 = '10') and (A6 = '10' and A6 = '10') and (exists (select 1 from dual where t_b_dict where 1=999) ) and DELETED = 0");
+        showSql(delete, "tableDeleteConditionTest1", "DELETE FROM t_b_dict where XXSS <> '3' AND A4 = '2' AND A6 <= '10' AND (A6 = '10' OR A6 = '10') AND (A6 = '10' AND A6 = '10') AND (exists (select 1 FROM dual where t_b_dict where 1=999) ) AND deleted = 0");
     }
 
     @Test
@@ -57,8 +57,8 @@ public class TableDeleteTest extends BaseDBTest {
                         .in(Dict::getA2, "3,4,5,6")
                         .in(Dict::getA2, "'31',111,5,6")
                         .in(Dict::getA2, "1")
-                        .in(Dict::getA2, "sql:select 2 from dual"));
-        showSql(delete, "tableDeleteConditionTest2", "delete from t_b_dict where (XXSS in (3,4,5,6) or XXSS in ('31','111','5','6') or XXSS in (1) or XXSS in (select 2 from dual)) and DELETED = 0");
+                        .in(Dict::getA2, "sql:select 2 FROM dual"));
+        showSql(delete, "tableDeleteConditionTest2", "DELETE FROM t_b_dict where (XXSS IN (3,4,5,6) OR XXSS IN ('31','111','5','6') OR XXSS IN (1) OR XXSS IN (select 2 FROM dual)) AND deleted = 0");
     }
 
     @Test
@@ -70,6 +70,6 @@ public class TableDeleteTest extends BaseDBTest {
                         .ands(w -> w.eq("xxId2", 3).eq("xxId1", 4))
                         .ors(w -> w.eq("xxId2", 3).eq("xxId1", 4))
                         .eq("xxId3", 5));
-        showSql(delete, "tableDeleteConditionTest3", "delete from dh_room where equipment_id = 1 and equipment_id2 = 2 and (XX_ID2 = 3 and XX_ID1 = 4) and (XX_ID2 = 3 or XX_ID1 = 4) and XX_ID3 = 5");
+        showSql(delete, "tableDeleteConditionTest3", "DELETE FROM dh_room where equipment_id = 1 AND equipment_id2 = 2 AND (XX_ID2 = 3 AND XX_ID1 = 4) AND (XX_ID2 = 3 OR XX_ID1 = 4) AND XX_ID3 = 5");
     }
 }
