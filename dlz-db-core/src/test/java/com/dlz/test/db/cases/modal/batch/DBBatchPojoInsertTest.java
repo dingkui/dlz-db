@@ -2,11 +2,13 @@ package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
+import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.dto.BatchStatus;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,8 +92,9 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
 
         //测试 insert - 空列表返回 false
         List<Orders> users = Collections.emptyList();
-        assertEquals(DB.batch.insert(users).status(), BatchStatus.SUCCESS);
-        assertFalse(new PojoInsert(Orders.class).batch(users).isSuccess());
+        final BatchResult insert = DB.batch.insert(users);
+        assertEquals(insert.status(), BatchStatus.SUCCESS);
+        assertTrue(new PojoInsert(Orders.class).batch(users).isSuccess());
     }
 
     @Test

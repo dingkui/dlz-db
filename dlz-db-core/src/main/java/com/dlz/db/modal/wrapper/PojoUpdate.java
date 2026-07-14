@@ -1,5 +1,6 @@
 package com.dlz.db.modal.wrapper;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.inf.ISqlQuery;
@@ -110,6 +111,15 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         String dbName = PojoCache.getTableName(beanClass);
         final IdInfo idInfo = PojoCache.getIdInfo(beanClass);
         final List<Field> fields = PojoCache.getBeanFields(beanClass);
+        if(idInfo==null){
+            throw new DbParameterException("未找到主键字段:"+dbName);
+        }
+        valueBeans.forEach(bean -> {
+            Object id = idInfo.getValue(bean);
+            if(id==null){
+                throw new DbParameterException("未设置主键值，无法更新");
+            }
+        });
         String sql = WrapperBuildUtil.buildUpdateSql(dbName, fields, idInfo.getDbName());
         for (int start = 0; start < valueBeans.size(); start += batchSize) {
             int end = Math.min(valueBeans.size(), start + batchSize);

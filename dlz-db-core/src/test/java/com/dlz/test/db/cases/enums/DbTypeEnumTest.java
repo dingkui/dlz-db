@@ -4,7 +4,8 @@ import com.dlz.db.enums.DbTypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("DbTypeEnum 数据库类型枚举测试")
 class DbTypeEnumTest {

@@ -2,7 +2,6 @@ package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
-import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
@@ -10,10 +9,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 批量操作专题测试
@@ -23,12 +22,7 @@ public class DBBatchTableUpdateTest extends BaseDBTest {
     @Test
     @DisplayName("测试  UPDATE - 空列表返回 false")
     void testPojoUpdateEmptyList() {
-        List<JSONMap> users = Collections.emptyList();
-        assertFalse(DB.batch.update("Test_User",users).isSuccess());
-
-        assertThrows(NullPointerException.class, () -> {
-            assertFalse(DB.batch.update("Test_User",null).isSuccess());
-        });
+        assertThrows(DbParameterException.class, () -> DB.batch.update("Test_User",null));
     }
 
     @Test

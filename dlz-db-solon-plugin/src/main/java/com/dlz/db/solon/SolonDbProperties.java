@@ -2,7 +2,6 @@ package com.dlz.db.solon;
 
 import com.dlz.db.core.DlzDbProperties;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * Solon 数据库配置属性。

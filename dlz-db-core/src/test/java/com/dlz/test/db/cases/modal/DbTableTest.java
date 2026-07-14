@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.modal;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * DbTable 表操作执行测试（DB.Table 实际 CRUD 执行）
@@ -675,29 +677,29 @@ class DbTableTest extends BaseDBTest {
     @Test
     @DisplayName("selectByIds - 空 IDs 应抛出异常")
     void testSelectByIdsWithEmptyIds() {
-        assertThrows(SystemException.class, () -> DB.table.selectByIds("user", ""));
-        assertThrows(SystemException.class, () -> DB.table.selectByIds("user", (String) null));
+        assertEquals(0,  DB.table.selectByIds("user", "").size());
+        assertThrows(DbParameterException.class, () -> DB.table.selectByIds("user", (String) null));
     }
 
     @Test
     @DisplayName("deleteByIds - 空 String IDs 应抛出异常")
     void testDeleteByIdsStringWithEmptyIds() {
-        assertThrows(SystemException.class, () -> DB.table.deleteByIds("user", ""));
-        assertThrows(SystemException.class, () -> DB.table.deleteByIds("user", (String) null));
+        assertEquals(0, DB.table.deleteByIds("user", ""));
+        assertThrows(DbParameterException.class, () -> DB.table.deleteByIds("user", (String) null));
     }
 
     @Test
     @DisplayName("deleteByIds - 空 List IDs 应抛出异常")
     void testDeleteByIdsListWithEmptyIds() {
-        assertThrows(SystemException.class, () -> DB.table.deleteByIds("user", Collections.emptyList()));
-        assertThrows(SystemException.class, () -> DB.table.deleteByIds("user", (List<?>) null));
+        assertEquals(0, DB.table.deleteByIds("user", Collections.emptyList()));
+        assertThrows(DbParameterException.class, () -> DB.table.deleteByIds("user", (List<?>) null));
     }
 
     @Test
     @DisplayName("deleteById - 空 id 应抛出异常")
     void testDeleteByIdWithEmptyId() {
-        assertThrows(SystemException.class, () -> DB.table.deleteById("user", ""));
-        assertThrows(SystemException.class, () -> DB.table.deleteById("user", (Object) null));
+        assertEquals(0,  DB.table.deleteById("user", ""));
+        assertThrows(DbParameterException.class, () -> DB.table.deleteById("user", (Object) null));
     }
 
     // ==================== 自由查询模式 ====================

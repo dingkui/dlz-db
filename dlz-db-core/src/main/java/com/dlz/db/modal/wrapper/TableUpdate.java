@@ -7,10 +7,13 @@ import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
+import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.json.JSONMap;
+import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -28,12 +31,14 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
     private static final long serialVersionUID = 8374167270612933157L;
     final Map<String, Object> updateSets = new HashMap<>();
 
+    String idDbName;
+    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null || name.equals(idDbName) ;
     public TableUpdate(String tableName) {
         super(tableName);
+
     }
 
-    public TableUpdate set(String paraName, Object value) {
-        paraName = DbConvertUtil.toDbName(paraName);
+    private TableUpdate setByDbName(String paraName, Object value) {
         if (!PojoCache.isColumnExists(getTableName(),paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;
@@ -42,29 +47,32 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
         return this;
     }
 
+    public TableUpdate set(String paraName, Object value) {
+        return setByDbName(PojoCache.getDbName(paraName), value);
+    }
+
     public <T> void set(DlzFn<T, ?> column, Object value) {
-        set(PojoCache.fnName(column), value);
+        setByDbName(PojoCache.fnName(column), value);
     }
 
     /**
      * 添加要更新的值集合
      *
      * @param setValues
-          */
+     */
     public TableUpdate set(Map<String, Object> setValues) {
-        return set(setValues,null);
-    }
-
-    public TableUpdate set(Map<String, Object> setValues, Function<String, Boolean> ignore) {
         for (String str : setValues.keySet()) {
             Object fieldValue = setValues.get(str);
-            if (fieldValue != null) {
-                if (ignore != null && ignore.apply(str)) {
-                    continue;
-                }
-                set(str, setValues.get(str));
+            final String columnName = PojoCache.getDbName(str);
+            if (this.ignore.apply(columnName, fieldValue)) {
+                continue;
             }
+            setByDbName(columnName, fieldValue);
         }
+        return this;
+    }
+    public TableUpdate ignore(DlzFn2<String, Object,Boolean> ignore) {
+        this.ignore = ignore;
         return this;
     }
 

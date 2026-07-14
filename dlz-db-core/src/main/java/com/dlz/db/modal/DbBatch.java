@@ -20,8 +20,8 @@ public class DbBatch {
     }
 
     public <T> BatchResult insert(List<T> entities, int batchSize) {
-        requireList(entities);
-        requireBatchSize(batchSize);
+        RequireUtil.requireList(entities);
+        RequireUtil.requireBatchSize(batchSize);
         if (entities.isEmpty()) return empty(batchSize);
         return executePojo(entities, batchSize, true);
     }
@@ -31,8 +31,8 @@ public class DbBatch {
     }
 
     public <T> BatchResult update(List<T> entities, int batchSize) {
-        requireList(entities);
-        requireBatchSize(batchSize);
+        RequireUtil.requireList(entities);
+        RequireUtil.requireBatchSize(batchSize);
         if (entities.isEmpty()) return empty(batchSize);
         return executePojo(entities, batchSize, false);
     }
@@ -42,10 +42,10 @@ public class DbBatch {
     }
 
     public BatchResult insert(String table, List<?> values, int batchSize) {
-        requireList(values);
-        requireBatchSize(batchSize);
+        RequireUtil.requireList(values);
+        RequireUtil.requireBatchSize(batchSize);
         if (values.isEmpty()) return empty(batchSize);
-        List<JSONMap> maps = requireMaps(values);
+        List<JSONMap> maps = RequireUtil.requireMaps(values);
         return executeTable(table, maps, batchSize, true);
     }
 
@@ -54,10 +54,10 @@ public class DbBatch {
     }
 
     public BatchResult update(String table, List<?> values, int batchSize) {
-        requireList(values);
-        requireBatchSize(batchSize);
+        RequireUtil.requireList(values);
+        RequireUtil.requireBatchSize(batchSize);
         if (values.isEmpty()) return empty(batchSize);
-        List<JSONMap> maps = requireMaps(values);
+        List<JSONMap> maps = RequireUtil.requireMaps(values);
         return executeTable(table, maps, batchSize, false);
     }
 
@@ -66,9 +66,9 @@ public class DbBatch {
     }
 
     public BatchResult execute(String sql, List<Object[]> params, int batchSize) {
-        if (sql == null || sql.trim().isEmpty()) throw new DbParameterException("sql must not be empty");
-        requireList(params);
-        requireBatchSize(batchSize);
+        RequireUtil.requireJdbcSql(sql);
+        RequireUtil.requireList(params);
+        RequireUtil.requireBatchSize(batchSize);
         return executeSql(sql, params, batchSize);
     }
 
@@ -105,25 +105,7 @@ public class DbBatch {
         return result.build();
     }
 
-    private List<JSONMap> requireMaps(List<?> values) {
-        List<JSONMap> maps = new ArrayList<>(values.size());
-        for (Object value : values) {
-            if (!(value instanceof JSONMap)) throw new DbParameterException("table batch values must be JSONMap");
-            maps.add((JSONMap) value);
-        }
-        return maps;
-    }
-
     private BatchResult empty(int size) {
         return BatchResult.of(0, size, 0, 0, 0, 0, Collections.<Integer>emptyList(), BatchStatus.SUCCESS, null);
-    }
-
-    private List<?> requireList(List<?> list) {
-        if (list == null) throw new DbParameterException("values must not be null");
-        return list;
-    }
-
-    private void requireBatchSize(int size) {
-        if (size < 1) throw new DbParameterException("batchSize must be greater than zero");
     }
 }

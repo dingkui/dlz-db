@@ -2,9 +2,6 @@ package com.dlz.db.interceptor;
 
 import com.dlz.db.inf.IExecutorDelete;
 import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.wrapper.WrapperBuildUtil;
-import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.SqlRunThreadHolder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;

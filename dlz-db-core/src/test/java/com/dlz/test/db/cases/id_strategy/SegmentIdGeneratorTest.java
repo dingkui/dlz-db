@@ -4,7 +4,6 @@ import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
-import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.NoIdEntity;

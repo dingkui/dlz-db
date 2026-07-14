@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.modal.batch;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
@@ -12,9 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 批量操作专题测试
@@ -23,21 +22,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DBBatchPojoUpdateTest extends BaseDBTest {
 
 
-
     @Test
     @DisplayName("测试  UPDATE - 空列表返回 false")
     void testPojoUpdateEmptyList() {
         List<TestUser> users = Collections.emptyList();
 
-        boolean result = DB.batch.update(users).isSuccess();
-
-        assertFalse(result);
+        assertTrue(DB.batch.update(users).isSuccess());
     }
 
     @Test
     @DisplayName("测试  UPDATE - null 列表抛出异常")
     void testPojoUpdateNullList() {
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(DbParameterException.class, () -> {
             DB.batch.update(null);
         });
     }
@@ -46,7 +42,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     @DisplayName("测试  UPDATE - 带批次大小参数")
     void testPojoUpdateWithBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
-        assertThrows(SystemException.class, () -> {
+        assertThrows(DbParameterException.class, () -> {
             DB.batch.update(users, 100);
         });
     }
@@ -55,8 +51,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     @DisplayName("测试  UPDATE - 默认批次大小")
     void testPojoUpdateDefaultBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
-
-        assertThrows(SystemException.class, () -> {
+        assertThrows(DbParameterException.class, () -> {
             DB.batch.update(users);
         });
     }

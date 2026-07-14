@@ -1,10 +1,8 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.enums.DbBuildEnum;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
-import com.dlz.kit.json.JSONMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

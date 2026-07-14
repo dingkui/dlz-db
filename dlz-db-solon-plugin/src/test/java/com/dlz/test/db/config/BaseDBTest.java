@@ -1,9 +1,5 @@
 package com.dlz.test.db.config;
 
-import com.dlz.db.inf.ISqlPara;
-import com.dlz.db.modal.items.JdbcItem;
-import com.dlz.db.modal.para.AParaPojo;
-import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.util.id.TraceUtil;
 import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;

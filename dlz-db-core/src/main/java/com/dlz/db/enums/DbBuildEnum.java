@@ -8,9 +8,6 @@ import com.dlz.kit.json.JSONMap;
 import com.dlz.kit.util.StringUtils;
 import lombok.AllArgsConstructor;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @AllArgsConstructor
 public enum DbBuildEnum {
     ands("AND #s"),//and多条件语句,

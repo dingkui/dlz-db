@@ -3,15 +3,9 @@ package com.dlz.test.spring.holder;
 import com.dlz.spring.holder.SpringHolder;
 import com.dlz.test.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.io.Resource;
 
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * SpringHolder 测试类

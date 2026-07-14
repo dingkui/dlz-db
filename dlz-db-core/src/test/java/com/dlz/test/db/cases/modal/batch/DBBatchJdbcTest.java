@@ -1,9 +1,11 @@
 package com.dlz.test.db.cases.modal.batch;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.dto.BatchStatus;
 import com.dlz.test.db.config.BaseDBTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * 批量操作专题测试
@@ -27,12 +29,12 @@ public class DBBatchJdbcTest extends BaseDBTest {
                 new Object[]{"李四", 2}
         );
 
-
         DB.batch.execute(sql, params, 100);
         DB.batch.execute(sql, params, 1);
         DB.batch.execute(sql, params, 2);
-        DB.batch.execute(sql, params, 0);
-        DB.batch.execute(sql, Arrays.asList(), 100);
+        assertThrows(DbParameterException.class, () -> DB.batch.execute(sql, params, 0));
+        assertThrows(DbParameterException.class, () -> DB.batch.execute(sql, params, -1));
+        assertTrue(DB.batch.execute(sql, Arrays.asList(), 100).isSuccess());
     }
 
     @Test
@@ -42,9 +44,7 @@ public class DBBatchJdbcTest extends BaseDBTest {
         List<Object[]> params = Collections.emptyList();
 
         // 空列表不会进入循环，直接返回 true
-        final BatchResult execute = DB.batch.execute(sql, params);
-
-        assertEquals(execute.status(), BatchStatus.SUCCESS);
+        assertEquals(0, DB.batch.execute(sql, params).batchCount());
     }
     @Test
     @DisplayName("测试  UPDATE - SQL 和参数列表")

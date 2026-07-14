@@ -1,6 +1,5 @@
 package com.dlz.db.modal.para;
 
-import com.dlz.db.enums.ParaTypeEnum;
 import com.dlz.db.inf.IChained;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.dto.Page;

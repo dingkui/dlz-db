@@ -1,11 +1,12 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.mapper.name.NameConvertNative;
 import com.dlz.db.mapper.name.INameConverter;
+import com.dlz.db.mapper.name.NameConvertNative;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("ColumnNameNative 原生列名转换测试")
 class ColumnNameNativeTest {

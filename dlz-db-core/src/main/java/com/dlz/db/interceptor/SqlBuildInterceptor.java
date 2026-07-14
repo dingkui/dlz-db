@@ -1,8 +1,6 @@
 package com.dlz.db.interceptor;
 
 import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.para.AQuery;
-import com.dlz.db.modal.wrapper.TableInsert;
 
 import java.util.Map;
 

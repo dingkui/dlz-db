@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class DbPojo {
     public <T> PojoQuery<T> selectWrapper(Class<T> type, DlzFn<T, ?>... fields) {
-        final PojoQuery<T> tPojoQuery = new PojoQuery(requireType(type));
+        final PojoQuery<T> tPojoQuery = new PojoQuery(RequireUtil.requireType(type));
         if (fields != null) {
             tPojoQuery.select(fields);
         }
@@ -28,23 +28,23 @@ public class DbPojo {
     }
 
     public <T> PojoInsert<T> insertWrapper(Class<T> type) {
-        return new PojoInsert(requireType(type));
+        return new PojoInsert(RequireUtil.requireType(type));
     }
 
     public <T> PojoInsert<T> insertWrapper(T entity) {
-        return new PojoInsert((Class<T>) requireEntity(entity).getClass()).value(entity);
+        return new PojoInsert((Class<T>) RequireUtil.requireEntity(entity).getClass()).value(entity);
     }
 
     public <T> PojoUpdate<T> updateWrapper(Class<T> type) {
-        return new PojoUpdate(requireType(type));
+        return new PojoUpdate(RequireUtil.requireType(type));
     }
 
     public <T> PojoUpdate<T> updateWrapper(T entity) {
-        return new PojoUpdate((Class<T>) requireEntity(entity).getClass()).set(entity);
+        return new PojoUpdate((Class<T>) RequireUtil.requireEntity(entity).getClass()).set(entity);
     }
 
     public <T> PojoDelete<T> deleteWrapper(Class<T> type) {
-        return new PojoDelete(requireType(type));
+        return new PojoDelete(RequireUtil.requireType(type));
     }
 
     public <T> T insert(T entity, DbOption... options) {
@@ -58,8 +58,8 @@ public class DbPojo {
     }
 
     public <T> T insertOrUpdateById(T entity, DbOption... options) {
-        requireEntity(entity);
-        IdInfo idInfo = requireIdInfo(entity.getClass());
+        RequireUtil.requireEntity(entity);
+        IdInfo idInfo = RequireUtil.requireIdInfo(entity.getClass());
         if (idInfo.getValue(entity) == null) {
             return insert(entity, options);
         }
@@ -73,37 +73,30 @@ public class DbPojo {
     }
 
     public <T> T selectById(Class<T> type, Object id, DbOption... options) {
-        requireType(type);
-        requireId(id);
-        String idColumn = requireIdInfo(type).getDbName();
+        RequireUtil.requireId(id);
+        String idColumn = RequireUtil.requireIdInfo(type).getDbName();
         return selectWrapper(type).eq(idColumn, id).queryBean();
     }
 
     public <T> List<T> selectByIds(Class<T> type, Collection<?> ids) {
-        requireType(type);
-        if (ids == null || ids.isEmpty()) {
-            return Collections.emptyList();
-        }
-        String idColumn = requireIdInfo(type).getDbName();
+        RequireUtil.requireIds(ids);
+        String idColumn = RequireUtil.requireIdInfo(type).getDbName();
         return selectWrapper(type).in(idColumn, new ArrayList<Object>(ids)).queryBeanList();
     }
 
     public <T> List<T> selectByIds(Class<T> type, String ids) {
-        requireType(type);
-        if (ids == null || ids.isEmpty()) {
-            return Collections.emptyList();
-        }
-        String idColumn = requireIdInfo(type).getDbName();
+        RequireUtil.requireIds(ids);
+        String idColumn = RequireUtil.requireIdInfo(type).getDbName();
         return selectWrapper(type).in(idColumn, ids).queryBeanList();
     }
 
     @SuppressWarnings("unchecked")
     public <T> int updateById(T entity, DbOption... options) {
-        requireEntity(entity);
+        RequireUtil.requireEntity(entity);
         Class<T> type = (Class<T>) entity.getClass();
-        IdInfo idInfo = requireIdInfo(type);
+        IdInfo idInfo = RequireUtil.requireIdInfo(type);
         Object id = idInfo.getValue(entity);
-        requireId(id);
+        RequireUtil.requireId(id);
         return updateWrapper(type)
                 .ignore((name, value) -> value == null || name.equalsIgnoreCase(idInfo.getDbName()))
                 .set(entity)
@@ -112,64 +105,24 @@ public class DbPojo {
     }
 
     public <T> int deleteById(Class<T> type, Object id, DbOption... options) {
-        requireType(type);
-        requireId(id);
-        String idColumn = requireIdInfo(type).getDbName();
+        RequireUtil.requireId(id);
+        String idColumn = RequireUtil.requireIdInfo(type).getDbName();
         return deleteWrapper(type).eq(idColumn, id).execute();
     }
 
     public <T> int deleteByIds(Class<T> type, Collection<?> ids) {
-        requireType(type);
-        if (ids == null || ids.isEmpty()) {
-            return 0;
-        }
-        String idColumn = requireIdInfo(type).getDbName();
+        RequireUtil.requireIds(ids);
+        String idColumn = RequireUtil.requireIdInfo(type).getDbName();
         return deleteWrapper(type).in(idColumn, new ArrayList<Object>(ids)).execute();
     }
 
     public <T> int deleteByIds(Class<T> type, String ids) {
-        requireType(type);
-        if (ids == null || ids.isEmpty()) {
-            return 0;
-        }
-        String idColumn = requireIdInfo(type).getDbName();
+        RequireUtil.requireIds(ids);
+        String idColumn = RequireUtil.requireIdInfo(type).getDbName();
         return deleteWrapper(type).in(idColumn, ids).execute();
     }
 
     public <T> boolean existsById(Class<T> type, Object id) {
         return selectById(type, id) != null;
-    }
-
-    public <T> long count(Class<T> type) {
-        requireType(type);
-        return selectWrapper(type).count();
-    }
-
-    private <T> T requireType(T type) {
-        if (type == null) {
-            throw new DbParameterException("type must not be null");
-        }
-        return type;
-    }
-
-    private <T> T requireEntity(T entity) {
-        if (entity == null) {
-            throw new DbParameterException("entity must not be null");
-        }
-        return entity;
-    }
-
-    private IdInfo requireIdInfo(Class<?> type) {
-        IdInfo idInfo = PojoCache.getIdInfo(type);
-        if (idInfo == null) {
-            throw new DbParameterException("entity must declare an id: " + type.getName());
-        }
-        return idInfo;
-    }
-
-    private void requireId(Object id) {
-        if (id == null) {
-            throw new DbParameterException("id must not be null");
-        }
     }
 }

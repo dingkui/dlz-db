@@ -1,6 +1,5 @@
 package com.dlz.test.db.cases.modal.dto;
 
-import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Sort;
 import com.dlz.kit.exception.ValidateException;

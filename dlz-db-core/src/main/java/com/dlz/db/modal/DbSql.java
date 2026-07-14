@@ -1,22 +1,15 @@
 package com.dlz.db.modal;
 
-import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.dto.Page;
-import com.dlz.db.modal.dto.PageRequest;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.SqlExecute;
 import com.dlz.db.modal.wrapper.SqlQuery;
-import com.dlz.db.support.DBHolder;
-import com.dlz.db.support.SqlHolder;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DbSql {
     public SqlQuery selectWrapper(String sqlKey, Map<String, Object>... maps) {
-        final SqlQuery sqlQuery = new SqlQuery(requireSqlKey(sqlKey));
+        final SqlQuery sqlQuery = new SqlQuery(RequireUtil.requireSqlKey(sqlKey));
         for (Map<String, Object> map : maps) {
             if(map != null && !map.isEmpty()){
                 sqlQuery.addParas(map);
@@ -26,7 +19,7 @@ public class DbSql {
     }
 
     public SqlExecute executeWrapper(String sqlKey, Map<String, Object>... maps) {
-        final SqlExecute sqlExecute = new SqlExecute(requireSqlKey(sqlKey));
+        final SqlExecute sqlExecute = new SqlExecute(RequireUtil.requireSqlKey(sqlKey));
         for (Map<String, Object> map : maps) {
             if(map != null && !map.isEmpty()){
                 sqlExecute.addParas(map);
@@ -44,7 +37,7 @@ public class DbSql {
     }
 
     public <T> T one(String sqlKey, Class<T> type, Map<String, Object>... params) {
-        return selectWrapper(sqlKey,params).queryOne(requireType( type));
+        return selectWrapper(sqlKey,params).queryOne(RequireUtil.requireType( type));
     }
 
     public List<ResultMap> list(String sqlKey, Map<String, Object>... params) {
@@ -52,19 +45,10 @@ public class DbSql {
     }
 
     public <T> List<T> list(String sqlKey, Class<T> type, Map<String, Object>... params) {
-        return selectWrapper(sqlKey,params).queryList(requireType( type));
+        return selectWrapper(sqlKey,params).queryList(RequireUtil.requireType( type));
     }
 
     public long count(String sqlKey, Map<String, Object>... params) {
         return selectWrapper(sqlKey,params).count();
-    }
-
-    private String requireSqlKey(String key) {
-        if (key == null || key.trim().isEmpty()) throw new DbParameterException("sql key must not be empty");
-        return key;
-    }
-    private <T> Class<T> requireType(Class<T> type) {
-        if (type == null) throw new DbParameterException("type must not be empty");
-        return type;
     }
 }

@@ -2,6 +2,7 @@ package com.dlz.test.db.cases.modal;
 
 
 import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -10,12 +11,7 @@ import com.dlz.db.support.helper.HelperScan;
 import com.dlz.db.support.helper.SqlHelper;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.test.db.entity.AutoIdEntity;
-import com.dlz.test.db.entity.Orders;
-import com.dlz.test.db.entity.SysSql;
-import com.dlz.test.db.entity.TestUser;
-import com.dlz.test.db.entity.Yc1Record;
-import com.dlz.test.db.entity.YcRecord;
+import com.dlz.test.db.entity.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -238,7 +234,7 @@ class DbPojoTest extends BaseDBTest {
     void testUpdateWrapperByIdWithNullId() {
         TestUser user = new TestUser();
         user.setName("张三");
-        assertThrows(SystemException.class, () -> DB.pojo.updateById(user));
+        assertThrows(DbParameterException.class, () -> DB.pojo.updateById(user));
     }
 
     @Test
@@ -260,7 +256,7 @@ class DbPojoTest extends BaseDBTest {
     @Test
     @DisplayName("selectById - id 为空抛出异常")
     void testSelectWrapperByIdWithNullId() {
-        assertThrows(SystemException.class, () -> DB.pojo.selectById(TestUser.class, null));
+        assertThrows(DbParameterException.class, () -> DB.pojo.selectById(TestUser.class, null));
     }
 
     @Test
@@ -280,7 +276,7 @@ class DbPojoTest extends BaseDBTest {
     @Test
     @DisplayName("selectByIds - IDs 为空抛出异常")
     void testSelectWrapperByIdsWithNullIds() {
-        assertThrows(SystemException.class, () -> DB.pojo.selectByIds(TestUser.class, (String) null));
+        assertThrows(DbParameterException.class, () -> DB.pojo.selectByIds(TestUser.class, (String) null));
     }
 
     @Test
@@ -294,7 +290,7 @@ class DbPojoTest extends BaseDBTest {
     @Test
     @DisplayName("deleteById - id 为空抛出异常")
     void testDeleteWrapperByIdWithNullId() {
-        assertThrows(SystemException.class, () -> DB.pojo.deleteById(TestUser.class, null));
+        assertThrows(DbParameterException.class, () -> DB.pojo.deleteById(TestUser.class, null));
     }
 
     @Test
@@ -313,7 +309,7 @@ class DbPojoTest extends BaseDBTest {
     @Test
     @DisplayName("deleteByIds - String IDs 为空抛出异常")
     void testDeleteWrapperByIdsStringWithNullIds() {
-        assertThrows(SystemException.class, () -> DB.pojo.deleteByIds(TestUser.class, (String) null));
+        assertThrows(DbParameterException.class, () -> DB.pojo.deleteByIds(TestUser.class, (String) null));
     }
 
     @Test
@@ -325,7 +321,7 @@ class DbPojoTest extends BaseDBTest {
     @Test
     @DisplayName("deleteByIds - List IDs 为空抛出异常")
     void testDeleteWrapperByIdsListWithNullIds() {
-        assertThrows(SystemException.class, () -> DB.pojo.deleteByIds(TestUser.class, (List<?>) null));
+        assertThrows(DbParameterException.class, () -> DB.pojo.deleteByIds(TestUser.class, (List<?>) null));
     }
 
     @Test

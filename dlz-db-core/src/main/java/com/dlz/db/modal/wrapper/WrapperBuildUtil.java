@@ -1,9 +1,9 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.annotation.IdType;
-import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
+import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;

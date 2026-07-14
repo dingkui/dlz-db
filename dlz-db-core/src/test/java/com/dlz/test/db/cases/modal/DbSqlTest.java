@@ -1,6 +1,7 @@
 package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.exception.DbException;
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
@@ -42,8 +43,8 @@ class DbSqlTest extends BaseDBTest {
     @Test
     @DisplayName("测试 空 SQL")
     void testNullSql() {
-        assertThrowsExactly(Exception.class, () -> DB.sql.selectWrapper(""));
-        assertThrowsExactly(Exception.class, () -> DB.sql.selectWrapper(null));
+        assertThrowsExactly(DbParameterException.class, () -> DB.sql.selectWrapper(""));
+        assertThrowsExactly(DbParameterException.class, () -> DB.sql.selectWrapper(null));
     }
 
     // ========== 执行操作测试 ==========

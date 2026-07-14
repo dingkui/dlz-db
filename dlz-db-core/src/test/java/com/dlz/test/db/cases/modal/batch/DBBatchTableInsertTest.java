@@ -1,10 +1,12 @@
 package com.dlz.test.db.cases.modal.batch;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.BatchStatus;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Orders;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,9 +15,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 批量操作专题测试
@@ -51,11 +53,9 @@ public class DBBatchTableInsertTest extends BaseDBTest {
     @Test
     public void batch_insert_empty() {
         List<JSONMap> emptyList = Collections.emptyList();
-        assertEquals(DB.batch.insert("Orders", emptyList, 100).status(), BatchStatus.SUCCESS);
-        assertEquals(DB.batch.insert("Orders", emptyList).status(), BatchStatus.SUCCESS);
-        assertThrows(NullPointerException.class, () -> {
-            assertEquals(DB.batch.insert("Test_User",null).status(), BatchStatus.SUCCESS);
-        });
+        assertTrue(DB.batch.insert("Test_User",emptyList, 100).isSuccess());
+        assertTrue(DB.batch.insert("Test_User",emptyList).isSuccess());
+        assertThrows(DbParameterException.class,()-> DB.batch.insert("Test_User",null));
         assertEquals(0, DB.jdbc.selectWrapper("SELECT COUNT(*) FROM Orders").count());
     }
 }

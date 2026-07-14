@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.modal;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
-import com.dlz.db.modal.DbJdbc;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.JdbcSelect;
@@ -10,8 +10,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DbJdbc 原生 JDBC 操作测试
@@ -61,16 +60,14 @@ class DbJdbcTest extends BaseDBTest {
     @Test
     @DisplayName("测试空 SQL 参数处理")
     void testEmptySql() {
-        JdbcSelect query = DB.jdbc.selectWrapper("");
-        assertNotNull(query);
+        assertThrows(DbParameterException.class, () -> DB.jdbc.selectWrapper(""));
     }
 
     @Test
     @DisplayName("测试 null SQL 参数处理")
     void testNullSql() {
-        JdbcSelect query = DB.jdbc.selectWrapper(null);
+        assertThrows(DbParameterException.class, () -> DB.jdbc.selectWrapper(null));
         // 这里可能在实际执行时失败，但构造应该没问题
-        assertNotNull(query);
     }
 
     @Test
