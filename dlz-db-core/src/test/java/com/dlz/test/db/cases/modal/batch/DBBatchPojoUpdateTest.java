@@ -2,7 +2,6 @@ package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
-import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.TestUser;
 import com.dlz.test.db.entity.User;
@@ -13,7 +12,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 批量操作专题测试

@@ -7,17 +7,14 @@ import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.json.JSONMap;
-import com.dlz.kit.util.system.FieldReflections;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -95,7 +92,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
             return result.build();
         }
         final String tableName = getTableName();
-        final String idName = PojoCache.getIdDbName(tableName);
+        final String idName = PojoCache.getIdFieldName(tableName);
         valueBeans.forEach(valueBean -> {
             final Object o = valueBean.get(idName);
             if (o == null) throw new DbParameterException("id must not be null");

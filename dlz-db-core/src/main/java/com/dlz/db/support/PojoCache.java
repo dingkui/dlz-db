@@ -244,12 +244,12 @@ public class PojoCache {
      * @return 主键信息
      * @throws SystemException 如果未设置可辨识的主键
      */
-    public static String getIdDbName(Class<?> clazz) {
+    public static String getIdFieldName(Class<?> clazz) {
         final IdInfo idInfo = getIdInfo(clazz);
         if (idInfo == null) {
             throw new SystemException(clazz.getSimpleName() + "未设置可辨识的主键");
         }
-        return idInfo.getDbName();
+        return idInfo.getField().getName();
     }
 
     /**
@@ -302,7 +302,7 @@ public class PojoCache {
      * @param tableName bean 类
      * @return 主键 Field；若不存在返回 null
      */
-    public static String getIdDbName(String tableName) {
+    public static String getIdFieldName(String tableName) {
         return idNameCache.getAndSet(tableName, () -> {
             final List<String> primaryKeys = DB.ds.getSqlHelper().getTableInfo(tableName).getPrimaryKeys();
             if(primaryKeys == null || primaryKeys.isEmpty()){

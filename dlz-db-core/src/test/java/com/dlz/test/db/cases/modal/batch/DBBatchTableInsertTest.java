@@ -2,11 +2,9 @@ package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.BatchStatus;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Orders;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

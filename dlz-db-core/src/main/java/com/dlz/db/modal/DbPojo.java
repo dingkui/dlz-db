@@ -1,18 +1,15 @@
 package com.dlz.db.modal;
 
-import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.options.DbOption;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.db.modal.wrapper.PojoUpdate;
-import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.kit.fn.DlzFn;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**

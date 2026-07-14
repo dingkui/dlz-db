@@ -1,6 +1,5 @@
 package com.dlz.db.modal;
 
-import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.dto.BatchStatus;
 import com.dlz.db.modal.wrapper.PojoInsert;
