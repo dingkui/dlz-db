@@ -6,7 +6,11 @@ import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
-import com.dlz.db.modal.options.SelectOption;
+import com.dlz.db.modal.options.DbOperation;
+import com.dlz.db.modal.options.point.SelectLockPoint;
+import com.dlz.db.modal.options.point.context.CrudContext;
+import com.dlz.db.modal.options.point.context.SelectLockMode;
+
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.IdInfo;
@@ -44,8 +48,19 @@ public class WrapperBuildUtil {
     private static final String MAKER_OTHER_WHERE = "otherwhere";
 
 
+    private static String selectLockSql(SelectLockMode lockMode) {
+        if (lockMode == SelectLockMode.FOR_UPDATE) {
+            return "FOR UPDATE";
+        }
+        if (lockMode == SelectLockMode.FOR_SHARE) {
+            return "FOR SHARE";
+        }
+        return "";
+    }
+
     /**
      * 生成查询条件sql
+
      *
      */
     public static void buildSql(AParaTable maker) {
@@ -56,9 +71,15 @@ public class WrapperBuildUtil {
         }
         if (maker instanceof TableQuery) {
             buildWhereColumns((TableQuery) maker);
-            maker.addPara(MAKER_OTHER_WHERE,
-                    maker.getDbOptions().has(SelectOption.FOR_UPDATE) ? "FOR UPDATE" : "");
+            SelectLockPoint lockPoint = maker.getDbOptions().getPointBindings()
+                    .single(SelectLockPoint.class);
+
+            SelectLockMode lockMode = lockPoint == null ? SelectLockMode.NONE
+                    : lockPoint.chooseSelectLock(new CrudContext(DbOperation.SELECT,
+                            maker.getTableName(), null, maker.getDbOptions()));
+            maker.addPara(MAKER_OTHER_WHERE, selectLockSql(lockMode));
         }
+
         if (maker instanceof TableUpdate) {
             buildUpdateSql((TableUpdate) maker);
         }
@@ -78,6 +99,7 @@ public class WrapperBuildUtil {
     /**
      * 生成查询条件sql
      * <p>先调用所有启用的插件的 {@link SqlBuildInterceptor#onBuildWhere}，
+
      * 再生成最终 WHERE 子句。
      */
     public static void buildWhere(AQuery maker) {

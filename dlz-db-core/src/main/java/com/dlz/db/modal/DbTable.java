@@ -4,8 +4,10 @@ import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.options.DbOption;
 import com.dlz.db.modal.options.DbOperation;
 import com.dlz.db.modal.options.DbOptions;
-import com.dlz.db.modal.options.InsertOption;
-import com.dlz.db.modal.options.UpdateOption;
+import com.dlz.db.modal.options.point.InsertNullFieldPoint;
+import com.dlz.db.modal.options.point.UpdateNullFieldPoint;
+import com.dlz.db.modal.options.point.context.CrudContext;
+import com.dlz.db.modal.options.point.context.NullFieldMode;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.db.modal.wrapper.TableInsert;
 import com.dlz.db.modal.wrapper.TableQuery;
@@ -37,7 +39,7 @@ public class DbTable {
         RequireUtil.requireValues(values);
         DbOptions resolved = DbOptions.resolve(DbOperation.INSERT, options);
         TableInsert wrapper = insertWrapper(table);
-        if (resolved.has(InsertOption.INCLUDE_NULL)) {
+        if (includeInsertNullFields(resolved, table)) {
             wrapper.ignore((name, value) -> false);
         }
         wrapper.options(resolved);
@@ -48,7 +50,7 @@ public class DbTable {
         RequireUtil.requireValues(values);
         DbOptions resolved = DbOptions.resolve(DbOperation.INSERT, options);
         TableInsert wrapper = insertWrapper(table);
-        if (resolved.has(InsertOption.INCLUDE_NULL)) {
+        if (includeInsertNullFields(resolved, table)) {
             wrapper.ignore((name, value) -> false);
         }
         wrapper.options(resolved);
@@ -91,7 +93,7 @@ public class DbTable {
         String idColumn = RequireUtil.requireIdColumn(table);
         Object id = RequireUtil.requireId(values.get(idColumn));
         TableUpdate wrapper = updateWrapper(table);
-        if (resolved.has(UpdateOption.INCLUDE_NULL)) {
+        if (includeUpdateNullFields(resolved, table)) {
             wrapper.ignore((name, value) -> name.equals(wrapper.getTableInfo()
                     .requireSinglePrimaryKey().getDbName()));
         }
@@ -121,5 +123,17 @@ public class DbTable {
             return 0;
         }
         return deleteWrapper(table).in(idColumn, ids).execute();
+    }
+
+    private boolean includeInsertNullFields(DbOptions options, String tableName) {
+        InsertNullFieldPoint point = options.getPointBindings().single(InsertNullFieldPoint.class);
+        return point != null && point.chooseInsertNullFields(new CrudContext(
+                DbOperation.INSERT, tableName, null, options)) == NullFieldMode.INCLUDE;
+    }
+
+    private boolean includeUpdateNullFields(DbOptions options, String tableName) {
+        UpdateNullFieldPoint point = options.getPointBindings().single(UpdateNullFieldPoint.class);
+        return point != null && point.chooseUpdateNullFields(new CrudContext(
+                DbOperation.UPDATE, tableName, null, options)) == NullFieldMode.INCLUDE;
     }
 }

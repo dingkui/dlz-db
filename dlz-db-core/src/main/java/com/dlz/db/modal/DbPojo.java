@@ -3,8 +3,10 @@ package com.dlz.db.modal;
 import com.dlz.db.modal.options.DbOption;
 import com.dlz.db.modal.options.DbOperation;
 import com.dlz.db.modal.options.DbOptions;
-import com.dlz.db.modal.options.InsertOption;
-import com.dlz.db.modal.options.UpdateOption;
+import com.dlz.db.modal.options.point.InsertNullFieldPoint;
+import com.dlz.db.modal.options.point.UpdateNullFieldPoint;
+import com.dlz.db.modal.options.point.context.CrudContext;
+import com.dlz.db.modal.options.point.context.NullFieldMode;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -51,7 +53,7 @@ public class DbPojo {
     public <T> T insert(T entity, DbOption... options) {
         DbOptions resolved = DbOptions.resolve(DbOperation.INSERT, options);
         PojoInsert<T> wrapper = insertWrapper(entity);
-        if (resolved.has(InsertOption.INCLUDE_NULL)) {
+        if (includeInsertNullFields(resolved, wrapper.getTableName(), entity.getClass())) {
             wrapper.ignore((name, value) -> false);
         }
         wrapper.options(resolved);
@@ -109,7 +111,7 @@ public class DbPojo {
         RequireUtil.requireId(id);
         DbOptions resolved = DbOptions.resolve(DbOperation.UPDATE, options);
         PojoUpdate<T> wrapper = updateWrapper(type);
-        if (resolved.has(UpdateOption.INCLUDE_NULL)) {
+        if (includeUpdateNullFields(resolved, wrapper.getTableName(), type)) {
             wrapper.ignore((name, value) -> name.equalsIgnoreCase(idInfo.getDbName()));
         } else {
             wrapper.ignore((name, value) -> value == null || name.equalsIgnoreCase(idInfo.getDbName()));
@@ -140,6 +142,18 @@ public class DbPojo {
         RequireUtil.requireIds(ids);
         String idColumn = RequireUtil.requireIdInfo(type).getDbName();
         return deleteWrapper(type).in(idColumn, ids).execute();
+    }
+
+    private boolean includeInsertNullFields(DbOptions options, String tableName, Class<?> entityType) {
+        InsertNullFieldPoint point = options.getPointBindings().single(InsertNullFieldPoint.class);
+        return point != null && point.chooseInsertNullFields(new CrudContext(
+                DbOperation.INSERT, tableName, entityType, options)) == NullFieldMode.INCLUDE;
+    }
+
+    private boolean includeUpdateNullFields(DbOptions options, String tableName, Class<?> entityType) {
+        UpdateNullFieldPoint point = options.getPointBindings().single(UpdateNullFieldPoint.class);
+        return point != null && point.chooseUpdateNullFields(new CrudContext(
+                DbOperation.UPDATE, tableName, entityType, options)) == NullFieldMode.INCLUDE;
     }
 
     public <T> boolean existsById(Class<T> type, Object id) {

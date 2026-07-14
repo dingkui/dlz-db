@@ -4,8 +4,11 @@ import com.dlz.db.inf.IExecutorDelete;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.modal.options.DbOptions;
-import com.dlz.db.modal.options.DeleteOption;
-import com.dlz.db.modal.options.SelectOption;
+import com.dlz.db.modal.options.point.DeleteModePoint;
+import com.dlz.db.modal.options.point.DeletedDataPoint;
+import com.dlz.db.modal.options.point.context.CrudContext;
+import com.dlz.db.modal.options.point.context.DeleteMode;
+import com.dlz.db.modal.options.point.context.DeletedDataMode;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.db.modal.wrapper.TableUpdate;
@@ -81,8 +84,8 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
 
     @Override
     public void onBuildWhere(String tableName, Condition where, DbOptions options) {
-        if (options.has(SelectOption.INCLUDE_DELETED)
-                || options.has(DeleteOption.PHYSICAL)
+        if (includesDeletedData(tableName, options)
+                || usesPhysicalDelete(tableName, options)
                 || SqlRunThreadHolder.isIgnoreLogicDelete()) {
             return;
         }
@@ -93,6 +96,18 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
             return;
         }
         where.eq(dbColumnName, 0);
+    }
+
+    private boolean includesDeletedData(String tableName, DbOptions options) {
+        DeletedDataPoint point = options.getPointBindings().single(DeletedDataPoint.class);
+        return point != null && point.chooseDeletedData(new CrudContext(
+                options.getOperation(), tableName, null, options)) == DeletedDataMode.INCLUDE;
+    }
+
+    private boolean usesPhysicalDelete(String tableName, DbOptions options) {
+        DeleteModePoint point = options.getPointBindings().single(DeleteModePoint.class);
+        return point != null && point.chooseDeleteMode(new CrudContext(
+                options.getOperation(), tableName, null, options)) == DeleteMode.PHYSICAL;
     }
 
     /**
@@ -120,7 +135,7 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
      * @return
      */
     public int doLogicDelete(IExecutorDelete executor, DbOptions options) {
-        if (options.has(DeleteOption.PHYSICAL)
+        if (usesPhysicalDelete(executor.getTableName(), options)
                 || SqlRunThreadHolder.isIgnoreLogicDelete()) {
             return -1; // 放行物理 DELETE
         }

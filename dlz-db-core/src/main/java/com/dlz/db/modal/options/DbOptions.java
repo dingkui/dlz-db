@@ -1,10 +1,13 @@
 package com.dlz.db.modal.options;
 
 import com.dlz.db.exception.DbParameterException;
+import com.dlz.db.modal.options.point.OptionPointBindings;
+import com.dlz.db.modal.options.point.StandardOptionPoints;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +15,25 @@ import java.util.Map;
 /** 单次数据库操作解析后的不可变 Option 集合。 */
 public final class DbOptions implements Serializable {
     private static final long serialVersionUID = 1L;
-    public static final DbOptions EMPTY = new DbOptions(Collections.emptyMap());
+    private static final Map<DbOperation, DbOptions> EMPTY_BY_OPERATION = createEmptyOptions();
+    public static final DbOptions EMPTY = EMPTY_BY_OPERATION.get(DbOperation.SELECT);
 
+    private final DbOperation operation;
     private final Map<String, DbOption> options;
+    private final OptionPointBindings pointBindings;
 
-    private DbOptions(Map<String, DbOption> options) {
+    private DbOptions(DbOperation operation, Map<String, DbOption> options, boolean bindPoints) {
+        this.operation = operation;
         this.options = options;
+        this.pointBindings = bindPoints ? OptionPointBindings.bind(this, StandardOptionPoints.REGISTRY) : null;
+    }
+
+    private static Map<DbOperation, DbOptions> createEmptyOptions() {
+        Map<DbOperation, DbOptions> emptyOptions = new EnumMap<>(DbOperation.class);
+        for (DbOperation operation : DbOperation.values()) {
+            emptyOptions.put(operation, new DbOptions(operation, Collections.emptyMap(), true));
+        }
+        return Collections.unmodifiableMap(emptyOptions);
     }
 
     public static DbOptions resolve(DbOperation operation, DbOption... options) {
@@ -25,7 +41,7 @@ public final class DbOptions implements Serializable {
             throw new DbParameterException("operation must not be null");
         }
         if (options == null || options.length == 0) {
-            return EMPTY;
+            return EMPTY_BY_OPERATION.get(operation);
         }
         Map<String, DbOption> resolved = new LinkedHashMap<>();
         for (DbOption option : options) {
@@ -45,7 +61,17 @@ public final class DbOptions implements Serializable {
                 throw new DbParameterException("重复或冲突的DbOption: " + key);
             }
         }
-        return new DbOptions(Collections.unmodifiableMap(resolved));
+        return new DbOptions(operation, Collections.unmodifiableMap(resolved), true);
+    }
+
+    public DbOperation getOperation() {
+        return operation;
+    }
+
+    public OptionPointBindings getPointBindings() {
+        return pointBindings == null
+                ? OptionPointBindings.bind(this, StandardOptionPoints.REGISTRY)
+                : pointBindings;
     }
 
     public boolean has(DbOption option) {
