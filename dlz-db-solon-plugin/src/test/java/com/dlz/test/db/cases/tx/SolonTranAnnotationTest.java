@@ -32,7 +32,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
     @BeforeAll
     public static void setupTable() {
         // 创建测试表
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
 //        DB.Jdbc.execute("CREATE TABLE USER (" +
 //                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 //                "name TEXT, " +
@@ -49,7 +49,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         txService = Solon.context().getBean(SolonTxTestService.class);
 
         // 清理数据
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
     }
 
     /**
@@ -61,7 +61,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
     void testCommit() {
         txService.testCommit();
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "事务用户")
                 .queryBeanList();
 
@@ -84,7 +84,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
             log.info("捕获到预期异常: {}", e.getMessage());
         }
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "回滚用户")
                 .queryBeanList();
 
@@ -105,7 +105,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
             log.info("捕获到预期异常: {}", e.getMessage());
         }
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "手动回滚用户")
                 .queryBeanList();
 
@@ -121,11 +121,11 @@ public class SolonTranAnnotationTest extends BaseDBTest {
     void testNestedTransactionSuccess() {
         txService.testNestedTransactionSuccess();
 
-        List<User> outerUsers = DB.Pojo.select(User.class)
+        List<User> outerUsers = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "外层用户")
                 .queryBeanList();
 
-        List<User> innerUsers = DB.Pojo.select(User.class)
+        List<User> innerUsers = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "内层用户")
                 .queryBeanList();
 
@@ -149,7 +149,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
             log.info("外层也捕获到异常: {}", e.getMessage());
         }
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "外层用户-内层失败")
                 .queryBeanList();
 
@@ -171,11 +171,11 @@ public class SolonTranAnnotationTest extends BaseDBTest {
             log.info("捕获到预期异常: {}", e.getMessage());
         }
 
-        List<User> outerUsers = DB.Pojo.select(User.class)
+        List<User> outerUsers = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "外层用户-外层失败")
                 .queryBeanList();
 
-        List<User> innerUsers = DB.Pojo.select(User.class)
+        List<User> innerUsers = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "内层用户")
                 .queryBeanList();
 
@@ -194,7 +194,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
 
         assertNotNull(userId, "应该返回用户ID");
 
-        User user = DB.Pojo.select(User.class)
+        User user = DB.pojo.selectWrapper(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
 
@@ -211,7 +211,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
     void testBatchOperation() {
         txService.testBatchOperation();
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "批量用户")
                 .queryBeanList();
 
@@ -229,12 +229,12 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User user1 = new User();
         user1.setName("查询测试A");
         user1.setAge(25);
-        DB.Pojo.add(user1);
+        DB.pojo.add(user1);
 
         User user2 = new User();
         user2.setName("查询测试B");
         user2.setAge(30);
-        DB.Pojo.add(user2);
+        DB.pojo.add(user2);
 
         // 在事务中查询
         List<User> users = txService.testReadOnlyQuery("查询测试");
@@ -253,13 +253,13 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User user = new User();
         user.setName("更新前");
         user.setAge(20);
-        DB.Pojo.add(user);
+        DB.pojo.add(user);
         Long userId = user.getId();
 
         // 在事务中更新
         txService.testUpdateTransaction(userId, "更新后", 30);
 
-        User updatedUser = DB.Pojo.select(User.class)
+        User updatedUser = DB.pojo.selectWrapper(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
 
@@ -279,13 +279,13 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User user = new User();
         user.setName("待删除用户");
         user.setAge(25);
-        DB.Pojo.add(user);
+        DB.pojo.add(user);
         Long userId = user.getId();
 
         // 在事务中删除
         txService.testDeleteTransaction(userId);
 
-        User deletedUser = DB.Pojo.select(User.class)
+        User deletedUser = DB.pojo.selectWrapper(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
 
@@ -303,22 +303,22 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户");
         fromUser.setAge(200); // 余额 200
-        DB.Pojo.add(fromUser);
+        DB.pojo.add(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户");
         toUser.setAge(100); // 余额 100
-        DB.Pojo.add(toUser);
+        DB.pojo.add(toUser);
 
         // 执行转账（金额 50，小于 100，不会触发异常）
         txService.testTransfer("转出账户", "转入账户", 50);
 
         // 验证转账结果
-        User updatedFrom = DB.Pojo.select(User.class)
+        User updatedFrom = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转出账户")
                 .queryBean();
 
-        User updatedTo = DB.Pojo.select(User.class)
+        User updatedTo = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转入账户")
                 .queryBean();
 
@@ -339,12 +339,12 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户2");
         fromUser.setAge(30); // 余额 30
-        DB.Pojo.add(fromUser);
+        DB.pojo.add(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户2");
         toUser.setAge(100); // 余额 100
-        DB.Pojo.add(toUser);
+        DB.pojo.add(toUser);
 
         try {
             // 尝试转账 50，余额不足
@@ -355,11 +355,11 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         }
 
         // 验证数据未改变
-        User fromAfter = DB.Pojo.select(User.class)
+        User fromAfter = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转出账户2")
                 .queryBean();
 
-        User toAfter = DB.Pojo.select(User.class)
+        User toAfter = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转入账户2")
                 .queryBean();
 
@@ -378,12 +378,12 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户3");
         fromUser.setAge(200); // 余额 200
-        DB.Pojo.add(fromUser);
+        DB.pojo.add(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户3");
         toUser.setAge(100); // 余额 100
-        DB.Pojo.add(toUser);
+        DB.pojo.add(toUser);
 
         try {
             // 尝试转账 150，超过限制
@@ -394,11 +394,11 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         }
 
         // 验证数据未改变（回滚）
-        User fromAfter = DB.Pojo.select(User.class)
+        User fromAfter = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转出账户3")
                 .queryBean();
 
-        User toAfter = DB.Pojo.select(User.class)
+        User toAfter = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转入账户3")
                 .queryBean();
 
@@ -415,13 +415,13 @@ public class SolonTranAnnotationTest extends BaseDBTest {
     void testMultipleTransactionCalls() {
         // 第一次调用
         txService.testCommit();
-        long count1 = DB.Pojo.select(User.class)
+        long count1 = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "事务用户")
                 .count();
 
         // 第二次调用
         txService.testCommit();
-        long count2 = DB.Pojo.select(User.class)
+        long count2 = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "事务用户")
                 .count();
 

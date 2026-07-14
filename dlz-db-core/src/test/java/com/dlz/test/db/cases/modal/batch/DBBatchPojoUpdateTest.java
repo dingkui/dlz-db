@@ -29,7 +29,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     void testPojoUpdateEmptyList() {
         List<TestUser> users = Collections.emptyList();
 
-        boolean result = DB.Batch.pojoUpdate(users);
+        boolean result = DB.batch.update(users).isSuccess();
 
         assertFalse(result);
     }
@@ -38,7 +38,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     @DisplayName("测试  UPDATE - null 列表抛出异常")
     void testPojoUpdateNullList() {
         assertThrows(NullPointerException.class, () -> {
-            DB.Batch.pojoUpdate(null);
+            DB.batch.update(null);
         });
     }
 
@@ -47,7 +47,7 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     void testPojoUpdateWithBatchSize() {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
         assertThrows(SystemException.class, () -> {
-            DB.Batch.pojoUpdate(users, 100);
+            DB.batch.update(users, 100);
         });
     }
 
@@ -57,20 +57,20 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
         List<TestUser> users = Arrays.asList(new TestUser(), new TestUser());
 
         assertThrows(SystemException.class, () -> {
-            DB.Batch.pojoUpdate(users);
+            DB.batch.update(users);
         });
     }
 
     @Test
     @DisplayName("测试  UPDATE - 空参数列表")
     void testPojoUpdateWithEmptyBeans() {
-        final User insert1 = DB.Pojo.add(new User());
-        final User insert2 = DB.Pojo.add(new User());
+        final User insert1 = DB.pojo.add(new User());
+        final User insert2 = DB.pojo.add(new User());
         List<User> users = Arrays.asList(insert1, insert2);
         insert1.setAge(12);
         insert2.setAge(6);
         // 空列表不会进入循环，直接返回 true
-        boolean result = DB.Batch.pojoUpdate(users, 10);
+        boolean result = DB.batch.update(users, 10).isSuccess();
 
         assertTrue(result);
     }

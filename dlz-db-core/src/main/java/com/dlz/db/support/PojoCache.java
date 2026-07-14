@@ -304,7 +304,7 @@ public class PojoCache {
      */
     public static String getIdDbName(String tableName) {
         return idNameCache.getAndSet(tableName, () -> {
-            final List<String> primaryKeys = DB.Dynamic.getSqlHelper().getTableInfo(tableName).getPrimaryKeys();
+            final List<String> primaryKeys = DB.ds.getSqlHelper().getTableInfo(tableName).getPrimaryKeys();
             if(primaryKeys == null || primaryKeys.isEmpty()){
                 throw new SystemException("表["+tableName+"]无主键");
             }

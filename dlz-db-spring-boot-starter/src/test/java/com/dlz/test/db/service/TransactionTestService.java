@@ -29,7 +29,7 @@ public class TransactionTestService {
      */
     @Transactional
     public void insertUserInSpringTx(int id, String name, int age) {
-        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
+        DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                 id, name, age);
     }
 
@@ -47,7 +47,7 @@ public class TransactionTestService {
      */
     @Transactional
     public void insertUserInSpringTxWithException(int id, String name, int age) {
-        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
+        DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                 id, name, age);
         throw new RuntimeException("Spring transaction exception");
     }
@@ -64,7 +64,7 @@ public class TransactionTestService {
      */
     @Transactional
     public void updateUserInSpringTx(int id, int newAge) {
-        DB.Jdbc.execute("UPDATE tx_test_user SET age = ? WHERE id = ?", newAge, id);
+        DB.jdbc.execute("UPDATE tx_test_user SET age = ? WHERE id = ?", newAge, id);
     }
 
     /**
@@ -83,7 +83,7 @@ public class TransactionTestService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void insertUserWithCheckedException(int id, String name, int age) throws Exception {
-        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
+        DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)",
                 id, name, age);
         throw new Exception("Checked exception");
     }
@@ -93,9 +93,9 @@ public class TransactionTestService {
      */
     @Transactional
     public void springContainsDlzInnerExceptionBothRollback() {
-        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 1, "spring_outer", 30);
-        DB.Tx.run(() -> {
-            DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 2, "dlz_inner", 25);
+        DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 1, "spring_outer", 30);
+        DB.tx.run(() -> {
+            DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 2, "dlz_inner", 25);
             throw new RuntimeException("DLZ inner exception");
         });
     }
@@ -105,9 +105,9 @@ public class TransactionTestService {
      */
     @Transactional
     public void springContainsDlzOuterExceptionBothRollback() {
-        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 1, "spring_outer", 30);
-        DB.Tx.run(() -> {
-            DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 2, "dlz_inner", 25);
+        DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 1, "spring_outer", 30);
+        DB.tx.run(() -> {
+            DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 2, "dlz_inner", 25);
         });
         throw new RuntimeException("Spring outer exception");
     }
@@ -117,9 +117,9 @@ public class TransactionTestService {
      */
     @Transactional
     public void springContainsDlzNoExceptionBothCommit() {
-        DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 1, "spring_outer", 30);
-        DB.Tx.run(() -> {
-            DB.Jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 2, "dlz_inner", 25);
+        DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 1, "spring_outer", 30);
+        DB.tx.run(() -> {
+            DB.jdbc.execute("INSERT INTO tx_test_user (id, name, age) VALUES (?, ?, ?)", 2, "dlz_inner", 25);
         });
     }
 }

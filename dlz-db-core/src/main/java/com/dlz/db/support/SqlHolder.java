@@ -97,7 +97,7 @@ public class SqlHolder {
     }
 
     private static String sql(String key) {
-        Map<String, String> m_sqlList = m_dialect_sql.get(DB.Dynamic.getDbType().getEnd());
+        Map<String, String> m_sqlList = m_dialect_sql.get(DB.ds.getDbType().getEnd());
         final String sql = m_sqlList.get(key);
         if(sql!=null){
             return sql;

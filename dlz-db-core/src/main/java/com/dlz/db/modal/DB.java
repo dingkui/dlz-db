@@ -9,12 +9,12 @@ public class DB {
      * 原生JDBC操作，适合简单的少参数sql.可快速构建功能
      * 建议采用Sql操作
      */
-    public final static DbJdbc Jdbc = new DbJdbc();
+    public final static DbJdbc jdbc = new DbJdbc();
     /**
      * 根据表名操作数据库，适合为定义Pojo的情况下快速操作数据库
      * 建议定义Pojo，采用Pojo操作
      */
-    public final static DbTable Table = new DbTable();
+    public final static DbTable table = new DbTable();
     /**
      * 预设sql语句操作,支持复杂自定义sql，支持参数设置，支持动态判断
      * sql:
@@ -22,21 +22,27 @@ public class DB {
      *   2.xml预设sql：<sql id="key.selectUser">select * FROM user WHERE id=#{id}</sql>
      *   3.db 预设sql：selectUser= select * FROM user WHERE id=#{id}
      */
-    public final static DbSql Sql = new DbSql();
+    public final static DbSql sql = new DbSql();
     /**
      * 基于Pojo 和lambda 操作数据库,Lambda 表达式，IDE 自动补全，重构安全
      */
-    public final static DbPojo Pojo = new DbPojo();
+    public final static DbPojo pojo = new DbPojo();
     /**
      * 批量操作数据库
+     *
      */
-    public final static DbBatch Batch = new DbBatch();
+    public final static DbBatch batch = new DbBatch();
     /**
      * 动态数据源操作（仅切换数据源，不开启事务）
      */
-    public final static DBDynamic Dynamic = new DBDynamic();
+    public final static DBDynamic ds = new DBDynamic();
     /**
      * 事务执行器（在当前线程数据源或指定数据源上开启事务）
      */
-    public final static DBTx Tx = new DBTx();
+    public final static DBTx tx = new DBTx();
+
+    /**
+     * 数据库配置
+     */
+    public static final DbConfig config = new DbConfig();
 }

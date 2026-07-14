@@ -52,7 +52,7 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara{
                 wrapValues(fields, valueBean);
             }
             if(queryBean != null){
-                wrapQuery(fields, valueBean);
+                wrapQuery(fields, queryBean);
             }
             isGenerator = true;
         }
@@ -64,14 +64,17 @@ public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara{
      * @param fields
      * @param bean
      */
-    protected abstract void wrapValues(List<Field> fields, T bean) ;
+    protected void wrapValues(List<Field> fields, T bean) {}
+
+
     /**
      * 自动构建参数
      *
      * @param fields
      * @param bean
      */
-    protected abstract void wrapQuery(List<Field> fields, T bean) ;
+    protected void wrapQuery(List<Field> fields, T bean) {}
+
 
     public Class<T> getBeanClass() {
         return beanClass;

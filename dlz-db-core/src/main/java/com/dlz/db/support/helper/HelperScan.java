@@ -19,7 +19,7 @@ public class HelperScan {
             return;
         }
         try {
-            final SqlHelper helper = DB.Dynamic.getSqlHelper();
+            final SqlHelper helper = DB.ds.getSqlHelper();
             Set<Class<?>> set = DlzResourceLoader.scan(packageName, TableName.class);
             set.stream().forEach(clazz -> initTable(clazz, helper));
         } catch (Exception e) {

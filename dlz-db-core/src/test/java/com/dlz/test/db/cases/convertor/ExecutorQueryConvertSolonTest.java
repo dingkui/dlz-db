@@ -26,12 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExecutorQueryConvertSolonTest extends BaseDBTest {
     @BeforeEach
     public void before() {
-        DB.Jdbc.execute("DELETE FROM sys_sql");
-        DB.Jdbc.execute("INSERT INTO sys_sql(deleted ,sql_key,id) VALUES(0,'xxx',666)");
+        DB.jdbc.execute("DELETE FROM sys_sql");
+        DB.jdbc.execute("INSERT INTO sys_sql(deleted ,sql_key,id) VALUES(0,'xxx',666)");
     }
     @AfterEach
     public void after() {
-        DB.Jdbc.execute("DELETE FROM sys_sql");
+        DB.jdbc.execute("DELETE FROM sys_sql");
     }
     @Test
     @DisplayName("测试 convert() - 使用自定义转换器")
@@ -39,7 +39,7 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 测试 convert() 方法 ==========");
         
         // 使用驼峰转换器（默认）
-        List<ResultMap> results = DB.Table.select("Sys_Sql")
+        List<ResultMap> results = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(2)
                 .convert(new NameConvertCamel())
@@ -63,7 +63,7 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 测试 convertNative() 方法 ==========");
         
         // 使用原生转换器（保持数据库原始字段名）
-        List<ResultMap> results = DB.Table.select("Sys_Sql")
+        List<ResultMap> results = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(2)
                 .convertNative()
@@ -87,7 +87,7 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 测试 convertUpper() 方法 ==========");
         
         // 使用大写转换器
-        List<ResultMap> results = DB.Table.select("Sys_Sql")
+        List<ResultMap> results = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(2)
                 .convertUpper()
@@ -112,7 +112,7 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 测试链式调用 ==========");
         
         // 先设置为原生，再改为驼峰
-        List<ResultMap> results = DB.Table.select("Sys_Sql")
+        List<ResultMap> results = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertNative()  // 第一次设置
@@ -136,7 +136,7 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 测试 queryOne() 配合转换器 ==========");
         
         // 使用原生转换器查询单条
-        ResultMap result = DB.Table.select("Sys_Sql")
+        ResultMap result = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .eq("id", 1)
                 .convertNative()
@@ -156,7 +156,7 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 测试 queryPage() 配合转换器 ==========");
         
         // 使用驼峰转换器分页查询
-        Page<ResultMap> page = DB.Table.select("Sys_Sql")
+        Page<ResultMap> page = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .page(1, 5)
                 .convert(new NameConvertCamel())
@@ -178,21 +178,21 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 比较不同转换器的效果 ==========");
         
         // 使用原生转换器
-        List<ResultMap> nativeResults = DB.Table.select("Sys_Sql")
+        List<ResultMap> nativeResults = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertNative()
                 .queryList();
         
         // 使用驼峰转换器
-        List<ResultMap> camelResults = DB.Table.select("Sys_Sql")
+        List<ResultMap> camelResults = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convert(new NameConvertCamel())
                 .queryList();
         
         // 使用大写转换器
-        List<ResultMap> upperResults = DB.Table.select("Sys_Sql")
+        List<ResultMap> upperResults = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertUpper()
@@ -215,14 +215,14 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         log.info("========== 测试线程隔离性 ==========");
         
         // 第一次查询：使用原生转换器
-        List<ResultMap> results1 = DB.Table.select("Sys_Sql")
+        List<ResultMap> results1 = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .convertNative()
                 .queryList();
         
         // 第二次查询：不使用转换器（应该恢复默认）
-        List<ResultMap> results2 = DB.Table.select("Sys_Sql")
+        List<ResultMap> results2 = DB.table.selectWrapper("Sys_Sql")
                 .setAllowFullQuery(true)
                 .limit(1)
                 .queryList();

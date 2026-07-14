@@ -2,10 +2,7 @@ package com.dlz.test.db.cases.preset_sql;
 
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.*;
 
 import java.util.Arrays;
@@ -21,10 +18,10 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @BeforeAll
     public static void setUp() {
         // 清理用户表数据
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
 
         // 插入测试数据
-        DB.Batch.jdbcExecute("INSERT INTO user(name, age, status, deleted ) VALUES(?, ?, ?, ?)",
+        DB.batch.execute("INSERT INTO user(name, age, status, deleted ) VALUES(?, ?, ?, ?)",
                 Arrays.asList(new Object[]{"张三", 25, "1", 0},
                         new Object[]{"李四", 30, "1", 0},
                         new Object[]{"王五", 35, "0", 0},
@@ -34,7 +31,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @AfterAll
     public static void tearDown() {
         // 清理测试数据
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
     }
 
     /**
@@ -44,7 +41,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @Test
     public void testPresetSqlBasicQuery() {
         // 使用预设SQL进行查询
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("name", "%张%")
                 .queryList();
 
@@ -60,7 +57,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @Test
     public void testDynamicSqlConditionIgnore() {
         // name参数为空，该条件应该被忽略
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("name", null)  // 空值，条件应被忽略
                 .addPara("status", new String[]{"1"})  // 有效值
                 .queryList();
@@ -82,7 +79,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @Test
     public void testParameterPlaceholder() {
         // 测试单个参数
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("name", "%李%")
                 .queryList();
 
@@ -91,7 +88,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
         assertEquals("李四", results.get(0).getStr("name"));
 
         // 测试多个参数
-        List<ResultMap> results2 = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results2 = DB.sql.select("key.demo.user.find")
                 .addPara("name", "%张%")
                 .addPara("status", new String[]{"1"})
                 .queryList();
@@ -108,7 +105,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @Test
     public void testCollectionParameterInQuery() {
         // 测试字符串数组参数
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("status", new String[]{"1", "0"})  // 集合参数
                 .queryList();
 
@@ -117,7 +114,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
         assertEquals(4, results.size());
 
         // 测试整数数组参数
-        List<ResultMap> results2 = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results2 = DB.sql.select("key.demo.user.find")
                 .addPara("status", Arrays.asList("1"))  // List参数
                 .queryList();
 
@@ -133,7 +130,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @Test
     public void testCollectionParameterInQuery1() {
         // 测试字符串数组参数
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("status", "a,0,1".split(","))  // 集合参数
                 .queryList();
 
@@ -142,7 +139,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
         assertEquals(4, results.size());
 
         // 测试整数数组参数
-        List<ResultMap> results2 = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results2 = DB.sql.select("key.demo.user.find")
                 .addPara("status", Arrays.asList("1"))  // List参数
                 .queryList();
 
@@ -158,7 +155,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     public void testPresetSqlWithPojo() {
         // 虽然文档主要展示的是DB.Sql.select方式，
         // 但也可以与其他查询方式结合使用
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("status", new String[]{"1"})
                 .queryList();
 
@@ -178,7 +175,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @Test
     public void testAllParametersEmpty() {
         // 当所有动态条件参数都为空时，应该只保留基础查询
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("name", null)
                 .addPara("status", null)
                 .queryList();
@@ -194,7 +191,7 @@ public class PresetSqlConfigTest extends BaseDBTest {
     @Test
     public void testSpecialCharactersHandling() {
         // 测试包含特殊字符的参数
-        List<ResultMap> results = DB.Sql.select("key.demo.user.find")
+        List<ResultMap> results = DB.sql.select("key.demo.user.find")
                 .addPara("name", "' OR '1'='1")  // SQL注入尝试
                 .queryList();
 

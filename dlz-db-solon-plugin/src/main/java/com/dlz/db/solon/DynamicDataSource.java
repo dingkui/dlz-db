@@ -24,7 +24,7 @@ public class DynamicDataSource implements DataSource {
 
     public DynamicDataSource(DataSource defaultDataSource) {
         this.defaultDataSource = defaultDataSource;
-        DB.Dynamic.setDefaultDataSource(defaultDataSource);
+        DB.ds.setDefaultDataSource(defaultDataSource);
         log.info("初始化 DynamicDataSource，默认数据源: {}", defaultDataSource);
     }
 
@@ -77,7 +77,7 @@ public class DynamicDataSource implements DataSource {
      * 从 DB.Dynamic 获取当前线程的目标数据源
      */
     private DataSource getTargetDataSource() {
-        DataSource dataSource = DB.Dynamic.getDataSource();
+        DataSource dataSource = DB.ds.getDataSource();
         if (dataSource == null || dataSource == this) {
             return defaultDataSource;
         }

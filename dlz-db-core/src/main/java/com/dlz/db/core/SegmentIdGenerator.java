@@ -4,7 +4,6 @@ import com.dlz.db.core.anno.SqlAction;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.util.DbLogUtil;
-import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.fn.DlzFn2;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +25,7 @@ public class SegmentIdGenerator {
 
     public long nextId(String tableName, long count) {
         if (count <= 0) count = 1;
-        String key = DB.Dynamic.getCurrentConfig().getName() + ":" + tableName;
+        String key = DB.ds.getCurrentConfig().getName() + ":" + tableName;
         SegmentBuffer buffer = bufferMap.computeIfAbsent(key, k -> new SegmentBuffer(tableName, defaultStep));
         return buffer.nextIds(count);
     }
@@ -61,7 +60,7 @@ public class SegmentIdGenerator {
             long t = System.currentTimeMillis();
             T re = null;
             Exception err = null;
-            try (Connection conn = DB.Dynamic.getCurrentConfig().getDataSource().getConnection()) {
+            try (Connection conn = DB.ds.getCurrentConfig().getDataSource().getConnection()) {
                 re = (T) action.run(conn);
                 return re;
             } catch (Exception e) {

@@ -13,7 +13,7 @@ public class DBSqlSelectTest extends BaseDBTest {
     @Test
     public void sqlSelectTest1() {
         String sql = "key.sqlTest.sqlUtil";
-        SqlQuery ump2 = DB.Sql.select(sql);
+        SqlQuery ump2 = DB.sql.select(sql);
         ump2.addPara("a", "a1");
         ump2.addPara("b", "b1");
         ump2.addPara("d", "d1");
@@ -27,7 +27,7 @@ public class DBSqlSelectTest extends BaseDBTest {
     @Test
     public void sqlSelectTest2() {
         String sql = "key.test";
-        SqlQuery ump2 = DB.Sql.select(sql);
+        SqlQuery ump2 = DB.sql.select(sql);
         ump2.addPara("a", "a1");
         ump2.addPara("b", "b1");
         ump2.addPara("d", "d1");
@@ -39,7 +39,7 @@ public class DBSqlSelectTest extends BaseDBTest {
 
     @Test
     public void sqlSelectTest3(){
-        final SqlQuery sqlQuery = DB.Sql.select("SELECT t.* FROM PTN t WHERE t.id=${key.comm.pageSql} AND t.cc=${a} AND c=${b} AND ccc")
+        final SqlQuery sqlQuery = DB.sql.select("SELECT t.* FROM PTN t WHERE t.id=${key.comm.pageSql} AND t.cc=${a} AND c=${b} AND ccc")
                 .addPara("a", "a${b}")
                 .addPara("b", "b${c}")
                 .addPara("_sql", "_sql${a}");

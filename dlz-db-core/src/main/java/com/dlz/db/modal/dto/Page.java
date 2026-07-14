@@ -36,6 +36,25 @@ public class Page<T> extends Sort<Page> implements Serializable {
         return new Page<>(current, size, order);
     }
 
+    public static <T> Page<T> of(List<T> records, long total, PageRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("request must not be null");
+        }
+        Page<T> page = new Page<>(request.pageNo(), request.pageSize());
+        page.setTotal(total);
+        page.setRecords(records == null ? new ArrayList<T>() : new ArrayList<>(records));
+        return page;
+    }
+
+    public List<T> records() { return records; }
+    public long total() { return total; }
+    public int pageNo() { return (int) current; }
+    public int pageSize() { return (int) size; }
+    public int pages() { return (int) pages; }
+    public boolean hasNext() { return current < pages; }
+    public boolean hasPrevious() { return current > 1; }
+
+
     public static <T> Page<T> build(Order... order) {
         return new Page<>(order);
     }

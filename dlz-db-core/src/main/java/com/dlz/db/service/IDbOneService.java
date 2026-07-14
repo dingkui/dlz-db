@@ -39,14 +39,14 @@ public interface IDbOneService extends IDbBaseService {
     }
 
     default <T> T getBean(T bean) {
-        final PojoQuery<T> wrapper = PojoQuery.wrapper(bean);
+        final PojoQuery<T> wrapper = new PojoQuery(bean.getClass());
         return getBean(wrapper, wrapper.getBeanClass(), true);
     }
     default <T> T selectById(String id,Class<T> clazz){
         if(StringUtils.isEmpty(id)){
             throw new ValidateException("id不能为空");
         }
-        return getBean(PojoQuery.wrapper(clazz).eq("id",id),clazz,true);
+        return getBean(new PojoQuery<>(clazz).eq("id", id),clazz,true);
     }
 
 }

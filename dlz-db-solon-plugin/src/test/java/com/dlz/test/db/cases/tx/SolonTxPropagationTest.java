@@ -32,13 +32,13 @@ public class SolonTxPropagationTest extends BaseDBTest {
 
     @BeforeAll
     public static void setupTable() {
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
     }
 
     @BeforeEach
     public void setUp() {
         propagationService = Solon.context().getBean(SolonPropagationService.class);
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
     }
 
     // ==================== @Tran 外层 + DB.Tx.run() 内层 ====================
@@ -171,7 +171,7 @@ public class SolonTxPropagationTest extends BaseDBTest {
     }
 
     private long countByName(String name) {
-        return DB.Pojo.select(User.class)
+        return DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, name)
                 .count();
     }

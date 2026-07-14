@@ -20,21 +20,21 @@ public class PageTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
         // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "alice", 25, "1", 0);
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "bob", 30, "1", 0);
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "charlie", 35, "0", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "alice", 25, "1", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "bob", 30, "1", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "charlie", 35, "0", 0);
     }
 
     @AfterEach
     public void tearDown() {
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
     }
 
     @Test
     public void jdbc_page() {
-        Page page = DB.Jdbc.select("SELECT * FROM user WHERE deleted =0")
+        Page page = DB.jdbc.selectWrapper("SELECT * FROM user WHERE deleted =0")
                 .page(1, 2, Order.asc("age"))
                 .queryPage();
         assertEquals(3, page.getTotal());
@@ -43,7 +43,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void jdbc_pageBean() {
-        Page<User> page = DB.Jdbc.select("SELECT * FROM user WHERE deleted =0")
+        Page<User> page = DB.jdbc.selectWrapper("SELECT * FROM user WHERE deleted =0")
                 .page(1, 2, Order.asc("age"))
                 .queryPage(User.class);
         assertEquals(3, page.getTotal());
@@ -52,7 +52,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void pojo_queryPage() {
-        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0")
                 .page(Page.build(1, 2, Order.asc("age"))).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(2, page.getRecords().size());
@@ -60,7 +60,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void page_without_order() {
-        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0")
                 .page(1, 2).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(2, page.getRecords().size());
@@ -68,7 +68,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void page_last_page() {
-        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0")
                 .page(2, 2, Order.asc("age")).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(1, page.getRecords().size());
@@ -76,7 +76,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void pojo_page_with_order() {
-        Page<User> page = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
+        Page<User> page = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0")
                 .page(1, 2).orderByAsc(User::getAge).queryBeanPage();
         assertEquals(3, page.getTotal());
         assertEquals(2, page.getRecords().size());
@@ -85,7 +85,7 @@ public class PageTest extends BaseDBTest {
 
     @Test
     public void jdbc_page_with_order() {
-        Page<ResultMap> page = DB.Jdbc.select("SELECT * FROM user WHERE deleted =0")
+        Page<ResultMap> page = DB.jdbc.selectWrapper("SELECT * FROM user WHERE deleted =0")
                 .page(1, 2).orderByAsc("age").queryPage();
         assertEquals(3, page.getTotal());
         assertEquals(2, page.getRecords().size());

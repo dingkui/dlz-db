@@ -14,13 +14,13 @@ import javax.sql.DataSource;
 public class DynamicJdbcTemplate extends JdbcTemplate {
 
     public DynamicJdbcTemplate(DataSource dataSource) {
-        DB.Dynamic.setDefaultDataSource(dataSource);
+        DB.ds.setDefaultDataSource(dataSource);
     }
 
     @Override
     public DataSource getDataSource() {
         // 从连接池管理器获取对应的数据源
-        return DB.Dynamic.getDataSource();
+        return DB.ds.getDataSource();
     }
 
     @Override

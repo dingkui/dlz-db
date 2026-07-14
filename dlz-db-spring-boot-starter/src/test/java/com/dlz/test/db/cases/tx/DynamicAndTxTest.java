@@ -33,7 +33,7 @@ public class DynamicAndTxTest extends BaseDBTest {
     public void setup() {
         // 清理已有数据源
         try {
-            DB.Dynamic.removeDataSource(TEST_DS_NAME);
+            DB.ds.removeDataSource(TEST_DS_NAME);
         } catch (Exception ignore) {
         }
 
@@ -42,30 +42,30 @@ public class DynamicAndTxTest extends BaseDBTest {
         properties.setName(TEST_DS_NAME);
         properties.setDriverClassName("org.sqlite.JDBC");
         properties.setUrl("jdbc:sqlite:" + DB_FILE);
-        DB.Dynamic.setDataSource(properties);
+        DB.ds.setDataSource(properties);
 
         // 清空并重建表
-        DB.Dynamic.use(TEST_DS_NAME, () -> {
-            DB.Jdbc.execute("DROP TABLE IF EXISTS tx_user");
-            DB.Jdbc.execute("CREATE TABLE tx_user (id INTEGER PRIMARY KEY, name TEXT)");
+        DB.ds.use(TEST_DS_NAME, () -> {
+            DB.jdbc.execute("DROP TABLE IF EXISTS tx_user");
+            DB.jdbc.execute("CREATE TABLE tx_user (id INTEGER PRIMARY KEY, name TEXT)");
         });
     }
 
     @AfterEach
     public void teardown() {
-        DB.Dynamic.removeDataSource(TEST_DS_NAME);
+        DB.ds.removeDataSource(TEST_DS_NAME);
     }
 
     // ============== DB.Dynamic.use ：纯切换 ==============
 
     @Test
     public void testDynamicUse_switchOnly() {
-        DB.Dynamic.use(TEST_DS_NAME, () -> {
-            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 1, "alice");
+        DB.ds.use(TEST_DS_NAME, () -> {
+            DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 1, "alice");
         });
 
-        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
-                DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 1).count()
+        long count = DB.ds.use(TEST_DS_NAME, () ->
+                DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 1).count()
         );
         assertEquals(1, count);
     }
@@ -73,7 +73,7 @@ public class DynamicAndTxTest extends BaseDBTest {
     @Test
     public void testDynamicUse_dataSourceNotExist() {
         try {
-            DB.Dynamic.use("not_exist", () -> DB.Jdbc.select("SELECT 1").queryList());
+            DB.ds.use("not_exist", () -> DB.jdbc.selectWrapper("SELECT 1").queryList());
             fail("应抛出异常：数据源不存在");
         } catch (Exception e) {
             String msg = e.getMessage();
@@ -85,15 +85,15 @@ public class DynamicAndTxTest extends BaseDBTest {
     @Test
     public void testDynamicUse_nestedSwitch() {
         // 嵌套切换：内层切完应恢复到外层数据源
-        DB.Dynamic.use(TEST_DS_NAME, () -> {
-            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 10, "outer");
-            assertEquals(TEST_DS_NAME, DB.Dynamic.getUsedDataSourceName());
+        DB.ds.use(TEST_DS_NAME, () -> {
+            DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 10, "outer");
+            assertEquals(TEST_DS_NAME, DB.ds.getUsedDataSourceName());
 
             // 内层切换到 default
-            DB.Dynamic.use("default", () -> assertEquals("default", DB.Dynamic.getUsedDataSourceName()));
+            DB.ds.use("default", () -> assertEquals("default", DB.ds.getUsedDataSourceName()));
 
             // 退出内层后应恢复到 TEST_DS_NAME
-            assertEquals(TEST_DS_NAME, DB.Dynamic.getUsedDataSourceName());
+            assertEquals(TEST_DS_NAME, DB.ds.getUsedDataSourceName());
         });
     }
 
@@ -101,25 +101,25 @@ public class DynamicAndTxTest extends BaseDBTest {
 
     @Test
     public void testTxRun_commit() {
-        DB.Tx.run(TEST_DS_NAME, () -> {
-            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 100, "committed");
+        DB.tx.run(TEST_DS_NAME, () -> {
+            DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 100, "committed");
         });
 
-        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
-                DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 100).count()
+        long count = DB.ds.use(TEST_DS_NAME, () ->
+                DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 100).count()
         );
         assertEquals(1, count, "事务提交后应能查到数据");
     }
 
     @Test
     public void testTxRun_rollbackOnException() {
-        long count1 = DB.Dynamic.use(TEST_DS_NAME, () ->
-                DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
+        long count1 = DB.ds.use(TEST_DS_NAME, () ->
+                DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
         assertEquals(0, count1, "异常应触发回滚，数据不应持久化");
         try {
-            DB.Tx.run(TEST_DS_NAME, () -> {
-                DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 200, "rollback");
+            DB.tx.run(TEST_DS_NAME, () -> {
+                DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 200, "rollback");
                 throw new RuntimeException("模拟业务异常");
             });
             fail("应抛出异常");
@@ -129,22 +129,22 @@ public class DynamicAndTxTest extends BaseDBTest {
                     "异常应包含 '模拟业务异常'，实际: " + e.getMessage());
         }
 
-        long count2 = DB.Dynamic.use(TEST_DS_NAME, () ->
-            DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
+        long count2 = DB.ds.use(TEST_DS_NAME, () ->
+            DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
         assertEquals(0, count2, "异常应触发回滚，数据不应持久化");
     }
 
     @Test
     public void testTxRun_supplierReturnValue() {
-        Integer result = DB.Tx.run(TEST_DS_NAME, () -> {
-            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 300, "ret");
+        Integer result = DB.tx.run(TEST_DS_NAME, () -> {
+            DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 300, "ret");
             return 42;
         });
         assertEquals(Integer.valueOf(42), result);
 
-        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
-                DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 300).count()
+        long count = DB.ds.use(TEST_DS_NAME, () ->
+                DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 300).count()
         );
         assertEquals(1, count);
     }
@@ -154,12 +154,12 @@ public class DynamicAndTxTest extends BaseDBTest {
     @Test
     public void testTxRun_inDynamicUse_useCurrentDataSource() {
         // 在 Dynamic.use 切换后调用 Tx.run()，应在切换后的数据源上开事务
-        DB.Dynamic.use(TEST_DS_NAME, () -> DB.Tx.run(() -> {
-            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 400, "nested_tx");
+        DB.ds.use(TEST_DS_NAME, () -> DB.tx.run(() -> {
+            DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 400, "nested_tx");
         }));
 
-        long count = DB.Dynamic.use(TEST_DS_NAME, () ->
-            DB.Jdbc.select("SELECT COUNT(*) FROM tx_user WHERE id = ?", 400).count()
+        long count = DB.ds.use(TEST_DS_NAME, () ->
+            DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 400).count()
         );
         assertEquals(1, count);
     }
@@ -167,8 +167,8 @@ public class DynamicAndTxTest extends BaseDBTest {
     @Test
     public void testTxRun_runnableOverload() {
         AtomicInteger executed = new AtomicInteger(0);
-        DB.Tx.run(TEST_DS_NAME, () -> {
-            DB.Jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 500, "runnable");
+        DB.tx.run(TEST_DS_NAME, () -> {
+            DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 500, "runnable");
             executed.incrementAndGet();
         });
         assertEquals(1, executed.get());

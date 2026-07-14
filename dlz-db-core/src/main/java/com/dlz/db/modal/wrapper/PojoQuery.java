@@ -28,14 +28,6 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
         ICondAddByLamda<PojoQuery<T>, T>,
         ISqlPage<PojoQuery<T>>,
         IExecutorQuery<PojoQuery<T>> {
-    public static <T> PojoQuery<T> wrapper(T conditionBean) {
-        return new PojoQuery(conditionBean.getClass());
-    }
-
-    public static <T> PojoQuery<T> wrapper(Class<T> beanClass) {
-        return new PojoQuery(beanClass);
-    }
-
     public PojoQuery(Class<T> beanClass) {
         super(beanClass);
         setPm(new TableQuery(getTableName()));

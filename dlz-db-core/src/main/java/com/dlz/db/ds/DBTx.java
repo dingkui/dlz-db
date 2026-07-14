@@ -27,7 +27,7 @@ public class DBTx {
      * <p>当前线程数据源由 {@link DBDynamic#use} 决定，未切换时使用默认数据源。</p>
      */
     public <T> T run(Supplier<T> c) {
-        DataSourceConfig config = DB.Dynamic.getCurrentConfig();
+        DataSourceConfig config = DB.ds.getCurrentConfig();
         return doRun(config, c);
     }
 
@@ -46,8 +46,8 @@ public class DBTx {
      * <p>等价于 {@code DB.Dynamic.use(name, () -> DB.Tx.run(c))}。</p>
      */
     public <T> T run(String name, Supplier<T> c) {
-        return DB.Dynamic.use(name, () -> {
-            DataSourceConfig config = DB.Dynamic.getCurrentConfig();
+        return DB.ds.use(name, () -> {
+            DataSourceConfig config = DB.ds.getCurrentConfig();
             return doRun(config, c);
         });
     }

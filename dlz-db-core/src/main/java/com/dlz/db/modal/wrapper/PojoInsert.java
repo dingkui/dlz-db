@@ -39,13 +39,8 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
         });
     }
 
-    @Override
-    protected void wrapQuery(List<Field> fields, T bean) {
-
-    }
-
-    public PojoInsert<T> value(T bean) {
-        this.valueBean = bean;
+    public PojoInsert<T> value(T value) {
+        this.valueBean = value;
         return this;
     }
     public PojoInsert<T> ignore(DlzFn2<String, Object,Boolean> ignore) {
@@ -64,11 +59,12 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
         final Class<T> beanClass = getBeanClass();
         String dbName = PojoCache.getTableName(beanClass);
         final IdInfo idInfo = PojoCache.getIdInfo(beanClass);
-        boolean doAutoId = idInfo != null || idInfo.getType() != IdType.AUTO;
+        final Field idField = idInfo == null ? null : idInfo.getField();
+        final boolean doAutoId = idInfo != null && idInfo.getType() != IdType.AUTO;
 
         final List<Field> fields = PojoCache.getBeanFields(beanClass)
                 .stream()
-                .filter(field -> !doAutoId || idInfo.getField() != field)
+                .filter(field -> !doAutoId || idField != field)
                 .collect(Collectors.toList());
         String sql = WrapperBuildUtil.buildInsertSql(dbName, fields);
 

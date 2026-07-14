@@ -19,7 +19,7 @@ public class UserController {
     // ===== 查询：直接写 =====
     @GetMapping("/{id}")
     public User getById(@PathVariable Long id) {
-        return DB.Pojo.select(User.class)
+        return DB.pojo.selectWrapper(User.class)
                 .eq(User::getId, id)
                 .queryBean();
     }
@@ -28,7 +28,7 @@ public class UserController {
     public List<User> list(
             @RequestParam(required = false) Integer status,
             @RequestParam(required = false) String keyword) {
-        return DB.Pojo.select(User.class)
+        return DB.pojo.selectWrapper(User.class)
                 .eq(status != null, User::getStatus, status)
                 .like(keyword != null, User::getName, keyword)
                 .orderByDesc(User::getCreateTime)
@@ -39,7 +39,7 @@ public class UserController {
     public Map<String, Object> page(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize) {
-        IPage<User> p = DB.Pojo.select(User.class)
+        IPage<User> p = DB.pojo.selectWrapper(User.class)
                 .page(pageNum, pageSize)
                 .queryBeanPage();
         return Map.of("total", p.getTotal(), "list", p.getRows());
@@ -50,7 +50,7 @@ public class UserController {
     @Transactional
     public User create(@RequestBody User user) {
         user.setCreateTime(new Date());
-        Long id = DB.Pojo.insert(user).insertWithAutoKey();
+        Long id = DB.pojo.insert(user).insertWithAutoKey();
         user.setId(id);
         return user;
     }
@@ -59,13 +59,13 @@ public class UserController {
     @Transactional
     public void update(@PathVariable Long id, @RequestBody User user) {
         user.setId(id);
-        DB.Pojo.updateById(user);
+        DB.pojo.updateById(user);
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public void delete(@PathVariable Long id) {
-        DB.Pojo.delete(User.class)
+        DB.pojo.deleteWrapper(User.class)
                 .eq(User::getId, id)
                 .execute();
     }

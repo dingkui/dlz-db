@@ -34,10 +34,6 @@ public interface IDbListService extends IDbBaseService{
     default <T> List<T> getBeanList(IExecutorQuery paraMap, Class<T> t) {
         return ConvertUtil.convertList(getMapList(paraMap), t);
     }
-    default <T> List<T> getBeanList(T bean){
-        final PojoQuery<T> wrapper = PojoQuery.wrapper(bean);
-        return getBeanList(wrapper,wrapper.getBeanClass());
-    }
     default long getCnt(IExecutorQuery paraMap) {
         return doCnt(paraMap, jdbcSql -> getSqlExecutor().getFirstColumn(jdbcSql.sql, Long.class, jdbcSql.paras));
     }

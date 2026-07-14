@@ -1,6 +1,6 @@
 # 从 MyBatis / MyBatis-Plus 迁移到 DLZ-DB
 
-> 本文档帮助从 MyBatis 或 MyBatis-Plus 迁移到 DLZ-DB。核心变化：**删除所有 Mapper 接口和 XML，改用 `DB.Pojo` 静态调用。**
+> 本文档帮助从 MyBatis 或 MyBatis-Plus 迁移到 DLZ-DB。核心变化：**删除所有 Mapper 接口和 XML，改用 `DB.pojo` 静态调用。**
 
 ---
 
@@ -10,9 +10,9 @@
 |-------------|--------|------|
 | `@Mapper` 接口 | **删除** | 不需要 Mapper 层 |
 | `*Mapper.xml` | **删除** | 不需要 XML 映射文件 |
-| `BaseMapper<T>` | `DB.Pojo` | 静态方法替代继承 |
+| `BaseMapper<T>` | `DB.pojo` | 静态方法替代继承 |
 | `IService<T>` / `ServiceImpl` | 可选 Service | 简单 CRUD 不需要 Service |
-| `QueryWrapper<T>` | 条件构造器（Lambda） | `DB.Pojo.select(...).eq(...)` |
+| `QueryWrapper<T>` | 条件构造器（Lambda） | `DB.pojo.selectWrapper(...).eq(...)` |
 | `@Select` / `@Update` 注解 | `DB.Jdbc` / `DB.Sql` | 原生 SQL 或预设 SQL |
 | `Page<T>`（MP） | `Page<T>`（DLZ-DB） | 分页用法类似 |
 | `@TableName` | `@TableName` | **保留**，用法一致 |
@@ -33,9 +33,9 @@ userMapper.selectList(new QueryWrapper<User>().like("name", "张"));
 userMapper.selectPage(page, wrapper);
 
 // ✅ DLZ-DB
-DB.Pojo.select(User.class).eq(User::getId, 1).queryBean();
-DB.Pojo.select(User.class).like(User::getName, "张").queryBeanList();
-DB.Pojo.select(User.class).like(User::getName, "张").page(1, 10).queryBeanPage();
+DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryBean();
+DB.pojo.selectWrapper(User.class).like(User::getName, "张").queryBeanList();
+DB.pojo.selectWrapper(User.class).like(User::getName, "张").page(1, 10).queryBeanPage();
 ```
 
 ### 新增
@@ -45,7 +45,7 @@ DB.Pojo.select(User.class).like(User::getName, "张").page(1, 10).queryBeanPage(
 userMapper.insert(user);
 
 // ✅ DLZ-DB
-DB.Pojo.insert(user);  // 自动回填主键
+DB.pojo.insert(user);  // 自动回填主键
 ```
 
 ### 更新
@@ -56,8 +56,8 @@ userMapper.updateById(user);
 userMapper.update(user, new QueryWrapper<User>().eq("id", id));
 
 // ✅ DLZ-DB
-DB.Pojo.updateById(user);
-DB.Pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
+DB.pojo.updateById(user);
+DB.pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
 ```
 
 ### 删除
@@ -67,7 +67,7 @@ DB.Pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).e
 userMapper.deleteById(1);
 
 // ✅ DLZ-DB
-DB.Pojo.delete(User.class).eq(User::getId, 1).execute();
+DB.pojo.deleteWrapper(User.class).eq(User::getId, 1).execute();
 ```
 
 ---

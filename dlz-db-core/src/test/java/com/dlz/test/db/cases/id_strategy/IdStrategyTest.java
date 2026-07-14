@@ -20,16 +20,16 @@ public class IdStrategyTest extends BaseDBTest {
 
     @Before
     public void setUp() {
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
         // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
-        DB.Jdbc.execute("DELETE FROM test_auto_id");
+        DB.jdbc.execute("DELETE FROM test_auto_id");
         // DB.Jdbc.execute("CREATE TABLE test_auto_id (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
     }
 
     @After
     public void tearDown() {
-        DB.Jdbc.execute("DELETE FROM user");
-        DB.Jdbc.execute("DELETE FROM test_auto_id");
+        DB.jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM test_auto_id");
     }
 
     @Test
@@ -37,7 +37,7 @@ public class IdStrategyTest extends BaseDBTest {
         AutoIdEntity e = new AutoIdEntity();
         e.setName("auto_test");
         assertNull(e.getId());
-        DB.Pojo.add(e);
+        DB.pojo.add(e);
         assertNotNull(e.getId());
         assertTrue(e.getId() > 0);
     }
@@ -49,7 +49,7 @@ public class IdStrategyTest extends BaseDBTest {
         u.setAge(22);
         u.setStatus("1");
         u.setDeleted("0");
-        DB.Pojo.add(u);
+        DB.pojo.add(u);
         assertNotNull(u.getId());
         assertTrue(u.getId() > 0);
     }
@@ -60,7 +60,7 @@ public class IdStrategyTest extends BaseDBTest {
         m1.setName("ba1");
         AutoIdEntity m2 = new AutoIdEntity();
         m2.setName("ba2");
-        DB.Batch.pojoInsert(Arrays.asList(m1, m2), 100);
+        DB.batch.insert(Arrays.asList(m1, m2), 100);
         assertNull("AUTO batch 不应回填", m1.getId());
         assertNull("AUTO batch 不应回填", m2.getId());
     }
@@ -73,8 +73,8 @@ public class IdStrategyTest extends BaseDBTest {
         u.setAge(40);
         u.setStatus("1");
         u.setDeleted("0");
-        DB.Pojo.add(u);
+        DB.pojo.add(u);
         assertEquals(Long.valueOf(999L), u.getId());
-        assertEquals(Long.valueOf(999L), DB.Pojo.selectById(User.class, 999L).getId());
+        assertEquals(Long.valueOf(999L), DB.pojo.selectById(User.class, 999L).getId());
     }
 }

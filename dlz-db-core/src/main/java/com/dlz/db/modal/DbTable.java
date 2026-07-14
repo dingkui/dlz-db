@@ -1,103 +1,113 @@
 package com.dlz.db.modal;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.modal.options.DbOption;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.db.modal.wrapper.TableInsert;
 import com.dlz.db.modal.wrapper.TableQuery;
 import com.dlz.db.modal.wrapper.TableUpdate;
+import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
-import com.dlz.kit.exception.SystemException;
+import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.json.JSONMap;
-import com.dlz.kit.util.StringUtils;
-import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-@Slf4j
 public class DbTable {
-    public TableInsert insert(String tableName) {
-        return new TableInsert(tableName);
-    }
-    public TableDelete delete(String tableName) {
-        return new TableDelete(tableName);
+    public TableQuery selectWrapper(String table) { return new TableQuery(tableName(table)); }
+    public TableInsert insertWrapper(String table) { return new TableInsert(tableName(table)); }
+    public TableUpdate updateWrapper(String table) { return new TableUpdate(tableName(table)); }
+    public TableDelete deleteWrapper(String table) { return new TableDelete(tableName(table)); }
+
+    public int insert(String table, JSONMap values, DbOption... options) {
+        requireValues(values);
+        return insertWrapper(table).value(values).execute();
     }
 
-    public TableUpdate update(String tableName) {
-        return new TableUpdate(tableName);
-    }
-    public TableQuery select(String tableName) {
-        return new TableQuery(tableName);
+    public Long insertWithAutoKey(String table, JSONMap values, DbOption... options) {
+        requireValues(values);
+        return insertWrapper(table).value(values).insertWithAutoKey();
     }
 
-    //以下都是直接操作执行
-    public int insert(String tableName, JSONMap value) {
-        return new TableInsert(tableName).value(value).execute();
-    }
-    public Long insertWithAutoKey(String tableName, JSONMap value) {
-        return new TableInsert(tableName).value(value).insertWithAutoKey();
-    }
-
-
-    public int insertOrUpdate(String tableName, JSONMap value) {
-        final String idName = PojoCache.getIdDbName(tableName);
-        final Object id = value.get(idName);
-        if (StringUtils.isEmpty(id)) {
-            return insert(tableName,value);
+    public int insertOrUpdate(String table, JSONMap values, DbOption... options) {
+        requireValues(values);
+        String idColumn = idColumn(table);
+        Object id = values.get(idColumn);
+        if (id == null) return insert(table, values, options);
+        Object removed = values.remove(idColumn);
+        try {
+            return updateWrapper(table).set(values).eq(idColumn, id).execute();
+        } finally {
+            values.put(idColumn, removed);
         }
-        value.remove(idName);
-        final int updateResult = update(tableName).set(value).eq(idName, id).execute();
-        value.put(idName, id);
-        return updateResult;
     }
 
-    private int updateById(String tableName, JSONMap value) {
-        final String idName = PojoCache.getIdDbName(tableName);
-        final Object id = value.getLong(idName);
-        if (StringUtils.isEmpty(id)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        value.remove(idName);
-        final int updateResult = update(tableName).set(value).eq(idName, id).execute();
-        value.put(idName, id);
-        if (updateResult == 1) {
-            return updateResult;
-        }
-        log.warn("更新数据条数应为1,实际更新数据为:{}", updateResult);
-        return updateResult;
-    }
-    public ResultMap selectById(String tableName, Object id) {
-        final String idName = PojoCache.getIdDbName(tableName);
-        return select(tableName).eq(idName, id).queryOne();
-    }
-    public List<ResultMap> selectByIds(String tableName, Object ids) {
-        final String idName = PojoCache.getIdDbName(tableName);
-        if (StringUtils.isEmpty(ids)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return select(tableName).in(idName, ids).queryList();
+    public ResultMap selectById(String table, Object id, DbOption... options) {
+        requireId(id);
+        return selectWrapper(table).eq(idColumn(table), id).queryOne();
     }
 
-    public int deleteByIds(String tableName, Object ids) {
-        final String idName = PojoCache.getIdDbName(tableName);
-        if (StringUtils.isEmpty(ids)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return delete(tableName).in(idName, ids).execute();
+    public List<ResultMap> selectByIds(String table, Collection<?> ids) {
+        if (ids == null || ids.isEmpty()) return Collections.emptyList();
+        return selectWrapper(table).in(idColumn(table), ids).queryList();
     }
 
-    public int deleteByIds(String tableName, List<?> ids) {
-        final String idName = PojoCache.getIdDbName(tableName);
-        if (StringUtils.isEmpty(ids)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return delete(tableName).in(idName, ids).execute();
+    public List<ResultMap> selectByIds(String table, String ids) {
+        if (ids == null || ids.trim().isEmpty()) return Collections.emptyList();
+        return selectWrapper(table).in(idColumn(table), ids).queryList();
     }
 
-    public int deleteById(String tableName, Object id) {
-        final String idName = PojoCache.getIdDbName(tableName);
-        if (StringUtils.isEmpty(id)) {
-            throw new SystemException(idName + "不能为空");
+    public int updateById(String table, JSONMap values, DbOption... options) {
+        requireValues(values);
+        String idColumn = idColumn(table);
+        Object id = values.get(idColumn);
+        requireId(id);
+        Object removed = values.remove(idColumn);
+        try {
+            return updateWrapper(table).set(values).eq(idColumn, id).execute();
+        } finally {
+            values.put(idColumn, removed);
         }
-        return delete(tableName).eq(idName, id).execute();
+    }
+
+    public int deleteById(String table, Object id, DbOption... options) {
+        requireId(id);
+        return deleteWrapper(table).eq(idColumn(table), id).execute();
+    }
+
+    public int deleteByIds(String table, Collection<?> ids) {
+        if (ids == null || ids.isEmpty()) return 0;
+        return deleteWrapper(table).in(idColumn(table), ids).execute();
+    }
+    public int deleteByIds(String table, String ids) {
+        if (ids == null || ids.isEmpty()) return 0;
+        return deleteWrapper(table).in(idColumn(table), ids).execute();
+    }
+
+    public boolean existsById(String table, Object id) {
+        return selectById(table, id) != null;
+    }
+
+    public long count(String table) {
+        return DBHolder.getService().getLong("SELECT COUNT(*) FROM " + tableName(table));
+    }
+
+    private String tableName(String table) {
+        return DbConvertUtil.validateDbName(table, "表名");
+    }
+
+    private String idColumn(String table) {
+        return PojoCache.getIdDbName(tableName(table));
+    }
+
+    private void requireId(Object id) {
+        if (id == null) throw new DbParameterException("id must not be null");
+    }
+
+    private void requireValues(JSONMap values) {
+        if (values == null || values.isEmpty()) throw new DbParameterException("values must not be empty");
     }
 }

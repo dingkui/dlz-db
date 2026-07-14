@@ -7,7 +7,7 @@
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-7.1.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 
 ```java
-List<User> users = DB.Pojo.select(User.class)
+List<User> users = DB.pojo.selectWrapper(User.class)
         .eq(User::getStatus, 1)
         .like(User::getName, "Zhang")
         .orderByDesc(User::getCreateTime)
@@ -71,7 +71,7 @@ DB.Dynamic.setDataSource(prop);
 // Decide which database to use at runtime with any logic
 String dsName = routeByTenant(tenantId);
 User user = DB.Dynamic.use(dsName, () ->
-    DB.Pojo.select(User.class).eq(User::getId, id).queryBean()
+    DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean()
 );
 ```
 
@@ -200,7 +200,7 @@ public class User {
 public class UserController {
     @GetMapping("/user/{id}")
     public User getUser(@PathVariable Long id) {
-        return DB.Pojo.select(User.class).eq(User::getId, id).queryBean();
+        return DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean();
     }
 }
 ```
@@ -245,13 +245,13 @@ datasource:
 
 #### 3. Use
 
-API is completely consistent under Solon, `DB.Pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` interfaces unchanged:
+API is completely consistent under Solon, `DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` interfaces unchanged:
 
 ```java
 @Component
 public class UserService {
     public User getUser(Long id) {
-        return DB.Pojo.select(User.class).eq(User::getId, id).queryBean();
+        return DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean();
     }
 }
 ```
@@ -261,11 +261,11 @@ Solon transactions use `@Tran` annotation:
 ```java
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
-    DB.Pojo.update(Account.class)
+    DB.pojo.update(Account.class)
         .setSql("balance = balance - #{amount}", Params.of("amount", amount))
         .eq(Account::getId, fromId)
         .execute();
-    DB.Pojo.update(Account.class)
+    DB.pojo.update(Account.class)
         .setSql("balance = balance + #{amount}", Params.of("amount", amount))
         .eq(Account::getId, toId)
         .execute();
@@ -278,22 +278,22 @@ public void transfer(Long fromId, Long toId, BigDecimal amount) {
 
 ```java
 // Query
-User u     = DB.Pojo.select(User.class).eq(User::getId, 1).queryBean();
-List<User> list = DB.Pojo.select(User.class).eq(User::getStatus, 1).queryBeanList();
-Page<User> page = DB.Pojo.select(User.class)
+User u     = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryBean();
+List<User> list = DB.pojo.selectWrapper(User.class).eq(User::getStatus, 1).queryBeanList();
+Page<User> page = DB.pojo.selectWrapper(User.class)
         .setPage(Page.build(1, 10, Order.desc("create_time")))
         .queryBeanPage();
 
 // Insert
-DB.Pojo.insert(user);
+DB.pojo.insert(user);
 DB.Batch.insert(users, 100);
 
 // Update
-DB.Pojo.update(user).eq(User::getId, id).execute();
-DB.Pojo.update(User.class).set(User::getName, "New Name").eq(User::getId, id).execute();
+DB.pojo.update(user).eq(User::getId, id).execute();
+DB.pojo.update(User.class).set(User::getName, "New Name").eq(User::getId, id).execute();
 
 // Delete (with deleted field automatically uses logical delete)
-DB.Pojo.delete(User.class).eq(User::getId, id).execute();
+DB.pojo.deleteWrapper(User.class).eq(User::getId, id).execute();
 
 // Preset SQL (defined in xml/db, key starts with "key.")
 List<User> users = DB.Sql.select("key.user.find")
@@ -307,7 +307,7 @@ List<User> users = DB.Sql.select("key.user.find")
 
 ```
 Main Operation Entry Points (choose one by SQL style)
-├─ DB.Pojo   ← First choice when you have Bean, chain + Lambda, type-safe
+├─ DB.pojo   ← First choice when you have Bean, chain + Lambda, type-safe
 ├─ DB.Table  ← Dynamic table name scenarios, no Bean needed
 ├─ DB.Jdbc   ← One-line simple SQL, ? placeholder, second to migrate JdbcTemplate
 └─ DB.Sql    ← Complex / dynamic / reusable SQL, #{} placeholder + preset SQL
@@ -340,7 +340,7 @@ DB.Jdbc.select("complex SQL statement where id=?", id).queryList();
 DB.Sql.select("key.complexQuery").addPara("x", 1).queryList();
 
 // Condition builder + custom fragment
-DB.Pojo.select(User.class)
+DB.pojo.selectWrapper(User.class)
         .eq(User::getStatus, 1)
         .sql("EXISTS (SELECT 1 FROM vip WHERE user_id=t.id AND level>=#{lv})",
              new JSONMap("lv", 3))
@@ -364,7 +364,7 @@ Yes. DLZ-DB doesn't depend on the MyBatis ecosystem, both use their own datasour
 
 **Q: Is v7 API compatible with v6?**
 
-`DB.Pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` and other core APIs are fully compatible. But Maven coordinates, configuration class package paths have changed, see [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md) for details.
+`DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` and other core APIs are fully compatible. But Maven coordinates, configuration class package paths have changed, see [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md) for details.
 
 ---
 

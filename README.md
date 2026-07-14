@@ -9,7 +9,7 @@
 [![codecov](https://codecov.io/gh/dingkui/dlz-db/graph/badge.svg?token=UDX6ZH1R0Q)](https://codecov.io/gh/dingkui/dlz-db)
 
 ```java
-List<User> users = DB.Pojo.select(User.class)
+List<User> users = DB.pojo.selectWrapper(User.class)
         .eq(User::getStatus, 1)
         .like(User::getName, "张")
         .orderByDesc(User::getCreateTime)
@@ -73,7 +73,7 @@ DB.Dynamic.setDataSource(prop);
 // 运行时用任意逻辑决定走哪个库
 String dsName = routeByTenant(tenantId);
 User user = DB.Dynamic.use(dsName, () ->
-    DB.Pojo.select(User.class).eq(User::getId, id).queryBean()
+    DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean()
 );
 ```
 
@@ -202,7 +202,7 @@ public class User {
 public class UserController {
     @GetMapping("/user/{id}")
     public User getUser(@PathVariable Long id) {
-        return DB.Pojo.select(User.class).eq(User::getId, id).queryBean();
+        return DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean();
     }
 }
 ```
@@ -247,13 +247,13 @@ datasource:
 
 #### 3. 使用
 
-Solon 下 API 完全一致，`DB.Pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 接口不变：
+Solon 下 API 完全一致，`DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 接口不变：
 
 ```java
 @Component
 public class UserService {
     public User getUser(Long id) {
-        return DB.Pojo.select(User.class).eq(User::getId, id).queryBean();
+        return DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean();
     }
 }
 ```
@@ -263,11 +263,11 @@ Solon 事务使用 `@Tran` 注解：
 ```java
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
-    DB.Pojo.update(Account.class)
+    DB.pojo.update(Account.class)
         .setSql("balance = balance - #{amount}", Params.of("amount", amount))
         .eq(Account::getId, fromId)
         .execute();
-    DB.Pojo.update(Account.class)
+    DB.pojo.update(Account.class)
         .setSql("balance = balance + #{amount}", Params.of("amount", amount))
         .eq(Account::getId, toId)
         .execute();
@@ -280,22 +280,22 @@ public void transfer(Long fromId, Long toId, BigDecimal amount) {
 
 ```java
 // 查询
-User u     = DB.Pojo.select(User.class).eq(User::getId, 1).queryBean();
-List<User> list = DB.Pojo.select(User.class).eq(User::getStatus, 1).queryBeanList();
-Page<User> page = DB.Pojo.select(User.class)
+User u     = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryBean();
+List<User> list = DB.pojo.selectWrapper(User.class).eq(User::getStatus, 1).queryBeanList();
+Page<User> page = DB.pojo.selectWrapper(User.class)
         .setPage(Page.build(1, 10, Order.desc("create_time")))
         .queryBeanPage();
 
 // 插入
-DB.Pojo.insert(user);
+DB.pojo.insert(user);
 DB.Batch.insert(users, 100);
 
 // 更新
-DB.Pojo.update(user).eq(User::getId, id).execute();
-DB.Pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
+DB.pojo.update(user).eq(User::getId, id).execute();
+DB.pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
 
 // 删除（有 deleted 字段自动走逻辑删除）
-DB.Pojo.delete(User.class).eq(User::getId, id).execute();
+DB.pojo.deleteWrapper(User.class).eq(User::getId, id).execute();
 
 // 预设 SQL（xml / db 中定义，key 以 "key." 开头）
 List<User> users = DB.Sql.select("key.user.find")
@@ -309,7 +309,7 @@ List<User> users = DB.Sql.select("key.user.find")
 
 ```
 主操作入口（按 SQL 风格选一个）
-├─ DB.Pojo   ← 有 Bean 时首选，链式 + Lambda，类型安全
+├─ DB.pojo   ← 有 Bean 时首选，链式 + Lambda，类型安全
 ├─ DB.Table  ← 动态表名场景，不需要 Bean
 ├─ DB.Jdbc   ← 一行搞定的简单 SQL，? 占位符，秒迁 JdbcTemplate
 └─ DB.Sql    ← 复杂 / 动态 / 可复用 SQL，#{} 占位符 + 预设 SQL
@@ -342,7 +342,7 @@ DB.Jdbc.select("复杂的SQL语句 WHERE id=?", id).queryList();
 DB.Sql.select("key.复杂查询").addPara("x", 1).queryList();
 
 // 条件构造器 + 自定义片段
-DB.Pojo.select(User.class)
+DB.pojo.selectWrapper(User.class)
         .eq(User::getStatus, 1)
         .sql("EXISTS (SELECT 1 FROM vip WHERE user_id=t.id AND level>=#{lv})",
              new JSONMap("lv", 3))
@@ -366,7 +366,7 @@ DB.Pojo.select(User.class)
 
 **Q：v7 和 v6 的 API 兼容吗？**
 
-`DB.Pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 等核心 API 完全兼容。但 Maven 坐标、配置类包路径有变更，详见 [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md)。
+`DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 等核心 API 完全兼容。但 Maven 坐标、配置类包路径有变更，详见 [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md)。
 
 ---
 
@@ -388,10 +388,10 @@ DB.Pojo.select(User.class)
 
 | 变更 | 旧 API (7.0.x) | 新 API (7.1.0) | 说明 |
 |------|----------------|----------------|------|
-| **DbPojo 方法重命名** | `DB.Pojo.select(User.class)` | `DB.Pojo.select(User.class)` | `select` / `delete` / `update` → `select` / `delete` / `updateW` |
-| | `DB.Pojo.select(conditionBean)` | 移除 | 请改用 `select(Class)` + 条件链 |
-| | `DB.Pojo.delete(conditionBean)` | 移除 | 同上 |
-| | `DB.Pojo.update(Class)` | `DB.Pojo.update(Class)` | 同上 |
+| **DbPojo 方法重命名** | `DB.pojo.selectWrapper(User.class)` | `DB.pojo.selectWrapper(User.class)` | `select` / `delete` / `update` → `select` / `delete` / `updateW` |
+| | `DB.pojo.selectWrapper(conditionBean)` | 移除 | 请改用 `select(Class)` + 条件链 |
+| | `DB.pojo.delete(conditionBean)` | 移除 | 同上 |
+| | `DB.pojo.update(Class)` | `DB.pojo.update(Class)` | 同上 |
 | **DbTable 方法重命名** | `DB.Table.select("user")` | `DB.Table.select("user")` | `select` / `insert` / `delete` / `update` → `select` / `insertW` / `delete` / `updateW` |
 | **DbBatch 方法重命名** | `DB.Batch.insert(list)` | `DB.Batch.pojoInsert(list)` | 区分 Pojo / Table / Jdbc 三种模式 |
 | | `DB.Batch.update(list)` | `DB.Batch.pojoUpdate(list)` | 同上 |

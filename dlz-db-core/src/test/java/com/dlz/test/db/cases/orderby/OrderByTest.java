@@ -20,49 +20,49 @@ public class OrderByTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
         // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "alice", 25, "1", 0);
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "bob", 30, "1", 0);
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "charlie", 35, "0", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "alice", 25, "1", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "bob", 30, "1", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "charlie", 35, "0", 0);
     }
 
     @AfterEach
     public void tearDown() {
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
     }
 
     @Test
     public void jdbc_order_asc() {
-        List<User> users = DB.Jdbc.select("SELECT * FROM user WHERE deleted =0 ORDER BY age ASC").queryList(User.class);
+        List<User> users = DB.jdbc.selectWrapper("SELECT * FROM user WHERE deleted =0 ORDER BY age ASC").queryList(User.class);
         assertEquals("alice", users.get(0).getName());
         assertEquals("charlie", users.get(2).getName());
     }
 
     @Test
     public void jdbc_order_desc() {
-        List<User> users = DB.Jdbc.select("SELECT * FROM user WHERE deleted =0 ORDER BY age DESC").queryList(User.class);
+        List<User> users = DB.jdbc.selectWrapper("SELECT * FROM user WHERE deleted =0 ORDER BY age DESC").queryList(User.class);
         assertEquals("charlie", users.get(0).getName());
         assertEquals("alice", users.get(2).getName());
     }
 
     @Test
     public void pojo_orderByAsc() {
-        List<User> users = DB.Pojo.select(User.class).eq(User::getDeleted, "0").orderByAsc(User::getAge).queryBeanList();
+        List<User> users = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0").orderByAsc(User::getAge).queryBeanList();
         assertEquals("alice", users.get(0).getName());
         assertEquals("charlie", users.get(2).getName());
     }
 
     @Test
     public void pojo_orderByDesc() {
-        List<User> users = DB.Pojo.select(User.class).eq(User::getDeleted, "0").orderByDesc(User::getAge).queryBeanList();
+        List<User> users = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0").orderByDesc(User::getAge).queryBeanList();
         assertEquals("charlie", users.get(0).getName());
         assertEquals("alice", users.get(2).getName());
     }
 
     @Test
     public void pojo_order_multiple() {
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .orderByAsc(User::getStatus)
                 .orderByDesc(User::getAge)
                 .queryBeanList();
@@ -72,27 +72,27 @@ public class OrderByTest extends BaseDBTest {
 
     @Test
     public void page_order_asc() {
-        List<User> users = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
+        List<User> users = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0")
                 .sort(Order.asc("age")).queryBeanList();
         assertEquals("alice", users.get(0).getName());
     }
 
     @Test
     public void page_order_desc() {
-        List<User> users = DB.Pojo.select(User.class).eq(User::getDeleted, "0")
+        List<User> users = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0")
                 .sort(Order.desc("age")).queryBeanList();
         assertEquals("charlie", users.get(0).getName());
     }
 
     @Test
     public void pojo_orderByAsc_lambda() {
-        List<User> users = DB.Pojo.select(User.class).eq(User::getDeleted, "0").orderByAsc(User::getAge).queryBeanList();
+        List<User> users = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0").orderByAsc(User::getAge).queryBeanList();
         assertEquals("alice", users.get(0).getName());
     }
 
     @Test
     public void pojo_orderByDesc_lambda() {
-        List<User> users = DB.Pojo.select(User.class).eq(User::getDeleted, "0").orderByDesc(User::getAge).queryBeanList();
+        List<User> users = DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0").orderByDesc(User::getAge).queryBeanList();
         assertEquals("charlie", users.get(0).getName());
     }
 }

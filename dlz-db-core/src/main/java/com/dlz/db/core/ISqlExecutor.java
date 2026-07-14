@@ -25,7 +25,7 @@ import java.util.Locale;
  *   <li>Solon：基于自研 {@code SimpleJdbc}（规划中）</li>
  * </ul>
  * </p>
- * <p>用户通常无需直接使用，而是通过 {@code DB.Pojo} / {@code DB.Jdbc} / {@code DB.Sql} 等上层 API 访问。</p>
+ * <p>用户通常无需直接使用，而是通过 {@code DB.pojo} / {@code DB.Jdbc} / {@code DB.Sql} 等上层 API 访问。</p>
  *
  * @author dingkui
  * @since 7.0.0
@@ -34,7 +34,7 @@ public interface ISqlExecutor {
     ConnectionSupplier getConnectionSupplier();
 
     default List<ResultMap> getList(String sql, Object... args) {
-        return getList(sql, DB.Dynamic.getRowMapper(), args);
+        return getList(sql, DB.ds.getRowMapper(), args);
     }
 
     default <T> List<T> getList(String sql, IRowMapper<T> rowMapper, Object... args) {

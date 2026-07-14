@@ -25,7 +25,7 @@ public class SolonNativeTxTest extends BaseDBTest {
     @BeforeAll
     public static void setupTable() {
         // 创建测试表
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
     }
 
     @BeforeEach
@@ -34,7 +34,7 @@ public class SolonNativeTxTest extends BaseDBTest {
         nativeTxService = Solon.context().getBean(SolonNativeTxService.class);
 
         // 清理数据
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
     }
 
     /**

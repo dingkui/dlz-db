@@ -32,7 +32,7 @@ public class SolonNativeTxService {
         user.setName("Solon事务包含DB提交用户");
         user.setAge(25);
         user.setEmail("solon_dlz_commit@example.com");
-        DB.Pojo.add(user);
+        DB.pojo.add(user);
     }
 
     /**
@@ -44,13 +44,13 @@ public class SolonNativeTxService {
         user1.setName("Solon事务包含DB回滚用户1");
         user1.setAge(30);
         user1.setEmail("solon_dlz_rollback1@example.com");
-        DB.Pojo.add(user1);
+        DB.pojo.add(user1);
 
         User user2 = new User();
         user2.setName("Solon事务包含DB回滚用户2");
         user2.setAge(35);
         user2.setEmail("solon_dlz_rollback2@example.com");
-        DB.Pojo.add(user2);
+        DB.pojo.add(user2);
 
         throw new RuntimeException("Solon 事务包含 dlz-db 操作回滚测试");
     }

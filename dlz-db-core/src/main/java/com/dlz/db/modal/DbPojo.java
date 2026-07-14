@@ -1,136 +1,173 @@
 package com.dlz.db.modal;
 
+import com.dlz.db.modal.options.DbOption;
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.IdInfo;
-import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.fn.DlzFn;
-import com.dlz.kit.util.StringUtils;
-import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-@Slf4j
+/**
+ * 8.0 Pojo 门面，直接复用现有 wrapper 执行内核。
+ */
 public class DbPojo {
-    public <T> PojoQuery<T> select(Class<T> re) {
-        return PojoQuery.wrapper(re);
-    }
-    public <T> PojoQuery<T> select(Class<T> re, DlzFn<T, ?>... columns) {
-        return new PojoQuery<>(re).select(columns);
-    }
-    public <T> PojoDelete<T> delete(Class<T> beanClass) {
-        return new PojoDelete<>(beanClass);
+    public <T> PojoQuery<T> selectWrapper(Class<T> type) {
+        requireType(type);
+        return new PojoQuery<>(type);
     }
 
-    /**
-     * 默认忽略空字段
-     * @param value 要更新的实体
-     * @param <T>   实体类型
-     */
-    @SuppressWarnings("unchecked")
-    public <T> PojoUpdate<T> update(T value) {
-        if (value == null) {
-            return null;
+    public <T> PojoQuery<T> selectWrapper(Class<T> type, DlzFn<T, ?>... fields) {
+        requireType(type);
+        return new PojoQuery<>(type).select(fields);
+    }
+
+    public <T> PojoInsert<T> insertWrapper(Class<T> type) {
+        requireType(type);
+        return new PojoInsert<>(type);
+    }
+
+    public <T> PojoUpdate<T> updateWrapper(Class<T> type) {
+        requireType(type);
+        return new PojoUpdate<>(type);
+    }
+    public <T> PojoUpdate<T> updateWrapper(T entity) {
+        requireEntity(entity);
+        return DB.pojo.updateWrapper((Class<T>)entity.getClass()).set(entity);
+    }
+
+    public <T> PojoDelete<T> deleteWrapper(Class<T> type) {
+        requireType(type);
+        return new PojoDelete<>(type);
+    }
+
+    public <T> T insert(T entity, DbOption... options) {
+        requireEntity(entity);
+        insertWrapper((Class<T>)entity.getClass()).value(entity).execute();
+        return entity;
+    }
+
+    @Deprecated
+    public <T> T add(T entity) {
+        return insert(entity);
+    }
+
+    public <T> T insertOrUpdateById(T entity, DbOption... options) {
+        requireEntity(entity);
+        IdInfo idInfo = requireIdInfo(entity.getClass());
+        if (idInfo.getValue(entity) == null) {
+            return insert(entity, options);
         }
-        final Class<T> aClass = (Class<T>) value.getClass();
-        return new PojoUpdate<>(aClass).set(value);
-    }
-    /**
-     * 完整更新（包含空字段）
-     * @param value 要更新的实体
-     * @param <T>   实体类型
-     */
-    @SuppressWarnings("unchecked")
-    public <T> PojoUpdate<T> updateIntact(T value) {
-        return new PojoUpdate<>((Class<T>) value.getClass()).ignore((name, val) -> false).set(value);
-    }
-    public <T> PojoUpdate<T> update(Class<T> beanClass) {
-        return new PojoUpdate<>(beanClass);
-    }
-    @SuppressWarnings("unchecked")
-    public <T> PojoInsert<T> insert(T value) {
-        return new PojoInsert<>((Class<T>) value.getClass()).value(value);
+        updateById(entity, options);
+        return entity;
     }
 
-    //以下都是直接操作执行
-    public <T> T add(T bean) {
-        insert(bean).execute();
-        return bean;
+    @Deprecated
+    public <T> T save(T entity) {
+        return insertOrUpdateById(entity);
     }
 
-    public <T> T save(T obj) {
-        final Class<T> aClass = (Class<T>) obj.getClass();
-        final IdInfo idInfo = PojoCache.getIdInfo(aClass);
+    public <T> T selectById(Class<T> type, Object id, DbOption... options) {
+        requireType(type);
+        requireId(id);
+        String idColumn = requireIdInfo(type).getDbName();
+        return selectWrapper(type).eq(idColumn, id).queryBean();
+    }
+
+    public <T> List<T> selectByIds(Class<T> type, Collection<?> ids) {
+        requireType(type);
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String idColumn = requireIdInfo(type).getDbName();
+        return selectWrapper(type).in(idColumn, new ArrayList<Object>(ids)).queryBeanList();
+    }
+    public <T> List<T> selectByIds(Class<T> type, String ids) {
+        requireType(type);
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String idColumn = requireIdInfo(type).getDbName();
+        return selectWrapper(type).in(idColumn, ids).queryBeanList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> int updateById(T entity, DbOption... options) {
+        requireEntity(entity);
+        Class<T> type = (Class<T>) entity.getClass();
+        IdInfo idInfo = requireIdInfo(type);
+        Object id = idInfo.getValue(entity);
+        requireId(id);
+        return updateWrapper(type)
+                .ignore((name, value) -> value == null || name.equalsIgnoreCase(idInfo.getDbName()))
+                .set(entity)
+                .eq(idInfo.getDbName(), id)
+                .execute();
+    }
+
+    public <T> int deleteById(Class<T> type, Object id, DbOption... options) {
+        requireType(type);
+        requireId(id);
+        String idColumn = requireIdInfo(type).getDbName();
+        return deleteWrapper(type).eq(idColumn, id).execute();
+    }
+
+    public <T> int deleteByIds(Class<T> type, Collection<?> ids) {
+        requireType(type);
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+        String idColumn = requireIdInfo(type).getDbName();
+        return deleteWrapper(type).in(idColumn, new ArrayList<Object>(ids)).execute();
+    }
+    public <T> int deleteByIds(Class<T> type, String ids) {
+        requireType(type);
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+        String idColumn = requireIdInfo(type).getDbName();
+        return deleteWrapper(type).in(idColumn, ids).execute();
+    }
+
+    public <T> boolean existsById(Class<T> type, Object id) {
+        return selectById(type, id) != null;
+    }
+
+    public <T> long count(Class<T> type) {
+        requireType(type);
+        return selectWrapper(type).count();
+    }
+
+    private void requireType(Class<?> type) {
+        if (type == null) {
+            throw new DbParameterException("type must not be null");
+        }
+    }
+
+    private void requireEntity(Object entity) {
+        if (entity == null) {
+            throw new DbParameterException("entity must not be null");
+        }
+    }
+
+    private IdInfo requireIdInfo(Class<?> type) {
+        IdInfo idInfo = PojoCache.getIdInfo(type);
         if (idInfo == null) {
-            throw new SystemException("无主键信息,不支持:insertOrUpdate " + aClass.getSimpleName());
+            throw new DbParameterException("entity must declare an id: " + type.getName());
         }
-        final Object id = idInfo.getValue(obj);
-        if (StringUtils.isEmpty(id)) {
-            return add(obj);
-        }
-        return updateById(obj, id, aClass, idInfo);
+        return idInfo;
     }
 
-    private <T> T updateById(T obj, Object idValue, Class<T> aClass, IdInfo idInfo) {
-        final String idName = idInfo.getDbName();
-        if (StringUtils.isEmpty(idValue)) {
-            throw new SystemException(idName + "不能为空");
+    private void requireId(Object id) {
+        if (id == null) {
+            throw new DbParameterException("id must not be null");
         }
-        final int execute = update(aClass).ignore((name, val) -> val == null||name.equalsIgnoreCase(idName)).set(obj).eq(idName, idValue).execute();
-        if (execute == 1) {
-            return obj;
-        }
-        log.warn("更新数据条数应为1,实际更新数据为:{}", execute);
-        return null;
-    }
-
-    public <T> T updateById(T obj) {
-        final Class<T> aClass = (Class<T>) obj.getClass();
-        final IdInfo idInfo = PojoCache.getIdInfo(aClass);
-        final Object id = idInfo.getValue(obj);
-        return updateById(obj, id, aClass, idInfo);
-    }
-
-    public <T> T selectById(Class<T> c, Object id) {
-        final String idName = PojoCache.getIdDbName(c);
-        if (StringUtils.isEmpty(id)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return select(c).eq(idName, id).queryBean();
-    }
-
-    public <T> List<T> selectByIds(Class<T> c, Object id) {
-        final String idName = PojoCache.getIdDbName(c);
-        if (StringUtils.isEmpty(id)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return select(c).in(idName, id).queryBeanList();
-    }
-
-    public <T> int deleteByIds(Class<T> c, String ids) {
-        final String idName = PojoCache.getIdDbName(c);
-        if (StringUtils.isEmpty(ids)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return delete(c).in(idName, ids).execute();
-    }
-
-    public <T> int deleteByIds(Class<T> c, List<?> ids) {
-        final String idName = PojoCache.getIdDbName(c);
-        if (StringUtils.isEmpty(ids)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return delete(c).in(idName, ids).execute();
-    }
-
-    public <T> int deleteById(Class<T> c, Object id) {
-        final String idName = PojoCache.getIdDbName(c);
-        if (StringUtils.isEmpty(id)) {
-            throw new SystemException(idName + "不能为空");
-        }
-        return delete(c).eq(idName, id).execute();
     }
 }

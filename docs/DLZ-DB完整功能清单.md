@@ -12,7 +12,7 @@ DLZ-DB 提供 7 个静态入口，覆盖所有数据库操作场景：
 
 | 入口 | 职责 | 适用场景 |
 |------|------|----------|
-| **DB.Pojo** | 基于实体类的类型安全操作 | 推荐首选，IDE 自动补全，重构安全 |
+| **DB.pojo** | 基于实体类的类型安全操作 | 推荐首选，IDE 自动补全，重构安全 |
 | **DB.Table** | 基于表名的动态操作 | 无实体类或动态表名场景 |
 | **DB.Jdbc** | 原生 SQL 操作（? 占位符） | 简单 SQL，快速原型开发 |
 | **DB.Sql** | 预设 SQL 操作（#{key} 占位符） | 复杂 SQL，SQL 集中管理 |
@@ -22,7 +22,7 @@ DLZ-DB 提供 7 个静态入口，覆盖所有数据库操作场景：
 
 ---
 
-## 二、DB.Pojo - 实体类操作（推荐）
+## 二、DB.pojo - 实体类操作（推荐）
 
 ### 2.1 查询操作
 
@@ -226,7 +226,7 @@ TableDelete delete(String tableName)
 
 ### 3.2 查询结果方法
 
-与 DB.Pojo 相同，支持：
+与 DB.pojo 相同，支持：
 - `queryOne()` / `queryList()` / `queryPage()`
 - `queryOne(Class)` / `queryList(Class)` / `queryPage(Class)`
 - `queryStr()` / `queryLong()` / `queryInt()` / `queryDouble()` 及其 List 版本
@@ -234,7 +234,7 @@ TableDelete delete(String tableName)
 
 ### 3.3 条件构造方法
 
-与 DB.Pojo 相同，但使用字符串字段名而非 Lambda。
+与 DB.pojo 相同，但使用字符串字段名而非 Lambda。
 
 ---
 
@@ -265,7 +265,7 @@ int execute(String sql, Object... para)
 
 ### 4.3 查询结果方法
 
-与 DB.Pojo 相同，支持所有查询方法和标量方法。
+与 DB.pojo 相同，支持所有查询方法和标量方法。
 
 ### 4.4 分页支持
 
@@ -315,7 +315,7 @@ select("key.xxx")
 
 ### 5.4 查询结果方法
 
-与 DB.Pojo 相同，支持所有查询方法和标量方法。
+与 DB.pojo 相同，支持所有查询方法和标量方法。
 
 ---
 
@@ -383,14 +383,14 @@ void use(String name, Runnable action)
 ```java
 // 读写分离
 List<User> users = DB.Dynamic.use("slave", () ->
-    DB.Pojo.select(User.class)
+    DB.pojo.selectWrapper(User.class)
         .eq(User::getStatus, 1)
         .queryBeanList()
 );
 
 // 切换到报表库
 DB.Dynamic.use("report", () -> {
-    DB.Pojo.insert(reportData);
+    DB.pojo.insert(reportData);
 });
 ```
 
@@ -419,19 +419,19 @@ T run(String dataSourceName, Supplier<T> action)
 ```java
 // 基本事务
 DB.Tx.run(() -> {
-    DB.Pojo.insert(user);
-    DB.Pojo.insert(userLog);
+    DB.pojo.insert(user);
+    DB.pojo.insert(userLog);
 });
 
 // 带返回值
 Long userId = DB.Tx.run(() -> {
-    DB.Pojo.insert(user);
+    DB.pojo.insert(user);
     return user.getId();
 });
 
 // 指定数据源
 DB.Tx.run("slave", () -> {
-    DB.Pojo.insert(user);
+    DB.pojo.insert(user);
 });
 ```
 
@@ -441,7 +441,7 @@ DB.Tx.run("slave", () -> {
 ```java
 @Transactional
 public void createUser() {
-    DB.Pojo.insert(user);
+    DB.pojo.insert(user);
 }
 ```
 
@@ -449,7 +449,7 @@ public void createUser() {
 ```java
 @Tran
 public void createUser() {
-    DB.Pojo.insert(user);
+    DB.pojo.insert(user);
 }
 ```
 
@@ -476,7 +476,7 @@ public void createUser() {
 
 | 场景 | 推荐入口 | 原因 |
 |------|---------|------|
-| 日常 CRUD | DB.Pojo | 类型安全，IDE 提示好 |
+| 日常 CRUD | DB.pojo | 类型安全，IDE 提示好 |
 | 动态表名 | DB.Table | 无需定义实体类 |
 | 简单 SQL | DB.Jdbc | 快速原型开发 |
 | 复杂 SQL | DB.Sql | SQL 集中管理，易维护 |
@@ -577,7 +577,7 @@ DLZ-DB 提供了完整的数据库操作能力，核心特点：
 ✅ **多框架支持** - Spring Boot + Solon  
 ✅ **轻量级** - 核心模块仅依赖 JDBC  
 
-**推荐使用顺序：** DB.Pojo > DB.Sql > DB.Table > DB.Jdbc
+**推荐使用顺序：** DB.pojo > DB.Sql > DB.Table > DB.Jdbc
 
 ---
 

@@ -43,7 +43,7 @@ public class DlzDbAdapter{
         if (sqlExecutor == null) {
             synchronized (DlzDbAdapter.class) {
                 if (sqlExecutor == null) {
-                    DB.Dynamic.setDefaultDataSource(dataSourceMaker.get());
+                    DB.ds.setDefaultDataSource(dataSourceMaker.get());
 
                     final ISqlExecutor sqlExecutor1 = sqlExecutorMaker.get();
                     DbLogUtil.init(sqlConfig);

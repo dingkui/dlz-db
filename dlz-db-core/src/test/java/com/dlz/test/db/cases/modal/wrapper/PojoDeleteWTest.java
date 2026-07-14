@@ -12,7 +12,7 @@ public class PojoDeleteWTest extends BaseDBTest {
     public void deleterapperTest1() {
         SysSql dict = new SysSql();
         dict.setId(123L);
-        PojoDelete<SysSql> delete = DB.Pojo.delete(SysSql.class).eq(SysSql::getId, 123);
+        PojoDelete<SysSql> delete = DB.pojo.deleteWrapper(SysSql.class).eq(SysSql::getId, 123);
         showSql(delete,"deleterapperTest1","DELETE FROM sys_sql where id = 123 AND deleted = 0");
     }
     //未输入条件删除条件为false
@@ -20,7 +20,7 @@ public class PojoDeleteWTest extends BaseDBTest {
     public void deleterapperTest2() {
         SysSql dict = new SysSql();
         dict.setId(123L);
-        PojoDelete<SysSql> delete = DB.Pojo.delete(SysSql.class);
+        PojoDelete<SysSql> delete = DB.pojo.deleteWrapper(SysSql.class);
         showSql(delete,"deleterapperTest2","DELETE FROM sys_sql where deleted = 0");
     }
 

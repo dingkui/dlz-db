@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class DbOpPostgresql extends SqlHelper {
     @Override
     public void createTable(String tableName, Class<?> clazz) {
-        final String schema = DB.Dynamic.getCurrentConfig().getSchema();
+        final String schema = DB.ds.getCurrentConfig().getSchema();
         final String columns = FieldReflections.getFields(clazz).stream().map(field -> {
                     String columnName = PojoCache.getDbName(field);
                     String column = null;
@@ -62,7 +62,7 @@ public class DbOpPostgresql extends SqlHelper {
     public VAL<String,String[]> getTableColumnSql(String tableName) {
         // 达梦系统表查询字段信息
         String sql = "SELECT column_name as name FROM information_schema.columns WHERE table_schema=? AND table_name=?";
-        return VAL.of(sql, new String[]{DB.Dynamic.getCurrentConfig().getSchema(),tableName.toLowerCase()});
+        return VAL.of(sql, new String[]{DB.ds.getCurrentConfig().getSchema(),tableName.toLowerCase()});
     }
 
     @Override

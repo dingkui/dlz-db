@@ -40,13 +40,13 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
     public void pageAndOrderTest5_1_2() {
         // 分页构造方式1：page单独构建
         final Page<?> page = Page.build(1, 10, Order.desc("create_time"));
-        DB.Pojo.select(User.class)
+        DB.pojo.selectWrapper(User.class)
                 .eq(User::getStatus, 1)
                 .page(page)
                 .queryBeanPage();
 
         // 分页构造方式2：分页和排序链式构建
-        DB.Pojo.select(User.class)
+        DB.pojo.selectWrapper(User.class)
                 .eq(User::getStatus, 1)
                 .page(1,10)
                 .orderByAsc(User::getId)
@@ -55,7 +55,7 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
 
     @Test
     public void pageAndOrderTest5_1_3() {
-       DB.Jdbc.select("SELECT * FROM user WHERE status = ?", 1)
+       DB.jdbc.selectWrapper("SELECT * FROM user WHERE status = ?", 1)
                .page(Page.build(1, 10, Order.desc("id")))
                .queryPage();
 
@@ -72,13 +72,13 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
          SELECT * FROM user WHERE AND status = #{status}
          ]]></sql>
          */
-        DB.Sql.select("key.pageAndOrderTest5_1_4")
+        DB.sql.select("key.pageAndOrderTest5_1_4")
                 .addPara("status", 1)
                 .page(Page.build(1, 10, Order.desc("id")))
                 .queryPage();
 
         //方法2：直接写SQL
-        DB.Sql.select("SELECT * FROM user WHERE status = #{status}")
+        DB.sql.select("SELECT * FROM user WHERE status = #{status}")
                 .addPara("status", 1)
                 .page(Page.build(1, 10, Order.desc("id")))
                 .queryPage();
@@ -92,11 +92,11 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
     public void pageAndOrderTest5_1_5() {
         // 只需要排序，不需要分页
         //方法1：设置只有排序的分页
-        DB.Pojo.select(User.class)
+        DB.pojo.selectWrapper(User.class)
             .page(Page.build(Order.descs("create_time", "id")))  // 不传页码
             .queryList();
         //方法2：直接链式设置order
-        DB.Pojo.select(User.class)
+        DB.pojo.selectWrapper(User.class)
             .orderByDesc("create_time", "id")  // 不传页码
             .queryList();
 

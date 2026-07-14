@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * 测试 DB.Pojo 中带非简单属性（Bean 类型）的建表、保存和查询。
+ * 测试 DB.pojo 中带非简单属性（Bean 类型）的建表、保存和查询。
  * <p>
  * MapColumnBean.t1 是 TestBean 类型（非简单类型），
  * INSERT 时走 TableColumnMapper.cover() 序列化为 JSON 字符串存入 VARCHAR 列，
@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class MapColumnBeanTest extends BaseDBTest {
     @BeforeEach
     void clear1() {
-        DB.Jdbc.execute("DELETE FROM MAP_COLUMN_BEAN");
+        DB.jdbc.execute("DELETE FROM MAP_COLUMN_BEAN");
     }
 
     @AfterEach
     void clear2() {
-        DB.Jdbc.execute("DELETE FROM MAP_COLUMN_BEAN");
+        DB.jdbc.execute("DELETE FROM MAP_COLUMN_BEAN");
     }
 
     // ========== 建表验证 ==========
@@ -70,13 +70,13 @@ class MapColumnBeanTest extends BaseDBTest {
         bean.setT1(testBean);
 
         // 插入
-        MapColumnBean inserted = DB.Pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.add(bean);
         assertNotNull(inserted, "插入后应返回对象");
         assertNotNull(inserted.getId(), "id 应自动回填");
         log.info("插入成功, id={}", inserted.getId());
 
         // 查询回来
-        MapColumnBean found = DB.Pojo.selectById(MapColumnBean.class, inserted.getId());
+        MapColumnBean found = DB.pojo.selectById(MapColumnBean.class, inserted.getId());
         assertNotNull(found, "应能查询到插入的记录");
         assertNotNull(found.getT1(), "t1（Bean 属性）不应为 null");
 
@@ -94,10 +94,10 @@ class MapColumnBeanTest extends BaseDBTest {
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(null);
 
-        MapColumnBean inserted = DB.Pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.add(bean);
         assertNotNull(inserted.getId(), "id 应自动回填");
 
-        MapColumnBean found = DB.Pojo.selectById(MapColumnBean.class, inserted.getId());
+        MapColumnBean found = DB.pojo.selectById(MapColumnBean.class, inserted.getId());
         assertNotNull(found, "应能查询到插入的记录");
         assertNull(found.getT1(), "t1 为 null 时查询回来也应为 null");
     }
@@ -114,7 +114,7 @@ class MapColumnBeanTest extends BaseDBTest {
 
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(testBean);
-        MapColumnBean inserted = DB.Pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.add(bean);
 
         // 修改 Bean 属性
         TestBean newBean = new TestBean();
@@ -125,10 +125,10 @@ class MapColumnBeanTest extends BaseDBTest {
         inserted.setT1(newBean);
 
         // 更新
-        DB.Pojo.updateById(inserted);
+        DB.pojo.updateById(inserted);
 
         // 查询验证
-        MapColumnBean found = DB.Pojo.selectById(MapColumnBean.class, inserted.getId());
+        MapColumnBean found = DB.pojo.selectById(MapColumnBean.class, inserted.getId());
         assertNotNull(found.getT1(), "更新后 t1 不应为 null");
         assertEquals(2L, found.getT1().getId(), "TestBean.id 应更新");
         assertEquals("updated", found.getT1().getT().get("name"), "JSONMap.name 应更新");
@@ -147,7 +147,7 @@ class MapColumnBeanTest extends BaseDBTest {
 
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(testBean);
-        MapColumnBean inserted = DB.Pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.add(bean);
 
         // 修改 Bean 属性
         TestBean newBean = new TestBean();
@@ -158,22 +158,22 @@ class MapColumnBeanTest extends BaseDBTest {
         inserted.setT1(newBean);
 
         // 更新
-        DB.Pojo.updateById(inserted);
+        DB.pojo.updateById(inserted);
 
         JSONMap newMap2 = new JSONMap();
         newMap2.put("namexxx", "updated");
 
         // 更新
-       DB.Pojo.update(MapColumnBean.class)
+       DB.pojo.updateWrapper(MapColumnBean.class)
                 .set(MapColumnBean::getT2, newMap2)
                 .eq(MapColumnBean::getId, inserted.getId())
                 .execute();
 
-        final ResultMap map = DB.Pojo.select(MapColumnBean.class).eq(MapColumnBean::getId, inserted.getId()).queryOne();
+        final ResultMap map = DB.pojo.selectWrapper(MapColumnBean.class).eq(MapColumnBean::getId, inserted.getId()).queryOne();
         final MapColumnBean mapColumnBean = map.as(MapColumnBean.class);
 
         // 查询验证
-        MapColumnBean found = DB.Pojo.selectById(MapColumnBean.class,  inserted.getId());
+        MapColumnBean found = DB.pojo.selectById(MapColumnBean.class,  inserted.getId());
         assertNotNull(found.getT1(), "更新后 t1 不应为 null");
         assertEquals("updated", found.getT2().get("namexxx"), "JSONMap.name 应更新");
     }

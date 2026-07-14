@@ -1,6 +1,7 @@
 package com.dlz.test.db.cases.id_strategy;
 
 import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
 import com.dlz.kit.exception.SystemException;
@@ -23,20 +24,20 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
     void setUp() {
         // 清理测试数据，确保每次测试环境干净
         // 清理号段记录
-        DB.Jdbc.execute("DROP TABLE IF EXISTS sys_seq");
-        DB.Jdbc.execute("DELETE FROM TEST_AUTO_ID");
+        DB.jdbc.execute("DROP TABLE IF EXISTS sys_seq");
+        DB.jdbc.execute("DELETE FROM TEST_AUTO_ID");
         final DataSourceProperty properties = new DataSourceProperty();
         properties.setName("test");
         properties.setDriverClassName("org.sqlite.JDBC");
         properties.setUrl("jdbc:sqlite:./test/testdb_dynamic.sqlite3");
-        DB.Dynamic.setDataSource(properties);
-        DB.Dynamic.use("test", () -> {
+        DB.ds.setDataSource(properties);
+        DB.ds.use("test", () -> {
             // 清理测试数据，确保每次测试环境干净
-            DB.Jdbc.execute("DROP TABLE IF EXISTS " + TEST_TABLE);
-            DB.Jdbc.execute("CREATE TABLE " + TEST_TABLE + " (id INTEGER PRIMARY KEY, name TEXT)");
+            DB.jdbc.execute("DROP TABLE IF EXISTS " + TEST_TABLE);
+            DB.jdbc.execute("CREATE TABLE " + TEST_TABLE + " (id INTEGER PRIMARY KEY, name TEXT)");
 
             // 清理号段记录
-            DB.Jdbc.execute("DROP TABLE IF EXISTS sys_seq");
+            DB.jdbc.execute("DROP TABLE IF EXISTS sys_seq");
         });
     }
 
@@ -64,11 +65,11 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         int i = 20;
         AutoIdEntity autoIdEntity = new AutoIdEntity();
         autoIdEntity.setName("test");
-        long maxId1 = DB.Pojo.save(autoIdEntity).getId();
+        long maxId1 = DB.pojo.save(autoIdEntity).getId();
         while (i-- > 0) {
             AutoIdEntity autoIdEntity2 = new AutoIdEntity();
             autoIdEntity2.setName("test");
-            long maxId2 = DB.Pojo.save(autoIdEntity2).getId();
+            long maxId2 = DB.pojo.save(autoIdEntity2).getId();
             Assertions.assertEquals(maxId1 + 1, maxId2, "单次取号应连续递增");
             maxId1 = maxId2;
         }
@@ -78,7 +79,7 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
     void testSingleIdGeneration3() {
         NoIdEntity autoIdEntity = new NoIdEntity();
         autoIdEntity.setName("test");
-        Assertions.assertThrowsExactly(SystemException.class, () -> DB.Pojo.save(autoIdEntity));
+        Assertions.assertThrowsExactly(DbParameterException.class, () -> DB.pojo.save(autoIdEntity));
     }
 
     @Test
@@ -151,8 +152,8 @@ public class SegmentIdGeneratorTest extends BaseDBTest {
         // 场景：模拟两个不同的数据源 DS_A 和 DS_B，它们都有一个名为 "orders" 的表
         String sharedTableName = "test_orders_xx";
 
-        long dsA_id1 = DB.Dynamic.use("test", () -> DBHolder.sequence(sharedTableName));
-        long dsA_id2 = DB.Dynamic.use("test", () -> DBHolder.sequence(sharedTableName));
+        long dsA_id1 = DB.ds.use("test", () -> DBHolder.sequence(sharedTableName));
+        long dsA_id2 = DB.ds.use("test", () -> DBHolder.sequence(sharedTableName));
 
         // 在 DS_B 取号（应该从 1 开始，与 DS_A 无关）
         long dsB_id1 = DBHolder.sequence(sharedTableName, 1);

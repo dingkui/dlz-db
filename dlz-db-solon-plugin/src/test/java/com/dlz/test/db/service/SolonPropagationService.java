@@ -20,13 +20,13 @@ public class SolonPropagationService {
     @Tran
     public void tranOuterDlzInner() {
         insertUser("Tran外层用户", 25, "to@example.com");
-        DB.Tx.run(() -> insertUser("DLZ内层用户", 28, "di@example.com"));
+        DB.tx.run(() -> insertUser("DLZ内层用户", 28, "di@example.com"));
     }
 
     @Tran
     public void tranOuterDlzInnerRollback() {
         insertUser("Tran外层-回滚", 25, "to_rb@example.com");
-        DB.Tx.run(() -> {
+        DB.tx.run(() -> {
             insertUser("DLZ内层-回滚", 28, "di_rb@example.com");
             throw new RuntimeException("内层异常，整体回滚");
         });
@@ -35,14 +35,14 @@ public class SolonPropagationService {
     // ==================== DB.Tx.run() 外层 + @Tran 内层 ====================
 
     public void dlzOuterTranInner() {
-        DB.Tx.run(() -> {
+        DB.tx.run(() -> {
             insertUser("DLZ外层用户", 25, "do@example.com");
             self.tranInnerSimple();
         });
     }
 
     public void dlzOuterTranInnerRollback() {
-        DB.Tx.run(() -> {
+        DB.tx.run(() -> {
             insertUser("DLZ外层-回滚", 25, "do_rb@example.com");
             self.tranInnerRollback();
         });
@@ -64,7 +64,7 @@ public class SolonPropagationService {
     @Tran
     public void tranOuterWithNestedDlzAndTran() {
         insertUser("最外层-Tran", 25, "outermost@example.com");
-        DB.Tx.run(() -> {
+        DB.tx.run(() -> {
             insertUser("中间层-DLZ", 28, "middle@example.com");
             self.tranInnerMost();
         });
@@ -80,7 +80,7 @@ public class SolonPropagationService {
     @Tran
     public void tranOuterFailRollbackDlzInner() {
         insertUser("Tran外层-失败", 25, "to_fail@example.com");
-        DB.Tx.run(() -> insertUser("DLZ内层-被回滚", 28, "di_fail@example.com"));
+        DB.tx.run(() -> insertUser("DLZ内层-被回滚", 28, "di_fail@example.com"));
         throw new RuntimeException("Tran 外层异常，DLZ 内层也应回滚");
     }
 
@@ -89,6 +89,6 @@ public class SolonPropagationService {
         user.setName(name);
         user.setAge(age);
         user.setEmail(email);
-        DB.Pojo.add(user);
+        DB.pojo.add(user);
     }
 }

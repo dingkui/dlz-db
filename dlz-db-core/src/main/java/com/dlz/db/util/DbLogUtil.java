@@ -92,7 +92,7 @@ public class DbLogUtil {
     }
 
     public static <T> String generateSqlMessage(Long l, T reulst, String methodName, String sql, Object[] args) {
-        final String usedDataSourceName = DB.Dynamic.getUsedDataSourceName();
+        final String usedDataSourceName = DB.ds.getUsedDataSourceName();
         if (usedDataSourceName != null) {
             methodName = "[" + usedDataSourceName + "] " + methodName;
         }

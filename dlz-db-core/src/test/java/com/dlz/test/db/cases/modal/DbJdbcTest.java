@@ -18,13 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DisplayName("DbJdbc 原生 JDBC 操作测试")
 class DbJdbcTest extends BaseDBTest {
-
-    private DbJdbc dbJdbc = new DbJdbc();
-
     @Test
     @DisplayName("测试 select 方法返回 JdbcQuery")
     void testSelect() {
-        JdbcSelect query = dbJdbc.select("SELECT * FROM user WHERE id = ?", 1);
+        JdbcSelect query = DB.jdbc.selectWrapper("SELECT * FROM user WHERE id = ?", 1);
         
         assertNotNull(query);
         assertTrue(query instanceof JdbcSelect);
@@ -33,7 +30,7 @@ class DbJdbcTest extends BaseDBTest {
     @Test
     @DisplayName("测试 select 方法传递 SQL 和参数")
     void testSelectWithParameters() {
-        JdbcSelect query = dbJdbc.select("SELECT * FROM user WHERE name = ? AND age = ?", "张三", 25);
+        JdbcSelect query = DB.jdbc.selectWrapper("SELECT * FROM user WHERE name = ? AND age = ?", "张三", 25);
         
         assertNotNull(query);
     }
@@ -41,7 +38,7 @@ class DbJdbcTest extends BaseDBTest {
     @Test
     @DisplayName("测试 select 方法传递单个参数")
     void testSelectWithSingleParameter() {
-        JdbcSelect query = dbJdbc.select("SELECT * FROM user WHERE id = ?", 1);
+        JdbcSelect query = DB.jdbc.selectWrapper("SELECT * FROM user WHERE id = ?", 1);
         
         assertNotNull(query);
     }
@@ -49,7 +46,7 @@ class DbJdbcTest extends BaseDBTest {
     @Test
     @DisplayName("测试 select 方法无参数")
     void testSelectWithoutParameters() {
-        JdbcSelect query = dbJdbc.select("SELECT COUNT(*) FROM user");
+        JdbcSelect query = DB.jdbc.selectWrapper("SELECT COUNT(*) FROM user");
         
         assertNotNull(query);
     }
@@ -58,20 +55,20 @@ class DbJdbcTest extends BaseDBTest {
     @DisplayName("测试方法返回值类型验证")
     void testMethodReturnTypes() {
         // select 返回 JdbcQuery
-        assertTrue(dbJdbc.select("SELECT * FROM user") instanceof JdbcSelect);
+        assertTrue(DB.jdbc.selectWrapper("SELECT * FROM user") instanceof JdbcSelect);
     }
 
     @Test
     @DisplayName("测试空 SQL 参数处理")
     void testEmptySql() {
-        JdbcSelect query = dbJdbc.select("");
+        JdbcSelect query = DB.jdbc.selectWrapper("");
         assertNotNull(query);
     }
 
     @Test
     @DisplayName("测试 null SQL 参数处理")
     void testNullSql() {
-        JdbcSelect query = dbJdbc.select(null);
+        JdbcSelect query = DB.jdbc.selectWrapper(null);
         // 这里可能在实际执行时失败，但构造应该没问题
         assertNotNull(query);
     }
@@ -80,40 +77,40 @@ class DbJdbcTest extends BaseDBTest {
     @DisplayName("测试各种类型的参数")
     void testVariousParameterTypes() {
         // 测试字符串参数
-        JdbcSelect query1 = dbJdbc.select("SELECT * FROM user WHERE name = ?", "张三");
+        JdbcSelect query1 = DB.jdbc.selectWrapper("SELECT * FROM user WHERE name = ?", "张三");
         assertNotNull(query1);
         
         // 测试整数参数
-        JdbcSelect query2 = dbJdbc.select("SELECT * FROM user WHERE id = ?", 1);
+        JdbcSelect query2 = DB.jdbc.selectWrapper("SELECT * FROM user WHERE id = ?", 1);
         assertNotNull(query2);
         
         // 测试布尔参数
-        JdbcSelect query3 = dbJdbc.select("SELECT * FROM user WHERE active = ?", true);
+        JdbcSelect query3 = DB.jdbc.selectWrapper("SELECT * FROM user WHERE active = ?", true);
         assertNotNull(query3);
         
         // 测试浮点参数
-        JdbcSelect query4 = dbJdbc.select("SELECT * FROM user WHERE score = ?", 95.5);
+        JdbcSelect query4 = DB.jdbc.selectWrapper("SELECT * FROM user WHERE score = ?", 95.5);
         assertNotNull(query4);
     }
 
 
     @Test
     public void jdbcPageTest1() {
-        final JdbcSelect page = DB.Jdbc.select("SELECT 1 FROM dual WHERE ?=1", 1)
+        final JdbcSelect page = DB.jdbc.selectWrapper("SELECT 1 FROM dual WHERE ?=1", 1)
                 .page(Page.build(1, 2));
         showSql(page, "jdbcPageTest1", "SELECT 1 FROM dual WHERE 1=1 LIMIT 0,2");
     }
 
     @Test
     public void jdbcPageTest2() {
-        final JdbcSelect page = DB.Jdbc.select("SELECT 1 FROM dual WHERE ?=1", 1)
+        final JdbcSelect page = DB.jdbc.selectWrapper("SELECT 1 FROM dual WHERE ?=1", 1)
                 .page(Page.build(1, 2, Order.descs("x1", "x2")));
         showSql(page, "jdbcPageTest2", "SELECT 1 FROM dual WHERE 1=1 order by X1 desc,X2 desc LIMIT 0,2");
     }
 
     @Test
     public void jdbcPageTest3() {
-        final JdbcSelect page = DB.Jdbc.select("SELECT 1 FROM dual WHERE ?=1", 1)
+        final JdbcSelect page = DB.jdbc.selectWrapper("SELECT 1 FROM dual WHERE ?=1", 1)
                 .page(1, 20, Order.descs("x1", "x2"))
                 .page(Page.build(Order.descs("x1", "x2")));
         showSql(page, "jdbcPageTest3", "SELECT 1 FROM dual WHERE 1=1 order by X1 desc,X2 desc");
@@ -121,13 +118,13 @@ class DbJdbcTest extends BaseDBTest {
 
     @Test
     public void jdbcExecute() {
-        final int execute = DB.Jdbc.execute("DELETE FROM user");
+        final int execute = DB.jdbc.execute("DELETE FROM user");
         Assert.assertNotNull("Jdbc 执行并返回影响行数", execute);
     }
 
     @Test
     public void jdbcDelete() {
-        final int execute = DB.Jdbc.execute("DELETE FROM user where id=?",1);
+        final int execute = DB.jdbc.execute("DELETE FROM user where id=?",1);
         Assert.assertNotNull("Jdbc 执行并返回影响行数", execute);
     }
 }

@@ -117,7 +117,7 @@ Step 6  验证测试
 
 > 这 5 条覆盖 90% 的场景，剩下的查路由表。
 
-1. **无 Mapper/DAO/XML**，直接用 `DB.Pojo.xxx`
+1. **无 Mapper/DAO/XML**，直接用 `DB.pojo.xxx`
 2. **简单 CRUD → Controller 里直接写**，不建 Service
 3. **复杂多表 / 可复用逻辑 → 才建 Service**
 4. **写操作必须 `.execute()` 结尾**（`insert` 除外，它直接执行）

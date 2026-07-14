@@ -20,6 +20,7 @@ public class DbException extends BaseException {
 		ExceptionErrors.addErrors(1005, "数据转换异常");
 		ExceptionErrors.addErrors(1006, "数据事务执行异常");
 		ExceptionErrors.addErrors(1007, "数据事连接关闭异常");
+		ExceptionErrors.addErrors(1008, "数据事连接关闭异常");
 	}
 
 	public DbException(String message, int errorCode, Throwable cause) {

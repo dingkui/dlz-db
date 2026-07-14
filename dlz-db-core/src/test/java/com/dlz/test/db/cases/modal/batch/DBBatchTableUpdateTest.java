@@ -4,7 +4,6 @@ import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.test.db.entity.TestUser;
 import com.dlz.test.db.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,10 +23,10 @@ public class DBBatchTableUpdateTest extends BaseDBTest {
     @DisplayName("测试  UPDATE - 空列表返回 false")
     void testPojoUpdateEmptyList() {
         List<JSONMap> users = Collections.emptyList();
-        assertFalse(DB.Batch.tableUpdate("Test_User",users));
+        assertFalse(DB.batch.update("Test_User",users).isSuccess());
 
         assertThrows(NullPointerException.class, () -> {
-            assertFalse(DB.Batch.tableUpdate("Test_User",null));
+            assertFalse(DB.batch.update("Test_User",null).isSuccess());
         });
     }
 
@@ -36,10 +35,10 @@ public class DBBatchTableUpdateTest extends BaseDBTest {
     void testPojoUpdateWithBatchSize() {
         List<JSONMap> users = Arrays.asList(new JSONMap(), new JSONMap());
         assertThrows(SystemException.class, () -> {
-            DB.Batch.tableUpdate("Test_User",users, 100);
+            DB.batch.update("Test_User",users, 100);
         });
         assertThrows(SystemException.class, () -> {
-            DB.Batch.tableUpdate("Test_User",users);
+            DB.batch.update("Test_User",users);
         });
     }
 
@@ -54,7 +53,7 @@ public class DBBatchTableUpdateTest extends BaseDBTest {
         insert2.setAge(6);
         List<JSONMap> users = Arrays.asList(new JSONMap(insert1), new JSONMap(insert2));
         // 空列表不会进入循环，直接返回 true
-        boolean result = DB.Batch.tableUpdate("Test_User", users, 10);
+        boolean result = DB.batch.update("Test_User", users, 10).isSuccess();
 
         assertTrue(result);
     }

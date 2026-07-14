@@ -17,49 +17,49 @@ public class LogicDeleteTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
         // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "alice", 25, "1", 0);
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "bob", 30, "1", 0);
-        DB.Jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "deleted_user", 35, "0", 1);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "alice", 25, "1", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "bob", 30, "1", 0);
+        DB.jdbc.execute("INSERT INTO user(name,age,status,deleted ) VALUES(?,?,?,?)", "deleted_user", 35, "0", 1);
     }
 
     @AfterEach
     public void tearDown() {
-        DB.Jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("DELETE FROM user");
     }
 
     @Test
     public void query_without_deleted() {
-        assertEquals(2, DB.Pojo.select(User.class).eq(User::getDeleted, "0").count());
-        assertEquals(2, DB.Pojo.select(User.class).count());
+        assertEquals(2, DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0").count());
+        assertEquals(2, DB.pojo.selectWrapper(User.class).count());
     }
 
     @Test
     public void query_with_deleted() {
-        assertEquals(1, DB.Pojo.select(User.class).eq(User::getDeleted, "1").count());
+        assertEquals(1, DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "1").count());
     }
 
     @Test
     public void soft_delete_by_update() {
-        User u = DB.Pojo.select(User.class).eq(User::getName, "alice").queryBean();
-        DB.Pojo.update(User.class).set(User::getDeleted, "1").eq(User::getId, u.getId()).execute();
-        assertEquals(2, DB.Pojo.select(User.class).eq(User::getDeleted, "1").count());
-        assertEquals(1, DB.Pojo.select(User.class).eq(User::getDeleted, "0").count());
-        assertEquals(1, DB.Pojo.select(User.class).count());
+        User u = DB.pojo.selectWrapper(User.class).eq(User::getName, "alice").queryBean();
+        DB.pojo.updateWrapper(User.class).set(User::getDeleted, "1").eq(User::getId, u.getId()).execute();
+        assertEquals(2, DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "1").count());
+        assertEquals(1, DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0").count());
+        assertEquals(1, DB.pojo.selectWrapper(User.class).count());
     }
 
     @Test
     public void restore_by_update() {
-        User u = DB.Pojo.select(User.class).eq(User::getName, "deleted_user").eq(User::getDeleted, "1").queryBean();
-        DB.Pojo.update(User.class).set(User::getDeleted, "0").eq(User::getId, u.getId()).eq(User::getDeleted, "1").execute();
-        assertEquals(0, DB.Pojo.select(User.class).eq(User::getDeleted, "1").count());
-        assertEquals(3, DB.Pojo.select(User.class).eq(User::getDeleted, "0").count());
+        User u = DB.pojo.selectWrapper(User.class).eq(User::getName, "deleted_user").eq(User::getDeleted, "1").queryBean();
+        DB.pojo.updateWrapper(User.class).set(User::getDeleted, "0").eq(User::getId, u.getId()).eq(User::getDeleted, "1").execute();
+        assertEquals(0, DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "1").count());
+        assertEquals(3, DB.pojo.selectWrapper(User.class).eq(User::getDeleted, "0").count());
     }
 
     @Test
     public void physical_delete() {
-        DB.Pojo.delete(User.class).ignoreLogicDelete(true).eq(User::getName, "deleted_user").execute();
-        assertEquals(0, DB.Jdbc.select("SELECT COUNT(*) FROM user WHERE name=?", "deleted_user").count());
+        DB.pojo.deleteWrapper(User.class).ignoreLogicDelete(true).eq(User::getName, "deleted_user").execute();
+        assertEquals(0, DB.jdbc.selectWrapper("SELECT COUNT(*) FROM user WHERE name=?", "deleted_user").count());
     }
 }

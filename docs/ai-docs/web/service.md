@@ -26,12 +26,12 @@ public class OrderService {
         order.setOrderNo(generateOrderNo());
         order.setUserId(req.getUserId());
         order.setTotalAmount(req.getTotalAmount());
-        order = DB.Pojo.insert(order);
+        order = DB.pojo.insert(order);
 
         // 2. 插入订单明细
         for (OrderItem item : req.getItems()) {
             item.setOrderId(order.getId());
-            DB.Pojo.insert(item);
+            DB.pojo.insert(item);
         }
 
         return order;
@@ -39,7 +39,7 @@ public class OrderService {
 
     // 可复用的复杂查询
     public List<Order> findUserOrders(Long userId, Integer status) {
-        return DB.Pojo.select(Order.class)
+        return DB.pojo.selectWrapper(Order.class)
                 .eq(Order::getUserId, userId)
                 .eq(status != null, Order::getStatus, status)
                 .orderByDesc(Order::getCreateTime)
@@ -50,14 +50,14 @@ public class OrderService {
     @Transactional
     public void deductStock(Long productId, int quantity) {
         // 先查后判
-        Product p = DB.Pojo.select(Product.class)
+        Product p = DB.pojo.selectWrapper(Product.class)
                 .eq(Product::getId, productId)
                 .queryBean();
         if (p.getStockQuantity() < quantity) {
             throw new BusinessException("库存不足");
         }
         // 条件更新
-        DB.Pojo.update(Product.class)
+        DB.pojo.update(Product.class)
                 .set(Product::getStockQuantity, p.getStockQuantity() - quantity)
                 .eq(Product::getId, productId)
                 .execute();
@@ -78,13 +78,13 @@ public class OrderService {
 ```java
 // 编程式事务（推荐用于多表操作，不依赖框架注解）
 DB.Tx.run(() -> {
-    DB.Pojo.insert(order);
-    DB.Pojo.insert(orderItem);
+    DB.pojo.insert(order);
+    DB.pojo.insert(orderItem);
 });
 
 // 带返回值的编程式事务
 Order result = DB.Tx.run(() -> {
-    return DB.Pojo.insert(order);
+    return DB.pojo.insert(order);
 });
 Long orderId = result.getId();
 ```
@@ -97,7 +97,7 @@ List<User> users = loadFromExcel();
 DB.Batch.insert(users);
 
 // 条件删除含批量
-DB.Pojo.delete(User.class)
+DB.pojo.deleteWrapper(User.class)
     .in(User::getId, Arrays.asList(1L, 2L, 3L))
     .execute();
 ```
@@ -107,7 +107,7 @@ DB.Pojo.delete(User.class)
 ```java
 // 读走从库
 List<User> users = DB.Dynamic.use("slave", () ->
-    DB.Pojo.select(User.class).queryBeanList()
+    DB.pojo.selectWrapper(User.class).queryBeanList()
 );
 
 // 运行时注册新数据源
@@ -129,6 +129,6 @@ List<ResultMap> rows = DB.Jdbc.select("SELECT * FROM user WHERE id = ?", 1).quer
 List<User> r = DB.Sql.select("key.user.find").addPara("status", 1).queryList(User.class);
 
 // 标量查询
-String name = DB.Pojo.select(User.class).eq(User::getId, 1).queryStr();
-Long count = DB.Pojo.select(User.class).queryLong();
+String name = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryStr();
+Long count = DB.pojo.selectWrapper(User.class).queryLong();
 ```

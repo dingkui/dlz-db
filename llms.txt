@@ -23,7 +23,7 @@ DLZ-DB is a lightweight Java database framework with <7000 lines of code, design
 
 ### Main Entry Points
 
-- `DB.Pojo` - CRUD with Bean entities (preferred)
+- `DB.pojo` - CRUD with Bean entities (preferred)
 - `DB.Table` - Dynamic table names without Bean
 - `DB.Jdbc` - Simple SQL with `?` placeholders
 - `DB.Sql` - Preset/complex SQL with `#{key}` placeholders
@@ -54,26 +54,26 @@ All methods support three-parameter form: `eq(boolean condition, field, value)`
 
 ```java
 // Query
-User user = DB.Pojo.select(User.class)
+User user = DB.pojo.selectWrapper(User.class)
     .eq(User::getId, 1)
     .queryBean();
 
-List<User> users = DB.Pojo.select(User.class)
+List<User> users = DB.pojo.selectWrapper(User.class)
     .eq(User::getStatus, 1)
     .like(User::getName, "Zhang")
     .queryBeanList();
 
 // Insert
-DB.Pojo.insert(user);
+DB.pojo.insert(user);
 
 // Update
-DB.Pojo.update(User.class)
+DB.pojo.update(User.class)
     .set(User::getName, "New Name")
     .eq(User::getId, id)
     .execute();
 
 // Delete
-DB.Pojo.delete(User.class)
+DB.pojo.deleteWrapper(User.class)
     .eq(User::getId, id)
     .execute();
 
@@ -82,19 +82,19 @@ DB.Batch.insert(users);
 
 // Transaction
 DB.Tx.run(() -> {
-    DB.Pojo.insert(order);
-    DB.Pojo.insert(orderItem);
+    DB.pojo.insert(order);
+    DB.pojo.insert(orderItem);
 });
 
 // Dynamic Datasource
 DB.Dynamic.use("slave", () ->
-    DB.Pojo.select(User.class).queryBeanList()
+    DB.pojo.selectWrapper(User.class).queryBeanList()
 );
 ```
 
 ## Hard Constraints
 
-1. No Mapper/DAO/Wrapper classes, use `DB.Pojo.*` directly
+1. No Mapper/DAO/Wrapper classes, use `DB.pojo.*` directly
 2. Placeholder separation: `DB.Jdbc` uses `?`, `DB.Sql` uses `#{key}`
 3. Query columns use `columns()` not `select()`
 4. LIKE uses `like()`/`likeLeft()`/`likeRight()`/`notLike()`

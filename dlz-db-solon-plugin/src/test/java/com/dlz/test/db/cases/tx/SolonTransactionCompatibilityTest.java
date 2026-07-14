@@ -34,7 +34,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     @BeforeAll
     public static void setupTable() {
         // 创建测试表
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
     }
 
     @BeforeEach
@@ -43,7 +43,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         compatibilityService = Solon.context().getBean(SolonCompatibilityService.class);
 
         // 清理数据
-        DB.Jdbc.execute("DELETE FROM USER");
+        DB.jdbc.execute("DELETE FROM USER");
     }
 
     // ==================== Solon @Transaction + DLZ-DB API ====================
@@ -57,7 +57,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     void testSolonTranWithDlzDb() {
         compatibilityService.solonTranWithDlzDb();
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "Solon事务用户")
                 .queryBeanList();
 
@@ -72,7 +72,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     @Test
     @Order(2)
     void testSolonTranRollback() {
-        long size = DB.Pojo.select(User.class)
+        long size = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "Solon回滚用户")
                 .count();
         try {
@@ -82,7 +82,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
             log.info("捕获到预期异常: {}", e.getMessage());
         }
 
-        long size2 = DB.Pojo.select(User.class)
+        long size2 = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "Solon回滚用户")
                 .count();
 
@@ -100,12 +100,12 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User user1 = new User();
         user1.setName("查询测试A");
         user1.setAge(25);
-        DB.Pojo.add(user1);
+        DB.pojo.add(user1);
 
         User user2 = new User();
         user2.setName("查询测试B");
         user2.setAge(30);
-        DB.Pojo.add(user2);
+        DB.pojo.add(user2);
 
         // 在 Solon 事务中查询
         List<User> users = compatibilityService.solonTranQuery("查询测试");
@@ -124,13 +124,13 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User user = new User();
         user.setName("更新前");
         user.setAge(20);
-        DB.Pojo.add(user);
+        DB.pojo.add(user);
         Long userId = user.getId();
 
         // 在 Solon 事务中更新
         compatibilityService.solonTranUpdate(userId, "更新后");
 
-        User updatedUser = DB.Pojo.select(User.class)
+        User updatedUser = DB.pojo.selectWrapper(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
 
@@ -149,13 +149,13 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User user = new User();
         user.setName("待删除用户");
         user.setAge(25);
-        DB.Pojo.add(user);
+        DB.pojo.add(user);
         Long userId = user.getId();
 
         // 在 Solon 事务中删除
         compatibilityService.solonTranDelete(userId);
 
-        User deletedUser = DB.Pojo.select(User.class)
+        User deletedUser = DB.pojo.selectWrapper(User.class)
                 .eq(User::getId, userId)
                 .queryBean();
 
@@ -174,11 +174,11 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     void testSolonTranWithDlzNestedTx() {
         compatibilityService.solonTranWithDlzNestedTx();
 
-        List<User> outerUsers = DB.Pojo.select(User.class)
+        List<User> outerUsers = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "Solon外层用户")
                 .queryBeanList();
 
-        List<User> innerUsers = DB.Pojo.select(User.class)
+        List<User> innerUsers = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "DLZ内层用户")
                 .queryBeanList();
 
@@ -201,11 +201,11 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
             log.info("捕获到预期异常: {}", e.getMessage());
         }
 
-        List<User> solonUsers = DB.Pojo.select(User.class)
+        List<User> solonUsers = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "Solon用户-会回滚")
                 .queryBeanList();
 
-        List<User> dlzUsers = DB.Pojo.select(User.class)
+        List<User> dlzUsers = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "DLZ用户-也会回滚")
                 .queryBeanList();
 
@@ -225,7 +225,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     void testDlzTxCallSolonMethod() {
         compatibilityService.dlzTxCallSolonMethod();
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "%DLZ调用%")
                 .queryBeanList();
 
@@ -242,11 +242,11 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     void testDlzTxCallSolonTranMethod() {
         compatibilityService.dlzTxCallSolonTranMethod();
 
-        List<User> dlzUsers = DB.Pojo.select(User.class)
+        List<User> dlzUsers = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "DLZ外层用户")
                 .queryBeanList();
 
-        List<User> solonUsers = DB.Pojo.select(User.class)
+        List<User> solonUsers = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "@Transaction用户")
                 .queryBeanList();
 
@@ -267,22 +267,22 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户-Solon");
         fromUser.setAge(200); // 余额 200
-        DB.Pojo.add(fromUser);
+        DB.pojo.add(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户-Solon");
         toUser.setAge(100); // 余额 100
-        DB.Pojo.add(toUser);
+        DB.pojo.add(toUser);
 
         // 执行转账
         compatibilityService.transferBySolonTran("转出账户-Solon", "转入账户-Solon", 50);
 
         // 验证转账结果
-        User updatedFrom = DB.Pojo.select(User.class)
+        User updatedFrom = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转出账户-Solon")
                 .queryBean();
 
-        User updatedTo = DB.Pojo.select(User.class)
+        User updatedTo = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转入账户-Solon")
                 .queryBean();
 
@@ -303,22 +303,22 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户-DLZ");
         fromUser.setAge(200);
-        DB.Pojo.add(fromUser);
+        DB.pojo.add(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户-DLZ");
         toUser.setAge(100);
-        DB.Pojo.add(toUser);
+        DB.pojo.add(toUser);
 
         // 执行转账
         compatibilityService.transferByDlzTx("转出账户-DLZ", "转入账户-DLZ", 50);
 
         // 验证转账结果
-        User updatedFrom = DB.Pojo.select(User.class)
+        User updatedFrom = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转出账户-DLZ")
                 .queryBean();
 
-        User updatedTo = DB.Pojo.select(User.class)
+        User updatedTo = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转入账户-DLZ")
                 .queryBean();
 
@@ -339,12 +339,12 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户-不足");
         fromUser.setAge(30); // 余额 30
-        DB.Pojo.add(fromUser);
+        DB.pojo.add(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户-不足");
         toUser.setAge(100);
-        DB.Pojo.add(toUser);
+        DB.pojo.add(toUser);
 
         try {
             // 尝试转账 50，余额不足
@@ -355,7 +355,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         }
 
         // 验证数据未改变
-        User fromAfter = DB.Pojo.select(User.class)
+        User fromAfter = DB.pojo.selectWrapper(User.class)
                 .eq(User::getName, "转出账户-不足")
                 .queryBean();
 
@@ -371,7 +371,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     void testBatchInsertBySolonTran() {
         compatibilityService.batchInsertBySolonTran(10);
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "Solon批量用户")
                 .queryBeanList();
 
@@ -387,7 +387,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
     void testBatchInsertByDlzTx() {
         compatibilityService.batchInsertByDlzTx(10);
 
-        List<User> users = DB.Pojo.select(User.class)
+        List<User> users = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "DLZ批量用户")
                 .queryBeanList();
 
@@ -409,11 +409,11 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         compatibilityService.batchInsertByDlzTx(5);
 
         // 验证两种方式的数据都存在
-        List<User> solonUsers = DB.Pojo.select(User.class)
+        List<User> solonUsers = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "Solon事务用户")
                 .queryBeanList();
 
-        List<User> dlzUsers = DB.Pojo.select(User.class)
+        List<User> dlzUsers = DB.pojo.selectWrapper(User.class)
                 .like(User::getName, "DLZ批量用户")
                 .queryBeanList();
 

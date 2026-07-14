@@ -113,13 +113,13 @@ dlz-db 包含三个子模块，全部测试通过：
 // AUTO类型ID自动回填
 AutoIdEntity e = new AutoIdEntity();
 e.setName("svc_auto");
-DB.Pojo.insert(e);
+DB.pojo.insert(e);
 assertNotNull(e.getId()); // ✅ 通过
 
 // ASSIGN_ID类型ID预生成
 Orders o = new Orders();
 o.setUserId("svc_assign");
-DB.Pojo.insert(o);
+DB.pojo.insert(o);
 assertNotNull(o.getId()); // ✅ 通过
 ```
 

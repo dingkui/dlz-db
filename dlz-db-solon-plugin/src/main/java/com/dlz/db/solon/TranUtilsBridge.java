@@ -56,7 +56,7 @@ final class TranUtilsBridge {
     static Connection getConnection() {
         if (!AVAILABLE) return null;
         try {
-            DataSource ds = DB.Dynamic.getDataSource();
+            DataSource ds = DB.ds.getDataSource();
             return org.noear.solon.data.tran.TranUtils.getConnection(ds);
         } catch (Throwable e) {
             log.warn("TranUtils.getConnection() 调用失败", e);

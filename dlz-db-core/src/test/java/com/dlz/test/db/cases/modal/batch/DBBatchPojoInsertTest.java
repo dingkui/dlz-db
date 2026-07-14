@@ -1,14 +1,13 @@
 package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.modal.DB;
+import com.dlz.db.modal.dto.BatchStatus;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;
-import com.dlz.test.db.entity.TestUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -27,13 +26,13 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
 
     @BeforeEach
     public void setUp() {
-        DB.Jdbc.execute("DELETE FROM Orders");
-       // DB.Jdbc.execute("CREATE TABLE Orders (id INTEGER PRIMARY KEY, user_id TEXT, amount INTEGER)");
+        DB.jdbc.execute("DELETE FROM Orders");
+        // DB.Jdbc.execute("CREATE TABLE Orders (id INTEGER PRIMARY KEY, user_id TEXT, amount INTEGER)");
     }
 
     @AfterEach
     public void tearDown() {
-        DB.Jdbc.execute("DELETE FROM Orders");
+        DB.jdbc.execute("DELETE FROM Orders");
     }
 
     @Test
@@ -46,7 +45,7 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
         o2.setAmount(20);
         assertNull(o1.getId());
         assertNull(o2.getId());
-        DB.Batch.pojoInsert(Arrays.asList(o1, o2), 100);
+        DB.batch.insert(Arrays.asList(o1, o2), 100);
         assertNotNull(o1.getId());
         assertNotNull(o2.getId());
         assertNotEquals(o1.getId(), o2.getId());
@@ -63,14 +62,14 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
         Orders o3 = new Orders();
         o3.setUserId("b3");
         o3.setAmount(30);
-        DB.Batch.pojoInsert(Arrays.asList(o1, o2, o3), 2);
-        assertEquals(3, DB.Jdbc.select("SELECT COUNT(*) FROM Orders").count());
+        DB.batch.insert(Arrays.asList(o1, o2, o3), 2);
+        assertEquals(3, DB.jdbc.selectWrapper("SELECT COUNT(*) FROM Orders").count());
     }
 
     @Test
     public void batch_insert_empty() {
-        DB.Batch.pojoInsert(Arrays.asList(), 100);
-        assertEquals(0, DB.Jdbc.select("SELECT COUNT(*) FROM Orders").count());
+        DB.batch.insert(Arrays.asList(), 100);
+        assertEquals(0, DB.jdbc.selectWrapper("SELECT COUNT(*) FROM Orders").count());
     }
 
     @Test
@@ -79,18 +78,18 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
         o1.setUserId("single");
         o1.setAmount(100);
         assertNull(o1.getId());
-        DB.Batch.pojoInsert(Arrays.asList(o1));
+        DB.batch.insert(Arrays.asList(o1));
         assertNotNull(o1.getId());
-        assertEquals(1, DB.Jdbc.select("SELECT COUNT(*) FROM Orders").count());
+        assertEquals(1, DB.jdbc.selectWrapper("SELECT COUNT(*) FROM Orders").count());
 
         //测试 insert - null
         assertThrows(NullPointerException.class, () -> {
-            DB.Batch.pojoInsert(null);
+            DB.batch.insert(null);
         });
 
         //测试 insert - 空列表返回 false
         List<Orders> users = Collections.emptyList();
-        assertFalse(DB.Batch.pojoInsert(users));
+        assertEquals(DB.batch.insert(users).status(), BatchStatus.SUCCESS);
         assertFalse(new PojoInsert(Orders.class).batch(users));
     }
 
@@ -107,7 +106,7 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
         assertNull(o1.getId());
         assertNull(o2.getId());
 
-        DB.Batch.pojoInsert(Arrays.asList(o1, o2), 100);
+        DB.batch.insert(Arrays.asList(o1, o2), 100);
 
         assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o1.getId());
         assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o2.getId());
@@ -122,7 +121,7 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
         AutoIdEntity m2 = new AutoIdEntity();
         m2.setName("batch_auto2");
 
-        DB.Batch.pojoInsert(Arrays.asList(m1, m2), 100);
+        DB.batch.insert(Arrays.asList(m1, m2), 100);
 
         assertNull("AUTO 类型 batch 后不应回填主键（驱动限制）", m1.getId());
     }

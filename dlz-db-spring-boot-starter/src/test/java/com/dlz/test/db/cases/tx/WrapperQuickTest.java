@@ -18,20 +18,20 @@ public class WrapperQuickTest extends BaseDBTest {
         properties.setName("test");
         properties.setDriverClassName("org.sqlite.JDBC");
         properties.setUrl("jdbc:sqlite:./test/testdb_dynamic.sqlite3");
-        DB.Dynamic.setDataSource(properties);
+        DB.ds.setDataSource(properties);
 
-        DB.Dynamic.use("test",()-> {
-            final SqlHelper helper = DB.Dynamic.getSqlHelper();
+        DB.ds.use("test",()-> {
+            final SqlHelper helper = DB.ds.getSqlHelper();
             HelperScan.initTable(SysSql.class,helper);
-            DB.Pojo.selectById(SysSql.class, "1");
-            DB.Pojo.selectById(SysSql.class, "2");
+            DB.pojo.selectById(SysSql.class, "1");
+            DB.pojo.selectById(SysSql.class, "2");
             return null;
         });
 
-        DB.Pojo.selectById(SysSql.class, "1");
-        DB.Dynamic.use("default",()-> {
-            DB.Pojo.selectById(SysSql.class, "1");
-            DB.Pojo.selectById(SysSql.class, "2");
+        DB.pojo.selectById(SysSql.class, "1");
+        DB.ds.use("default",()-> {
+            DB.pojo.selectById(SysSql.class, "1");
+            DB.pojo.selectById(SysSql.class, "2");
             return null;
         });
 

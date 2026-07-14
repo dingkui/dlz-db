@@ -16,7 +16,7 @@ import javax.sql.DataSource;
  * <h3>启动流程</h3>
  * <ol>
  *   <li>从配置 {@code dlz.db} 绑定 {@link SolonDbProperties}。</li>
- *   <li>等待用户应用注册 {@link DataSource}，注册到 {@link DB#Dynamic} 默认数据源。</li>
+ *   <li>等待用户应用注册 {@link DataSource}，注册到 {@link DB#ds} 默认数据源。</li>
  *   <li>触发 {@link SqlHolder#init()} 与 {@link SqlHolder#loadDbSql()}，加载 SQL 资源。</li>
  * </ol>
  *
