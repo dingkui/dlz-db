@@ -2,6 +2,7 @@ package com.dlz.db.support.helper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
+import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
@@ -76,6 +77,7 @@ public class DbOpDm8 extends SqlHelper {
     @Override
     public TableInfo getTableInfo(String tableName) {
         TableInfo tableInfo = new TableInfo();
+        tableInfo.setSchema(DB.ds.getCurrentConfig().getSchema());
         tableInfo.setTableName(tableName);
 
         // 查询表注释

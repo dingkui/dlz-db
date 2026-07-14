@@ -2,6 +2,7 @@ package com.dlz.db.support.helper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
+import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
@@ -103,6 +104,7 @@ public class DbOpSqlite extends SqlHelper {
         }
 
         TableInfo tableInfo = new TableInfo();
+        tableInfo.setSchema(DB.ds.getCurrentConfig().getSchema());
         tableInfo.setTableName(tableName);
 //        tableInfo.setTableComment(tableComment);
         tableInfo.setColumnInfos(columnInfos);

@@ -70,10 +70,12 @@ public class DbOpPostgresql extends SqlHelper {
 
     @Override
     public TableInfo getTableInfo(String tableName) {
+        final String schema = DB.ds.getCurrentConfig().getSchema();
         // 构建查询表注释的SQL语句
-        String sql = "SELECT obj_description('public." + tableName + "'::regclass) AS TABLE_COMMENT";
+        String sql = "SELECT obj_description('" + schema + "." + tableName + "'::regclass) AS TABLE_COMMENT";
         // 执行查询并获取结果
         TableInfo tableInfo = new TableInfo();
+        tableInfo.setSchema(schema);
         tableInfo.setTableName(tableName);
         tableInfo.setTableComment(DBHolder.getSqlExecutor().getFirstColumn(sql, String.class));
 
@@ -83,14 +85,14 @@ public class DbOpPostgresql extends SqlHelper {
                 "JOIN information_schema.key_column_usage kcu " +
                 "ON tc.constraint_name = kcu.constraint_name " +
                 "AND tc.table_schema = kcu.table_schema " +
-                "WHERE tc.table_schema = 'public' " +
+                "WHERE tc.table_schema = ? " +
                 "AND tc.table_name = ? " +
                 "AND tc.constraint_type = 'PRIMARY KEY'";
         // 执行查询并获取结果
-        List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql, tableName);
+        List<ResultMap> maps = DBHolder.getSqlExecutor().getList(sql, schema, tableName);
         List<String> primaryKeys = new ArrayList<>();
         for (ResultMap map : maps) {
-            primaryKeys.add(ValUtil.toStr(map.get("column_name"), ""));
+            primaryKeys.add(ValUtil.toStr(map.get("columnName"), ""));
         }
         tableInfo.setPrimaryKeys(primaryKeys);
 
@@ -105,24 +107,24 @@ public class DbOpPostgresql extends SqlHelper {
                 "JOIN pg_catalog.pg_namespace n ON c.relnamespace = n.oid " +
                 "JOIN pg_catalog.pg_type t ON a.atttypid = t.oid " +
                 "LEFT JOIN pg_catalog.pg_attrdef d ON a.attrelid = d.adrelid AND a.attnum = d.adnum " +
-                "WHERE c.relname = ? AND n.nspname = 'public' AND a.attnum > 0 AND NOT a.attisdropped " +
+                "WHERE c.relname = ? AND n.nspname = ? AND a.attnum > 0 AND NOT a.attisdropped " +
                 "ORDER BY a.attnum";
         // 执行查询并获取结果
-        maps = DBHolder.getSqlExecutor().getList(sql, tableName);
+        maps = DBHolder.getSqlExecutor().getList(sql, tableName, schema);
         List<ColumnInfo> columnInfos = new ArrayList<>();
 
         for (ResultMap map : maps) {
             ColumnInfo columnInfo = new ColumnInfo();
-            columnInfo.setColumnName(ValUtil.toStr(map.get("COLUMN_NAME"), ""));
-            columnInfo.setColumnType(ValUtil.toStr(map.get("COLUMN_TYPE"), ""));
-            columnInfo.setColumnComment(ValUtil.toStr(map.get("COLUMN_COMMENT"), ""));
+            columnInfo.setColumnName(ValUtil.toStr(map.get("columnName"), ""));
+            columnInfo.setColumnType(ValUtil.toStr(map.get("columnType"), ""));
+            columnInfo.setColumnComment(ValUtil.toStr(map.get("columnComment"), ""));
             // 转换字段类型为Java类型
             columnInfo.setJavaType(getJavaType(columnInfo.getColumnType()));
             // 6 个新字段
-            Object notNullObj = map.get("IS_NOT_NULL");
+            Object notNullObj = map.get("isNotNull");
             boolean notNull = Boolean.TRUE.equals(notNullObj) || "t".equals(ValUtil.toStr(notNullObj)) || "true".equalsIgnoreCase(ValUtil.toStr(notNullObj));
             columnInfo.setNullable(!notNull);
-            columnInfo.setDefaultValue(ValUtil.toStr(map.get("COLUMN_DEFAULT")));
+            columnInfo.setDefaultValue(ValUtil.toStr(map.get("columnDefault")));
             columnInfo.setAutoIncrement(false); // PG 用 SERIAL/IDENTITY，attidentity 字段可后期补
             // PG 的 atttypmod 对 varchar 存储为 size+4（varchar 头部开销），对 numeric 存储为 (precision<<16)|scale+4
             int atttypmod = ValUtil.toInt(map.get("atttypmod"), -1);

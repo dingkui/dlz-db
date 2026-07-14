@@ -2,6 +2,7 @@ package com.dlz.db.support.helper;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
+import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.ColumnInfo;
@@ -83,6 +84,7 @@ public class DbOpMysql extends SqlHelper {
         String sql = "SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?";
         // 执行查询并获取结果
         TableInfo tableInfo = new TableInfo();
+        tableInfo.setSchema(DB.ds.getCurrentConfig().getSchema());
         tableInfo.setTableName(tableName);
         tableInfo.setTableComment(DBHolder.getSqlExecutor().getFirstColumn(sql, String.class, tableName));
 

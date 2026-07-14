@@ -6,6 +6,7 @@ import com.dlz.db.annotation.TableName;
 import com.dlz.db.annotation.proxy.AnnoProxies;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.bean.IdInfo;
+import com.dlz.db.support.bean.TableInfo;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
 import com.dlz.kit.cache.CacheMap;
@@ -34,13 +35,17 @@ public class PojoCache {
     private static final CacheMap<Class<?>, String> tableNameCache = new CacheMap<>();
     private static final CacheMap<Field, String> dbNameCache = new CacheMap<>();
     private static final CacheMap<String, List<Field>> tableFieldCache = new CacheMap<>();
+    private static final CacheMap<String, TableInfo> tableInfoCache = new CacheMap<>();
     private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCache = new CacheMap<>();
     private static final CacheMap<Class<?>, IdInfo> idFieldCache = new CacheMap<>();
     private static final CacheMap<Class<?>, Field> deletedFieldCache = new CacheMap<>();
-    private static final CacheMap<String, String> idNameCache = new CacheMap<>();
 
     public static void clearAll() {
+        tableInfoCache.clear();
         tableColumnsInfoCache.clear();
+        tableFieldCache.clear();
+        idFieldCache.clear();
+        deletedFieldCache.clear();
     }
 
     /**
@@ -189,12 +194,31 @@ public class PojoCache {
     }
 
     /**
-     * （带缓存）取得数据库表字段信息
+     * （带缓存）取得当前数据源下的完整表元数据快照。
+     */
+    public static TableInfo getTableInfo(String tableName) {
+        final String cacheKey = getTableInfoCacheKey(tableName);
+        return tableInfoCache.getAndSet(cacheKey, () ->
+                DB.ds.getSqlHelper().getTableInfo(tableName).snapshot()
+        );
+    }
+
+    private static String getTableInfoCacheKey(String tableName) {
+        final com.dlz.db.ds.DataSourceConfig config = DB.ds.getCurrentConfig();
+        final String schema = config.getSchema() == null ? "" : config.getSchema();
+        return config.getName() + "@" + System.identityHashCode(config.getDataSource())
+                + ":" + schema + ":" + tableName;
+    }
+
+    /**
+     * （带缓存）取得数据库表字段信息。
+     * 兼容旧 API：key 为数据库列名，value 为 JDBC 类型。
      *
-     * @param tableName
+     * @param tableName 表名
      */
     public static HashMap<String, Integer> getTableColumnsInfo(String tableName) {
-        return tableColumnsInfoCache.getAndSet(tableName, () ->
+        final String cacheKey = getTableInfoCacheKey(tableName);
+        return tableColumnsInfoCache.getAndSet(cacheKey, () ->
                 DBHolder.getSqlExecutor().getTableColumnsInfo(tableName)
         );
     }
@@ -303,16 +327,7 @@ public class PojoCache {
      * @return 主键 Field；若不存在返回 null
      */
     public static String getIdFieldName(String tableName) {
-        return idNameCache.getAndSet(tableName, () -> {
-            final List<String> primaryKeys = DB.ds.getSqlHelper().getTableInfo(tableName).getPrimaryKeys();
-            if(primaryKeys == null || primaryKeys.isEmpty()){
-                throw new SystemException("表["+tableName+"]无主键");
-            }
-            if(primaryKeys.size()>1){
-                throw new SystemException("表["+tableName+"]为复合主键，不支持此操作");
-            }
-            return DbConvertUtil.toFieldName(primaryKeys.get(0));
-        });
+        return getTableInfo(tableName).requireSinglePrimaryKey().getFieldName();
     }
 
     public static Field getLogicDeleteInfo(Class<?> beanClass,String logicDeleteFileName) {

@@ -7,7 +7,8 @@ import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
-import com.dlz.db.util.DbConvertUtil;
+import com.dlz.db.support.bean.ColumnInfo;
+import com.dlz.db.support.bean.TableInfo;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.fn.DlzFn2;
@@ -28,11 +29,10 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
     private static final long serialVersionUID = 8374167270612933157L;
     final Map<String, Object> updateSets = new HashMap<>();
 
-    String idDbName;
-    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null || name.equals(idDbName) ;
+    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value == null
+            || name.equals(getTableInfo().requireSinglePrimaryKey().getDbName());
     public TableUpdate(String tableName) {
         super(tableName);
-
     }
 
     private TableUpdate setByDbName(String paraName, Object value) {
@@ -92,18 +92,25 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
             return result.build();
         }
         final String tableName = getTableName();
-        final String idName = PojoCache.getIdFieldName(tableName);
+        final TableInfo tableInfo = getTableInfo();
+        final ColumnInfo idColumn = tableInfo.requireSinglePrimaryKey();
+        final String idFieldName = idColumn.getFieldName();
+        final String idDbName = idColumn.getDbName();
         valueBeans.forEach(valueBean -> {
-            final Object o = valueBean.get(idName);
+            final Object o = valueBean.get(idFieldName);
             if (o == null) throw new DbParameterException("id must not be null");
         });
         final HashMap<String, Integer> dbColumns = PojoCache.getTableColumnsInfo(tableName);
-        final HashMap<String, Integer> normalizedColumns = new LinkedHashMap<>(dbColumns.size());
-        dbColumns.forEach((column, type) -> normalizedColumns.put(column.toLowerCase(Locale.ROOT), type));
-
-        String sql = WrapperBuildUtil.buildUpdateSql(tableName, normalizedColumns, DbConvertUtil.toDbName(idName));
+        final HashMap<String, Integer> sqlColumns = new LinkedHashMap<>(dbColumns.size());
         final HashMap<String, Integer> fields = new LinkedHashMap<>(dbColumns.size());
-        dbColumns.forEach((column, type) -> fields.put(DbConvertUtil.toFieldName(column.toLowerCase(Locale.ROOT)), type));
+        for (ColumnInfo column : tableInfo.getColumnInfos()) {
+            Integer type = dbColumns.get(column.getDbName());
+            if (type != null) {
+                sqlColumns.put(column.getDbName(), type);
+                fields.put(column.getFieldName(), type);
+            }
+        }
+        String sql = WrapperBuildUtil.buildUpdateSql(tableName, sqlColumns, idDbName);
         final String logicDeleteField = DbPlugin.getLogicDeleteField(tableName);
 
         for (int start = 0; start < valueBeans.size(); start += batchSize) {
@@ -115,7 +122,7 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
                             if (logicDeleteField != null && value.get(logicDeleteField) == null) {
                                 value.set(logicDeleteField, 0);
                             }
-                            return WrapperBuildUtil.buildUpdateParams(value, fields, idName);
+                            return WrapperBuildUtil.buildUpdateParams(value, fields, idFieldName);
                         })
                         .collect(Collectors.toList());
                 result.completed(start, DBHolder.getSqlExecutor().batch(sql, paramValues));
