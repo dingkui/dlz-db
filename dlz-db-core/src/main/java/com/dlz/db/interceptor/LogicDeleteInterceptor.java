@@ -3,6 +3,9 @@ package com.dlz.db.interceptor;
 import com.dlz.db.inf.IExecutorDelete;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.modal.options.DbOptions;
+import com.dlz.db.modal.options.DeleteOption;
+import com.dlz.db.modal.options.SelectOption;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.db.modal.wrapper.TableUpdate;
@@ -73,7 +76,14 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
      */
     @Override
     public void onBuildWhere(String tableName, Condition where) {
-        if (SqlRunThreadHolder.isIgnoreLogicDelete()) {
+        onBuildWhere(tableName, where, DbOptions.EMPTY);
+    }
+
+    @Override
+    public void onBuildWhere(String tableName, Condition where, DbOptions options) {
+        if (options.has(SelectOption.INCLUDE_DELETED)
+                || options.has(DeleteOption.PHYSICAL)
+                || SqlRunThreadHolder.isIgnoreLogicDelete()) {
             return;
         }
         if (!PojoCache.isColumnExists(tableName, dbColumnName)) {
@@ -109,8 +119,9 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
      * @param executor
      * @return
      */
-    public int doLogicDelete(IExecutorDelete executor) {
-        if (SqlRunThreadHolder.isIgnoreLogicDelete()) {
+    public int doLogicDelete(IExecutorDelete executor, DbOptions options) {
+        if (options.has(DeleteOption.PHYSICAL)
+                || SqlRunThreadHolder.isIgnoreLogicDelete()) {
             return -1; // 放行物理 DELETE
         }
         if (!PojoCache.isColumnExists(executor.getTableName(), dbColumnName)) {
@@ -119,6 +130,7 @@ public class LogicDeleteInterceptor implements SqlBuildInterceptor {
 
         // DELETE → UPDATE deleted=1
         final TableUpdate update = new TableUpdate(executor.getTableName())
+                .options(options)
                 .set(dbColumnName, 1)
                 .where(executor.where());
         if (executor instanceof TableDelete) {

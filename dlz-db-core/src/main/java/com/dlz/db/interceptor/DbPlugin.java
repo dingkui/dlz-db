@@ -2,6 +2,8 @@ package com.dlz.db.interceptor;
 
 import com.dlz.db.inf.IExecutorDelete;
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.modal.options.DbOptionAware;
+import com.dlz.db.modal.options.DbOptions;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -69,6 +71,7 @@ public class DbPlugin {
      */
     public static void clearInterceptors() {
         interceptors.clear();
+        logicDeleteInterceptor = null;
     }
 
     /**
@@ -93,9 +96,13 @@ public class DbPlugin {
      * 再生成最终 WHERE 子句。
      */
     public static void onBuildWhere(String tableName, Condition where) {
+        onBuildWhere(tableName, where, DbOptions.EMPTY);
+    }
+
+    public static void onBuildWhere(String tableName, Condition where, DbOptions options) {
         // 调用插件链：逻辑删除/租户/权限 等自动注入 WHERE 条件
         for (SqlBuildInterceptor interceptor : interceptors) {
-            interceptor.onBuildWhere(tableName, where);
+            interceptor.onBuildWhere(tableName, where, options);
         }
     }
     /**
@@ -104,9 +111,13 @@ public class DbPlugin {
      * 再生成最终 INSERT 子句。
      */
     public static void onBuildInsert(String tableName, Map<String, Object> insertValues) {
+        onBuildInsert(tableName, insertValues, DbOptions.EMPTY);
+    }
+
+    public static void onBuildInsert(String tableName, Map<String, Object> insertValues, DbOptions options) {
         // 调用插件链：逻辑删除/租户 等自动注入插入字段
         for (SqlBuildInterceptor interceptor : interceptors) {
-             interceptor.onBuildInsert(tableName, insertValues);
+             interceptor.onBuildInsert(tableName, insertValues, options);
         }
     }
     /**
@@ -120,7 +131,10 @@ public class DbPlugin {
         if(logicDeleteInterceptor == null){
             return -1;
         }
-        return logicDeleteInterceptor.doLogicDelete(maker);
+        DbOptions options = maker instanceof DbOptionAware
+                ? ((DbOptionAware) maker).getDbOptions()
+                : DbOptions.EMPTY;
+        return logicDeleteInterceptor.doLogicDelete(maker, options);
     }
     /**
      * 获取指定表的逻辑删除字段（Bean Field 形式）。

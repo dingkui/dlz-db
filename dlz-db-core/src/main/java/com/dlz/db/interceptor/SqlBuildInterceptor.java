@@ -1,6 +1,7 @@
 package com.dlz.db.interceptor;
 
 import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.modal.options.DbOptions;
 
 import java.util.Map;
 
@@ -59,6 +60,10 @@ public interface SqlBuildInterceptor {
         // 默认空实现，子类按需覆盖
     }
 
+    default void onBuildWhere(String tableName, Condition where, DbOptions options) {
+        onBuildWhere(tableName, where);
+    }
+
     /**
      * 插入的字段构建时调用。
      *
@@ -76,5 +81,9 @@ public interface SqlBuildInterceptor {
      */
     default void onBuildInsert(String tableName, Map<String, Object> insertValues) {
         // 默认空实现，子类按需覆盖
+    }
+
+    default void onBuildInsert(String tableName, Map<String, Object> insertValues, DbOptions options) {
+        onBuildInsert(tableName, insertValues);
     }
 }

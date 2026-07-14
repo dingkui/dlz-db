@@ -83,9 +83,9 @@ class RequireUtil {
     }
 
     static String requireIdColumn(String table) {
-        final String idDbName = PojoCache.getIdFieldName(requireTableName(table));
-        if (idDbName == null) throw new DbParameterException("table must declare an id: " + table);
-        return idDbName;
+        final String idFieldName = PojoCache.getIdFieldName(requireTableName(table));
+        if (idFieldName == null) throw new DbParameterException("table must declare an id: " + table);
+        return idFieldName;
     }
 
     static List<JSONMap> requireMaps(List<?> values) {

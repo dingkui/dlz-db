@@ -8,6 +8,7 @@ import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.json.JSONMap;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class TableInsert extends AParaTable implements IExecutorInsert {
     private static final long serialVersionUID = 8374167270612933157L;
     public final Map<String, Object> insertValues = new HashMap<>();
+    private DlzFn2<String, Object, Boolean> ignore = (name, value) -> value == null;
     public TableInsert(String tableName) {
         super(tableName);
     }
@@ -41,6 +43,9 @@ public class TableInsert extends AParaTable implements IExecutorInsert {
 
     public TableInsert value(String key, Object value) {
         String paraName = DbConvertUtil.toDbName(key);
+        if (ignore.apply(paraName, value)) {
+            return this;
+        }
         if (!PojoCache.isColumnExists(getTableName(), paraName)) {
             log.warn("column is not exists:" + getTableName() + "." + paraName);
             return this;
@@ -53,6 +58,11 @@ public class TableInsert extends AParaTable implements IExecutorInsert {
         for (String str : values.keySet()) {
             value(str, values.get(str));
         }
+        return this;
+    }
+
+    public TableInsert ignore(DlzFn2<String, Object, Boolean> ignore) {
+        this.ignore = ignore;
         return this;
     }
     public BatchResult batch(List<JSONMap> valueBeans) {

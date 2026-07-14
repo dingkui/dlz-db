@@ -1,6 +1,10 @@
 package com.dlz.db.modal;
 
 import com.dlz.db.modal.options.DbOption;
+import com.dlz.db.modal.options.DbOperation;
+import com.dlz.db.modal.options.DbOptions;
+import com.dlz.db.modal.options.InsertOption;
+import com.dlz.db.modal.options.UpdateOption;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -45,7 +49,13 @@ public class DbPojo {
     }
 
     public <T> T insert(T entity, DbOption... options) {
-        insertWrapper(entity).execute();
+        DbOptions resolved = DbOptions.resolve(DbOperation.INSERT, options);
+        PojoInsert<T> wrapper = insertWrapper(entity);
+        if (resolved.has(InsertOption.INCLUDE_NULL)) {
+            wrapper.ignore((name, value) -> false);
+        }
+        wrapper.options(resolved);
+        wrapper.execute();
         return entity;
     }
 
@@ -71,8 +81,11 @@ public class DbPojo {
 
     public <T> T selectById(Class<T> type, Object id, DbOption... options) {
         RequireUtil.requireId(id);
+        DbOptions resolved = DbOptions.resolve(DbOperation.SELECT, options);
         String idColumn = RequireUtil.requireIdInfo(type).getDbName();
-        return selectWrapper(type).eq(idColumn, id).queryBean();
+        PojoQuery<T> wrapper = selectWrapper(type);
+        wrapper.options(resolved);
+        return wrapper.eq(idColumn, id).queryBean();
     }
 
     public <T> List<T> selectByIds(Class<T> type, Collection<?> ids) {
@@ -94,8 +107,15 @@ public class DbPojo {
         IdInfo idInfo = RequireUtil.requireIdInfo(type);
         Object id = idInfo.getValue(entity);
         RequireUtil.requireId(id);
-        return updateWrapper(type)
-                .ignore((name, value) -> value == null || name.equalsIgnoreCase(idInfo.getDbName()))
+        DbOptions resolved = DbOptions.resolve(DbOperation.UPDATE, options);
+        PojoUpdate<T> wrapper = updateWrapper(type);
+        if (resolved.has(UpdateOption.INCLUDE_NULL)) {
+            wrapper.ignore((name, value) -> name.equalsIgnoreCase(idInfo.getDbName()));
+        } else {
+            wrapper.ignore((name, value) -> value == null || name.equalsIgnoreCase(idInfo.getDbName()));
+        }
+        wrapper.options(resolved);
+        return wrapper
                 .set(entity)
                 .eq(idInfo.getDbName(), id)
                 .execute();
@@ -103,8 +123,11 @@ public class DbPojo {
 
     public <T> int deleteById(Class<T> type, Object id, DbOption... options) {
         RequireUtil.requireId(id);
+        DbOptions resolved = DbOptions.resolve(DbOperation.DELETE, options);
         String idColumn = RequireUtil.requireIdInfo(type).getDbName();
-        return deleteWrapper(type).eq(idColumn, id).execute();
+        PojoDelete<T> wrapper = deleteWrapper(type);
+        wrapper.options(resolved);
+        return wrapper.eq(idColumn, id).execute();
     }
 
     public <T> int deleteByIds(Class<T> type, Collection<?> ids) {

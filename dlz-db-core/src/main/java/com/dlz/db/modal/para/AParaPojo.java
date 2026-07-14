@@ -4,9 +4,10 @@ import com.dlz.db.exception.DbException;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
+import com.dlz.db.modal.options.DbOptionAware;
+import com.dlz.db.modal.options.DbOptions;
 import com.dlz.db.support.PojoCache;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -16,16 +17,36 @@ import java.util.List;
  *
  * @author dk
  */
-public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara{
+public abstract class AParaPojo<T,P extends ParaMap> implements ISqlPara, DbOptionAware{
     private final Class<T> beanClass;
     protected T valueBean;
     protected T queryBean;
     private final String tableName;
     private final List<Field> fields;
     private boolean isGenerator = false;
+    private DbOptions dbOptions = DbOptions.EMPTY;
     @Getter
-    @Setter
     private P pm;
+
+    public void setPm(P pm) {
+        this.pm = pm;
+        if (pm instanceof AParaTable) {
+            ((AParaTable<?>) pm).options(dbOptions);
+        }
+    }
+
+    public AParaPojo<T, P> options(DbOptions options) {
+        this.dbOptions = options == null ? DbOptions.EMPTY : options;
+        if (pm instanceof AParaTable) {
+            ((AParaTable<?>) pm).options(this.dbOptions);
+        }
+        return this;
+    }
+
+    @Override
+    public DbOptions getDbOptions() {
+        return dbOptions;
+    }
 
     public AParaPojo(Class<T> beanClass) {
         this.beanClass = beanClass;

@@ -2,6 +2,10 @@ package com.dlz.db.modal;
 
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.options.DbOption;
+import com.dlz.db.modal.options.DbOperation;
+import com.dlz.db.modal.options.DbOptions;
+import com.dlz.db.modal.options.InsertOption;
+import com.dlz.db.modal.options.UpdateOption;
 import com.dlz.db.modal.wrapper.TableDelete;
 import com.dlz.db.modal.wrapper.TableInsert;
 import com.dlz.db.modal.wrapper.TableQuery;
@@ -31,12 +35,24 @@ public class DbTable {
 
     public int insert(String table, JSONMap values, DbOption... options) {
         RequireUtil.requireValues(values);
-        return insertWrapper(table).value(values).execute();
+        DbOptions resolved = DbOptions.resolve(DbOperation.INSERT, options);
+        TableInsert wrapper = insertWrapper(table);
+        if (resolved.has(InsertOption.INCLUDE_NULL)) {
+            wrapper.ignore((name, value) -> false);
+        }
+        wrapper.options(resolved);
+        return wrapper.value(values).execute();
     }
 
     public Long insertWithAutoKey(String table, JSONMap values, DbOption... options) {
         RequireUtil.requireValues(values);
-        return insertWrapper(table).value(values).insertWithAutoKey();
+        DbOptions resolved = DbOptions.resolve(DbOperation.INSERT, options);
+        TableInsert wrapper = insertWrapper(table);
+        if (resolved.has(InsertOption.INCLUDE_NULL)) {
+            wrapper.ignore((name, value) -> false);
+        }
+        wrapper.options(resolved);
+        return wrapper.value(values).insertWithAutoKey();
     }
 
     public int insertOrUpdate(String table, JSONMap values, DbOption... options) {
@@ -44,13 +60,14 @@ public class DbTable {
         String idColumn = RequireUtil.requireIdColumn(table);
         Object id = values.get(idColumn);
         if (id == null) return insert(table, values, options);
-        return updateWrapper(table).set(values).eq(idColumn, id).execute();
+        return updateById(table, values, options);
     }
 
     public ResultMap selectById(String table, Object id, DbOption... options) {
         RequireUtil.requireId(id);
+        DbOptions resolved = DbOptions.resolve(DbOperation.SELECT, options);
         final String idColumn = RequireUtil.requireIdColumn(table);
-        return selectWrapper(table).eq(idColumn, id).queryOne();
+        return selectWrapper(table).options(resolved).eq(idColumn, id).queryOne();
     }
 
     public List<ResultMap> selectByIds(String table, Collection<?> ids) {
@@ -70,15 +87,22 @@ public class DbTable {
 
     public int updateById(String table, JSONMap values, DbOption... options) {
         RequireUtil.requireValues(values);
+        DbOptions resolved = DbOptions.resolve(DbOperation.UPDATE, options);
         String idColumn = RequireUtil.requireIdColumn(table);
         Object id = RequireUtil.requireId(values.get(idColumn));
-        return updateWrapper(table).set(values).eq(idColumn, id).execute();
+        TableUpdate wrapper = updateWrapper(table);
+        if (resolved.has(UpdateOption.INCLUDE_NULL)) {
+            wrapper.ignore((name, value) -> name.equals(wrapper.getTableInfo()
+                    .requireSinglePrimaryKey().getDbName()));
+        }
+        return wrapper.options(resolved).set(values).eq(idColumn, id).execute();
     }
 
     public int deleteById(String table, Object id, DbOption... options) {
         RequireUtil.requireId(id);
+        DbOptions resolved = DbOptions.resolve(DbOperation.DELETE, options);
         final String idColumn = RequireUtil.requireIdColumn(table);
-        return deleteWrapper(table).eq(idColumn, id).execute();
+        return deleteWrapper(table).options(resolved).eq(idColumn, id).execute();
     }
 
     public int deleteByIds(String table, Collection<?> ids) {

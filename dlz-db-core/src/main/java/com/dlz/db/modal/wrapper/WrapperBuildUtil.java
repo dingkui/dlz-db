@@ -6,6 +6,7 @@ import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.modal.para.AQuery;
+import com.dlz.db.modal.options.SelectOption;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.IdInfo;
@@ -40,6 +41,7 @@ public class WrapperBuildUtil {
     private static final String MAKER_VALUES = "values";
     private static final String MAKER_STR_SETS = "sets";
     private static final String MAKER_WHERE = "where";
+    private static final String MAKER_OTHER_WHERE = "otherwhere";
 
 
     /**
@@ -54,6 +56,8 @@ public class WrapperBuildUtil {
         }
         if (maker instanceof TableQuery) {
             buildWhereColumns((TableQuery) maker);
+            maker.addPara(MAKER_OTHER_WHERE,
+                    maker.getDbOptions().has(SelectOption.FOR_UPDATE) ? "FOR UPDATE" : "");
         }
         if (maker instanceof TableUpdate) {
             buildUpdateSql((TableUpdate) maker);
@@ -78,7 +82,7 @@ public class WrapperBuildUtil {
      */
     public static void buildWhere(AQuery maker) {
         // 调用插件链：逻辑删除/租户/权限 等自动注入 WHERE 条件
-        DbPlugin.onBuildWhere( maker.getTableName(), maker.where());
+        DbPlugin.onBuildWhere(maker.getTableName(), maker.where(), maker.getDbOptions());
         String where = maker.where().getRunsql(maker);
         if (!maker.isAllowFullQuery() && StringUtils.isEmpty(where)) {
             where = "WHERE false";
@@ -100,7 +104,7 @@ public class WrapperBuildUtil {
         }
         // 调用插件链：逻辑删除/租户 等自动注入插入字段
         final String tableName = maker.getTableName();
-        DbPlugin.onBuildInsert(tableName, insertValues);
+        DbPlugin.onBuildInsert(tableName, insertValues, maker.getDbOptions());
         for (Map.Entry<String, Object> entry : insertValues.entrySet()) {
             String paraName = entry.getKey();
             Object value = entry.getValue();
@@ -112,9 +116,9 @@ public class WrapperBuildUtil {
             }
             sbColumns.append(paraName);
             if (appendSql(sbValues, value, columnName)) continue;
-            if (value == null)
-                value = "";
-            maker.addPara(columnName, DbConvertUtil.getVal4Db(tableName, columnName, value));
+            maker.addPara(columnName, value == null
+                    ? null
+                    : DbConvertUtil.getVal4Db(tableName, columnName, value));
         }
         maker.addPara(MAKER_COLUMNS, sbColumns.toString());
         maker.addPara(MAKER_VALUES, sbValues.toString());
