@@ -1,7 +1,9 @@
 package com.dlz.db.modal.wrapper;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.interceptor.DbPlugin;
+import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
@@ -75,44 +77,54 @@ public class TableUpdate extends AQuery<TableUpdate> implements IExecutorUDI {
     public String getSql() {
         return WrapperBuildUtil.MAKER_SQL_UPDATE;
     }
-    public boolean batch(List<JSONMap> valueBeans) {
+    public BatchResult batch(List<JSONMap> valueBeans) {
         return batch(valueBeans, 1000);
     }
-    public boolean batch(List<JSONMap> valueBeans, int batchSize) {
+
+    public BatchResult batch(List<JSONMap> valueBeans, int batchSize) {
+        BatchResult.Builder result = BatchResult.builder(valueBeans.size(), batchSize);
         if (valueBeans.isEmpty()) {
-            return false;
+            return result.build();
         }
         final String tableName = getTableName();
         final String idName = PojoCache.getIdDbName(tableName);
+        valueBeans.forEach(valueBean -> {
+            final Object o = valueBean.get(idName);
+            if (o == null) throw new DbParameterException("id must not be null");
+        });
         final HashMap<String, Integer> dbColumns = PojoCache.getTableColumnsInfo(tableName);
-        final HashMap<String, Integer> dbColumnsF = new LinkedHashMap<>(dbColumns.size());
-        dbColumns.entrySet().forEach(entry -> dbColumnsF.put(entry.getKey().toLowerCase(Locale.ROOT), entry.getValue()));
+        final HashMap<String, Integer> normalizedColumns = new LinkedHashMap<>(dbColumns.size());
+        dbColumns.forEach((column, type) -> normalizedColumns.put(column.toLowerCase(Locale.ROOT), type));
 
-
-        String sql = WrapperBuildUtil.buildUpdateSql(tableName, dbColumnsF, DbConvertUtil.toDbName(idName));
+        String sql = WrapperBuildUtil.buildUpdateSql(tableName, normalizedColumns, DbConvertUtil.toDbName(idName));
         final HashMap<String, Integer> fields = new LinkedHashMap<>(dbColumns.size());
-        dbColumns.entrySet().forEach(entry -> fields.put(DbConvertUtil.toFieldName(entry.getKey().toLowerCase(Locale.ROOT)), entry.getValue()));
-        // Pojo 批量插入走原生 JDBC（buildInsertSql(dbColumns) + batch），不经过 TableInsert.buildInsertSql
+        dbColumns.forEach((column, type) -> fields.put(DbConvertUtil.toFieldName(column.toLowerCase(Locale.ROOT)), type));
         final String logicDeleteField = DbPlugin.getLogicDeleteField(tableName);
 
-        while (!valueBeans.isEmpty() && batchSize > 0) {
-            if (batchSize > valueBeans.size()) {
-                batchSize = valueBeans.size();
+        for (int start = 0; start < valueBeans.size(); start += batchSize) {
+            int end = Math.min(valueBeans.size(), start + batchSize);
+            final List<JSONMap> items = valueBeans.subList(start, end);
+            try {
+                List<Object[]> paramValues = items.stream()
+                        .map(value -> {
+                            if (logicDeleteField != null && value.get(logicDeleteField) == null) {
+                                value.set(logicDeleteField, 0);
+                            }
+                            return WrapperBuildUtil.buildUpdateParams(value, fields, idName);
+                        })
+                        .collect(Collectors.toList());
+                result.completed(start, DBHolder.getSqlExecutor().batch(sql, paramValues));
+                if (!paramValues.isEmpty()) {
+                    log.info(SqlUtil.getRunSqlByJdbc(sql, paramValues.get(0)).trim());
+                }
+                if (result.hasFailure()) {
+                    break;
+                }
+            } catch (Throwable cause) {
+                result.failed(start, cause);
+                break;
             }
-            final List<JSONMap> ts = valueBeans.subList(0, batchSize);
-
-            List<Object[]> paramValues = ts.stream()
-                    .map(v -> {
-                        if(logicDeleteField!=null && v.get(logicDeleteField)==null){
-                            v.set(logicDeleteField, 0);
-                        }
-                        return WrapperBuildUtil.buildUpdateParams(v, fields, idName);
-                    })
-                    .collect(Collectors.toList());
-            DBHolder.getSqlExecutor().batch(sql, paramValues);
-            log.info(SqlUtil.getRunSqlByJdbc(sql, paramValues.get(0)).trim());
-            valueBeans = valueBeans.subList(batchSize, valueBeans.size());
         }
-        return true;
+        return result.build();
     }
 }

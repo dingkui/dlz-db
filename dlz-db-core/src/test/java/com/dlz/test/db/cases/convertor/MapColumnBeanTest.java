@@ -70,7 +70,7 @@ class MapColumnBeanTest extends BaseDBTest {
         bean.setT1(testBean);
 
         // 插入
-        MapColumnBean inserted = DB.pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.insert(bean);
         assertNotNull(inserted, "插入后应返回对象");
         assertNotNull(inserted.getId(), "id 应自动回填");
         log.info("插入成功, id={}", inserted.getId());
@@ -94,7 +94,7 @@ class MapColumnBeanTest extends BaseDBTest {
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(null);
 
-        MapColumnBean inserted = DB.pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.insert(bean);
         assertNotNull(inserted.getId(), "id 应自动回填");
 
         MapColumnBean found = DB.pojo.selectById(MapColumnBean.class, inserted.getId());
@@ -114,7 +114,7 @@ class MapColumnBeanTest extends BaseDBTest {
 
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(testBean);
-        MapColumnBean inserted = DB.pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.insert(bean);
 
         // 修改 Bean 属性
         TestBean newBean = new TestBean();
@@ -147,7 +147,7 @@ class MapColumnBeanTest extends BaseDBTest {
 
         MapColumnBean bean = new MapColumnBean();
         bean.setT1(testBean);
-        MapColumnBean inserted = DB.pojo.add(bean);
+        MapColumnBean inserted = DB.pojo.insert(bean);
 
         // 修改 Bean 属性
         TestBean newBean = new TestBean();

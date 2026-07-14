@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.modal.batch;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.json.JSONMap;
@@ -34,10 +35,10 @@ public class DBBatchTableUpdateTest extends BaseDBTest {
     @DisplayName("测试  UPDATE - 带批次大小参数")
     void testPojoUpdateWithBatchSize() {
         List<JSONMap> users = Arrays.asList(new JSONMap(), new JSONMap());
-        assertThrows(SystemException.class, () -> {
+        assertThrows(DbParameterException.class, () -> {
             DB.batch.update("Test_User",users, 100);
         });
-        assertThrows(SystemException.class, () -> {
+        assertThrows(DbParameterException.class, () -> {
             DB.batch.update("Test_User",users);
         });
     }

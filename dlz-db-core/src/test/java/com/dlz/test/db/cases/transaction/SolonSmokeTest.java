@@ -165,7 +165,7 @@ public class SolonSmokeTest extends BaseDBTest {
         user.setEmail("zhangsan@example.com");
         user.setCreateTime(new Date());
         
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Assertions.assertNotNull(user.getId(), "插入后应回填主键");
         
         // 查询单条记录
@@ -210,7 +210,7 @@ public class SolonSmokeTest extends BaseDBTest {
         User user = new User();
         user.setName("更新前");
         user.setAge(30);
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Long userId = user.getId();
         
         // 更新记录
@@ -236,7 +236,7 @@ public class SolonSmokeTest extends BaseDBTest {
         // 插入记录
         User user = new User();
         user.setName("待删除");
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Long userId = user.getId();
         
         // 删除记录
@@ -263,7 +263,7 @@ public class SolonSmokeTest extends BaseDBTest {
             User user = new User();
             user.setName("分页用户" + i);
             user.setAge(20 + (i % 10));
-            DB.pojo.add(user);
+            DB.pojo.insert(user);
         }
         
         // 分页查询
@@ -289,12 +289,12 @@ public class SolonSmokeTest extends BaseDBTest {
         User user1 = new User();
         user1.setName("条件测试1");
         user1.setAge(25);
-        DB.pojo.add(user1);
+        DB.pojo.insert(user1);
         
         User user2 = new User();
         user2.setName("条件测试2");
         user2.setAge(30);
-        DB.pojo.add(user2);
+        DB.pojo.insert(user2);
         
         // 多条件查询
         List<User> users = DB.pojo.selectWrapper(User.class)
@@ -315,12 +315,12 @@ public class SolonSmokeTest extends BaseDBTest {
         User user1 = new User();
         user1.setName("OR测试A");
         user1.setAge(20);
-        DB.pojo.add(user1);
+        DB.pojo.insert(user1);
         
         User user2 = new User();
         user2.setName("OR测试B");
         user2.setAge(35);
-        DB.pojo.add(user2);
+        DB.pojo.insert(user2);
         
         List<User> users = DB.pojo.selectWrapper(User.class)
                 .ors(wrapper -> wrapper
@@ -344,7 +344,7 @@ public class SolonSmokeTest extends BaseDBTest {
         User user = new User();
         user.setName("逻辑删除测试");
         user.setDeleted("0");
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Long userId = user.getId();
         
         // 执行逻辑删除

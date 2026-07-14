@@ -3,6 +3,7 @@ package com.dlz.db.modal.wrapper;
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.interceptor.DbPlugin;
+import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.para.AParaPojo;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
@@ -48,48 +49,55 @@ public class PojoInsert<T> extends AParaPojo<T, TableInsert> implements IExecuto
         return this;
     }
 
-    public boolean batch(List<T> valueBeans) {
+    public BatchResult batch(List<T> valueBeans) {
         return batch(valueBeans, 1000);
     }
 
-    public boolean batch(List<T> valueBeans, int batchSize) {
+    public BatchResult batch(List<T> valueBeans, int batchSize) {
+        BatchResult.Builder result = BatchResult.builder(valueBeans.size(), batchSize);
         if (valueBeans.isEmpty()) {
-            return false;
+            return result.build();
         }
         final Class<T> beanClass = getBeanClass();
         String dbName = PojoCache.getTableName(beanClass);
         final IdInfo idInfo = PojoCache.getIdInfo(beanClass);
         final Field idField = idInfo == null ? null : idInfo.getField();
-        final boolean doAutoId = idInfo != null && idInfo.getType() != IdType.AUTO;
+        final boolean databaseAutoId = idInfo != null && idInfo.getType() == IdType.AUTO;
+        final boolean generateId = idInfo != null && idInfo.getType() != IdType.AUTO;
 
         final List<Field> fields = PojoCache.getBeanFields(beanClass)
                 .stream()
-                .filter(field -> !doAutoId || idField != field)
+                .filter(field -> !databaseAutoId || idField != field)
                 .collect(Collectors.toList());
         String sql = WrapperBuildUtil.buildInsertSql(dbName, fields);
 
         // Pojo 批量插入走原生 JDBC（buildInsertSql(fields) + batch），不经过 TableInsert.buildInsertSql
         final Field logicDeleteField = DbPlugin.getLogicDeleteField(dbName, beanClass);
 
-        while (!valueBeans.isEmpty() && batchSize > 0) {
-            if (batchSize > valueBeans.size()) {
-                batchSize = valueBeans.size();
+        for (int start = 0; start < valueBeans.size(); start += batchSize) {
+            int end = Math.min(valueBeans.size(), start + batchSize);
+            final List<T> items = valueBeans.subList(start, end);
+            try {
+                if (generateId) {
+                    WrapperBuildUtil.fillAutoIds(dbName, idInfo, items);
+                }
+                List<Object[]> paramValues = items.stream()
+                        .map(value -> {
+                            if (logicDeleteField != null) {
+                                FieldReflections.setValue(value, logicDeleteField, 0);
+                            }
+                            return WrapperBuildUtil.buildInsertParams(value, fields);
+                        })
+                        .collect(Collectors.toList());
+                result.completed(start, DBHolder.getSqlExecutor().batch(sql, paramValues));
+                if (result.hasFailure()) {
+                    break;
+                }
+            } catch (Throwable cause) {
+                result.failed(start, cause);
+                break;
             }
-            final List<T> ts = valueBeans.subList(0, batchSize);
-            if(doAutoId){
-                WrapperBuildUtil.fillAutoIds(dbName, idInfo, ts);
-            }
-            List<Object[]> paramValues = ts.stream()
-                    .map(v -> {
-                        if(logicDeleteField!=null){
-                            FieldReflections.setValue(v, logicDeleteField, 0);
-                        }
-                        return WrapperBuildUtil.buildInsertParams(v, fields);
-                    })
-                    .collect(Collectors.toList());
-            DBHolder.getSqlExecutor().batch(sql, paramValues);
-            valueBeans = valueBeans.subList(batchSize, valueBeans.size());
         }
-        return true;
+        return result.build();
     }
 }

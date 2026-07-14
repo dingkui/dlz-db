@@ -63,7 +63,7 @@ public class SolonTxTestService {
         user.setName("返回值测试用户");
         user.setAge(25);
         user.setEmail("ret@example.com");
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         return user.getId();
     }
 
@@ -137,6 +137,6 @@ public class SolonTxTestService {
         user.setName(name);
         user.setAge(age);
         user.setEmail(email);
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
     }
 }

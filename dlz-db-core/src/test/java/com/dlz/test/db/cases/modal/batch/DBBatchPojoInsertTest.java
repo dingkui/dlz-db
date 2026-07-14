@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.modal.batch;
 
+import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.BatchStatus;
 import com.dlz.db.modal.wrapper.PojoInsert;
@@ -83,14 +84,14 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
         assertEquals(1, DB.jdbc.selectWrapper("SELECT COUNT(*) FROM Orders").count());
 
         //测试 insert - null
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(DbParameterException.class, () -> {
             DB.batch.insert(null);
         });
 
         //测试 insert - 空列表返回 false
         List<Orders> users = Collections.emptyList();
         assertEquals(DB.batch.insert(users).status(), BatchStatus.SUCCESS);
-        assertFalse(new PojoInsert(Orders.class).batch(users));
+        assertFalse(new PojoInsert(Orders.class).batch(users).isSuccess());
     }
 
     @Test

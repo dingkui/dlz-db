@@ -100,12 +100,12 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User user1 = new User();
         user1.setName("查询测试A");
         user1.setAge(25);
-        DB.pojo.add(user1);
+        DB.pojo.insert(user1);
 
         User user2 = new User();
         user2.setName("查询测试B");
         user2.setAge(30);
-        DB.pojo.add(user2);
+        DB.pojo.insert(user2);
 
         // 在 Solon 事务中查询
         List<User> users = compatibilityService.solonTranQuery("查询测试");
@@ -124,7 +124,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User user = new User();
         user.setName("更新前");
         user.setAge(20);
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Long userId = user.getId();
 
         // 在 Solon 事务中更新
@@ -149,7 +149,7 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User user = new User();
         user.setName("待删除用户");
         user.setAge(25);
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Long userId = user.getId();
 
         // 在 Solon 事务中删除
@@ -267,12 +267,12 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户-Solon");
         fromUser.setAge(200); // 余额 200
-        DB.pojo.add(fromUser);
+        DB.pojo.insert(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户-Solon");
         toUser.setAge(100); // 余额 100
-        DB.pojo.add(toUser);
+        DB.pojo.insert(toUser);
 
         // 执行转账
         compatibilityService.transferBySolonTran("转出账户-Solon", "转入账户-Solon", 50);
@@ -303,12 +303,12 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户-DLZ");
         fromUser.setAge(200);
-        DB.pojo.add(fromUser);
+        DB.pojo.insert(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户-DLZ");
         toUser.setAge(100);
-        DB.pojo.add(toUser);
+        DB.pojo.insert(toUser);
 
         // 执行转账
         compatibilityService.transferByDlzTx("转出账户-DLZ", "转入账户-DLZ", 50);
@@ -339,12 +339,12 @@ public class SolonTransactionCompatibilityTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户-不足");
         fromUser.setAge(30); // 余额 30
-        DB.pojo.add(fromUser);
+        DB.pojo.insert(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户-不足");
         toUser.setAge(100);
-        DB.pojo.add(toUser);
+        DB.pojo.insert(toUser);
 
         try {
             // 尝试转账 50，余额不足

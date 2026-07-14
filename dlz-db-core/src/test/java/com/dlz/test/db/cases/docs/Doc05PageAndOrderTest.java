@@ -72,13 +72,13 @@ public class Doc05PageAndOrderTest extends BaseDBTest {
          SELECT * FROM user WHERE AND status = #{status}
          ]]></sql>
          */
-        DB.sql.select("key.pageAndOrderTest5_1_4")
+        DB.sql.selectWrapper("key.pageAndOrderTest5_1_4")
                 .addPara("status", 1)
                 .page(Page.build(1, 10, Order.desc("id")))
                 .queryPage();
 
         //方法2：直接写SQL
-        DB.sql.select("SELECT * FROM user WHERE status = #{status}")
+        DB.sql.selectWrapper("SELECT * FROM user WHERE status = #{status}")
                 .addPara("status", 1)
                 .page(Page.build(1, 10, Order.desc("id")))
                 .queryPage();

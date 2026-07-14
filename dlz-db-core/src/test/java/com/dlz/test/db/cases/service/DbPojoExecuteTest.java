@@ -51,7 +51,7 @@ class DbPojoExecuteTest extends BaseDBTest {
         entity.setName("张三");
         entity.setAge(25);
 
-        TestAutoEntity result = DB.pojo.add(entity);
+        TestAutoEntity result = DB.pojo.insert(entity);
 
         assertNotNull(result, "插入后应返回对象");
         assertNotNull(result.getId(), "实体ID应被自动回填");
@@ -66,7 +66,7 @@ class DbPojoExecuteTest extends BaseDBTest {
         entity.setName("王五");
         entity.setAge(30);
 
-        DB.pojo.add(entity);
+        DB.pojo.insert(entity);
 
         // 查询验证
         TestAutoEntity found = DB.pojo.selectById(TestAutoEntity.class, entity.getId());
@@ -85,7 +85,7 @@ class DbPojoExecuteTest extends BaseDBTest {
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("原始名称");
         entity.setAge(25);
-        DB.pojo.add(entity);
+        DB.pojo.insert(entity);
 
         // 修改并更新
         entity.setName("新名称");
@@ -107,7 +107,7 @@ class DbPojoExecuteTest extends BaseDBTest {
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("待删除");
         entity.setAge(25);
-        DB.pojo.add(entity);
+        DB.pojo.insert(entity);
 
         // 删除
         int rows = DB.pojo.deleteById(TestAutoEntity.class, entity.getId());
@@ -127,7 +127,7 @@ class DbPojoExecuteTest extends BaseDBTest {
         for (int i = 1; i <= 3; i++) {
             TestAutoEntity entity = new TestAutoEntity();
             entity.setName("批量删除" + i);
-            DB.pojo.add(entity);
+            DB.pojo.insert(entity);
             ids.add(entity.getId());
         }
 
@@ -152,7 +152,7 @@ class DbPojoExecuteTest extends BaseDBTest {
         TestAutoEntity entity = new TestAutoEntity();
         entity.setName("条件测试");
         entity.setAge(25);
-        DB.pojo.add(entity);
+        DB.pojo.insert(entity);
 
         // 条件查询
         PojoQuery<TestAutoEntity> wrapper = DB.pojo.selectWrapper(TestAutoEntity.class);
@@ -174,7 +174,7 @@ class DbPojoExecuteTest extends BaseDBTest {
         entity.setName("null测试");
         entity.setAge(null);
 
-        TestAutoEntity result = DB.pojo.add(entity);
+        TestAutoEntity result = DB.pojo.insert(entity);
 
         assertNotNull(result, "即使有null字段也应成功插入");
     }

@@ -103,7 +103,7 @@ class DbPojoTest extends BaseDBTest {
     void testAddReturnType() {
         TestUser user = new TestUser();
         user.setName("张三");
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
     }
 
     @Test
@@ -112,7 +112,7 @@ class DbPojoTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setName("xx");
         try {
-            DB.pojo.add(dict);
+            DB.pojo.insert(dict);
             fail("应该抛出 SystemException");
         } catch (SystemException e) {
             assertTrue(e.getMessage().contains("SysSql.id为手动输入"));
@@ -125,14 +125,14 @@ class DbPojoTest extends BaseDBTest {
         dict.setRe("xx");
         dict.setPcid("xx");
         dict.setSta(1);
-        DB.pojo.add(dict);
+        DB.pojo.insert(dict);
     }
 
     @Test
     public void addYc1RecordMinimalTest() {
         Yc1Record yc1Record = new Yc1Record();
         yc1Record.setSta(1);
-        DB.pojo.add(yc1Record);
+        DB.pojo.insert(yc1Record);
     }
 
     @Test
@@ -142,7 +142,7 @@ class DbPojoTest extends BaseDBTest {
         entity.setName("auto_backfill");
         assertNull(entity.getId());
 
-        DB.pojo.add(entity);
+        DB.pojo.insert(entity);
         assertNotNull(entity.getId(), "AUTO 类型 execute 后应回填生成的主键");
         assertTrue(entity.getId() > 0, "回填的主键应大于 0");
     }
@@ -157,7 +157,7 @@ class DbPojoTest extends BaseDBTest {
         orders.setCreateTime(LocalDateTime.now());
         assertNull(orders.getId());
 
-        DB.pojo.add(orders);
+        DB.pojo.insert(orders);
         assertNotNull(orders.getId(), "ASSIGN_ID 类型 execute 后应预生成并回填主键");
     }
 
@@ -205,7 +205,7 @@ class DbPojoTest extends BaseDBTest {
         DB.pojo.deleteWrapper(SysSql.class).eq(SysSql::getId, 666L).execute();
         DB.pojo.deleteWrapper(SysSql.class).eq(SysSql::getId, 666L).ignoreLogicDelete(true).execute();
 
-        DB.pojo.add(dict);
+        DB.pojo.insert(dict);
 
         assertNotNull(DB.table.selectWrapper("Sys_Sql").setAllowFullQuery(true).queryList());
     }
@@ -216,7 +216,7 @@ class DbPojoTest extends BaseDBTest {
         SysSql dict = new SysSql();
         dict.setSqlKey("xxx");
         try {
-            DB.pojo.add(dict);
+            DB.pojo.insert(dict);
             fail("应该抛出 SystemException");
         } catch (SystemException e) {
             assertTrue(e.getMessage().contains("为手动输入,不能为空"));

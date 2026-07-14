@@ -229,12 +229,12 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User user1 = new User();
         user1.setName("查询测试A");
         user1.setAge(25);
-        DB.pojo.add(user1);
+        DB.pojo.insert(user1);
 
         User user2 = new User();
         user2.setName("查询测试B");
         user2.setAge(30);
-        DB.pojo.add(user2);
+        DB.pojo.insert(user2);
 
         // 在事务中查询
         List<User> users = txService.testReadOnlyQuery("查询测试");
@@ -253,7 +253,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User user = new User();
         user.setName("更新前");
         user.setAge(20);
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Long userId = user.getId();
 
         // 在事务中更新
@@ -279,7 +279,7 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User user = new User();
         user.setName("待删除用户");
         user.setAge(25);
-        DB.pojo.add(user);
+        DB.pojo.insert(user);
         Long userId = user.getId();
 
         // 在事务中删除
@@ -303,12 +303,12 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户");
         fromUser.setAge(200); // 余额 200
-        DB.pojo.add(fromUser);
+        DB.pojo.insert(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户");
         toUser.setAge(100); // 余额 100
-        DB.pojo.add(toUser);
+        DB.pojo.insert(toUser);
 
         // 执行转账（金额 50，小于 100，不会触发异常）
         txService.testTransfer("转出账户", "转入账户", 50);
@@ -339,12 +339,12 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户2");
         fromUser.setAge(30); // 余额 30
-        DB.pojo.add(fromUser);
+        DB.pojo.insert(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户2");
         toUser.setAge(100); // 余额 100
-        DB.pojo.add(toUser);
+        DB.pojo.insert(toUser);
 
         try {
             // 尝试转账 50，余额不足
@@ -378,12 +378,12 @@ public class SolonTranAnnotationTest extends BaseDBTest {
         User fromUser = new User();
         fromUser.setName("转出账户3");
         fromUser.setAge(200); // 余额 200
-        DB.pojo.add(fromUser);
+        DB.pojo.insert(fromUser);
 
         User toUser = new User();
         toUser.setName("转入账户3");
         toUser.setAge(100); // 余额 100
-        DB.pojo.add(toUser);
+        DB.pojo.insert(toUser);
 
         try {
             // 尝试转账 150，超过限制

@@ -34,7 +34,7 @@ public class PresetSqlTest extends BaseDBTest {
 
     @Test
     public void sql_select() {
-        List<ResultMap> list = DB.sql.select("SELECT * FROM user WHERE name=#{name}").addPara("name", "alice").queryList();
+        List<ResultMap> list = DB.sql.selectWrapper("SELECT * FROM user WHERE name=#{name}").addPara("name", "alice").queryList();
         assertEquals(1, list.size());
         assertEquals("alice", list.get(0).getStr("name"));
     }
@@ -60,7 +60,7 @@ public class PresetSqlTest extends BaseDBTest {
 
     @Test
     public void sql_multiple_params() {
-        List<ResultMap> list = DB.sql.select("SELECT * FROM user WHERE name=#{name} AND age=#{age}")
+        List<ResultMap> list = DB.sql.selectWrapper("SELECT * FROM user WHERE name=#{name} AND age=#{age}")
                 .addPara("name", "alice").addPara("age", 25).queryList();
         assertEquals(1, list.size());
         assertEquals("alice", list.get(0).getStr("name"));
@@ -68,7 +68,7 @@ public class PresetSqlTest extends BaseDBTest {
 
     @Test
     public void sql_queryOne() {
-        ResultMap row = DB.sql.select("SELECT * FROM user WHERE name=#{name}")
+        ResultMap row = DB.sql.selectWrapper("SELECT * FROM user WHERE name=#{name}")
                 .addPara("name", "alice").queryOne();
         assertNotNull(row);
         assertEquals("alice", row.getStr("name"));
@@ -76,7 +76,7 @@ public class PresetSqlTest extends BaseDBTest {
 
     @Test
     public void sql_count() {
-        long cnt = DB.sql.select("SELECT COUNT(*) FROM user WHERE status=#{status}")
+        long cnt = DB.sql.selectWrapper("SELECT COUNT(*) FROM user WHERE status=#{status}")
                 .addPara("status", "1").count();
         assertEquals(2, cnt);
     }

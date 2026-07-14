@@ -64,8 +64,8 @@ public class DBBatchPojoUpdateTest extends BaseDBTest {
     @Test
     @DisplayName("测试  UPDATE - 空参数列表")
     void testPojoUpdateWithEmptyBeans() {
-        final User insert1 = DB.pojo.add(new User());
-        final User insert2 = DB.pojo.add(new User());
+        final User insert1 = DB.pojo.insert(new User());
+        final User insert2 = DB.pojo.insert(new User());
         List<User> users = Arrays.asList(insert1, insert2);
         insert1.setAge(12);
         insert2.setAge(6);

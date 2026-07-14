@@ -220,8 +220,7 @@ class DbTableTest extends BaseDBTest {
             new JSONMap().put("id", id1).put("name", "batch新1").put("score", "12")
         );
 
-        boolean success = DB.table.updateWrapper("user").batch(updates);
-        assertTrue(success);
+        assertTrue(DB.table.updateWrapper("user").batch(updates).isSuccess());
 
         final ResultMap user = DB.table.selectById("user", id1);
         final ResultMap user1 = DB.table.selectById("user", id2);

@@ -1,7 +1,7 @@
 package com.dlz.db.modal;
 
-import com.dlz.db.modal.options.DbOption;
 import com.dlz.db.exception.DbParameterException;
+import com.dlz.db.modal.options.DbOption;
 import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoInsert;
 import com.dlz.db.modal.wrapper.PojoQuery;
@@ -19,38 +19,36 @@ import java.util.List;
  * 8.0 Pojo 门面，直接复用现有 wrapper 执行内核。
  */
 public class DbPojo {
-    public <T> PojoQuery<T> selectWrapper(Class<T> type) {
-        requireType(type);
-        return new PojoQuery<>(type);
-    }
-
     public <T> PojoQuery<T> selectWrapper(Class<T> type, DlzFn<T, ?>... fields) {
-        requireType(type);
-        return new PojoQuery<>(type).select(fields);
+        final PojoQuery<T> tPojoQuery = new PojoQuery(requireType(type));
+        if (fields != null) {
+            tPojoQuery.select(fields);
+        }
+        return tPojoQuery;
     }
 
     public <T> PojoInsert<T> insertWrapper(Class<T> type) {
-        requireType(type);
-        return new PojoInsert<>(type);
+        return new PojoInsert(requireType(type));
+    }
+
+    public <T> PojoInsert<T> insertWrapper(T entity) {
+        return new PojoInsert((Class<T>) requireEntity(entity).getClass()).value(entity);
     }
 
     public <T> PojoUpdate<T> updateWrapper(Class<T> type) {
-        requireType(type);
-        return new PojoUpdate<>(type);
+        return new PojoUpdate(requireType(type));
     }
+
     public <T> PojoUpdate<T> updateWrapper(T entity) {
-        requireEntity(entity);
-        return DB.pojo.updateWrapper((Class<T>)entity.getClass()).set(entity);
+        return new PojoUpdate((Class<T>) requireEntity(entity).getClass()).set(entity);
     }
 
     public <T> PojoDelete<T> deleteWrapper(Class<T> type) {
-        requireType(type);
-        return new PojoDelete<>(type);
+        return new PojoDelete(requireType(type));
     }
 
     public <T> T insert(T entity, DbOption... options) {
-        requireEntity(entity);
-        insertWrapper((Class<T>)entity.getClass()).value(entity).execute();
+        insertWrapper(entity).execute();
         return entity;
     }
 
@@ -89,6 +87,7 @@ public class DbPojo {
         String idColumn = requireIdInfo(type).getDbName();
         return selectWrapper(type).in(idColumn, new ArrayList<Object>(ids)).queryBeanList();
     }
+
     public <T> List<T> selectByIds(Class<T> type, String ids) {
         requireType(type);
         if (ids == null || ids.isEmpty()) {
@@ -127,6 +126,7 @@ public class DbPojo {
         String idColumn = requireIdInfo(type).getDbName();
         return deleteWrapper(type).in(idColumn, new ArrayList<Object>(ids)).execute();
     }
+
     public <T> int deleteByIds(Class<T> type, String ids) {
         requireType(type);
         if (ids == null || ids.isEmpty()) {
@@ -145,16 +145,18 @@ public class DbPojo {
         return selectWrapper(type).count();
     }
 
-    private void requireType(Class<?> type) {
+    private <T> T requireType(T type) {
         if (type == null) {
             throw new DbParameterException("type must not be null");
         }
+        return type;
     }
 
-    private void requireEntity(Object entity) {
+    private <T> T requireEntity(T entity) {
         if (entity == null) {
             throw new DbParameterException("entity must not be null");
         }
+        return entity;
     }
 
     private IdInfo requireIdInfo(Class<?> type) {

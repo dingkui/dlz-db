@@ -20,7 +20,7 @@ public class IDbExecuteServiceTest extends BaseDBTest {
         AutoIdEntity e = new AutoIdEntity();
         e.setName("svc_auto");
         assertNull(e.getId());
-        DB.pojo.add(e);
+        DB.pojo.insert(e);
         assertNotNull("execute 对 AUTO 应回填主键", e.getId());
         assertTrue("回填的主键应大于 0", e.getId() > 0);
     }
@@ -31,7 +31,7 @@ public class IDbExecuteServiceTest extends BaseDBTest {
         o.setUserId("svc_assign");
         o.setAmount(70);
         assertNull(o.getId());
-        DB.pojo.add(o);
+        DB.pojo.insert(o);
         assertNotNull("execute 对 ASSIGN_ID 应预生成并回填主键", o.getId());
     }
 
@@ -39,7 +39,7 @@ public class IDbExecuteServiceTest extends BaseDBTest {
     public void insertWithAutoKeyReturnsKey() {
         AutoIdEntity e = new AutoIdEntity();
         e.setName("svc_key");
-        DB.pojo.add(e);
+        DB.pojo.insert(e);
         assertNotNull("insertWithAutoKey 应返回生成的主键", e.getId());
     }
 }

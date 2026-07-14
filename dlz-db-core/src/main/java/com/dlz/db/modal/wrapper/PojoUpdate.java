@@ -3,6 +3,7 @@ package com.dlz.db.modal.wrapper;
 import com.dlz.db.inf.ICondAddByLamda;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.inf.ISqlQuery;
+import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.para.APojoQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
@@ -96,31 +97,36 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         return this;
     }
 
-    public boolean batch(List<T> valueBeans) {
+    public BatchResult batch(List<T> valueBeans) {
         return batch(valueBeans, 1000);
     }
 
-    public boolean batch(List<T> valueBeans, int batchSize) {
+    public BatchResult batch(List<T> valueBeans, int batchSize) {
+        BatchResult.Builder result = BatchResult.builder(valueBeans.size(), batchSize);
         if (valueBeans.isEmpty()) {
-            return false;
+            return result.build();
         }
         final Class<T> beanClass = getBeanClass();
         String dbName = PojoCache.getTableName(beanClass);
         final IdInfo idInfo = PojoCache.getIdInfo(beanClass);
-        final List<Field> fields = PojoCache.getBeanFields(getBeanClass());
+        final List<Field> fields = PojoCache.getBeanFields(beanClass);
         String sql = WrapperBuildUtil.buildUpdateSql(dbName, fields, idInfo.getDbName());
-        while (!valueBeans.isEmpty() && batchSize > 0) {
-            if (batchSize > valueBeans.size()) {
-                batchSize = valueBeans.size();
+        for (int start = 0; start < valueBeans.size(); start += batchSize) {
+            int end = Math.min(valueBeans.size(), start + batchSize);
+            final List<T> items = valueBeans.subList(start, end);
+            try {
+                List<Object[]> paramValues = items.stream()
+                        .map(value -> WrapperBuildUtil.buildUpdateParams(value, fields, idInfo.getField()))
+                        .collect(Collectors.toList());
+                result.completed(start, DBHolder.getSqlExecutor().batch(sql, paramValues));
+                if (result.hasFailure()) {
+                    break;
+                }
+            } catch (Throwable cause) {
+                result.failed(start, cause);
+                break;
             }
-            final List<T> ts = valueBeans.subList(0, batchSize);
-
-            List<Object[]> paramValues = ts.stream()
-                    .map(v -> WrapperBuildUtil.buildUpdateParams(v, fields, idInfo.getField()))
-                    .collect(Collectors.toList());
-            DBHolder.getSqlExecutor().batch(sql, paramValues);
-            valueBeans = valueBeans.subList(batchSize, valueBeans.size());
         }
-        return true;
+        return result.build();
     }
 }

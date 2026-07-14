@@ -18,7 +18,7 @@ public class Doc00AllTest extends BaseDBTest {
         SysSql.setSqlKey("test");
         SysSql.setSqlValue("SELECT * FROM user WHERE AND status = #{status}");
         try {
-            DB.pojo.add(SysSql);
+            DB.pojo.insert(SysSql);
             fail("应该抛出 SystemException");
         } catch (SystemException e) {
             assertTrue(e.getMessage().contains("SysSql.id为手动输入"));

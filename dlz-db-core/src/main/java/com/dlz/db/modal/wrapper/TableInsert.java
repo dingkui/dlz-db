@@ -2,6 +2,7 @@ package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.inf.IExecutorInsert;
 import com.dlz.db.interceptor.DbPlugin;
+import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.para.AParaTable;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
@@ -54,43 +55,45 @@ public class TableInsert extends AParaTable implements IExecutorInsert {
         }
         return this;
     }
-    public boolean batch(List<JSONMap> valueBeans) {
+    public BatchResult batch(List<JSONMap> valueBeans) {
         return batch(valueBeans, 1000);
     }
 
-    public boolean batch(List<JSONMap> valueBeans, int batchSize) {
+    public BatchResult batch(List<JSONMap> valueBeans, int batchSize) {
+        BatchResult.Builder result = BatchResult.builder(valueBeans.size(), batchSize);
         if (valueBeans.isEmpty()) {
-            return false;
+            return result.build();
         }
         final String tableName = getTableName();
-//        final String idName = PojoCache.getIdName(tableName);
-
         final HashMap<String, Integer> dbColumns = PojoCache.getTableColumnsInfo(tableName);
         String sql = WrapperBuildUtil.buildInsertSql(tableName, dbColumns);
 
-        // Pojo 批量插入走原生 JDBC（buildInsertSql(dbColumns) + batch），不经过 TableInsert.buildInsertSql
+        // Table 批量插入走原生 JDBC（buildInsertSql(dbColumns) + batch）
         final String logicDeleteField = DbPlugin.getLogicDeleteField(tableName);
-
-
         final HashMap<String, Integer> fields = new LinkedHashMap<>(dbColumns.size());
-        dbColumns.entrySet().forEach(entry -> fields.put(DbConvertUtil.toFieldName(entry.getKey()), entry.getValue()));
+        dbColumns.forEach((column, type) -> fields.put(DbConvertUtil.toFieldName(column), type));
 
-        while (!valueBeans.isEmpty() && batchSize > 0) {
-            if (batchSize > valueBeans.size()) {
-                batchSize = valueBeans.size();
+        for (int start = 0; start < valueBeans.size(); start += batchSize) {
+            int end = Math.min(valueBeans.size(), start + batchSize);
+            final List<JSONMap> items = valueBeans.subList(start, end);
+            try {
+                List<Object[]> paramValues = items.stream()
+                        .map(value -> {
+                            if (logicDeleteField != null) {
+                                value.set(logicDeleteField, 0);
+                            }
+                            return WrapperBuildUtil.buildInsertParams(value, fields);
+                        })
+                        .collect(Collectors.toList());
+                result.completed(start, DBHolder.getSqlExecutor().batch(sql, paramValues));
+                if (result.hasFailure()) {
+                    break;
+                }
+            } catch (Throwable cause) {
+                result.failed(start, cause);
+                break;
             }
-            final List<JSONMap> ts = valueBeans.subList(0, batchSize);
-            List<Object[]> paramValues = ts.stream()
-                    .map(v -> {
-                        if(logicDeleteField!=null){
-                            v.set(logicDeleteField, 0);
-                        }
-                        return WrapperBuildUtil.buildInsertParams(v, fields);
-                    })
-                    .collect(Collectors.toList());
-            DBHolder.getSqlExecutor().batch(sql, paramValues);
-            valueBeans = valueBeans.subList(batchSize, valueBeans.size());
         }
-        return true;
+        return result.build();
     }
 }
