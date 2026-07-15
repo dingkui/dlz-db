@@ -1,5 +1,6 @@
 package com.dlz.test.db.cases.util;
 
+import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.para.ParaJdbc;
@@ -7,6 +8,7 @@ import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
+import org.assertj.core.util.DateUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -58,32 +60,33 @@ class SqlUtilTest extends BaseDBTest {
     @Test
     @DisplayName("getRunSqlByJdbc - Date 参数（覆盖 Date 分支）")
     void testGetRunSqlByJdbc_Date() {
-        Date now = new Date();
-        String sql = SqlUtil.getRunSqlByJdbc("SELECT * FROM user WHERE t = ?", new Object[]{now});
+        Date now = DateUtil.parse("2026-07-01");
+        String sql = SqlUtil.getRunSqlByJdbc("SELECT * FROM user WHERE t = ?", now);
         assertNotNull(sql);
-        assertTrue(sql.startsWith("SELECT * FROM user WHERE t = '"));
+        assertEquals("SELECT * FROM user WHERE t = '2026-07-01 00:00:00'", sql);
     }
 
     @Test
     @DisplayName("getRunSqlByJdbc - TemporalAccessor 参数（覆盖 LocalDateTime 分支）")
     void testGetRunSqlByJdbc_LocalDateTime() {
         LocalDateTime ldt = LocalDateTime.of(2026, 7, 1, 12, 0, 0);
-        String sql = SqlUtil.getRunSqlByJdbc("SELECT * FROM user WHERE t = ?", new Object[]{ldt});
-        assertNotNull(sql);
-        assertTrue(sql.startsWith("SELECT * FROM user WHERE t = '"));
+        String sql = SqlUtil.getRunSqlByJdbc("SELECT * FROM user WHERE t = ?", ldt);
+        assertEquals("SELECT * FROM user WHERE t = '2026-07-01 12:00:00'", sql);
     }
 
     @Test
     @DisplayName("getRunSqlByJdbc - 无 ? 占位符的原生 SQL")
     void testGetRunSqlByJdbc_NoPlaceholders() {
-        String sql = SqlUtil.getRunSqlByJdbc("SELECT 1", new Object[]{});
+        String sql = SqlUtil.getRunSqlByJdbc("SELECT 1");
         assertEquals("SELECT 1", sql);
     }
 
     @Test
     @DisplayName("getRunSqlByJdbc - null jdbcSql 抛异常")
     void testGetRunSqlByJdbc_NullJdbcSql() {
-        assertThrows(Exception.class, () -> SqlUtil.getRunSqlByJdbc(null, new Object[]{}));
+        assertThrows(Exception.class, () -> SqlUtil.getRunSqlByJdbc(null));
+        assertThrows(DbException.class, () -> SqlUtil.getRunSqlByJdbc("SELECT 1 where 1=?"));
+        assertThrows(DbException.class, () -> SqlUtil.getRunSqlByJdbc("SELECT 1 where 1=?",1,2,3));
     }
 
     // ==================== getCntSql ====================
@@ -98,7 +101,7 @@ class SqlUtilTest extends BaseDBTest {
     @Test
     @DisplayName("getCntSql - 大写 SQL")
     void testGetCntSql_UpperCase() {
-        assertEquals("SELECT COUNT(*) FROM user",SqlUtil.getCntSql("SELECT * FROM user"));
+        assertEquals("SELECT COUNT(*) FROM user", SqlUtil.getCntSql("SELECT * FROM user"));
     }
 
     @Test
@@ -155,7 +158,7 @@ class SqlUtilTest extends BaseDBTest {
     @DisplayName("getSqlInStr - 空值抛异常")
     void testGetSqlInStr_Empty() {
         assertThrows(SystemException.class, () -> SqlUtil.getSqlInStr(""));
-        assertThrows(SystemException.class, () -> SqlUtil.getSqlInStr((Object) null));
+        assertThrows(SystemException.class, () -> SqlUtil.getSqlInStr(null));
     }
 
     @Test
@@ -294,7 +297,7 @@ class SqlUtilTest extends BaseDBTest {
         ParaJdbc pj = new ParaJdbc("SELECT * FROM user WHERE id = ?", new Object[]{1});
         JdbcItem item = SqlUtil.dealJdbc(pj, 2);
         assertNotNull(item);
-        assertEquals("SELECT COUNT(*) FROM user WHERE id = ?",item.sql);
+        assertEquals("SELECT COUNT(*) FROM user WHERE id = ?", item.sql);
     }
 
     @Test

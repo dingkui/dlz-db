@@ -5,7 +5,7 @@ package com.dlz.db.service;
  * sql语句，可以带参数如：select AD_ENDDATE FROM JOB_AD t WHERE ad_id=#{ad_id}
  * paraMap ：Map<String,Object> m=new HashMap<String,Object>();m.put("ad_id", "47");
  */
-public interface ICommService extends IDbJdbcService, IDbExecuteService, IDbOneService, IDbListService, IDbColumnService {
+public interface ICommService extends IDbExecuteService, IDbOneService, IDbListService, IDbColumnService {
 
 
 }

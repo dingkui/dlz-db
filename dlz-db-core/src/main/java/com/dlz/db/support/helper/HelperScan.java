@@ -41,10 +41,7 @@ public class HelperScan {
             List<Field> fields = FieldReflections.getFields(clazz);
             for (Field field : fields) {
                 String columnName = PojoCache.getDbName(field);
-                if (columnName.equals("")
-                        || columns.contains(columnName)
-                        || columnName.equalsIgnoreCase("id")
-                ) {
+                if (columnName.equals("") || columns.contains(columnName)) {
                     continue;
                 }
                 // 创建字段

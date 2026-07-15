@@ -15,14 +15,6 @@ import com.dlz.kit.util.system.ConvertUtil;
   * @throws Exception
  */
 public interface IDbOneService extends IDbBaseService {
-
-    /**
-     * 从数据库中取得集合
-     */
-    default ResultMap getMap(IExecutorQuery paraMap) {
-        return getMap(paraMap, false);
-    }
-
     default ResultMap getMap(IExecutorQuery paraMap, boolean throwEx) {
         return doDb(paraMap, jdbcSql -> getSqlExecutor().getOne(jdbcSql.sql, throwEx, jdbcSql.paras));
     }
@@ -33,20 +25,4 @@ public interface IDbOneService extends IDbBaseService {
     default <T> T getBean(IExecutorQuery paraMap, Class<T> t, boolean throwEx) {
         return doDb(paraMap, jdbcSql -> ConvertUtil.convert(getSqlExecutor().getOne(jdbcSql.sql, throwEx, jdbcSql.paras), t));
     }
-
-    default <T> T getBean(IExecutorQuery paraMap, Class<T> t) {
-        return getBean(paraMap, t, false);
-    }
-
-    default <T> T getBean(T bean) {
-        final PojoQuery<T> wrapper = new PojoQuery(bean.getClass());
-        return getBean(wrapper, wrapper.getBeanClass(), true);
-    }
-    default <T> T selectById(String id,Class<T> clazz){
-        if(StringUtils.isEmpty(id)){
-            throw new ValidateException("id不能为空");
-        }
-        return getBean(new PojoQuery<>(clazz).eq("id", id),clazz,true);
-    }
-
 }

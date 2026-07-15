@@ -82,31 +82,6 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
     }
 
     @Test
-    @DisplayName("测试 convertUpper() - 使用大写转换器")
-    public void testConvertUpper() {
-        log.info("========== 测试 convertUpper() 方法 ==========");
-        
-        // 使用大写转换器
-        List<ResultMap> results = DB.table.selectWrapper("Sys_Sql")
-                .setAllowFullQuery(true)
-                .limit(2)
-                .convertUpper()
-                .queryList();
-        
-        assertNotNull(results, "查询结果不应为 null");
-        assertFalse(results.isEmpty(), "查询结果不应为空");
-        
-        // 验证字段名为大写格式
-        ResultMap firstResult = results.get(0);
-        log.info("大写字段名: {}", firstResult.keySet());
-        
-        // 大写转换器应该将所有字段名转为大写
-        boolean allUpperCase = firstResult.keySet().stream()
-                .allMatch(key -> key.equals(key));
-        assertTrue(allUpperCase, "所有字段名应该为大写");
-    }
-
-    @Test
     @DisplayName("测试链式调用 - 多次转换")
     public void testConvert_ChainedCalls() {
         log.info("========== 测试链式调用 ==========");
@@ -191,21 +166,12 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
                 .convert(new NameConvertCamel())
                 .queryList();
         
-        // 使用大写转换器
-        List<ResultMap> upperResults = DB.table.selectWrapper("Sys_Sql")
-                .setAllowFullQuery(true)
-                .limit(1)
-                .convertUpper()
-                .queryList();
-        
         assertNotNull(nativeResults, "原生转换器结果不应为 null");
         assertNotNull(camelResults, "驼峰转换器结果不应为 null");
-        assertNotNull(upperResults, "大写转换器结果不应为 null");
-        
-        if (!nativeResults.isEmpty() && !camelResults.isEmpty() && !upperResults.isEmpty()) {
+
+        if (!nativeResults.isEmpty() && !camelResults.isEmpty()) {
             log.info("原生字段名: {}", nativeResults.get(0).keySet());
             log.info("驼峰字段名: {}", camelResults.get(0).keySet());
-            log.info("大写字段名: {}", upperResults.get(0).keySet());
         }
     }
 

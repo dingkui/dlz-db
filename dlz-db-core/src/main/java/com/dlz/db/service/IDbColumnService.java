@@ -27,14 +27,6 @@ public interface IDbColumnService extends IDbBaseService {
         return doDb(paraMap, jdbcSql -> getSqlExecutor().getFirstColumn(jdbcSql.sql, tClass, jdbcSql.paras));
     }
 
-    default BigDecimal getBigDecimal(IExecutorQuery paraMap) {
-        return getFirstColumn(paraMap, BigDecimal.class);
-    }
-
-    default Float getFloat(IExecutorQuery paraMap) {
-        return getFirstColumn(paraMap, Float.class);
-    }
-
     default Integer getInt(IExecutorQuery paraMap) {
         return getFirstColumn(paraMap, Integer.class);
     }
@@ -49,14 +41,6 @@ public interface IDbColumnService extends IDbBaseService {
 
     default List<String> getStrList(IExecutorQuery paraMap) {
         return getColumnList(paraMap, String.class);
-    }
-
-    default List<BigDecimal> getBigDecimalList(IExecutorQuery paraMap) {
-        return getColumnList(paraMap, BigDecimal.class);
-    }
-
-    default List<Float> getFloatList(IExecutorQuery paraMap) {
-        return getColumnList(paraMap, Float.class);
     }
 
     default List<Integer> getIntList(IExecutorQuery paraMap) {

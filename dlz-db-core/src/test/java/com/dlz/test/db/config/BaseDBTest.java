@@ -95,20 +95,12 @@ public abstract class BaseDBTest {
         if (re == null) {
             log.info(runSqlByJdbc);
         } else if (clearSql(re).equalsIgnoreCase(clearSql(runSqlByJdbc))) {
-            log.info("sucess:" + runSqlByJdbc);
+            log.info("{} sucess:{}", fn, runSqlByJdbc);
         } else {
-            log.error("error:" + runSqlByJdbc);
-            log.error("target:" + re);
+            log.error("{} error:{}", fn, runSqlByJdbc);
+            log.error("{} target:{}", fn, re);
             assert false;
         }
-    }
-
-    public void showSql(ParaMap paraMap, String fn) {
-        showSql(paraMap, fn, null);
-    }
-
-    public void showSql(AParaPojo wrapper, String fn) {
-        showSql(wrapper, fn, null);
     }
 
     public String toSql(AParaPojo wrapper) {

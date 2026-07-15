@@ -85,33 +85,6 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
     }
 
     /**
-     * 测试 convertUpper() 方法 - 使用大写转换器
-     */
-    @Test
-    public void testConvertUpper() {
-        log.info("========== 测试 convertUpper() 方法 ==========");
-        
-        // 使用大写转换器
-        List<ResultMap> results = DB.table.selectWrapper("Sys_Sql")
-                .setAllowFullQuery(true)
-                .limit(2)
-                .convertUpper()
-                .queryList();
-        
-        assertNotNull("查询结果不应为 null", results);
-        assertFalse("查询结果不应为空", results.isEmpty());
-        
-        // 验证字段名为大写格式
-        ResultMap firstResult = results.get(0);
-        log.info("大写字段名: {}", firstResult.keySet());
-        
-        // 大写转换器应该将所有字段名转为大写
-        boolean allUpperCase = firstResult.keySet().stream()
-                .allMatch(key -> key.equals(key.toUpperCase()));
-        assertTrue("所有字段名应该为大写", allUpperCase);
-    }
-
-    /**
      * 测试链式调用 - 多次转换
      */
     @Test
@@ -204,22 +177,12 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .convert(new NameConvertCamel())
                 .queryList();
         
-        // 使用大写转换器
-        List<ResultMap> upperResults = DB.table.selectWrapper("Sys_Sql")
-                .setAllowFullQuery(true)
-                .limit(1)
-                .convertUpper()
-                .queryList();
-        
         assertNotNull("原生转换器结果不应为 null", nativeResults);
         assertNotNull("驼峰转换器结果不应为 null", camelResults);
-        assertNotNull("大写转换器结果不应为 null", upperResults);
-        
-        if (!nativeResults.isEmpty() && !camelResults.isEmpty() && !upperResults.isEmpty()) {
+
+        if (!nativeResults.isEmpty() && !camelResults.isEmpty() ) {
             log.info("原生字段名: {}", nativeResults.get(0).keySet());
             log.info("驼峰字段名: {}", camelResults.get(0).keySet());
-            log.info("大写字段名: {}", upperResults.get(0).keySet());
-            
             // 验证三种转换器的字段名确实不同
             // 注意：这里只是演示，实际可能因为数据库字段本身是大写而相同
         }

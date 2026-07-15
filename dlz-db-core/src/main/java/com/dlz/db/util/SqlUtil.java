@@ -96,12 +96,9 @@ public class SqlUtil {
      * @throws Exception
      * @author dk 2015-04-09
      */
-    public static String getRunSqlByJdbc(String jdbcSql, Object[] paraList) {
+    public static String getRunSqlByJdbc(String jdbcSql, Object... paraList) {
         if (jdbcSql == null) {
             throw new DbException("jdbcSql不应该为空", 1002);
-        }
-        if (paraList == null) {
-            paraList = new Object[0];
         }
         StringBuilder sbRunSql = new StringBuilder();
         int beginIndex = 0;
@@ -124,13 +121,9 @@ public class SqlUtil {
             } else if (jdbcParaItem == null) {
                 sbRunSql.append("'null'");
             } else {
-                try {
-                    sbRunSql.append("'")
-                            .append(ValUtil.toStr(jdbcParaItem).replace("'", "''"))
-                            .append("'");
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                sbRunSql.append("'")
+                        .append(ValUtil.toStr(jdbcParaItem).replace("'", "''"))
+                        .append("'");
             }
         }
         if (index != paraList.length) {

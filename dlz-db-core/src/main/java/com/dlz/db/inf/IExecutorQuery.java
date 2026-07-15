@@ -2,8 +2,6 @@ package com.dlz.db.inf;
 
 import com.dlz.db.mapper.name.IConvertorToFieldName;
 import com.dlz.db.mapper.name.NameConvertNative;
-import com.dlz.db.mapper.name.NameConvertToLower;
-import com.dlz.db.mapper.name.NameConvertToUper;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.DBHolder;
@@ -41,16 +39,6 @@ public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,ICh
 
     default ME convertNative() {
         SqlRunThreadHolder.setConvertorToFieldName(new NameConvertNative());
-        return me();
-    }
-
-    default ME convertUpper() {
-        SqlRunThreadHolder.setConvertorToFieldName(new NameConvertToUper());
-        return me();
-    }
-
-    default ME convertLower() {
-        SqlRunThreadHolder.setConvertorToFieldName(new NameConvertToLower());
         return me();
     }
 

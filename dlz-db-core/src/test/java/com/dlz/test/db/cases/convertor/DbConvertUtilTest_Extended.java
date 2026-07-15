@@ -1,8 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
 import com.dlz.db.mapper.name.NameConvertCamel;
-import com.dlz.db.mapper.name.NameConvertToLower;
-import com.dlz.db.mapper.name.NameConvertToUper;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -34,78 +32,6 @@ class DbConvertUtilTest_Extended {
         // 恢复默认值
         DbConvertUtil.defaultNameConvert = new NameConvertCamel();
     }
-
-    @Test
-    @DisplayName("测试 toFieldName - 使用 ColumnNameToLower")
-    void testToFieldName_WithToLowerConverter() {
-        NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultNameConvert = converter;
-        
-        assertEquals("username", DbConvertUtil.toFieldName("USERNAME"));
-        assertEquals("userName", DbConvertUtil.toFieldName("USER_NAME"));
-    }
-
-    @Test
-    @DisplayName("测试 toFieldName - 使用 ColumnNameToUper")
-    void testToFieldName_WithToUperConverter() {
-        NameConvertToUper converter = new NameConvertToUper();
-        DbConvertUtil.defaultNameConvert = converter;
-        
-        assertEquals("username", DbConvertUtil.toFieldName("username"));
-        assertEquals("userName", DbConvertUtil.toFieldName("user_name"));
-    }
-
-    @Test
-    @DisplayName("测试 toDbColumnName - 使用 ColumnNameToLower")
-    void testToDbColumnName_WithToLowerConverter() {
-        NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultNameConvert = converter;
-        
-        assertEquals("user_name", DbConvertUtil.toDbName("userName"));
-        assertEquals("user_name", DbConvertUtil.toDbName("USER_NAME"));
-    }
-
-    @Test
-    @DisplayName("测试 toDbColumnName - 使用 ColumnNameToUper")
-    void testToDbColumnName_WithToUperConverter() {
-        NameConvertToUper converter = new NameConvertToUper();
-        DbConvertUtil.defaultNameConvert = converter;
-        
-        assertEquals("user_name", DbConvertUtil.toDbName("userName"));
-        assertEquals("user_name", DbConvertUtil.toDbName("USER_NAME"));
-    }
-
-    @Test
-    @DisplayName("测试 getFirstColumn - 使用自定义转换器")
-    void testGetFirstColumn_WithCustomConverter() {
-        NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultNameConvert = converter;
-        
-        ResultMap map = new ResultMap();
-        map.put("id", 1);
-        map.put("name", "test");
-        
-        Object result = DbConvertUtil.getFirstColumn(map);
-        assertNotNull(result);
-    }
-
-    @Test
-    @DisplayName("测试 getColumnList - 使用自定义转换器")
-    void testGetColumnList_WithCustomConverter() {
-        NameConvertToLower converter = new NameConvertToLower();
-        DbConvertUtil.defaultNameConvert = converter;
-        
-        List<ResultMap> list = new ArrayList<>();
-        ResultMap map1 = new ResultMap();
-        map1.put("id", "1");
-        list.add(map1);
-        
-        List<Integer> result = DbConvertUtil.getColumnList(list, Integer.class);
-        
-        assertEquals(1, result.size());
-        assertEquals(1, result.get(0));
-    }
-
     @Test
     @DisplayName("测试 toDbColumnNames - 多个字段名")
     void testToDbNames_Multiple() {

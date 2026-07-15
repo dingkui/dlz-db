@@ -10,16 +10,11 @@ import java.util.Map;
 public class TableColumnMapper implements ITableColumnMapper {
     @Override
     public Object converObj4Db(String tableName, String columnName, Object value) {
-        Map<String, Integer> map = PojoCache.getTableColumnsInfo(tableName);
-        if (map != null) {
-            Integer dbClass = map.get(columnName);
-            if(dbClass==null){
-                return value;
-            }
-            return cover(dbClass, value);
+        Integer dbClass = PojoCache.getTableColumnsInfo(tableName).get(columnName);
+        if(dbClass==null){
+            return value;
         }
-//		final List<ResultMap> list = dao.getList("SELECT * FROMinformation_schema.columns WHERE table_name = '" + tableName + "'", new ResultMapRowMapper(new ColumnNameCamel()));
-        return value;
+        return cover(dbClass, value);
     }
 
     public static Object cover(Integer dbClass, Object obj) {
