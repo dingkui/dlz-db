@@ -21,10 +21,10 @@ import java.util.List;
  */
 public interface ISqlPage<T extends ISqlPage>{
     /** 当前绑定的分页对象（可能为 null）。 */
-    Page getPage();
+    Page<?> getPage();
 
     /** 直接用一个已有 {@link Page} 对象覆盖当前分页设置。 */
-    T page(Page page);
+    T page(Page<?> page);
 
     /** 追加升序排序列。 */
     default T orderByAsc(String... column) {
@@ -56,7 +56,7 @@ public interface ISqlPage<T extends ISqlPage>{
      * @param orders  追加到排序列表末尾的排序规则
      */
     default T page(long current, long size, List<Order> orders) {
-        Page pmPage = getPage();
+        Page<?> pmPage = getPage();
         if (pmPage == null) {
             pmPage = Page.build();
         }

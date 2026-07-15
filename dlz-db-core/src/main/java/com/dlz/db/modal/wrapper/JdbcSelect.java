@@ -21,9 +21,9 @@ public class JdbcSelect extends ParaJdbc implements Serializable, ISqlPara, ISql
         super(sql, paras);
     }
     @Override
-    public JdbcSelect page(Page page) {
+    public JdbcSelect page(Page<?> page) {
         if (page != null) {
-            this.setPage(page);
+            super.setPage(page);
         }
         return this;
     }

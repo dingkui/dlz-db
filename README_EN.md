@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
-[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.1.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-8.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 
 ```java
 List<User> users = DB.pojo.selectWrapper(User.class)
@@ -20,7 +20,7 @@ No Mapper interfaces, no Service layer, no XML.
 
 ## Version Notes
 
-Current version v7.1.0 (initial open-source version v6.6.4).
+Current version v8.0.0 (initial open-source version v6.6.4).
 
 This project didn't start from scratch. It began accumulating around **2009**, took shape around **2014**, and has been used as an internal database operation toolkit in the company for over a decade. During this period, it has been adopted by dozens of internal projects, adapted to various legacy systems, different open-source framework combinations, and various strange version mixes.
 
@@ -66,11 +66,11 @@ DLZ-DB makes both ends strings:
 
 ```java
 // Register a new datasource at runtime
-DB.Dynamic.setDataSource(prop);
+DB.ds.setDataSource(prop);
 
 // Decide which database to use at runtime with any logic
 String dsName = routeByTenant(tenantId);
-User user = DB.Dynamic.use(dsName, () ->
+User user = DB.ds.use(dsName, () ->
     DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean()
 );
 ```
@@ -101,7 +101,7 @@ Actual benefits you get:
 ### 4. Query Results Come with Deep Value Access
 
 ```java
-ResultMap result = DB.Table.select("user").eq("id", 1).queryOne();
+ResultMap result = DB.table.selectWrapper("user").eq("id", 1).queryOne();
 
 result.getInt("age", 0);
 result.getStr("profile.address.city", "Unknown");  // profile is a JSON field
@@ -124,7 +124,7 @@ DLZ-DB's entire framework aesthetic is consistent: **use explicit lambda and cha
 .or(o -> o.like(User::getName, "keyword").like(User::getAddress, "keyword"))
 
 // Datascope scope: lambda wrapped
-DB.Dynamic.use("other_db", () -> { ... });
+DB.ds.use("other_db", () -> { ... });
 
 // Auto-ignore null values: use square brackets in SQL
 [AND status = #{status}]
@@ -152,7 +152,7 @@ DLZ-DB v7 adopts a multi-module architecture, choose dependencies based on runti
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0</version>
 </dependency>
 ```
 
@@ -217,7 +217,7 @@ public class UserController {
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0</version>
 </dependency>
 ```
 
@@ -245,7 +245,7 @@ datasource:
 
 #### 3. Use
 
-API is completely consistent under Solon, `DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` interfaces unchanged:
+API is completely consistent under Solon, `DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` interfaces unchanged:
 
 ```java
 @Component
@@ -261,12 +261,12 @@ Solon transactions use `@Tran` annotation:
 ```java
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
-    DB.pojo.update(Account.class)
-        .setSql("balance = balance - #{amount}", Params.of("amount", amount))
+    DB.pojo.updateWrapper(Account.class)
+        .setSql("balance = balance - #{amount}", new JSONMap("amount", amount))
         .eq(Account::getId, fromId)
         .execute();
-    DB.pojo.update(Account.class)
-        .setSql("balance = balance + #{amount}", Params.of("amount", amount))
+    DB.pojo.updateWrapper(Account.class)
+        .setSql("balance = balance + #{amount}", new JSONMap("amount", amount))
         .eq(Account::getId, toId)
         .execute();
 }
@@ -286,17 +286,17 @@ Page<User> page = DB.pojo.selectWrapper(User.class)
 
 // Insert
 DB.pojo.insert(user);
-DB.Batch.insert(users, 100);
+DB.batch.insert(users, 100);
 
 // Update
-DB.pojo.update(user).eq(User::getId, id).execute();
-DB.pojo.update(User.class).set(User::getName, "New Name").eq(User::getId, id).execute();
+DB.pojo.updateWrapper(user).eq(User::getId, id).execute();
+DB.pojo.updateWrapper(User.class).set(User::getName, "New Name").eq(User::getId, id).execute();
 
 // Delete (with deleted field automatically uses logical delete)
 DB.pojo.deleteWrapper(User.class).eq(User::getId, id).execute();
 
 // Preset SQL (defined in xml/db, key starts with "key.")
-List<User> users = DB.Sql.select("key.user.find")
+List<User> users = DB.sql.selectWrapper("key.user.find")
         .addPara("status", 1)
         .queryList(User.class);
 ```
@@ -308,13 +308,14 @@ List<User> users = DB.Sql.select("key.user.find")
 ```
 Main Operation Entry Points (choose one by SQL style)
 ├─ DB.pojo   ← First choice when you have Bean, chain + Lambda, type-safe
-├─ DB.Table  ← Dynamic table name scenarios, no Bean needed
-├─ DB.Jdbc   ← One-line simple SQL, ? placeholder, second to migrate JdbcTemplate
-└─ DB.Sql    ← Complex / dynamic / reusable SQL, #{} placeholder + preset SQL
+├─ DB.table  ← Dynamic table name scenarios, no Bean needed
+├─ DB.jdbc   ← One-line simple SQL, ? placeholder, second to migrate JdbcTemplate
+└─ DB.sql    ← Complex / dynamic / reusable SQL, #{} placeholder + preset SQL
 
 Orthogonal Capabilities (can be superimposed anytime)
-├─ DB.Batch    ← Batch write
-└─ DB.Dynamic  ← Datasource switching scope
+├─ DB.batch  ← Batch write
+├─ DB.ds     ← Datasource switching scope
+└─ DB.tx     ← Programmatic transactions
 ```
 
 ---
@@ -334,10 +335,10 @@ Orthogonal Capabilities (can be superimposed anytime)
 
 ```java
 // Native SQL
-DB.Jdbc.select("complex SQL statement where id=?", id).queryList();
+DB.jdbc.selectWrapper("complex SQL statement where id=?", id).queryList();
 
 // Preset SQL
-DB.Sql.select("key.complexQuery").addPara("x", 1).queryList();
+DB.sql.list("key.complexQuery", new JSONMap("x", 1));
 
 // Condition builder + custom fragment
 DB.pojo.selectWrapper(User.class)
@@ -364,7 +365,7 @@ Yes. DLZ-DB doesn't depend on the MyBatis ecosystem, both use their own datasour
 
 **Q: Is v7 API compatible with v6?**
 
-`DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` and other core APIs are fully compatible. But Maven coordinates, configuration class package paths have changed, see [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md) for details.
+`DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` and other core APIs are fully compatible. But Maven coordinates, configuration class package paths have changed, see [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md) for details.
 
 ---
 

@@ -13,7 +13,7 @@
 | `BaseMapper<T>` | `DB.pojo` | 静态方法替代继承 |
 | `IService<T>` / `ServiceImpl` | 可选 Service | 简单 CRUD 不需要 Service |
 | `QueryWrapper<T>` | 条件构造器（Lambda） | `DB.pojo.selectWrapper(...).eq(...)` |
-| `@Select` / `@Update` 注解 | `DB.Jdbc` / `DB.Sql` | 原生 SQL 或预设 SQL |
+| `@Select` / `@Update` 注解 | `DB.jdbc` / `DB.sql` | 原生 SQL 或预设 SQL |
 | `Page<T>`（MP） | `Page<T>`（DLZ-DB） | 分页用法类似 |
 | `@TableName` | `@TableName` | **保留**，用法一致 |
 | `@TableId` | `@TableId` | **保留**，用法一致 |
@@ -57,7 +57,7 @@ userMapper.update(user, new QueryWrapper<User>().eq("id", id));
 
 // ✅ DLZ-DB
 DB.pojo.updateById(user);
-DB.pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
+DB.pojo.updateWrapper(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
 ```
 
 ### 删除
@@ -109,7 +109,7 @@ DB.pojo.deleteWrapper(User.class).eq(User::getId, 1).execute();
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0</version>
 </dependency>
 ```
 

@@ -108,7 +108,7 @@ Closes #123
 
 When contributing to DLZ-DB, follow these framework-specific conventions:
 
-1. **Entry Points**: All database operations should use `DB.pojo`, `DB.Table`, `DB.Jdbc`, or `DB.Sql`
+1. **Entry Points**: All database operations should use `DB.pojo`, `DB.table`, `DB.jdbc`, or `DB.sql`
 2. **Lambda Method References**: Use method references for field names (e.g., `User::getName`)
 3. **Three-Parameter Form**: Condition methods should support `(condition, field, value)` form
 4. **Return Values**: Follow the naming convention:
@@ -117,8 +117,8 @@ When contributing to DLZ-DB, follow these framework-specific conventions:
    - `queryOne()` → ResultMap
    - Write operations must end with `.execute()`
 5. **Placeholders**: 
-   - `DB.Jdbc` uses `?` placeholders
-   - `DB.Sql` uses `#{key}` placeholders
+   - `DB.jdbc` uses `?` placeholders
+   - `DB.sql` uses `#{key}` placeholders
 6. **No Mapper/DAO**: Do not create Mapper interfaces or DAO classes
 
 ### Java Guidelines

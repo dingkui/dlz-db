@@ -1,6 +1,6 @@
 # DLZ-DB AI 速读
 
-适用：top.dlzio:dlz-db-spring-boot-starter:V7.1.0  top.dlzio:dlz-db-solon-plugin:V7.1.0
+适用：top.dlzio:dlz-db-spring-boot-starter:V8.0.0  top.dlzio:dlz-db-solon-plugin:V8.0.0
 
 > 静态入口 `DB.`，链式 API，无 Mapper/XML。Spring Boot 和 Solon 下完全一致。
 
@@ -11,12 +11,12 @@
 | 入口           | 场景                | 占位符      |
 |--------------|-------------------|----------|
 | `DB.pojo`    | 有 Bean 的 CRUD（首选） | 条件构造器    |
-| `DB.Table`   | 动态表名              | 条件构造器    |
-| `DB.Jdbc`    | 一次性 SQL           | `?`      |
-| `DB.Sql`     | 预设/复杂 SQL         | `#{key}` |
-| `DB.Tx`      | 编程式事务             | —        |
-| `DB.Batch`   | 批量写入              | —        |
-| `DB.Dynamic` | 数据源切换             | —        |
+| `DB.table`   | 动态表名              | 条件构造器    |
+| `DB.jdbc`    | 一次性 SQL           | `?`      |
+| `DB.sql`     | 预设/复杂 SQL         | `#{key}` |
+| `DB.tx`      | 编程式事务             | —        |
+| `DB.batch`   | 批量写入              | —        |
+| `DB.ds` | 数据源切换             | —        |
 
 ## 二、条件方法
 
@@ -57,8 +57,8 @@
 ## 四、多数据源
 
 ```java
-DB.Dynamic.setDataSource(prop);  // 动态注册
-DB.Dynamic.use("slave",() ->DB.pojo.selectWrapper(...).queryBean()); // 动态切换，带返回值
+DB.ds.setDataSource(prop);  // 动态注册
+DB.ds.use("slave",() ->DB.pojo.selectWrapper(...).queryBean()); // 动态切换，带返回值
 ```
 
 ## 五、事务
@@ -66,21 +66,21 @@ DB.Dynamic.use("slave",() ->DB.pojo.selectWrapper(...).queryBean()); // 动态�
 声明式事务：Spring Boot `@Transactional`，Solon `@Tran`。
 
 ```java
-DB.Tx.run(() ->{...});                   // 与声明式事务兼容, 由最外层控制事务
-DB.Tx.run("slave",() ->{...});           // 指定数据源事务,不可与声明式事务混用
+DB.tx.run(() ->{...});                   // 与声明式事务兼容, 由最外层控制事务
+DB.tx.run("slave",() ->{...});           // 指定数据源事务,不可与声明式事务混用
 ```
 
 ## 六、硬约束
 
 1. 无 Mapper/DAO/Wrapper 类，直接 `DB.pojo.*`
-2. 占位符不混用：`DB.Jdbc` 用 `?`；`DB.Sql` / `sql()` 用 `#{key}`
+2. 占位符不混用：`DB.jdbc` 用 `?`；`DB.sql` / `sql()` 用 `#{key}`
 3. `queryOne/List/Page` 返回 `ResultMap`，要 Bean 用 `queryBean` 系列
 4. 查询列用 `columns()` 不是 `select()`（`.columns(User::getId, User::getName)`）
 5. `DB.pojo.insert(entity)` 直接执行并返回 entity（含自动填充主键），无需 `.execute()`
 6. 物理删除 / 查询绕过逻辑删除：`.ignoreLogicDelete(true)`
 7. 预设 SQL key 以 `"key."` 开头
 8. `in()` 仅支持 `List` / CSV / `"sql:子查询"`，不可传单值
-9. 批量操作用 `DB.Batch.insert(users)`，不是 `insertBatch()`
+9. 批量操作用 `DB.batch.insert(users)`，不是 `insertBatch()`
 10. #{key} 与 ${key} 不可混用， ${key}使用时不应该作为画面输入值
 
 ## 七、Entity 约定
@@ -102,19 +102,19 @@ DB.pojo.updateById(user);
 DB.pojo.deleteWrapper(User.class).eq(User::getId, 1).execute();
 
 // 批量
-DB.Batch.insert(users);
+DB.batch.insert(users);
 
 // 原生 SQL
-List<ResultMap> rows = DB.Jdbc.select("SELECT * FROM user WHERE id = ?", 1).queryList();
+List<ResultMap> rows = DB.jdbc.selectWrapper("SELECT * FROM user WHERE id = ?", 1).queryList();
 
 // 事务
-DB.Tx.run(() ->{
+DB.tx.run(() ->{
     DB.pojo.insert(order); 
     DB.pojo.insert(orderItem); 
 });
 
 // 预设 SQL
-List<User> r = DB.Sql.select("key.demo.user.find").addPara("status", "1,2,3".split(",")).queryList(User.class);
+List<User> r = DB.sql.selectWrapper("key.demo.user.find").addPara("status", "1,2,3".split(",")).queryList(User.class);
 ```
 
 ## 九、预设 SQL

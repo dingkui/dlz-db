@@ -1,6 +1,6 @@
 # DLZ-DB 完整功能清单
 
-**版本：** v7.1.0  
+**版本：** v8.0.0  
 **生成日期：** 2026-05-06  
 **入口类：** `com.dlz.db.modal.DB`
 
@@ -8,31 +8,32 @@
 
 ## 一、DB 入口概览
 
-DLZ-DB 提供 7 个静态入口，覆盖所有数据库操作场景：
+DLZ-DB 提供 8 个静态入口，覆盖数据库操作和运行时支持：
 
 | 入口 | 职责 | 适用场景 |
 |------|------|----------|
 | **DB.pojo** | 基于实体类的类型安全操作 | 推荐首选，IDE 自动补全，重构安全 |
-| **DB.Table** | 基于表名的动态操作 | 无实体类或动态表名场景 |
-| **DB.Jdbc** | 原生 SQL 操作（? 占位符） | 简单 SQL，快速原型开发 |
-| **DB.Sql** | 预设 SQL 操作（#{key} 占位符） | 复杂 SQL，SQL 集中管理 |
-| **DB.Batch** | 批量操作 | 批量插入、更新、删除 |
-| **DB.Dynamic** | 动态数据源切换 | 读写分离、多数据源 |
-| **DB.Tx** | 事务管理 | 编程式事务 |
+| **DB.table** | 基于表名的动态操作 | 无实体类或动态表名场景 |
+| **DB.jdbc** | 原生 SQL 操作（`?` 占位符） | 简单 SQL，快速执行 |
+| **DB.sql** | 预设 SQL 操作（`#{key}` 占位符） | 复杂 SQL，SQL 集中管理 |
+| **DB.batch** | 批量插入、更新和 JDBC 执行 | 批量写操作；当前不提供批量删除 |
+| **DB.ds** | 动态数据源注册、切换和删除 | 读写分离、多数据源 |
+| **DB.tx** | 事务管理 | 编程式事务 |
+| **DB.config** | 数据库配置 | 配置和运行时支持 |
 
 ---
 
-## 二、DB.pojo - 实体类操作（推荐）
+`add`、`save` 仍保留用于兼容，但已标记为 `@Deprecated`，新代码不要使用。
 
 ### 2.1 查询操作
 
 #### 基础查询（→ 构建器，需调用 queryBean/List/Page 执行）
 ```java
-// 按 Class 查询
-PojoQuery<T> select(Class<T> clazz)
+// 按 Class 创建查询器
+PojoQuery<T> selectWrapper(Class<T> clazz)
 
-// 按条件 Bean 查询
-PojoQuery<T> select(T conditionBean)
+// 选择查询列（可选）
+selectWrapper(Class<T> clazz, DlzFn<T, ?>... fields)
 ```
 
 #### 快捷查询方法（直接执行）
@@ -47,31 +48,28 @@ List<T> selectByIds(Class<T> clazz, Object ids)  // ids: "1,2,3" 或 List
 ### 2.2 插入操作（直接执行）
 
 ```java
-// 插入单条（自动回填主键）
-int insert(T bean)
+// 插入单条（返回传入实体，主键按实体配置处理）
+T insert(T bean, DbOption... options)
 
-// 批量插入（默认批次 1000）
-boolean insertBatch(List<T> beans)
-boolean insertBatch(List<T> beans, int batchSize)
+// 批量插入请使用 DB.batch
+BatchResult DB.batch.insert(List<T> beans)
+BatchResult DB.batch.insert(List<T> beans, int batchSize)
 
 // 插入或更新（根据 ID 判断）
-int insertOrUpdate(T obj)
+T insertOrUpdateById(T obj, DbOption... options)
 
-// 根据 ID 更新（只更新非 ID 字段）
-int updateById(T obj)
+// 根据 ID 更新（返回影响行数）
+int updateById(T obj, DbOption... options)
 ```
 
 ### 2.3 更新操作（→ 构建器，需调用 .execute()）
 
 ```java
 // 按 Class 创建更新器
-PojoUpdate<T> update(Class<T> clazz)
+PojoUpdate<T> updateWrapper(Class<T> clazz)
 
-// 按对象创建更新器（自动设置所有非 null 且非 ID 字段）
-PojoUpdate<T> update(T value)
-
-// 按对象创建更新器（自定义忽略规则）
-PojoUpdate<T> update(T value, Function<String, Boolean> ignore)
+// 按对象创建更新器
+PojoUpdate<T> updateWrapper(T value)
 ```
 
 ### 2.4 删除操作
@@ -79,20 +77,14 @@ PojoUpdate<T> update(T value, Function<String, Boolean> ignore)
 #### 链式删除（→ 构建器，需调用 .execute()）
 ```java
 // 按 Class 创建删除器
-PojoDelete<T> delete(Class<T> clazz)
+PojoDelete<T> deleteWrapper(Class<T> clazz)
 
-// 按条件对象创建删除器
-PojoDelete<T> delete(T condition)
-```
+// 按主键删除
+int deleteById(Class<T> clazz, Object id, DbOption... options)
 
-#### 快捷删除（直接执行）
-```java
-// 根据 ID 删除单条
-int deleteById(Class<T> clazz, Object id)
-
-// 根据 IDs 删除多条
-int deleteByIds(Class<T> clazz, String ids)     // CSV 字符串
-int deleteByIds(Class<T> clazz, List<?> ids)    // List
+// 按多个主键删除
+int deleteByIds(Class<T> clazz, Collection<?> ids)
+int deleteByIds(Class<T> clazz, String ids)
 ```
 
 ### 2.5 查询结果方法（PojoQuery）
@@ -206,7 +198,7 @@ eq(condition, field, value)  // 条件为 true 时才添加
 
 ---
 
-## 三、DB.Table - 表名操作
+## 三、DB.table - 表名操作
 
 ### 3.1 基础操作（→ 构建器，需调用 .execute() 或查询方法）
 
@@ -238,7 +230,7 @@ TableDelete delete(String tableName)
 
 ---
 
-## 四、DB.Jdbc - 原生 SQL 操作
+## 四、DB.jdbc - 原生 SQL 操作
 
 ### 4.1 查询操作（→ 构建器，需调用 queryOne/List/Page）
 
@@ -275,7 +267,7 @@ select(sql, params).page(Page.build(1, 10)).queryList()
 
 ---
 
-## 五、DB.Sql - 预设 SQL 操作
+## 五、DB.sql - 预设 SQL 操作
 
 ### 5.1 基础操作
 
@@ -319,7 +311,7 @@ select("key.xxx")
 
 ---
 
-## 六、DB.Batch - 批量操作
+## 六、DB.batch - 批量操作
 
 ### 6.1 批量插入
 
@@ -353,7 +345,7 @@ boolean update(String sql, List<Object[]> params, int batchSize)
 
 ---
 
-## 七、DB.Dynamic - 动态数据源
+## 七、DB.ds - 动态数据源
 
 ### 7.1 数据源管理
 
@@ -382,21 +374,21 @@ void use(String name, Runnable action)
 
 ```java
 // 读写分离
-List<User> users = DB.Dynamic.use("slave", () ->
+List<User> users = DB.ds.use("slave", () ->
     DB.pojo.selectWrapper(User.class)
         .eq(User::getStatus, 1)
         .queryBeanList()
 );
 
 // 切换到报表库
-DB.Dynamic.use("report", () -> {
+DB.ds.use("report", () -> {
     DB.pojo.insert(reportData);
 });
 ```
 
 ---
 
-## 八、DB.Tx - 事务管理
+## 八、DB.tx - 事务管理
 
 ### 8.1 编程式事务
 
@@ -418,19 +410,19 @@ T run(String dataSourceName, Supplier<T> action)
 
 ```java
 // 基本事务
-DB.Tx.run(() -> {
+DB.tx.run(() -> {
     DB.pojo.insert(user);
     DB.pojo.insert(userLog);
 });
 
 // 带返回值
-Long userId = DB.Tx.run(() -> {
+Long userId = DB.tx.run(() -> {
     DB.pojo.insert(user);
     return user.getId();
 });
 
 // 指定数据源
-DB.Tx.run("slave", () -> {
+DB.tx.run("slave", () -> {
     DB.pojo.insert(user);
 });
 ```
@@ -477,12 +469,12 @@ public void createUser() {
 | 场景 | 推荐入口 | 原因 |
 |------|---------|------|
 | 日常 CRUD | DB.pojo | 类型安全，IDE 提示好 |
-| 动态表名 | DB.Table | 无需定义实体类 |
-| 简单 SQL | DB.Jdbc | 快速原型开发 |
-| 复杂 SQL | DB.Sql | SQL 集中管理，易维护 |
-| 批量操作 | DB.Batch | 性能好，自动分批 |
-| 读写分离 | DB.Dynamic | 灵活切换数据源 |
-| 事务控制 | DB.Tx | 编程式事务，精确控制 |
+| 动态表名 | DB.table | 无需定义实体类 |
+| 简单 SQL | DB.jdbc | 快速原型开发 |
+| 复杂 SQL | DB.sql | SQL 集中管理，易维护 |
+| 批量操作 | DB.batch | 性能好，自动分批 |
+| 读写分离 | DB.ds | 灵活切换数据源 |
+| 事务控制 | DB.tx | 编程式事务，精确控制 |
 
 ---
 
@@ -577,7 +569,7 @@ DLZ-DB 提供了完整的数据库操作能力，核心特点：
 ✅ **多框架支持** - Spring Boot + Solon  
 ✅ **轻量级** - 核心模块仅依赖 JDBC  
 
-**推荐使用顺序：** DB.pojo > DB.Sql > DB.Table > DB.Jdbc
+**推荐使用顺序：** DB.pojo > DB.sql > DB.table > DB.jdbc
 
 ---
 

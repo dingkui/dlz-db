@@ -4,18 +4,17 @@
         <groupId>top.dlzio</groupId>
         <artifactId>dlz.parent</artifactId>
         <version>6.6.4</version>
-        <relativePath>../dlz.parent/pom.xml</relativePath>
     </parent>
     <name>dlz-db</name>
 	<artifactId>dlz-db</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0</version>
 	<packaging>pom</packaging>
-    <description>DLZ-DB v7.1.0: 多模块数据库框架，支持 Spring 和 Solon</description>
+    <description>DLZ-DB v8.0.0: 多模块数据库框架，支持 Spring 和 Solon</description>
     <properties>
         <java.version>1.8</java.version>
         <dlz-spring.version>6.6.5</dlz-spring.version>
         <dlz-kit.version>6.6.5</dlz-kit.version>
-        <dlz-db.version>7.1.0</dlz-db.version>
+        <dlz-db.version>8.0.0</dlz-db.version>
 
         <!-- 代码质量工具版本 -->
         <jacoco.version>0.8.11</jacoco.version>
@@ -24,7 +23,6 @@
         <findsecbugs.version>1.12.0</findsecbugs.version>
         <checkstyle.version>9.3</checkstyle.version>
         <pmd.version>3.21.2</pmd.version>
-
 
         <solon.version>3.0.6</solon.version>
         <jedis.version>4.4.3</jedis.version>

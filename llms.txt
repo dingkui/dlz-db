@@ -24,12 +24,13 @@ DLZ-DB is a lightweight Java database framework with <7000 lines of code, design
 ### Main Entry Points
 
 - `DB.pojo` - CRUD with Bean entities (preferred)
-- `DB.Table` - Dynamic table names without Bean
-- `DB.Jdbc` - Simple SQL with `?` placeholders
-- `DB.Sql` - Preset/complex SQL with `#{key}` placeholders
-- `DB.Batch` - Batch operations
-- `DB.Dynamic` - Datasource switching
-- `DB.Tx` - Programmatic transactions
+- `DB.table` - Dynamic table names without Bean
+- `DB.jdbc` - Simple SQL with `?` placeholders
+- `DB.sql` - Preset/complex SQL with `#{key}` placeholders
+- `DB.batch` - Batch insert/update/JDBC execution
+- `DB.ds` - Datasource switching and management
+- `DB.tx` - Programmatic transactions
+- `DB.config` - Database configuration
 
 ### Condition Methods
 
@@ -67,7 +68,7 @@ List<User> users = DB.pojo.selectWrapper(User.class)
 DB.pojo.insert(user);
 
 // Update
-DB.pojo.update(User.class)
+DB.pojo.updateWrapper(User.class)
     .set(User::getName, "New Name")
     .eq(User::getId, id)
     .execute();
@@ -78,30 +79,30 @@ DB.pojo.deleteWrapper(User.class)
     .execute();
 
 // Batch
-DB.Batch.insert(users);
+DB.batch.insert(users);
 
 // Transaction
-DB.Tx.run(() -> {
+DB.tx.run(() -> {
     DB.pojo.insert(order);
     DB.pojo.insert(orderItem);
 });
 
 // Dynamic Datasource
-DB.Dynamic.use("slave", () ->
+DB.ds.use("slave", () ->
     DB.pojo.selectWrapper(User.class).queryBeanList()
 );
 ```
 
 ## Hard Constraints
 
-1. No Mapper/DAO/Wrapper classes, use `DB.pojo.*` directly
-2. Placeholder separation: `DB.Jdbc` uses `?`, `DB.Sql` uses `#{key}`
+1. No need to write your own Mapper/DAO/XML; framework-provided Wrapper classes are public chain APIs
+2. Placeholder separation: `DB.jdbc` uses `?`, `DB.sql` uses `#{key}`
 3. Query columns use `columns()` not `select()`
 4. LIKE uses `like()`/`likeLeft()`/`likeRight()`/`notLike()`
 5. Insert with auto-increment key: `.insertWithAutoKey()` not `.execute()`
 6. Physical delete/bypass logical delete: `.ignoreLogicDelete(true)`
 7. `in()` cannot accept single value, must be List, CSV string, or "sql:subquery"
-8. Batch operations use `DB.Batch.insert(list)`, not `insertBatch()`
+8. Batch operations use `DB.batch.insert(list)`, not `insertBatch()`
 
 ## Entity Conventions
 
@@ -119,7 +120,6 @@ DB.Dynamic.use("slave", () ->
 
 ## Testing
 
-- 38 test files covering core functionality
 - Multi-module testing: core, spring-boot-starter, solon-plugin
 - 100% test pass rate
 

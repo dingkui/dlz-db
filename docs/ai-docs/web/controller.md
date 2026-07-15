@@ -50,7 +50,7 @@ public class UserController {
     @Transactional
     public User create(@RequestBody User user) {
         user.setCreateTime(new Date());
-        Long id = DB.pojo.insert(user).insertWithAutoKey();
+        DB.pojo.insert(user); // 执行插入并将生成的主键回填到 user
         user.setId(id);
         return user;
     }

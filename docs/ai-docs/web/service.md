@@ -57,7 +57,7 @@ public class OrderService {
             throw new BusinessException("库存不足");
         }
         // 条件更新
-        DB.pojo.update(Product.class)
+        DB.pojo.updateWrapper(Product.class)
                 .set(Product::getStockQuantity, p.getStockQuantity() - quantity)
                 .eq(Product::getId, productId)
                 .execute();
@@ -71,19 +71,19 @@ public class OrderService {
 |------|------|
 | 单数据源 | `@Transactional` 注解在方法上（Spring） |
 | 单数据源 | `@Tran` 注解在方法上（Solon） |
-| 编程式事务（跨框架通用） | `DB.Tx.run(() -> { ... })` |
-| 事务内多数据源 | `DB.Tx.run("datasourceName", () -> { ... })` |
-| 事务有返回值 | `Long id = DB.Tx.run(() -> { insert(); return id; });` |
+| 编程式事务（跨框架通用） | `DB.tx.run(() -> { ... })` |
+| 事务内多数据源 | `DB.tx.run("datasourceName", () -> { ... })` |
+| 事务有返回值 | `Long id = DB.tx.run(() -> { insert(); return id; });` |
 
 ```java
 // 编程式事务（推荐用于多表操作，不依赖框架注解）
-DB.Tx.run(() -> {
+DB.tx.run(() -> {
     DB.pojo.insert(order);
     DB.pojo.insert(orderItem);
 });
 
 // 带返回值的编程式事务
-Order result = DB.Tx.run(() -> {
+Order result = DB.tx.run(() -> {
     return DB.pojo.insert(order);
 });
 Long orderId = result.getId();
@@ -94,7 +94,7 @@ Long orderId = result.getId();
 ```java
 // 批量插入
 List<User> users = loadFromExcel();
-DB.Batch.insert(users);
+DB.batch.insert(users);
 
 // 条件删除含批量
 DB.pojo.deleteWrapper(User.class)
@@ -106,7 +106,7 @@ DB.pojo.deleteWrapper(User.class)
 
 ```java
 // 读走从库
-List<User> users = DB.Dynamic.use("slave", () ->
+List<User> users = DB.ds.use("slave", () ->
     DB.pojo.selectWrapper(User.class).queryBeanList()
 );
 
@@ -116,17 +116,17 @@ prop.setName("tenant_001");
 prop.setUrl("jdbc:mysql://...");
 prop.setUsername("root");
 prop.setPassword("123456");
-DB.Dynamic.setDataSource(prop);
+DB.ds.setDataSource(prop);
 ```
 
 ## 原生 SQL / 预设 SQL
 
 ```java
 // 原生 SQL（占位符 ?）
-List<ResultMap> rows = DB.Jdbc.select("SELECT * FROM user WHERE id = ?", 1).queryList();
+List<ResultMap> rows = DB.jdbc.selectWrapper("SELECT * FROM user WHERE id = ?", 1).queryList();
 
 // 预设 SQL（占位符 #{key}，定义在 resources/sql/ 下）
-List<User> r = DB.Sql.select("key.user.find").addPara("status", 1).queryList(User.class);
+List<User> r = DB.sql.selectWrapper("key.user.find").addPara("status", 1).queryList(User.class);
 
 // 标量查询
 String name = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryStr();

@@ -6,7 +6,7 @@
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0</version>
 </dependency>
 ```
 
@@ -36,7 +36,7 @@ dlz:
       show-caller: true
 ```
 
-> 多数据源：`datasource.slave.jdbcUrl=...`，自动注册，代码中 `DB.Dynamic.use("slave", () -> ...)` 即可。
+> 多数据源：`datasource.slave.jdbcUrl=...`，自动注册，代码中 `DB.ds.use("slave", () -> ...)` 即可。
 
 ## 事务
 

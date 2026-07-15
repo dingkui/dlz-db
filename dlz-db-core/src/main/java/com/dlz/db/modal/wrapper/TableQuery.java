@@ -57,7 +57,7 @@ public class TableQuery extends AQuery<TableQuery> implements ISqlPage<TableQuer
     }
 
     @Override
-    public TableQuery page(Page page) {
+    public TableQuery page(Page<?> page) {
         if (page != null) {
             this.setPage(page);
         }

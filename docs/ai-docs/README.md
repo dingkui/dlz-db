@@ -121,7 +121,7 @@ Step 6  验证测试
 2. **简单 CRUD → Controller 里直接写**，不建 Service
 3. **复杂多表 / 可复用逻辑 → 才建 Service**
 4. **写操作必须 `.execute()` 结尾**（`insert` 除外，它直接执行）
-5. **事务**：Spring 用 `@Transactional`，Solon 用 `@Tran`，通用用 `DB.Tx.run()`
+5. **事务**：Spring 用 `@Transactional`，Solon 用 `@Tran`，通用用 `DB.tx.run()`
 
 ---
 

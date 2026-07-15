@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
 [![Build Status](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml)
-[![Maven Central](https://img.shields.io/badge/Maven%20Central-7.1.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
+[![Maven Central](https://img.shields.io/badge/Maven%20Central-8.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 [![codecov](https://codecov.io/gh/dingkui/dlz-db/graph/badge.svg?token=UDX6ZH1R0Q)](https://codecov.io/gh/dingkui/dlz-db)
 
 ```java
@@ -22,7 +22,7 @@ List<User> users = DB.pojo.selectWrapper(User.class)
 
 ## 版本说明
 
-当前版本 v7.1.0（开源初始版 v6.6.4）。
+当前版本 v8.0.0（开源初始版 v6.6.4）。
 
 这个项目不是从零开始的。它大约在 **2009 年**开始积累，**2014 年**左右成型，作为公司内部的数据库操作工具包投入使用。此后十年间，累计被数十个内部项目采用，适配过各种老旧系统、各种开源框架组合、各种奇奇怪怪的版本混搭。
 
@@ -68,11 +68,11 @@ DLZ-DB 把两端都做成字符串：
 
 ```java
 // 运行时注册一个新数据源
-DB.Dynamic.setDataSource(prop);
+DB.ds.setDataSource(prop);
 
 // 运行时用任意逻辑决定走哪个库
 String dsName = routeByTenant(tenantId);
-User user = DB.Dynamic.use(dsName, () ->
+User user = DB.ds.use(dsName, () ->
     DB.pojo.selectWrapper(User.class).eq(User::getId, id).queryBean()
 );
 ```
@@ -103,7 +103,7 @@ User user = DB.Dynamic.use(dsName, () ->
 ### 4. 查询结果自带深度取值
 
 ```java
-ResultMap result = DB.Table.select("user").eq("id", 1).queryOne();
+ResultMap result = DB.table.selectWrapper("user").eq("id", 1).queryOne();
 
 result.getInt("age", 0);
 result.getStr("profile.address.city", "未知");  // profile 是 JSON 字段
@@ -126,7 +126,7 @@ DLZ-DB 整个框架的审美是一致的：**用显式的 lambda 和链式，对
 .or(o -> o.like(User::getName, "关键词").like(User::getAddress, "关键词"))
 
 // 数据源作用域：lambda 包起来
-DB.Dynamic.use("other_db", () -> { ... });
+DB.ds.use("other_db", () -> { ... });
 
 // 空值自动忽略：SQL 里用方括号
 [AND status = #{status}]
@@ -154,7 +154,7 @@ DLZ-DB v7 采用多模块架构，可根据运行环境选择依赖：
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0</version>
 </dependency>
 ```
 
@@ -219,7 +219,7 @@ public class UserController {
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-db-solon-plugin</artifactId>
-    <version>7.1.0</version>
+    <version>8.0.0</version>
 </dependency>
 ```
 
@@ -247,7 +247,7 @@ datasource:
 
 #### 3. 使用
 
-Solon 下 API 完全一致，`DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 接口不变：
+Solon 下 API 完全一致，`DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` 接口不变：
 
 ```java
 @Component
@@ -263,12 +263,12 @@ Solon 事务使用 `@Tran` 注解：
 ```java
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
-    DB.pojo.update(Account.class)
-        .setSql("balance = balance - #{amount}", Params.of("amount", amount))
+    DB.pojo.updateWrapper(Account.class)
+        .setSql("balance = balance - #{amount}", new JSONMap("amount", amount))
         .eq(Account::getId, fromId)
         .execute();
-    DB.pojo.update(Account.class)
-        .setSql("balance = balance + #{amount}", Params.of("amount", amount))
+    DB.pojo.updateWrapper(Account.class)
+        .setSql("balance = balance + #{amount}", new JSONMap("amount", amount))
         .eq(Account::getId, toId)
         .execute();
 }
@@ -288,19 +288,17 @@ Page<User> page = DB.pojo.selectWrapper(User.class)
 
 // 插入
 DB.pojo.insert(user);
-DB.Batch.insert(users, 100);
+DB.batch.insert(users, 100);
 
 // 更新
-DB.pojo.update(user).eq(User::getId, id).execute();
-DB.pojo.update(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
+DB.pojo.updateWrapper(user).set(User::getName, "新名字").eq(User::getId, id).execute();
+DB.pojo.updateWrapper(User.class).set(User::getName, "新名字").eq(User::getId, id).execute();
 
 // 删除（有 deleted 字段自动走逻辑删除）
 DB.pojo.deleteWrapper(User.class).eq(User::getId, id).execute();
 
 // 预设 SQL（xml / db 中定义，key 以 "key." 开头）
-List<User> users = DB.Sql.select("key.user.find")
-        .addPara("status", 1)
-        .queryList(User.class);
+List<User> users = DB.sql.list("key.user.find", User.class, new JSONMap("status", 1));
 ```
 
 ---
@@ -310,13 +308,14 @@ List<User> users = DB.Sql.select("key.user.find")
 ```
 主操作入口（按 SQL 风格选一个）
 ├─ DB.pojo   ← 有 Bean 时首选，链式 + Lambda，类型安全
-├─ DB.Table  ← 动态表名场景，不需要 Bean
-├─ DB.Jdbc   ← 一行搞定的简单 SQL，? 占位符，秒迁 JdbcTemplate
-└─ DB.Sql    ← 复杂 / 动态 / 可复用 SQL，#{} 占位符 + 预设 SQL
+├─ DB.table  ← 动态表名场景，不需要 Bean
+├─ DB.jdbc   ← 一行搞定的简单 SQL，? 占位符，秒迁 JdbcTemplate
+└─ DB.sql    ← 复杂 / 动态 / 可复用 SQL，#{} 占位符 + 预设 SQL
 
 正交能力（任何时候可叠加）
-├─ DB.Batch    ← 批量写入
-└─ DB.Dynamic  ← 数据源切换作用域
+├─ DB.batch  ← 批量写入
+├─ DB.ds     ← 数据源切换作用域
+└─ DB.tx     ← 编程式事务
 ```
 
 ---
@@ -336,10 +335,10 @@ List<User> users = DB.Sql.select("key.user.find")
 
 ```java
 // 原生 SQL
-DB.Jdbc.select("复杂的SQL语句 WHERE id=?", id).queryList();
+DB.jdbc.selectWrapper("复杂的SQL语句 WHERE id=?", id).queryList();
 
 // 预设 SQL
-DB.Sql.select("key.复杂查询").addPara("x", 1).queryList();
+DB.sql.list("key.复杂查询", new JSONMap("x", 1));
 
 // 条件构造器 + 自定义片段
 DB.pojo.selectWrapper(User.class)
@@ -366,13 +365,13 @@ DB.pojo.selectWrapper(User.class)
 
 **Q：v7 和 v6 的 API 兼容吗？**
 
-`DB.pojo`/`DB.Table`/`DB.Jdbc`/`DB.Sql` 等核心 API 完全兼容。但 Maven 坐标、配置类包路径有变更，详见 [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md)。
+`DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` 等核心 API 完全兼容。但 Maven 坐标、配置类包路径有变更，详见 [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md)。
 
 ---
 
 ## 版本历史
 
-### v7.1.0 — 2026-07-01
+### v8.0.0 — 2026-07-01
 
 架构级重构：插件化逻辑删除、API 命名统一、DbTable 一步式操作、测试覆盖大幅提升。
 
@@ -380,25 +379,23 @@ DB.pojo.selectWrapper(User.class)
 
 - **插件化架构**：新增 `SqlBuildInterceptor` 接口 + `DbPlugin` 注册中心，`LogicDeleteInterceptor` 从核心代码抽取为可插拔插件，后续可扩展租户隔离、数据权限等。
 - **`DbTable` 一步式操作**：新增 `insert(table, map)` / `insertWithAutoKey()` / `insertOrUpdate()` / `selectById()` / `selectByIds()` / `deleteById()` / `deleteByIds()` 直接执行 API，无需 Wrapper 链式调用。
-- **`DBDynamic.testConnection(DataSourceProperty)`**：测试数据源连接，不注册到配置池，返回成功/异常。
+- **`DBDynamic.testConnection(DataSourceProperty)`**：测试数据源连接，不注册到配置池；失败时抛出异常。
 - **`SqlHelper.listTables()`**：跨数据库通用表列表查询，走 JDBC `DatabaseMetaData.getTables()`，统一 MySQL/PostgreSQL/H2 行为。
-- **`PojoCache.getIdName(String tableName)`**：按表名查询主键字段名（支持 `DB.Table` 一步式操作）。
+- **`PojoCache.getIdFieldName(String tableName)`**：按表名查询主键字段名（支持 `DB.table` 一步式操作）。
 
 #### 🔧 变更（Breaking）
 
-| 变更 | 旧 API (7.0.x) | 新 API (7.1.0) | 说明 |
+| 变更 | 旧 API (7.0.x) | 新 API (8.0.0) | 说明 |
 |------|----------------|----------------|------|
-| **DbPojo 方法重命名** | `DB.pojo.selectWrapper(User.class)` | `DB.pojo.selectWrapper(User.class)` | `select` / `delete` / `update` → `select` / `delete` / `updateW` |
+| **DbPojo 方法** | `DB.pojo.selectWrapper(User.class)` | `DB.pojo.selectWrapper(User.class)` | 当前 Wrapper API 使用 `selectWrapper` / `updateWrapper` / `deleteWrapper` |
 | | `DB.pojo.selectWrapper(conditionBean)` | 移除 | 请改用 `select(Class)` + 条件链 |
-| | `DB.pojo.delete(conditionBean)` | 移除 | 同上 |
-| | `DB.pojo.update(Class)` | `DB.pojo.update(Class)` | 同上 |
-| **DbTable 方法重命名** | `DB.Table.select("user")` | `DB.Table.select("user")` | `select` / `insert` / `delete` / `update` → `select` / `insertW` / `delete` / `updateW` |
-| **DbBatch 方法重命名** | `DB.Batch.insert(list)` | `DB.Batch.pojoInsert(list)` | 区分 Pojo / Table / Jdbc 三种模式 |
-| | `DB.Batch.update(list)` | `DB.Batch.pojoUpdate(list)` | 同上 |
-| | — | `DB.Batch.tableInsert/tableUpdate/jdbcExecute` | 新增 Table/Jdbc 批量 API |
-| **DbJdbc 精简** | `DB.Jdbc.insert/update/delete` | 移除 | 统一用 `DB.Jdbc.execute()` |
-| **DbSql 精简** | `DB.Sql.insert/update/delete` | 移除 | 统一用 `DB.Sql.execute()` |
-| **逻辑删除** | 硬编码在 `IExecutorDelete` / `WrapperBuildUtil` | 抽取为 `LogicDeleteInterceptor` 插件 | 需通过 `DbPlugin.registerInterceptor()` 注册 |
+| | `DB.pojo.deleteWrapper(conditionBean)` | 移除 | 同上 |
+| | `DB.pojo.updateWrapper(Class)` | `DB.pojo.updateWrapper(Class)` | 同上 |
+| **DbTable 方法** | `DB.table.selectWrapper("user")` | `DB.table.selectWrapper("user")` | Wrapper API 使用 `selectWrapper` / `insertWrapper` / `updateWrapper` / `deleteWrapper` |
+| **DbBatch 方法** | `DB.batch.insert(list)` | `DB.batch.insert(list)` | Pojo、Table 批量插入通过重载区分 |
+| | `DB.batch.update(list)` | `DB.batch.update(list)` | JDBC 批量执行使用 `DB.batch.execute(sql, params)` |
+| **DbJdbc / DbSql 执行** | `DB.jdbc.execute` / `DB.sql.execute` | 保留 | 查询使用 `list` / `one` / `count` 等直接方法 |
+| **逻辑删除** | 删除执行链处理 | 使用 `LogicDeleteInterceptor` 插件 | 注册方式以框架初始化流程和实际配置为准 |
 | **ISqlExecutor.doDb(Supplier)** | 公开默认方法 | 注释掉 | 改用 `doDb(SqlAction, msg)` 重载 |
 
 #### 🐛 修复
@@ -418,7 +415,7 @@ DB.pojo.selectWrapper(User.class)
 
 #### 📦 依赖
 
-- 版本号：`7.0.1-4` → `7.1.0`
+- 版本号：`7.0.1-4` → `8.0.0`
 - `dlz-kit` → `6.6.5`
 - `dlz-spring` → `6.6.5`
 - `solon` → `3.0.6`
@@ -468,7 +465,6 @@ DB.pojo.selectWrapper(User.class)
 
 ### 其他
 - [5.1 AI 速读](./docs/第05章-AI辅助/5.1-AI速读.md)（AI 代码生成规范）
-- [5.1 AI Quick Reference (English)](./docs/Chapter05-AI/5.1-AI-Quick-Reference.md)（English AI Quick Reference）
 - [7.1 最佳实践](./docs/第07章-最佳实践/7.1-最佳实践.md)
 
 ### English Documentation

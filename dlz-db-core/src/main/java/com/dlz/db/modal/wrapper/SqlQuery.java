@@ -20,16 +20,12 @@ public class SqlQuery extends ParaMap<SqlQuery> implements ISqlPage<SqlQuery>, I
     public SqlQuery(String sql) {
         super(sql);
     }
-    public SqlQuery(String sql, Page page) {
-        super(sql);
-        this.setPage(page);
-    }
     @Override
     public SqlQuery me() {
         return this;
     }
     @Override
-    public SqlQuery page(Page page) {
+    public SqlQuery page(Page<?> page) {
         if (page != null) {
             this.setPage(page);
         }
