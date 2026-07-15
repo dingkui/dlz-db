@@ -14,7 +14,7 @@ import java.util.Map;
  * {@link JdbcTxExecutor} 与 {@link JdbcSqlExecutor} 在同一事务内复用同一连接。</p>
  *
  * <p>使用 {@code Map<DataSource,Connection>} 而非单 Connection，是为了支持
- * 嵌套切换数据源时（如 {@code DB.Dynamic.use("test", ...)}）各自独立的事务连接。</p>
+ * 嵌套切换数据源时，各数据源各自使用独立的事务连接。</p>
  *
  * @since 7.0.1
  */

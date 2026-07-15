@@ -8,7 +8,7 @@ import com.dlz.db.support.DBHolder;
 public interface IExecutorInsert extends IExecutorUDI {
     /**
      * 执行插入，返回数据库生成的自增主键。
-     * <pre>Long id = DB.Table.insert("user")).insertWithAutoKey();</pre>
+     * <pre>Long id = DB.table.insertWrapper("user").value(values).insertWithAutoKey();</pre>
      */
     default Long insertWithAutoKey() {
         return DBHolder.doDb(s -> s.insertWithAutoKey(this));

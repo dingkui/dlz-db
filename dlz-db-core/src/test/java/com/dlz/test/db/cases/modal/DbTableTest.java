@@ -1,6 +1,7 @@
 package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.exception.DbParameterException;
+import com.dlz.db.exception.NonUniqueResultException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
@@ -275,6 +276,49 @@ class DbTableTest extends BaseDBTest {
         assertNotNull(user);
         assertEquals("Bean查询", user.getName());
         assertEquals(Integer.valueOf(28), user.getAge());
+    }
+
+    @Test
+    @DisplayName("queryOne - 严格模式，多条结果抛出非唯一异常")
+    void testQueryOneRejectsMultipleRows() {
+        DB.jdbc.execute("DELETE FROM user WHERE name = ?", "严格查询测试");
+        DB.table.insert("user", new JSONMap().put("name", "严格查询测试"));
+        DB.table.insert("user", new JSONMap().put("name", "严格查询测试"));
+
+        assertThrows(NonUniqueResultException.class, () ->
+                DB.table.selectWrapper("user")
+                        .eq("name", "严格查询测试")
+                        .queryOne());
+
+        assertThrows(NonUniqueResultException.class, () ->
+                DB.pojo.selectWrapper(User.class)
+                        .eq(User::getName, "严格查询测试")
+                        .queryBean());
+    }
+
+    @Test
+    @DisplayName("queryFirst/queryFirstBean - 非严格模式返回第一条")
+    void testQueryFirstReturnsFirstRow() {
+        DB.jdbc.execute("DELETE FROM user WHERE name = ?", "非严格查询测试");
+        Long firstId = DB.table.insertWithAutoKey("user",
+                new JSONMap().put("name", "非严格查询测试").put("age", 18));
+        DB.table.insert("user", new JSONMap().put("name", "非严格查询测试").put("age", 19));
+
+        ResultMap result = DB.table.selectWrapper("user")
+                .eq("name", "非严格查询测试")
+                .orderByAsc("id")
+                .queryFirst();
+        assertNotNull(result);
+        assertEquals(firstId, result.getLong("id"));
+        assertEquals(18, result.getInt("age"));
+
+        User user = DB.pojo.selectWrapper(User.class)
+                .eq(User::getName, "非严格查询测试")
+                .orderByAsc(User::getId)
+                .queryFirstBean();
+        assertNotNull(user);
+        assertEquals(firstId, user.getId());
+        assertEquals(Integer.valueOf(18), user.getAge());
     }
 
     @Test

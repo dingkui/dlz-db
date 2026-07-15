@@ -22,8 +22,8 @@ import java.util.Map;
  * // 注册插件（启动时一次）
  * WrapperBuildUtil.registerInterceptor(new LogicDeleteInterceptor());
  *
- * // 后续所有 DB.Table 操作自动经过插件链
- * DB.Table.select("user").eq("id", 1).queryOne();
+ * // 后续所有 DB.table 操作自动经过插件链
+ * DB.table.selectWrapper("user").eq("id", 1).queryOne();
  * // ↑ LogicDeleteInterceptor.onBuildWhere 自动追加 deleted=0
  * </pre>
  *

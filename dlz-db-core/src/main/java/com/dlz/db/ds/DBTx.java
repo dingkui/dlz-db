@@ -13,8 +13,8 @@ import java.util.function.Supplier;
  *
  * <p>典型用法：</p>
  * <pre>
- * DB.Tx.run(() -&gt; { ... });           // 默认数据源 + 事务
- * DB.Tx.run("slave", () -&gt; { ... });  // 切换到 slave + 事务
+ * DB.tx.run(() -&gt; { ... });           // 默认数据源 + 事务
+ * DB.tx.run("slave", () -&gt; { ... });  // 切换到 slave + 事务
  * </pre>
  *
  * <p>本类不处理 Spring 的 {@code @Transactional} 传播行为；如需嵌套事务、传播控制，请使用 Spring 自身机制。</p>
@@ -43,7 +43,12 @@ public class DBTx {
 
     /**
      * 切换到指定数据源并在其上开启事务执行。
-     * <p>等价于 {@code DB.Dynamic.use(name, () -> DB.Tx.run(c))}。</p>
+     * <p>等价于 {@code DB.ds.use(name, () -> DB.tx.run(c))}。</p>
+     */
+    /**
+     * 在指定数据源上开启本地事务。
+     * <p>当前只保证单数据源本地事务；如果业务代码在回调中切换到其他数据源，
+     * 其他数据源会开启独立事务，不提供跨库提交/回滚协调。</p>
      */
     public <T> T run(String name, Supplier<T> c) {
         return DB.ds.use(name, () -> {

@@ -22,12 +22,24 @@ public class DbJdbc {
         return executeWrapper(sql, params).execute();
     }
 
+    /** 严格查询单条；无结果返回 {@code null}，多条结果抛出异常。 */
     public ResultMap one(String sql, Object... params) {
         return selectWrapper(sql, params).queryOne();
     }
 
+    /** 非严格查询第一条；无结果返回 {@code null}，多条结果返回第一条。 */
+    public ResultMap first(String sql, Object... params) {
+        return selectWrapper(sql, params).queryFirst();
+    }
+
+    /** 严格查询单条并映射为指定类型；无结果返回 {@code null}，多条结果抛出异常。 */
     public <T> T one(String sql, Class<T> type, Object... params) {
         return selectWrapper(sql, params).queryOne(requireType(type));
+    }
+
+    /** 非严格查询第一条并映射为指定类型。 */
+    public <T> T first(String sql, Class<T> type, Object... params) {
+        return selectWrapper(sql, params).queryFirst(requireType(type));
     }
 
     public List<ResultMap> list(String sql, Object... params) {

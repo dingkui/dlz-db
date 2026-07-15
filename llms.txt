@@ -46,9 +46,11 @@ All methods support three-parameter form: `eq(boolean condition, field, value)`
 - `queryBean()` → Single Bean
 - `queryBeanList()` → List<Bean>
 - `queryBeanPage()` → Page<Bean>
-- `queryOne()` → ResultMap (single row)
+- `queryOne()` → strict single ResultMap; null when absent, exception when multiple
+- `queryFirst()` → first ResultMap; null when absent
 - `queryList()` → List<ResultMap>
-- `queryOne(Class)` → Specified type
+- `queryOne(Class)` → strict single specified type
+- `queryFirst(Class)` → first specified type
 - Write operations must end with `.execute()`
 
 ### Code Examples

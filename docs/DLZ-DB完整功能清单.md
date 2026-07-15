@@ -91,21 +91,24 @@ int deleteByIds(Class<T> clazz, String ids)
 
 #### Bean 结果
 ```java
-T queryBean()                    // 单条 Bean
+T queryBean()                    // 严格单条 Bean，多条抛异常
+T queryFirstBean()               // 非严格取第一条 Bean
 List<T> queryBeanList()          // Bean 列表
 Page<T> queryBeanPage()          // Bean 分页
 ```
 
 #### ResultMap 结果
 ```java
-ResultMap queryOne()             // 单条 Map
+ResultMap queryOne()             // 严格单条 Map，多条抛异常
+ResultMap queryFirst()           // 非严格取第一条 Map
 List<ResultMap> queryList()      // Map 列表
 Page<ResultMap> queryPage()      // Map 分页
 ```
 
 #### 指定类型结果
 ```java
-T queryOne(Class<T> clazz)       // 指定类型单条
+T queryOne(Class<T> clazz)       // 严格单条指定类型，多条抛异常
+T queryFirst(Class<T> clazz)     // 非严格取第一条指定类型
 List<T> queryList(Class<T> clazz)  // 指定类型列表
 Page<T> queryPage(Class<T> clazz)  // 指定类型分页
 ```

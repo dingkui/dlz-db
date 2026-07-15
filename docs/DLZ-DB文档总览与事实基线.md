@@ -60,6 +60,7 @@ DB.table.deleteByIds("user", ids)
 ```java
 DB.jdbc.execute(sql, params)
 DB.jdbc.one(sql, params)
+DB.jdbc.first(sql, params)
 DB.jdbc.list(sql, params)
 DB.jdbc.count(sql, params)
 DB.jdbc.page(sql, pageRequest, params)
@@ -72,6 +73,7 @@ DB.jdbc.executeWrapper(sql, params)
 ```java
 DB.sql.execute(sqlKey, params)
 DB.sql.one(sqlKey, params)
+DB.sql.first(sqlKey, params)
 DB.sql.list(sqlKey, params)
 DB.sql.count(sqlKey, params)
 DB.sql.selectWrapper(sqlKey, params)
@@ -98,7 +100,9 @@ DB.sql.executeWrapper(sqlKey, params)
 - `DB.table.insert(...)`、`updateById(...)`、`deleteById(...)`：返回影响行数 `int`
 - `DB.table.insertWithAutoKey(...)`：返回自动生成主键 `Long`
 - `DB.batch.*(...)`：返回 `BatchResult`
-- `one`：返回单条 `ResultMap` 或指定类型对象
+- `one`：严格返回单条 `ResultMap` 或指定类型对象；无结果返回 `null`，多条抛出非唯一结果异常
+- `queryOne` / `queryBean`：严格模式
+- `queryFirst` / `queryFirst(Class)` / `queryFirstBean`：非严格模式，无结果返回 `null`，多条返回第一条
 - `list`：返回列表
 - `count`：返回 `long`
 - `page`：返回 `Page`
@@ -113,6 +117,9 @@ DB.sql.executeWrapper(sqlKey, params)
 - `DB.sql` 使用 `#{key}` 占位符
 - `in` 应传集合、CSV 字符串或项目支持的子查询表达式，不能传单个普通值
 - `DB.ds.use(...)` 只切换数据源，不自动开启事务；事务使用 `DB.tx`
+- `DB.pojo.insertOrUpdateById(...)` 与 `DB.table.insertOrUpdate(...)` 按主键是否为空选择 INSERT/UPDATE，不是数据库原子 Upsert
+- Wrapper 主要面向单表；JOIN、CTE、UNION、窗口函数和复杂聚合使用 `DB.jdbc` 或 `DB.sql`
+- 当前事务只承诺单数据源本地事务，跨数据源不提供原子提交/回滚
 
 ## 六、文档状态约定
 

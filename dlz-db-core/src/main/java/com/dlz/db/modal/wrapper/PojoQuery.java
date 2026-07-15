@@ -109,6 +109,14 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
         return DBHolder.doDb(s -> s.getBean(this, true));
     }
 
+    /**
+     * 查询第一条记录并映射为当前实体类型。
+     * <p>非严格模式：无结果返回 {@code null}；多条结果返回第一条。</p>
+     */
+    public T queryFirstBean() {
+        return DBHolder.doDb(s -> s.getBean(this, false));
+    }
+
     public List<T> queryBeanList() {
         return DBHolder.doDb(s -> s.getBeanList(this));
     }

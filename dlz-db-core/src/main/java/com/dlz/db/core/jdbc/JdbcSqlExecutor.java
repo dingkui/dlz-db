@@ -18,7 +18,7 @@ public class JdbcSqlExecutor implements ISqlExecutor {
     public ConnectionSupplier getConnectionSupplier() {
         return () -> {
             DataSource ds = DB.ds.getDataSource();
-            // 1. 优先复用 dlz-db 自身事务连接（DB.Tx.run）
+            // 1. 优先复用 dlz-db 自身事务连接（DB.tx.run）
             Connection bound = DlzConnectionHolder.get(ds);
             if (bound != null) {
                 return wrapNoClose(bound);

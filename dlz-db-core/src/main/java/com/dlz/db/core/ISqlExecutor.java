@@ -3,6 +3,7 @@ package com.dlz.db.core;
 import com.dlz.db.core.anno.ConnectionSupplier;
 import com.dlz.db.core.anno.SqlAction;
 import com.dlz.db.exception.DbException;
+import com.dlz.db.exception.NonUniqueResultException;
 import com.dlz.db.mapper.rowMapper.IRowMapper;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
@@ -25,7 +26,7 @@ import java.util.Locale;
  *   <li>Solon：基于自研 {@code SimpleJdbc}（规划中）</li>
  * </ul>
  * </p>
- * <p>用户通常无需直接使用，而是通过 {@code DB.pojo} / {@code DB.Jdbc} / {@code DB.Sql} 等上层 API 访问。</p>
+ * <p>用户通常无需直接使用，而是通过 {@code DB.pojo} / {@code DB.jdbc} / {@code DB.sql} 等上层 API 访问。</p>
  *
  * @author dingkui
  * @since 7.0.0
@@ -93,7 +94,7 @@ public interface ISqlExecutor {
             return null;
         }
         if (checkOne && list.size() > 1) {
-            throw new DbException("查询结果为多条", 1004);
+            throw new NonUniqueResultException("查询结果为多条");
         }
         return list.get(0);
     }

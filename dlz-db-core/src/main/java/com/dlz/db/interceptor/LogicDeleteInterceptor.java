@@ -44,10 +44,10 @@ import java.util.Map;
  *
  * <pre>
  * // 默认：逻辑删除
- * DB.Table.delete("user").eq("id", 1).execute();
+ * DB.table.deleteWrapper("user").eq("id", 1).execute();
  *
  * // 本次强制物理删除
- * DB.Table.delete("user").ignoreLogicDelete(true).eq("id", 1).execute();
+ * DB.table.deleteWrapper("user").ignoreLogicDelete(true).eq("id", 1).execute();
  * </pre>
  *
  * @author dingkui

@@ -378,7 +378,7 @@ DB.pojo.selectWrapper(User.class)
 #### ✨ 新增
 
 - **插件化架构**：新增 `SqlBuildInterceptor` 接口 + `DbPlugin` 注册中心，`LogicDeleteInterceptor` 从核心代码抽取为可插拔插件，后续可扩展租户隔离、数据权限等。
-- **`DbTable` 一步式操作**：新增 `insert(table, map)` / `insertWithAutoKey()` / `insertOrUpdate()` / `selectById()` / `selectByIds()` / `deleteById()` / `deleteByIds()` 直接执行 API，无需 Wrapper 链式调用。
+- **`DbTable` 一步式操作**：新增 `insert(table, map)` / `insertWithAutoKey()` / `insertOrUpdate()` / `selectById()` / `selectByIds()` / `deleteById()` / `deleteByIds()` 直接执行 API，无需 Wrapper 链式调用；其中 `insertOrUpdate()` 按主键是否为空选择 INSERT/UPDATE，不是数据库原子 Upsert。
 - **`DBDynamic.testConnection(DataSourceProperty)`**：测试数据源连接，不注册到配置池；失败时抛出异常。
 - **`SqlHelper.listTables()`**：跨数据库通用表列表查询，走 JDBC `DatabaseMetaData.getTables()`，统一 MySQL/PostgreSQL/H2 行为。
 - **`PojoCache.getIdFieldName(String tableName)`**：按表名查询主键字段名（支持 `DB.table` 一步式操作）。

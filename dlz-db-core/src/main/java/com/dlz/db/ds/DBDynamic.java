@@ -33,6 +33,11 @@ public class DBDynamic {
     /**
      * 切换到指定数据源执行（不开启事务）
      */
+    /**
+     * 在当前线程切换数据源后执行任务。
+     * <p>该方法只切换数据源，不开启事务，也不提供跨数据源原子性。
+     * 如果回调内部切换到多个数据源，各数据源上的事务彼此独立，不属于分布式事务。</p>
+     */
     public <T> T use(String name, Supplier<T> c) {
         DataSourceConfig config = configPool.get(name);
         if (config == null) {

@@ -66,6 +66,12 @@ public class DbPojo {
         return insert(entity);
     }
 
+    /**
+     * 根据实体主键是否为空选择插入或按主键更新。
+     * <p>这不是数据库原子 upsert：主键非空时只执行 UPDATE，即使数据库中不存在该主键记录，
+     * 也不会自动 INSERT。需要依赖唯一键冲突的数据库 upsert 时，请使用
+     * {@code DB.jdbc} 或 {@code DB.sql} 编写对应方言 SQL。</p>
+     */
     public <T> T insertOrUpdateById(T entity, DbOption... options) {
         RequireUtil.requireEntity(entity);
         IdInfo idInfo = RequireUtil.requireIdInfo(entity.getClass());

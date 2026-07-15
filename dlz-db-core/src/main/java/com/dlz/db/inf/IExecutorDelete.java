@@ -14,10 +14,10 @@ import com.dlz.db.support.SqlRunThreadHolder;
  *
  * <pre>
  * // 默认：如果注册了 LogicDeleteInterceptor 且表有 deleted 字段 → 逻辑删除
- * DB.Table.delete("user").eq("id", 1).execute();
+ * DB.table.deleteWrapper("user").eq("id", 1).execute();
  *
  * // 本次强制物理删除（跳过逻辑删除插件）
- * DB.Table.delete("user").ignoreLogicDelete(true).eq("id", 1).execute();
+ * DB.table.deleteWrapper("user").ignoreLogicDelete(true).eq("id", 1).execute();
  * </pre>
  */
 public interface IExecutorDelete<ME extends IExecutorDelete>

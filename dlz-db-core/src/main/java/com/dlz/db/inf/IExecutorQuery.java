@@ -56,10 +56,19 @@ public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,ICh
 
     /**
      * 查询单条，返回 {@link ResultMap}（支持 {@code getStr("a.b.c")} 深度取值）。
+     * <p>严格模式：无结果返回 {@code null}；多条结果抛出非唯一结果异常。</p>
      * <pre>ResultMap row = ...queryOne();</pre>
      */
     default ResultMap queryOne() {
-        return DBHolder.doDb(s->s.getMap(this));
+        return DBHolder.doDb(s->s.getMap(this, true));
+    }
+
+    /**
+     * 查询第一条结果，返回 {@link ResultMap}。
+     * <p>非严格模式：无结果返回 {@code null}；多条结果返回第一条。</p>
+     */
+    default ResultMap queryFirst() {
+        return DBHolder.doDb(s->s.getMap(this, false));
     }
 
     /** 查询列表，返回 {@link ResultMap} 列表。 */
@@ -74,10 +83,19 @@ public interface IExecutorQuery<ME extends IExecutorQuery> extends ISqlPara ,ICh
 
     /**
      * 查询单条并映射为指定 Bean。
+     * <p>严格模式：无结果返回 {@code null}；多条结果抛出非唯一结果异常。</p>
      * <pre>User u = ...queryOne(User.class);</pre>
      */
     default <T> T queryOne(Class<T> tClass) {
-        return DBHolder.doDb(s->s.getBean(this,tClass));
+        return DBHolder.doDb(s->s.getBean(this,tClass, true));
+    }
+
+    /**
+     * 查询第一条结果并映射为指定 Bean。
+     * <p>非严格模式：无结果返回 {@code null}；多条结果返回第一条。</p>
+     */
+    default <T> T queryFirst(Class<T> tClass) {
+        return DBHolder.doDb(s->s.getBean(this,tClass, false));
     }
 
     /** 查询列表并映射为指定 Bean 列表。 */
