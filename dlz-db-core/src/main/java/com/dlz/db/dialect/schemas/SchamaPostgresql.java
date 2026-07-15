@@ -1,4 +1,4 @@
-package com.dlz.db.support.helper;
+package com.dlz.db.dialect.schemas;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class DbOpPostgresql extends SqlHelper {
+public class SchamaPostgresql implements com.dlz.db.dialect.SchemaDialect {
     @Override
     public void createTable(String tableName, Class<?> clazz) {
         final String schema = DB.ds.getCurrentConfig().getSchema();

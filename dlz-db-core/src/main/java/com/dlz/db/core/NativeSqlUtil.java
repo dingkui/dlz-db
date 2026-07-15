@@ -1,9 +1,10 @@
 package com.dlz.db.core;
 
 import lombok.extern.slf4j.Slf4j;
+import com.dlz.db.dialect.DbDialect;
+import com.dlz.db.dialect.DialectRegistry;
 
 import java.sql.*;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -29,18 +30,11 @@ public class NativeSqlUtil {
     public static Long queryLastInsertIdByDialect(Connection conn) {
         String selectLastId;
         try {
-            String product = conn.getMetaData().getDatabaseProductName();
-            if (product == null) return null;
-            String p = product.toLowerCase(Locale.ROOT);
-            if (p.contains("sqlite")) {
-                selectLastId = "SELECT last_insert_rowid()";
-            } else if (p.contains("mysql") || p.contains("mariadb")) {
-                selectLastId = "SELECT LAST_INSERT_ID()";
-            } else if (p.contains("h2") || p.contains("hsql")) {
-                selectLastId = "CALL IDENTITY()";
-            } else {
+            DbDialect dialect = DialectRegistry.resolve(conn.getMetaData(), null);
+            if (dialect == null || dialect.generatedKey().lastInsertIdSql() == null) {
                 return null;
             }
+            selectLastId = dialect.generatedKey().lastInsertIdSql();
         } catch (Exception e) {
             log.debug("获取数据库产品名失败", e);
             return null;

@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper.support.dbs;
 
-import com.dlz.db.support.helper.DbOpMysql;
+import com.dlz.db.dialect.schemas.SchemaMysql;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("DbOpMysql 类型转换测试")
 class DbOpMysqlTest {
 
-    private DbOpMysql dbOpMysql;
+    private SchemaMysql dbOpMysql;
 
     @BeforeEach
     void setUp() {
-        dbOpMysql = new DbOpMysql();
+        dbOpMysql = new SchemaMysql();
     }
 
     // ========== getDbColumnType 测试 ==========
@@ -219,7 +219,7 @@ class DbOpMysqlTest {
      * 通过反射调用私有的 getJavaType 方法
      */
     private Class<?> invokeGetJavaType(String columnType) throws Exception {
-        java.lang.reflect.Method method = DbOpMysql.class.getDeclaredMethod("getJavaType", String.class);
+        java.lang.reflect.Method method = SchemaMysql.class.getDeclaredMethod("getJavaType", String.class);
         method.setAccessible(true);
         return (Class<?>) method.invoke(dbOpMysql, columnType);
     }

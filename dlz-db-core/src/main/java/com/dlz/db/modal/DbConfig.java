@@ -3,7 +3,8 @@ package com.dlz.db.modal;
 import com.dlz.db.core.DlzDbProperties;
 import com.dlz.db.core.ISqlExecutor;
 import com.dlz.db.core.ITxExecutor;
-import com.dlz.db.enums.DbTypeEnum;
+import com.dlz.db.dialect.DbDialect;
+import com.dlz.db.dialect.DialectRegistry;
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
@@ -32,10 +33,11 @@ public final class DbConfig {
         return this;
     }
 
-    public synchronized DbConfig dialect(DbTypeEnum dialect) {
+    /** 注册应用可用的数据库方言。 */
+    public synchronized DbConfig registerDialect(DbDialect dialect) {
         ensureMutable();
         if (dialect == null) throw new DbParameterException("dialect must not be null");
-        properties.setDbSupport(dialect.name());
+        DialectRegistry.register(dialect);
         return this;
     }
 

@@ -380,7 +380,7 @@ DB.pojo.selectWrapper(User.class)
 - **插件化架构**：新增 `SqlBuildInterceptor` 接口 + `DbPlugin` 注册中心，`LogicDeleteInterceptor` 从核心代码抽取为可插拔插件，后续可扩展租户隔离、数据权限等。
 - **`DbTable` 一步式操作**：新增 `insert(table, map)` / `insertWithAutoKey()` / `insertOrUpdate()` / `selectById()` / `selectByIds()` / `deleteById()` / `deleteByIds()` 直接执行 API，无需 Wrapper 链式调用；其中 `insertOrUpdate()` 按主键是否为空选择 INSERT/UPDATE，不是数据库原子 Upsert。
 - **`DBDynamic.testConnection(DataSourceProperty)`**：测试数据源连接，不注册到配置池；失败时抛出异常。
-- **`SqlHelper.listTables()`**：跨数据库通用表列表查询，走 JDBC `DatabaseMetaData.getTables()`，统一 MySQL/PostgreSQL/H2 行为。
+- **`SchemaDialect.listTables()`**：跨数据库通用表列表查询，走 JDBC `DatabaseMetaData.getTables()`，统一 MySQL/PostgreSQL/H2 行为。
 - **`PojoCache.getIdFieldName(String tableName)`**：按表名查询主键字段名（支持 `DB.table` 一步式操作）。
 
 #### 🔧 变更（Breaking）
@@ -410,7 +410,7 @@ DB.pojo.selectWrapper(User.class)
 - `DbJdbc.insert/update/delete`（统一为 `execute`）
 - `DbSql.insert/update/delete`（统一为 `execute`）
 - `DbPojo.select(conditionBean)` / `delete(conditionBean)`（重命名为 `select/delete`）
-- `SqlHelper.getTableIndexs()`（未使用，替代方案为 JDBC `DatabaseMetaData.getIndexInfo()`）
+- `SchemaDialect.getTableIndexs()`（未使用，替代方案为 JDBC `DatabaseMetaData.getIndexInfo()`）
 - 测试用废弃实体类：`Department` / `GoodsPrice` / `Room` / `Smoke` / `Vip`
 
 #### 📦 依赖
@@ -430,6 +430,9 @@ DB.pojo.selectWrapper(User.class)
 ---
 
 ## 文档导航
+
+### 产品总览
+- [产品介绍、能力边界与使用指南](./docs/DLZ-DB产品介绍与使用边界.md)（推荐首次阅读）
 
 ### 快速上手
 - [1.1 安装配置 - Spring Boot](./docs/第01章-快速入门/1.1-安装配置-SpringBoot.md)

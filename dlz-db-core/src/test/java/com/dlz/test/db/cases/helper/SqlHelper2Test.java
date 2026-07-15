@@ -21,7 +21,7 @@ public class SqlHelper2Test extends BaseDBTest {
 
     @Test
     public void getTableInfoTest() {
-        TableInfo sys_test = DB.ds.getSqlHelper().getTableInfo("user");
+        TableInfo sys_test = DB.ds.getSchemaDialect().getTableInfo("user");
         log.info(ValUtil.toStr(sys_test));
     }
     @Test
@@ -32,7 +32,7 @@ public class SqlHelper2Test extends BaseDBTest {
     @Test
     public void createTableTest() {
         DB.jdbc.execute("DROP TABLE IF EXISTS crete_user_test");
-        DB.ds.getSqlHelper().createTable("crete_user_test", User.class);
+        DB.ds.getSchemaDialect().createTable("crete_user_test", User.class);
         final User user = new User();
         user.setName("xx");
         user.setAge(1);
@@ -49,8 +49,8 @@ public class SqlHelper2Test extends BaseDBTest {
     @Test
     public void createColumnTest() {
         DB.jdbc.execute("DROP TABLE IF EXISTS crete_user_test2");
-        DB.ds.getSqlHelper().createTable("crete_user_test2", User.class);
+        DB.ds.getSchemaDialect().createTable("crete_user_test2", User.class);
         final Field vip = FieldReflections.getField(User.class,"vip", true);
-        DB.ds.getSqlHelper().createColumn("crete_user_test2", "xxx", vip);
+        DB.ds.getSchemaDialect().createColumn("crete_user_test2", "xxx", vip);
     }
 }

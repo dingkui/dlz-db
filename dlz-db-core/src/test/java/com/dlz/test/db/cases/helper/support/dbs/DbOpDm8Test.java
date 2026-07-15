@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper.support.dbs;
 
-import com.dlz.db.support.helper.DbOpDm8;
+import com.dlz.db.dialect.schemas.SchemaDm8;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("DbOpDm8 类型转换测试")
 class DbOpDm8Test {
 
-    private DbOpDm8 dbOpDm8;
+    private SchemaDm8 dbOpDm8;
 
     @BeforeEach
     void setUp() {
-        dbOpDm8 = new DbOpDm8();
+        dbOpDm8 = new SchemaDm8();
     }
 
     @Test
@@ -263,7 +263,7 @@ class DbOpDm8Test {
     }
 
     private Class<?> invokeGetJavaType(String columnType) throws Exception {
-        java.lang.reflect.Method method = DbOpDm8.class.getDeclaredMethod("getJavaType", String.class);
+        java.lang.reflect.Method method = SchemaDm8.class.getDeclaredMethod("getJavaType", String.class);
         method.setAccessible(true);
         return (Class<?>) method.invoke(dbOpDm8, columnType);
     }

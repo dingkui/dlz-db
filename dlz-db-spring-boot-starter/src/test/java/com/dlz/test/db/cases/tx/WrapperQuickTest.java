@@ -3,7 +3,7 @@ package com.dlz.test.db.cases.tx;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.helper.HelperScan;
-import com.dlz.db.support.helper.SqlHelper;
+import com.dlz.db.dialect.SchemaDialect;
 import com.dlz.test.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class WrapperQuickTest extends BaseDBTest {
         DB.ds.setDataSource(properties);
 
         DB.ds.use("test",()-> {
-            final SqlHelper helper = DB.ds.getSqlHelper();
+            final SchemaDialect helper = DB.ds.getSchemaDialect();
             HelperScan.initTable(SysSql.class,helper);
             DB.pojo.selectById(SysSql.class, "1");
             DB.pojo.selectById(SysSql.class, "2");

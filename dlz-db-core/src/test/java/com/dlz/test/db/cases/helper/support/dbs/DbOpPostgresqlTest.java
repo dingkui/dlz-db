@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper.support.dbs;
 
-import com.dlz.db.support.helper.DbOpPostgresql;
+import com.dlz.db.dialect.schemas.SchamaPostgresql;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("DbOpPostgresql 类型转换测试")
 class DbOpPostgresqlTest {
 
-    private DbOpPostgresql dbOpPostgresql;
+    private SchamaPostgresql dbOpPostgresql;
 
     @BeforeEach
     void setUp() {
-        dbOpPostgresql = new DbOpPostgresql();
+        dbOpPostgresql = new SchamaPostgresql();
     }
 
     @Test
@@ -233,7 +233,7 @@ class DbOpPostgresqlTest {
     }
 
     private Class<?> invokeGetJavaType(String columnType) throws Exception {
-        java.lang.reflect.Method method = DbOpPostgresql.class.getDeclaredMethod("getJavaType", String.class);
+        java.lang.reflect.Method method = SchamaPostgresql.class.getDeclaredMethod("getJavaType", String.class);
         method.setAccessible(true);
         return (Class<?>) method.invoke(dbOpPostgresql, columnType);
     }

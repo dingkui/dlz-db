@@ -1,7 +1,7 @@
 package com.dlz.db.support;
 
-import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.exception.DbException;
+import com.dlz.db.dialect.DialectRegistry;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.support.resouce.DlzResourceLoader;
@@ -31,15 +31,8 @@ public class SqlHolder {
     // 通用的sql
     static final Map<String, String> m_comm_sql = new ConcurrentHashMap<>();
     // 方言sql
-    static final Map<String, Map<String, String>> m_dialect_sql = new ConcurrentHashMap<>(DbTypeEnum.values().length);
+    static final Map<String, Map<String, String>> m_dialect_sql = new ConcurrentHashMap<>();
     private static boolean initIng = false;
-    static{
-        DbTypeEnum[] values = DbTypeEnum.values();
-        for (DbTypeEnum value : values) {
-            m_dialect_sql.put(value.getEnd(), new ConcurrentHashMap<>());
-        }
-    }
-
     public static void init() {
         load();
     }
@@ -65,7 +58,9 @@ public class SqlHolder {
     }
     public static void addSqlSetting(String sqlId,String sqlStr,boolean force){
         String sqlDB = sqlId.substring(sqlId.lastIndexOf(".")+1);
-        Map<String, String> m_sqlList = m_dialect_sql.get(sqlDB);
+        String dialectId = normalizeDialectId(sqlDB);
+        Map<String, String> m_sqlList = dialectId == null ? null
+                : m_dialect_sql.computeIfAbsent(dialectId, key -> new ConcurrentHashMap<>());
         if(m_sqlList!=null){
             //表示带数据库，key中删除数据库标记
             sqlId = sqlId.substring(0, sqlId.length() - sqlDB.length() -1);
@@ -97,7 +92,8 @@ public class SqlHolder {
     }
 
     private static String sql(String key) {
-        Map<String, String> m_sqlList = m_dialect_sql.get(DB.ds.getDbType().getEnd());
+        Map<String, String> m_sqlList = m_dialect_sql.computeIfAbsent(
+                DB.ds.getDialect().id(), dialectKey -> new ConcurrentHashMap<>());
         final String sql = m_sqlList.get(key);
         if(sql!=null){
             return sql;
@@ -148,6 +144,14 @@ public class SqlHolder {
         load();
         loadDbSql();
     }
+    private static String normalizeDialectId(String suffix) {
+        if (suffix == null || suffix.trim().isEmpty()) {
+            return null;
+        }
+        String normalized = suffix.startsWith("_") ? suffix.substring(1) : suffix;
+        return DialectRegistry.contains(normalized) ? normalized.toLowerCase(java.util.Locale.ROOT) : null;
+    }
+
     private static String clearSql(String sqlStr){
         return sqlStr.replaceAll("--.*", "").replaceAll("[\\s]+", " ");
     }

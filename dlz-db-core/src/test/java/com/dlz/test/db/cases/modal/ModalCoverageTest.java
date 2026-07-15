@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.modal;
 
-import com.dlz.db.enums.DbTypeEnum;
+import com.dlz.db.dialect.DbDialect;
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.modal.DB;
@@ -77,13 +77,13 @@ class ModalCoverageTest extends BaseDBTest {
         DbConfig config = new DbConfig();
         SqlBuildInterceptor interceptor = () -> true;
         assertSame(config, config.plugin(interceptor));
-        assertSame(config, config.dialect(DbTypeEnum.SQLITE));
+        assertSame(config, config.registerDialect((DbDialect) () -> "coverage"));
         assertSame(config, config.sql("coverage", "SELECT 1"));
         assertSame(config, config.sql("key.coverage2", "SELECT 2"));
         assertSame(config, config.logicDeleteField("deleted"));
         assertSame(config, config.columnNameConvertor(String::toUpperCase));
         assertThrows(DbParameterException.class, () -> config.plugin(null));
-        assertThrows(DbParameterException.class, () -> config.dialect(null));
+        assertThrows(DbParameterException.class, () -> config.registerDialect(null));
         assertThrows(DbParameterException.class, () -> config.sql("", "SELECT 1"));
         assertThrows(DbParameterException.class, () -> config.sql("key", ""));
         assertThrows(DbParameterException.class, () -> config.logicDeleteField(" "));

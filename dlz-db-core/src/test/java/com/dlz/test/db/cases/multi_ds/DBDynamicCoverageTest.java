@@ -3,7 +3,6 @@ package com.dlz.test.db.cases.multi_ds;
 import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DataSourceProperty;
 import com.dlz.db.ds.DataSourceConfig;
-import com.dlz.db.enums.DbTypeEnum;
 import com.dlz.db.exception.DbException;
 import com.dlz.kit.exception.SystemException;
 import org.junit.jupiter.api.Test;
@@ -31,9 +30,9 @@ class DBDynamicCoverageTest {
         assertTrue(dynamic.setDefaultDataSource(defaultSource));
         assertEquals(Collections.singleton("default"), dynamic.getAllDataSourceNames());
         assertSame(defaultSource, dynamic.getDataSource());
-        assertEquals(DbTypeEnum.SQLITE, dynamic.getDbType());
+        assertEquals("sqlite", dynamic.getDialect().id());
         assertNotNull(dynamic.getRowMapper());
-        assertNotNull(dynamic.getSqlHelper());
+        assertNotNull(dynamic.getSchemaDialect());
         assertNull(dynamic.getUsedDataSourceName());
         assertEquals("default", dynamic.getDataSourceProperty("default").getName());
 

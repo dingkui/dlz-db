@@ -1,9 +1,9 @@
 package com.dlz.db.ds;
 
-import com.dlz.db.enums.DbTypeEnum;
+import com.dlz.db.dialect.DbDialect;
+import com.dlz.db.dialect.SchemaDialect;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.mapper.rowMapper.ResultMapRowMapper;
-import com.dlz.db.support.helper.SqlHelper;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.StringUtils;
 import com.zaxxer.hikari.HikariDataSource;
@@ -127,18 +127,13 @@ public class DBDynamic {
         return getConfig().getRowMapper();
     }
 
-    /**
-     * 获取当前线程的数据源名称
-     */
-    public DbTypeEnum getDbType() {
-        return getConfig().getDbType();
+    /** 当前线程数据源使用的方言。 */
+    public DbDialect getDialect() {
+        return getConfig().getDialect();
     }
 
-    /**
-     * 获取当前线程的数据源名称
-     */
-    public SqlHelper getSqlHelper() {
-        return getConfig().getSqlHelper();
+    public SchemaDialect getSchemaDialect() {
+        return getConfig().getSchemaDialect();
     }
 
 

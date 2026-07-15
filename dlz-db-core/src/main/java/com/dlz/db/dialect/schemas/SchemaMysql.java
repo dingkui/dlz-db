@@ -1,4 +1,4 @@
-package com.dlz.db.support.helper;
+package com.dlz.db.dialect.schemas;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DbOpMysql extends SqlHelper {
+public class SchemaMysql implements com.dlz.db.dialect.SchemaDialect {
     /*
     CREATE TABLE `ds_info`  (
         `id` varchar(32) NOT NULL PRIMARY KEY,

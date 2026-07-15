@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper.support.dbs;
 
-import com.dlz.db.support.helper.DbOpSqlite;
+import com.dlz.db.dialect.schemas.SchemaSqlite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("DbOpSqlite 类型转换测试")
 class DbOpSqliteTest {
 
-    private DbOpSqlite dbOpSqlite;
+    private SchemaSqlite dbOpSqlite;
 
     @BeforeEach
     void setUp() {
-        dbOpSqlite = new DbOpSqlite();
+        dbOpSqlite = new SchemaSqlite();
     }
 
     @Test
@@ -187,7 +187,7 @@ class DbOpSqliteTest {
     }
 
     private Class<?> invokeGetJavaType(String columnType) throws Exception {
-        java.lang.reflect.Method method = DbOpSqlite.class.getDeclaredMethod("getJavaType", String.class);
+        java.lang.reflect.Method method = SchemaSqlite.class.getDeclaredMethod("getJavaType", String.class);
         method.setAccessible(true);
         return (Class<?>) method.invoke(dbOpSqlite, columnType);
     }

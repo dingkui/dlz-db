@@ -1,10 +1,10 @@
 package com.dlz.db.ds;
 
-import com.dlz.db.enums.DbTypeEnum;
-import com.dlz.db.mapper.rowMapper.MySqlColumnMapRowMapper;
-import com.dlz.db.mapper.rowMapper.OracleColumnMapRowMapper;
+import com.dlz.db.dialect.DbDialect;
+import com.dlz.db.dialect.DialectRegistry;
+import com.dlz.db.dialect.ResultMappingDialect;
+import com.dlz.db.dialect.SchemaDialect;
 import com.dlz.db.mapper.rowMapper.ResultMapRowMapper;
-import com.dlz.db.support.helper.*;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.ValUtil;
 import lombok.AccessLevel;
@@ -22,18 +22,14 @@ public class DataSourceConfig {
     @Setter(AccessLevel.NONE)
     private ResultMapRowMapper rowMapper;
 
+    private DbDialect dialect;
+    private SchemaDialect schemaDialect;
+
     public ResultMapRowMapper getRowMapper() {
         if (rowMapper != null) {
             return rowMapper;
         }
-        DbTypeEnum dbType = getDbType();
-        if (dbType == DbTypeEnum.MYSQL || dbType == DbTypeEnum.POSTGRESQL) {
-            rowMapper = new MySqlColumnMapRowMapper();
-        } else if (dbType == DbTypeEnum.ORACLE || dbType == DbTypeEnum.DM8) {
-            rowMapper = new OracleColumnMapRowMapper();
-        } else {
-            rowMapper = new ResultMapRowMapper();
-        }
+        rowMapper = getDialect().mapping().createRowMapper();
         return rowMapper;
     }
 
@@ -59,51 +55,30 @@ public class DataSourceConfig {
         }
     }
 
-    private DbTypeEnum dbType;
-
-    public DbTypeEnum getDbType() {
-        if (dbType != null) {
-            return dbType;
+    /** 当前数据源使用的方言。 */
+    public DbDialect getDialect() {
+        if (dialect != null) {
+            return dialect;
         }
-        final String lowerCase = property.getUrl().toLowerCase();
-        if (lowerCase.contains(":mysql")
-                || lowerCase.contains(":mariadb")) {
-            dbType = DbTypeEnum.MYSQL;
-        } else if (lowerCase.contains(":postgresql")) {
-            dbType = DbTypeEnum.POSTGRESQL;
-        } else if (lowerCase.contains(":oracle")) {
-            dbType = DbTypeEnum.ORACLE;
-        } else if (lowerCase.contains(":dm")) {
-            dbType = DbTypeEnum.DM8;
-        } else if (lowerCase.contains(":sqlite")) {
-            dbType = DbTypeEnum.SQLITE;
-        } else if (lowerCase.contains(":sqlserver")) {
-            dbType = DbTypeEnum.MSSQL;
-        } else if (lowerCase.contains(":h2")) {
-            dbType = DbTypeEnum.H2;
-        } else {
-            throw new SystemException("未识别的数据库类型:" + property.getUrl());
+        dialect = DialectRegistry.resolve(null, property.getUrl());
+        if (dialect == null && dataSource != null) {
+            try (java.sql.Connection connection = dataSource.getConnection()) {
+                dialect = DialectRegistry.resolve(connection.getMetaData(), property.getUrl());
+            } catch (Exception ignored) {
+                // 保持统一的未识别异常，避免暴露探测连接异常。
+            }
         }
-        return dbType;
+        if (dialect == null) {
+            throw new SystemException("未识别的数据库方言: " + property.getUrl());
+        }
+        return dialect;
     }
 
-    private SqlHelper helper;
-    public SqlHelper getSqlHelper() {
-        if (helper != null) {
-            return helper;
+    public SchemaDialect getSchemaDialect() {
+        if (schemaDialect == null) {
+            schemaDialect = getDialect().schema();
         }
-        final DbTypeEnum dbType = getDbType();
-
-        if (dbType == DbTypeEnum.SQLITE) {
-            helper = new DbOpSqlite();
-        } else if (dbType == DbTypeEnum.POSTGRESQL) {
-            helper = new DbOpPostgresql();
-        } else if (dbType == DbTypeEnum.ORACLE || dbType == DbTypeEnum.DM8) {
-            helper = new DbOpDm8();
-        } else {
-            helper = new DbOpMysql();
-        }
-        return helper;
+        return schemaDialect;
     }
 
     public void close() throws Exception {
@@ -116,6 +91,7 @@ public class DataSourceConfig {
         if (rowMapper != null) {
             rowMapper = null;
         }
+        schemaDialect = null;
     }
 
     public String getName() {

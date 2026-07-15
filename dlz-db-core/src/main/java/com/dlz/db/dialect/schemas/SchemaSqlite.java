@@ -1,4 +1,4 @@
-package com.dlz.db.support.helper;
+package com.dlz.db.dialect.schemas;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DbOpSqlite extends SqlHelper {
+public class SchemaSqlite implements com.dlz.db.dialect.SchemaDialect {
 
 
     @Override

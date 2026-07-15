@@ -199,7 +199,7 @@ public class PojoCache {
     public static TableInfo getTableInfo(String tableName) {
         final String cacheKey = getTableInfoCacheKey(tableName);
         return tableInfoCache.getAndSet(cacheKey, () ->
-                DB.ds.getSqlHelper().getTableInfo(tableName).snapshot()
+                DB.ds.getSchemaDialect().getTableInfo(tableName).snapshot()
         );
     }
 

@@ -8,7 +8,7 @@ import com.dlz.db.modal.wrapper.PojoDelete;
 import com.dlz.db.modal.wrapper.PojoQuery;
 import com.dlz.db.modal.wrapper.PojoUpdate;
 import com.dlz.db.support.helper.HelperScan;
-import com.dlz.db.support.helper.SqlHelper;
+import com.dlz.db.dialect.SchemaDialect;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.*;
@@ -347,7 +347,7 @@ class DbPojoTest extends BaseDBTest {
         DB.ds.setDataSource(properties);
 
         DB.ds.use("test", () -> {
-            SqlHelper helper = DB.ds.getSqlHelper();
+            SchemaDialect helper = DB.ds.getSchemaDialect();
             HelperScan.initTable(SysSql.class, helper);
             DB.pojo.selectById(SysSql.class, "1");
             DB.pojo.selectById(SysSql.class, "2");

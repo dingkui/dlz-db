@@ -2,7 +2,6 @@ package com.dlz.test.db.cases.ds;
 
 import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.ds.DataSourceProperty;
-import com.dlz.db.enums.DbTypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,57 +17,57 @@ class DataSourceConfigTest {
     }
 
     @Test
-    @DisplayName("getDbType - MySQL URL识别")
+    @DisplayName("getDialect - MySQL URL识别")
     void testDbTypeMysql() {
-        assertEquals(DbTypeEnum.MYSQL, createConfig("jdbc:mysql://localhost/db").getDbType());
+        assertEquals("mysql", createConfig("jdbc:mysql://localhost/db").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - MariaDB URL识别")
     void testDbTypeMariadb() {
-        assertEquals(DbTypeEnum.MYSQL, createConfig("jdbc:mariadb://localhost/db").getDbType());
+        assertEquals("mysql", createConfig("jdbc:mariadb://localhost/db").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - PostgreSQL URL识别")
     void testDbTypePostgresql() {
-        assertEquals(DbTypeEnum.POSTGRESQL, createConfig("jdbc:postgresql://localhost/db").getDbType());
+        assertEquals("postgresql", createConfig("jdbc:postgresql://localhost/db").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - Oracle URL识别")
     void testDbTypeOracle() {
-        assertEquals(DbTypeEnum.ORACLE, createConfig("jdbc:oracle:thin:@localhost:1521/db").getDbType());
+        assertEquals("oracle", createConfig("jdbc:oracle:thin:@localhost:1521/db").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - DM8 URL识别")
     void testDbTypeDm8() {
-        assertEquals(DbTypeEnum.DM8, createConfig("jdbc:dm://localhost:5236").getDbType());
+        assertEquals("dm8", createConfig("jdbc:dm://localhost:5236").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - SQLite URL识别")
     void testDbTypeSqlite() {
-        assertEquals(DbTypeEnum.SQLITE, createConfig("jdbc:sqlite::memory:").getDbType());
+        assertEquals("sqlite", createConfig("jdbc:sqlite::memory:").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - SQL Server URL识别")
     void testDbTypeMssql() {
-        assertEquals(DbTypeEnum.MSSQL, createConfig("jdbc:sqlserver://localhost:1433").getDbType());
+        assertEquals("mssql", createConfig("jdbc:sqlserver://localhost:1433").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - H2 URL识别")
     void testDbTypeH2() {
-        assertEquals(DbTypeEnum.H2, createConfig("jdbc:h2:mem:testdb").getDbType());
+        assertEquals("h2", createConfig("jdbc:h2:mem:testdb").getDialect().id());
     }
 
     @Test
     @DisplayName("getDbType - 未知URL抛异常")
     void testDbTypeUnknown() {
-        assertThrows(Exception.class, () -> createConfig("jdbc:unknown://localhost").getDbType());
+        assertThrows(Exception.class, () -> createConfig("jdbc:unknown://localhost").getDialect());
     }
 
     @Test
@@ -86,17 +85,17 @@ class DataSourceConfigTest {
     }
 
     @Test
-    @DisplayName("getSqlHelper - SQLite返回DbOpSqlite")
-    void testSqlHelperSqlite() {
+    @DisplayName("getSchemaDialect - SQLite")
+    void testSchemaDialectSqlite() {
         DataSourceConfig config = createConfig("jdbc:sqlite::memory:");
-        assertNotNull(config.getSqlHelper());
+        assertNotNull(config.getSchemaDialect());
     }
 
     @Test
-    @DisplayName("getSqlHelper - PostgreSQL返回DbOpPostgresql")
-    void testSqlHelperPostgresql() {
+    @DisplayName("getSchemaDialect - PostgreSQL")
+    void testSchemaDialectPostgresql() {
         DataSourceConfig config = createConfig("jdbc:postgresql://localhost/db");
-        assertNotNull(config.getSqlHelper());
+        assertNotNull(config.getSchemaDialect());
     }
 
     @Test

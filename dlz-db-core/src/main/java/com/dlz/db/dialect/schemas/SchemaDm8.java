@@ -1,4 +1,4 @@
-package com.dlz.db.support.helper;
+package com.dlz.db.dialect.schemas;
 
 import com.dlz.db.annotation.IdType;
 import com.dlz.db.annotation.TableId;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DbOpDm8 extends SqlHelper {
+public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
     @Override
     public void createTable(String tableName, Class<?> clazz) {
         // 达梦数据库表名需大写

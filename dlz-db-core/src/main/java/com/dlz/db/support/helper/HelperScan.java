@@ -1,6 +1,7 @@
 package com.dlz.db.support.helper;
 
 import com.dlz.db.annotation.TableName;
+import com.dlz.db.dialect.SchemaDialect;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.resouce.DlzResourceLoader;
@@ -19,7 +20,7 @@ public class HelperScan {
             return;
         }
         try {
-            final SqlHelper helper = DB.ds.getSqlHelper();
+            final SchemaDialect helper = DB.ds.getSchemaDialect();
             Set<Class<?>> set = DlzResourceLoader.scan(packageName, TableName.class);
             set.stream().forEach(clazz -> initTable(clazz, helper));
         } catch (Exception e) {
@@ -27,7 +28,7 @@ public class HelperScan {
         }
     }
 
-    public static void initTable(Class<?> clazz, SqlHelper helper) {
+    public static void initTable(Class<?> clazz, SchemaDialect helper) {
         TableName table = clazz.getAnnotation(TableName.class);
         if (table != null) {
             String tableName = PojoCache.getTableName(clazz);
