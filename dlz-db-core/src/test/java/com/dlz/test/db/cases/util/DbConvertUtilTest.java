@@ -208,4 +208,56 @@ class DbConvertUtilTest {
         String backToField = DbConvertUtil.toFieldName(dbColumn);
         assertEquals(original, backToField);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "user_id",
+        "schema.user_id",
+        "_internal.Table123"
+    })
+    @DisplayName("validateDbName - 接受单段和多段 SQL 标识符")
+    void validateDbNameAcceptsIdentifiers(String identifier) {
+        assertEquals(identifier, DbConvertUtil.validateDbName(identifier, "字段"));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'', 空标识符",
+        "1column, 数字开头",
+        "schema., 末尾点号",
+        ".table, 开头点号",
+        "user-name, 非法字符"
+    })
+    @DisplayName("validateDbName - 拒绝非法 SQL 标识符")
+    void validateDbNameRejectsInvalidIdentifiers(String identifier, String description) {
+        assertThrows(RuntimeException.class, () -> DbConvertUtil.validateDbName(identifier, description));
+        assertThrows(RuntimeException.class, () -> DbConvertUtil.validateDbName(null, description));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "amount",
+        "amount + tax",
+        "total - 12.50",
+        "count*2 / _factor"
+    })
+    @DisplayName("requireSqlExpression - 接受受限的列与算术表达式")
+    void requireSqlExpressionAcceptsSimpleExpressions(String expression) {
+        assertEquals(expression, DbConvertUtil.requireSqlExpression(expression));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "'', 空表达式",
+        "amount+, 缺少右操作数",
+        "amount..name, 非法标识符",
+        "1amount, 数字开头",
+        "amount + 1., 不完整小数",
+        "amount; DELETE, 多语句"
+    })
+    @DisplayName("requireSqlExpression - 拒绝不安全或不完整的表达式")
+    void requireSqlExpressionRejectsInvalidExpressions(String expression, String description) {
+        assertThrows(RuntimeException.class, () -> DbConvertUtil.requireSqlExpression(expression));
+        assertThrows(RuntimeException.class, () -> DbConvertUtil.requireSqlExpression(null));
+    }
 }
