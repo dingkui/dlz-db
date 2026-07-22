@@ -183,7 +183,7 @@ public class DBDynamic {
     /**
      * 更新数据源
      */
-    public synchronized boolean setDataSource(DataSourceProperty properties) {
+    public boolean setDataSource(DataSourceProperty properties) {
         if (properties == null) {
             throw new SystemException("数据源配置不能为空");
         }
@@ -191,13 +191,16 @@ public class DBDynamic {
         if (StringUtils.isEmpty(name)) {
             name = DEFAULT_NAME;
         }
-        if (configPool.containsKey(name)) {
-            // 关闭旧的数据源
-            removeDataSource(name);
-        }
-
         try {
-            configPool.put(name, new DataSourceConfig(properties));
+            DataSourceConfig replacement = new DataSourceConfig(properties);
+            DataSourceConfig previous = configPool.put(name, replacement);
+            if (previous != null) {
+                try {
+                    previous.close();
+                } catch (Exception e) {
+                    log.warn("关闭旧数据源时发生错误", e);
+                }
+            }
             if (name.equals(DEFAULT_NAME)) {
                 log.warn("修改系统默认数据源: {}", properties.getUrl());
             }
