@@ -11,7 +11,6 @@ import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.util.ValUtil;
 
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -111,9 +110,6 @@ public class DbConvertUtil {
      *
      * @param beanKey
      */
-    private static final Pattern SQL_IDENTIFIER = Pattern.compile(
-            "[A-Za-z_][A-Za-z0-9_]*+(?:\\.[A-Za-z_][A-Za-z0-9_]*+)*+");
-
     /**
      * 校验并返回 SQL 标识符。
      *
@@ -122,14 +118,11 @@ public class DbConvertUtil {
      * @return 原始标识符
      */
     public static String validateDbName(String name, String description) {
-        if (name == null || !SQL_IDENTIFIER.matcher(name).matches()) {
+        if (!isSqlIdentifier(name)) {
             throw new ValidateException(description + "不合法: " + name);
         }
         return name;
     }
-
-    private static final Pattern SQL_EXPRESSION = Pattern.compile(
-            "[A-Za-z_][A-Za-z0-9_]*+(?:\\s*+[+\\-*/]\\s*+(?:[A-Za-z_][A-Za-z0-9_]*+|[0-9]++(?:\\.[0-9]++)?))*+");
 
     /**
      * 校验更新表达式中的列名和简单 SQL 表达式。
@@ -139,10 +132,54 @@ public class DbConvertUtil {
      */
     public static String requireSqlExpression(String expression) {
         String value = expression == null ? null : expression.trim();
-        if (value == null || !SQL_EXPRESSION.matcher(value).matches()) {
+        if (!isSimpleSqlExpression(value)) {
             throw new DbException("SQL表达式不合法: " + expression, 1002);
         }
         return value;
+    }
+
+    private static boolean isSqlIdentifier(String value) {
+        if (value == null || value.isEmpty()) return false;
+        int index = readIdentifier(value, 0);
+        if (index < 0) return false;
+        while (index < value.length() && value.charAt(index) == '.') {
+            index = readIdentifier(value, index + 1);
+            if (index < 0) return false;
+        }
+        return index == value.length();
+    }
+
+    private static boolean isSimpleSqlExpression(String value) {
+        if (value == null || value.isEmpty()) return false;
+        int index = readIdentifier(value, 0);
+        if (index < 0) return false;
+        while (index < value.length()) {
+            while (index < value.length() && Character.isWhitespace(value.charAt(index))) index++;
+            if (index == value.length() || "+-*/".indexOf(value.charAt(index)) < 0) return false;
+            index++;
+            while (index < value.length() && Character.isWhitespace(value.charAt(index))) index++;
+            if (index == value.length()) return false;
+            if (Character.isDigit(value.charAt(index))) {
+                while (index < value.length() && Character.isDigit(value.charAt(index))) index++;
+                if (index < value.length() && value.charAt(index) == '.') {
+                    index++;
+                    int decimalStart = index;
+                    while (index < value.length() && Character.isDigit(value.charAt(index))) index++;
+                    if (decimalStart == index) return false;
+                }
+            } else {
+                index = readIdentifier(value, index);
+                if (index < 0) return false;
+            }
+        }
+        return true;
+    }
+
+    private static int readIdentifier(String value, int index) {
+        if (index >= value.length() || !(Character.isLetter(value.charAt(index)) || value.charAt(index) == '_')) return -1;
+        index++;
+        while (index < value.length() && (Character.isLetterOrDigit(value.charAt(index)) || value.charAt(index) == '_')) index++;
+        return index;
     }
 
     public static String toDbNames(String beanKey) {
