@@ -69,6 +69,13 @@ public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implem
     }
     /**
      * 自动根据map的键值对添加查询条件
+     */
+    public PojoQuery<T> auto(T bean) {
+        this.queryBean = bean;
+        return this;
+    }
+    /**
+     * 自动根据map的键值对添加查询条件
      *
      * @param req {key:列名，value:值} key值为列名 可带$前缀，如$eq_key:表示 key=key DbOperateEnum=eq
      *            value值为值

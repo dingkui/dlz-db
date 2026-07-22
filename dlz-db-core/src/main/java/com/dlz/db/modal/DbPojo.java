@@ -35,7 +35,7 @@ public class DbPojo {
     }
 
     public <T> PojoInsert<T> insertWrapper(T entity) {
-        return new PojoInsert((Class<T>) RequireUtil.requireEntity(entity).getClass()).value(entity);
+        return new PojoInsert(RequireUtil.requireEntity(entity).getClass()).value(entity);
     }
 
     public <T> PojoUpdate<T> updateWrapper(Class<T> type) {
@@ -43,7 +43,7 @@ public class DbPojo {
     }
 
     public <T> PojoUpdate<T> updateWrapper(T entity) {
-        return new PojoUpdate((Class<T>) RequireUtil.requireEntity(entity).getClass()).set(entity);
+        return new PojoUpdate(RequireUtil.requireEntity(entity).getClass()).set(entity);
     }
 
     public <T> PojoDelete<T> deleteWrapper(Class<T> type) {
