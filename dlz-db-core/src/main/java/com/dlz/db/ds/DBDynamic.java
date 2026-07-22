@@ -240,7 +240,7 @@ public class DBDynamic {
         if (StringUtils.isEmpty(properties.getUrl())) {
             throw new SystemException("数据源 url 不能为空");
         }
-        java.sql.Connection conn = null;
+        Connection conn = null;
         try {
             // 如指定驱动类则显式加载（兼容老驱动）
             if (StringUtils.isNotEmpty(properties.getDriverClassName())) {

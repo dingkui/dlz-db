@@ -99,7 +99,7 @@ public final class BatchResult {
         public BatchResult build() {
             BatchStatus status = failedPositions.isEmpty()
                     ? BatchStatus.SUCCESS
-                    : (completedBatches > 0 ? BatchStatus.PARTIAL_FAILURE : BatchStatus.FAILURE);
+                    : completedBatches > 0 ? BatchStatus.PARTIAL_FAILURE : BatchStatus.FAILURE;
             return BatchResult.of(totalItems, batchSize, batchCount, completedBatches,
                     knownAffectedRows, unknownAffectedRows, failedPositions, status, cause);
         }

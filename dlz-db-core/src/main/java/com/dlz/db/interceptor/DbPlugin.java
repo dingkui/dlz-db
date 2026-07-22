@@ -55,14 +55,12 @@ public class DbPlugin {
      * @param interceptor 拦截器实例
      */
     public static void registerInterceptor(SqlBuildInterceptor interceptor) {
-        if (interceptor != null) {
-            if(interceptor.isEnabled()){
-                if(interceptor instanceof LogicDeleteInterceptor){
-                    logicDeleteInterceptor = (LogicDeleteInterceptor) interceptor;
-                }
-                interceptors.add(interceptor);
-                log.info("Registered SqlBuildInterceptor: {}", interceptor.getClass().getName());
+        if (interceptor != null && interceptor.isEnabled()) {
+            if(interceptor instanceof LogicDeleteInterceptor){
+                logicDeleteInterceptor = (LogicDeleteInterceptor) interceptor;
             }
+            interceptors.add(interceptor);
+            log.info("Registered SqlBuildInterceptor: {}", interceptor.getClass().getName());
         }
     }
 

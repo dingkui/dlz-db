@@ -33,7 +33,7 @@ public class TableQuery extends AQuery<TableQuery> implements ISqlPage<TableQuer
         if (columns.length > 0) {
             this.columns = Arrays.stream(columns)
                     .map(column -> DbConvertUtil.validateDbName(column, "查询字段"))
-                    .map(com.dlz.db.util.DbConvertUtil::toDbNames)
+                    .map(DbConvertUtil::toDbNames)
                     .collect(Collectors.joining(","));
         }
         return this;

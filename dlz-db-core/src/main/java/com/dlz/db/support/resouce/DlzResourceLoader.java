@@ -398,7 +398,11 @@ public class DlzResourceLoader {
             log.warn("扫描 JAR 根资源失败: {}", rootUrl.toString(), e);
         } finally {
             if (jarFile != null) {
-                try { jarFile.close(); } catch (IOException e) { /* ignore */ }
+                try {
+                    jarFile.close();
+                } catch (IOException e) {
+                    log.debug("关闭 JarFile 失败: {}", rootUrl, e);
+                }
             }
         }
     }

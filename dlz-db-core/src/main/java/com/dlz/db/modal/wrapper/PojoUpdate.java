@@ -29,7 +29,7 @@ public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> imp
         ICondAddByLamda<PojoUpdate<T>, T>,
         IExecutorUDI {
     IdInfo idInfo;
-    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null || (idInfo!=null && name.equals(idInfo.getDbName())) ;
+    private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null || idInfo!=null && name.equals(idInfo.getDbName());
     public PojoUpdate(Class<T> beanClass) {
         super(beanClass);
         idInfo = PojoCache.getIdInfo(beanClass);
