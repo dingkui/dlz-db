@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition>, ICondAddByFn<Condition> {
+public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition>, ICondAddByFn<Condition>, Cloneable {
     boolean isMake = false;
     String runSql;
     JSONMap paras = new JSONMap();
