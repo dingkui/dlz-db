@@ -111,7 +111,8 @@ public class DbConvertUtil {
      *
      * @param beanKey
      */
-    private static final Pattern SQL_IDENTIFIER =Pattern.compile("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*");
+    private static final Pattern SQL_IDENTIFIER = Pattern.compile(
+            "[A-Za-z_][A-Za-z0-9_]*+(?:\\.[A-Za-z_][A-Za-z0-9_]*+)*+");
 
     /**
      * 校验并返回 SQL 标识符。
@@ -128,7 +129,7 @@ public class DbConvertUtil {
     }
 
     private static final Pattern SQL_EXPRESSION = Pattern.compile(
-            "[A-Za-z_][A-Za-z0-9_]*(\\s*[+\\-*/]\\s*(?:[A-Za-z_][A-Za-z0-9_]*|[0-9]+(?:\\.[0-9]+)?))*");
+            "[A-Za-z_][A-Za-z0-9_]*+(?:\\s*+[+\\-*/]\\s*+(?:[A-Za-z_][A-Za-z0-9_]*+|[0-9]++(?:\\.[0-9]++)?))*+");
 
     /**
      * 校验更新表达式中的列名和简单 SQL 表达式。
