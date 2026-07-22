@@ -17,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -65,7 +62,7 @@ public class SchamaPostgresql implements com.dlz.db.dialect.SchemaDialect {
     public VAL<String,String[]> getTableColumnSql(String tableName) {
         // 达梦系统表查询字段信息
         String sql = "SELECT column_name as name FROM information_schema.columns WHERE table_schema=? AND table_name=?";
-        return VAL.of(sql, new String[]{DB.ds.getCurrentConfig().getSchema(),tableName.toLowerCase()});
+        return VAL.of(sql, new String[]{DB.ds.getCurrentConfig().getSchema(),tableName.toLowerCase(Locale.ROOT)});
     }
 
     @Override
@@ -177,19 +174,19 @@ public class SchamaPostgresql implements com.dlz.db.dialect.SchemaDialect {
     }
 
     private Class<?> getJavaType(String columnType) {
-        if (columnType.toLowerCase().startsWith("varchar") || columnType.toLowerCase().startsWith("char")) {
+        if (columnType.toLowerCase(Locale.ROOT).startsWith("varchar") || columnType.toLowerCase(Locale.ROOT).startsWith("char")) {
             return String.class;
-        } else if (columnType.toLowerCase().startsWith("int") || columnType.toLowerCase().startsWith("integer")) {
+        } else if (columnType.toLowerCase(Locale.ROOT).startsWith("int") || columnType.toLowerCase(Locale.ROOT).startsWith("integer")) {
             return Integer.class;
-        } else if (columnType.toLowerCase().startsWith("boolean")) {
+        } else if (columnType.toLowerCase(Locale.ROOT).startsWith("boolean")) {
             return Boolean.class;
-        } else if (columnType.toLowerCase().startsWith("bigint")) {
+        } else if (columnType.toLowerCase(Locale.ROOT).startsWith("bigint")) {
             return Long.class;
-        } else if (columnType.toLowerCase().startsWith("decimal") || columnType.toLowerCase().startsWith("numeric")) {
+        } else if (columnType.toLowerCase(Locale.ROOT).startsWith("decimal") || columnType.toLowerCase(Locale.ROOT).startsWith("numeric")) {
             return Double.class;
-        } else if (columnType.toLowerCase().startsWith("date")) {
+        } else if (columnType.toLowerCase(Locale.ROOT).startsWith("date")) {
             return Date.class;
-        } else if (columnType.toLowerCase().startsWith("timestamp")) {
+        } else if (columnType.toLowerCase(Locale.ROOT).startsWith("timestamp")) {
             return LocalDateTime.class;
         } else {
             return Object.class; // 默认类型

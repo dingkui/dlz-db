@@ -15,6 +15,7 @@ import org.dom4j.io.SAXReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -149,7 +150,7 @@ public class SqlHolder {
             return null;
         }
         String normalized = suffix.startsWith("_") ? suffix.substring(1) : suffix;
-        return DialectRegistry.contains(normalized) ? normalized.toLowerCase(java.util.Locale.ROOT) : null;
+        return DialectRegistry.contains(normalized) ? normalized.toLowerCase(Locale.ROOT) : null;
     }
 
     private static String clearSql(String sqlStr){

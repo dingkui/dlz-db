@@ -50,7 +50,7 @@ public class TableInfo {
         for (String primaryKey : primaryKeys) {
             ColumnInfo column = columnsByDbName.get(primaryKey);
             if (column == null) {
-                column = columnsByDbName.get(primaryKey.toLowerCase());
+                column = columnsByDbName.get(primaryKey.toLowerCase(Locale.ROOT));
             }
             if (column != null) {
                 result.add(column);
@@ -121,7 +121,7 @@ public class TableInfo {
                     }
                     if (dbName != null) {
                         byDb.put(dbName, column);
-                        byDb.putIfAbsent(dbName.toLowerCase(), column);
+                        byDb.putIfAbsent(dbName.toLowerCase(Locale.ROOT), column);
                     }
                 }
             }

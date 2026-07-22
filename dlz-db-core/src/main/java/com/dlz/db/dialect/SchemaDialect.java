@@ -6,6 +6,7 @@ import com.dlz.kit.util.VAL;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /** 数据库结构和字段元数据能力。 */
@@ -17,7 +18,7 @@ public interface SchemaDialect {
         Set<String> names = new HashSet<>();
         DBHolder.getSqlExecutor().getList(value.v1, value.v2).forEach(item -> {
             String name = item.getStr("name");
-            names.add(name.toLowerCase());
+            names.add(name.toLowerCase(Locale.ROOT));
             names.add(name);
         });
         return names;

@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -110,7 +111,7 @@ public class SchemaMysql implements com.dlz.db.dialect.SchemaDialect {
             columnInfo.setNullable("YES".equalsIgnoreCase(map.getStr("isNullable", "")));
             columnInfo.setDefaultValue(map.getStr("columnDefault"));
             String extra = map.getStr("extra", "");
-            columnInfo.setAutoIncrement(extra != null && extra.toLowerCase().contains("auto_increment"));
+            columnInfo.setAutoIncrement(extra != null && extra.toLowerCase(Locale.ROOT).contains("auto_increment"));
             columnInfo.setColumnSize(ValUtil.toInt(map.get("characterMaximumLength"), 0));
             // numericPrecision 对应 DECIMAL(10,2) 的 10，作为 columnSize 兜底
             if (columnInfo.getColumnSize() == 0) {
@@ -154,7 +155,7 @@ public class SchemaMysql implements com.dlz.db.dialect.SchemaDialect {
         return "text";
     }
     private Class<?> getJavaType(String columnType) {
-        columnType = columnType.toLowerCase();
+        columnType = columnType.toLowerCase(Locale.ROOT);
         if (columnType.startsWith("varchar") || columnType.startsWith("char")) {
             return String.class;
         } else if (columnType.startsWith("int")) {

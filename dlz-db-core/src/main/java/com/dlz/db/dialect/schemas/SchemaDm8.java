@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
                     if (columnName.equals("")) {
                         return column;
                     }
-                    column = " \"" + columnName.toUpperCase() + "\" " + getDbColumnType(field);
+                    column = " \"" + columnName.toUpperCase(Locale.ROOT) + "\" " + getDbColumnType(field);
                     if (PojoCache.isColumnPk(field)) {
                         column += " PRIMARY KEY";
                         TableId tableId = field.getAnnotation(TableId.class);
@@ -46,7 +47,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
 
         String tableComment = PojoCache.getTableComment(clazz);
         if (StringUtils.isNotEmpty(tableComment)) {
-            sql += "; COMMENT ON TABLE \"" + tableName.toUpperCase() + "\" IS '" + tableComment + "'";
+            sql += "; COMMENT ON TABLE \"" + tableName.toUpperCase(Locale.ROOT) + "\" IS '" + tableComment + "'";
         }
 
         final String columnsComment = FieldReflections.getFields(clazz).stream().map(field -> {
@@ -56,7 +57,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
                     if (columnName.equals("") && StringUtils.isEmpty(columnComment)) {
                         return column;
                     }
-                    return "COMMENT ON COLUMN \"" + tableName.toUpperCase() + "\".\"" + columnName.toUpperCase() + "\" IS '" + columnComment + "'";
+                    return "COMMENT ON COLUMN \"" + tableName.toUpperCase(Locale.ROOT) + "\".\"" + columnName.toUpperCase(Locale.ROOT) + "\" IS '" + columnComment + "'";
                 }).filter(Objects::nonNull)
                 .collect(Collectors.joining(";"));
         if (StringUtils.isNotEmpty(columnsComment)) {
@@ -71,7 +72,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
     public VAL<String,String[]> getTableColumnSql(String tableName) {
         // 达梦系统表查询字段信息
         String sql = "SELECT column_name as name FROM ALL_TAB_COLUMNS WHERE OWNER = USER AND TABLE_NAME = ?";
-        return VAL.of(sql, new String[]{tableName.toUpperCase()});
+        return VAL.of(sql, new String[]{tableName.toUpperCase(Locale.ROOT)});
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
 
         // 查询表注释
         String sql = "SELECT COMMENTS FROM ALL_TAB_COMMENTS WHERE OWNER = USER AND TABLE_NAME = ?";
-        tableInfo.setTableComment(DBHolder.getSqlExecutor().getFirstColumn(sql, String.class, tableName.toUpperCase()));
+        tableInfo.setTableComment(DBHolder.getSqlExecutor().getFirstColumn(sql, String.class, tableName.toUpperCase(Locale.ROOT)));
 
         // 查询主键信息
         sql = "SELECT COLUMN_NAME" +
@@ -92,7 +93,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
                 " WHERE C.OWNER = USER" +
                 "   AND C.TABLE_NAME = ?" +
                 "   AND C.CONSTRAINT_TYPE = 'P'";
-        List<String> primaryKeys = DBHolder.getSqlExecutor().getList(sql, tableName.toUpperCase())
+        List<String> primaryKeys = DBHolder.getSqlExecutor().getList(sql, tableName.toUpperCase(Locale.ROOT))
                 .stream()
                 .map(map -> map.getStr("columnName", ""))
                 .collect(Collectors.toList());
@@ -114,7 +115,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
                 "      AND a.TABLE_NAME = C.TABLE_NAME " +
                 "      AND a.COLUMN_NAME = C.COLUMN_NAME" +
                 "    WHERE A.TABLE_NAME = ?";
-        List<ColumnInfo> columnInfos = DBHolder.getSqlExecutor().getList(sql, tableName.toUpperCase())
+        List<ColumnInfo> columnInfos = DBHolder.getSqlExecutor().getList(sql, tableName.toUpperCase(Locale.ROOT))
                 .stream()
                 .map(map -> {
                     ColumnInfo columnInfo = new ColumnInfo();
@@ -144,10 +145,10 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
     }
     @Override
     public void createColumn(String tableName, String name, Field field) {
-        String sql = "ALTER TABLE \"" + tableName.toUpperCase() + "\" ADD \"" + name.toUpperCase() + "\" " + getDbColumnType(field);
+        String sql = "ALTER TABLE \"" + tableName.toUpperCase(Locale.ROOT) + "\" ADD \"" + name.toUpperCase(Locale.ROOT) + "\" " + getDbColumnType(field);
         String columnComment = PojoCache.getColumnComment(field);
         if (StringUtils.isNotEmpty(columnComment)) {
-            sql += "; COMMENT ON COLUMN \"" + tableName.toUpperCase() + "\".\"" + name.toUpperCase() + "\" IS '" + columnComment + "'";
+            sql += "; COMMENT ON COLUMN \"" + tableName.toUpperCase(Locale.ROOT) + "\".\"" + name.toUpperCase(Locale.ROOT) + "\" IS '" + columnComment + "'";
         }
         DBHolder.getSqlExecutor().update(sql);
     }
@@ -172,7 +173,7 @@ public class SchemaDm8 implements com.dlz.db.dialect.SchemaDialect {
     }
 
     private Class<?> getJavaType(String columnType) {
-        columnType = columnType.toLowerCase();
+        columnType = columnType.toLowerCase(Locale.ROOT);
         if (columnType.contains("char") || columnType.startsWith("clob") || columnType.startsWith("text")) {
             return String.class;
         } else if (columnType.startsWith("int")) {
