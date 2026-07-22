@@ -31,7 +31,7 @@ public class SegmentIdGenerator {
         return buffer.nextIds(count);
     }
 
-    private class SegmentBuffer {
+    private static class SegmentBuffer {
         private final String tableName;
         private final int step;
         private volatile long max;        // 当前号段在 DB 中的 max_id 值（号段上限）
@@ -135,7 +135,7 @@ public class SegmentIdGenerator {
                         log.debug("CAS conflict for table {} (currentMax={}), retrying...", tableName, currentMax);
                     }
 
-                    if (++retries < maxRetries) Thread.sleep(10 * retries);
+                    if (++retries < maxRetries) Thread.sleep(10L * retries);
                     else throw new DbException("Failed to fetch segment after " + maxRetries + " retries", 1004);
 
                 } catch (Exception e) {

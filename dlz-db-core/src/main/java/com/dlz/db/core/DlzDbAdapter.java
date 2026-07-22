@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  */
 @Slf4j
 public class DlzDbAdapter{
-    private ISqlExecutor sqlExecutor;
+    private volatile ISqlExecutor sqlExecutor;
     private final Supplier<DataSource> dataSourceMaker;
     private final Supplier<ISqlExecutor> sqlExecutorMaker;
     private final DlzDbProperties sqlConfig;
