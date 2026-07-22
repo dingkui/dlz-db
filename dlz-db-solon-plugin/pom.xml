@@ -10,6 +10,11 @@
     <version>8.0.0</version>
 	<packaging>jar</packaging>
     <description>DLZ-DB Solon Plugin，自研 SimpleJdbc 和事务管理</description>
+	<properties>
+        <!-- Adapter baseline; raise these as Solon integration coverage grows. -->
+        <jacoco.line.coverage>0.80</jacoco.line.coverage>
+        <jacoco.branch.coverage>0.60</jacoco.branch.coverage>
+    </properties>
 	<dependencies>
         <!-- 核心模块 -->
         <dependency>

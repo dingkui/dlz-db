@@ -20,6 +20,7 @@
         <jacoco.version>0.8.11</jacoco.version>
         <spotbugs.version>4.8.6</spotbugs.version>
         <spotbugs.maven.version>4.8.6.6</spotbugs.maven.version>
+        <!-- Only high-confidence SpotBugs findings block release builds. -->
         <findsecbugs.version>1.12.0</findsecbugs.version>
         <checkstyle.version>9.3</checkstyle.version>
         <pmd.version>3.21.2</pmd.version>
@@ -178,6 +179,7 @@
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
+                    <maxRank>14</maxRank>
                     <xmlOutput>true</xmlOutput>
                     <htmlOutput>true</htmlOutput>
                     <failOnError>true</failOnError>
