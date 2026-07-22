@@ -57,4 +57,16 @@
         <Method name="testConnection"/>
         <Bug pattern="SQL_INJECTION_JDBC,SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
     </Match>
+
+    <!-- URLs originate from the active ClassLoader and resource scanning accepts only local/jar protocols. -->
+    <Match>
+        <Class name="com.dlz.db.support.resouce.DlzResourceLoader"/>
+        <Method name="tryOpenResourceStream"/>
+        <Bug pattern="URLCONNECTION_SSRF_FD"/>
+    </Match>
+    <Match>
+        <Class name="com.dlz.db.support.resouce.DlzResourceLoader"/>
+        <Method name="collectFromClasspathRoots"/>
+        <Bug pattern="PATH_TRAVERSAL_IN"/>
+    </Match>
 </FindBugsFilter>
