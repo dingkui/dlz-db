@@ -20,8 +20,6 @@ public final class DbConfig {
 
     private final DlzDbProperties properties = new DlzDbProperties();
     private State state = State.NEW;
-    private DataSource dataSource;
-    private ISqlExecutor sqlExecutor;
     private Supplier<DataSource> dataSourceMaker;
     private Supplier<ISqlExecutor> sqlExecutorMaker;
     private Function<DataSource, ITxExecutor> txExecutorMaker;
@@ -86,16 +84,14 @@ public final class DbConfig {
     public synchronized DbConfig dataSource(DataSource dataSource) {
         ensureMutable();
         require(dataSource);
-        this.dataSource = dataSource;
-        this.dataSourceMaker = () -> this.dataSource;
+        this.dataSourceMaker = () -> dataSource;
         return this;
     }
 
     public synchronized DbConfig sqlExecutor(ISqlExecutor executor) {
         ensureMutable();
         require(executor);
-        this.sqlExecutor = executor;
-        this.sqlExecutorMaker = () -> this.sqlExecutor;
+        this.sqlExecutorMaker = () -> executor;
         return this;
     }
 
