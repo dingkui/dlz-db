@@ -1,5 +1,6 @@
 package com.dlz.db.solon;
 
+import com.dlz.db.core.DlzDbProperties;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.SqlHolder;
@@ -15,7 +16,7 @@ import javax.sql.DataSource;
  *
  * <h3>启动流程</h3>
  * <ol>
- *   <li>从配置 {@code dlz.db} 绑定 {@link SolonDbProperties}。</li>
+ *   <li>从配置 {@code dlz.db} 绑定 {@link DlzDbProperties}。</li>
  *   <li>等待用户应用注册 {@link DataSource}，注册到 {@link DB#ds} 默认数据源。</li>
  *   <li>触发 {@link SqlHolder#init()} 与 {@link SqlHolder#loadDbSql()}，加载 SQL 资源。</li>
  * </ol>
@@ -28,7 +29,7 @@ public class DlzDbSolonPlugin implements Plugin {
     @Override
     public void start(AppContext context) throws Throwable {
         // 1. 绑定配置
-        final SolonDbProperties properties = Solon.cfg().getProp("dlz.db").toBean(SolonDbProperties.class);
+        final DlzDbProperties properties = Solon.cfg().getProp("dlz.db").toBean(DlzDbProperties.class);
 
         // 3. 等 DataSource 就绪后初始化 SqlExecutor / CommService
         context.getBeanAsync(DataSource.class, dataSource -> {

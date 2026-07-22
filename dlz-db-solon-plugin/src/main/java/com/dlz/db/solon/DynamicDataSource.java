@@ -4,9 +4,11 @@ import com.dlz.db.modal.DB;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 /**
  * 动态数据源包装器
@@ -39,12 +41,12 @@ public class DynamicDataSource implements DataSource {
     }
 
     @Override
-    public java.io.PrintWriter getLogWriter() throws SQLException {
+    public PrintWriter getLogWriter() throws SQLException {
         return getTargetDataSource().getLogWriter();
     }
 
     @Override
-    public void setLogWriter(java.io.PrintWriter out) throws SQLException {
+    public void setLogWriter(PrintWriter out) throws SQLException {
         getTargetDataSource().setLogWriter(out);
     }
 
@@ -59,7 +61,7 @@ public class DynamicDataSource implements DataSource {
     }
 
     @Override
-    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return getTargetDataSource().getParentLogger();
     }
 
