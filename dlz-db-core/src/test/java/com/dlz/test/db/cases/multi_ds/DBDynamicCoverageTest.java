@@ -2,7 +2,6 @@ package com.dlz.test.db.cases.multi_ds;
 
 import com.dlz.db.ds.DBDynamic;
 import com.dlz.db.ds.DataSourceProperty;
-import com.dlz.db.ds.DataSourceConfig;
 import com.dlz.db.exception.DbException;
 import com.dlz.kit.exception.SystemException;
 import org.junit.jupiter.api.Test;
@@ -11,9 +10,6 @@ import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;

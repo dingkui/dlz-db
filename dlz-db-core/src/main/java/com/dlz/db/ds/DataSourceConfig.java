@@ -2,7 +2,6 @@ package com.dlz.db.ds;
 
 import com.dlz.db.dialect.DbDialect;
 import com.dlz.db.dialect.DialectRegistry;
-import com.dlz.db.dialect.ResultMappingDialect;
 import com.dlz.db.dialect.SchemaDialect;
 import com.dlz.db.mapper.rowMapper.ResultMapRowMapper;
 import com.dlz.kit.exception.SystemException;

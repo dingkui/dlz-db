@@ -6,7 +6,6 @@ import com.dlz.db.core.jdbc.JdbcTxExecutor;
 import com.dlz.db.inf.ISqlPara;
 import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.para.AParaPojo;
-import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.util.id.TraceUtil;

@@ -1,28 +1,12 @@
 package com.dlz.test.db.cases.modal.options;
 
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.options.DbOperation;
-import com.dlz.db.modal.options.DbOption;
-import com.dlz.db.modal.options.DbOptions;
-import com.dlz.db.modal.options.DeleteOption;
-import com.dlz.db.modal.options.InsertOption;
-import com.dlz.db.modal.options.SelectOption;
-import com.dlz.db.modal.options.point.DeleteModePoint;
-import com.dlz.db.modal.options.point.DeletedDataPoint;
-import com.dlz.db.modal.options.point.InsertNullFieldPoint;
-import com.dlz.db.modal.options.point.InsertValuePoint;
-import com.dlz.db.modal.options.point.SelectLockPoint;
-import com.dlz.db.modal.options.point.UpdateSafetyPoint;
-import com.dlz.db.modal.options.point.context.CrudContext;
-import com.dlz.db.modal.options.point.context.DeleteMode;
-import com.dlz.db.modal.options.point.context.DeletedDataMode;
-import com.dlz.db.modal.options.point.context.SelectLockMode;
-import com.dlz.db.modal.options.point.context.ValueContext;
+import com.dlz.db.modal.options.*;
+import com.dlz.db.modal.options.point.*;
+import com.dlz.db.modal.options.point.context.*;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DbOptionsTest {
 

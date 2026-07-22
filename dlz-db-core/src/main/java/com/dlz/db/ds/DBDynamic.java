@@ -1,5 +1,6 @@
 package com.dlz.db.ds;
 
+import com.dlz.db.core.NativeSqlUtil;
 import com.dlz.db.dialect.DbDialect;
 import com.dlz.db.dialect.SchemaDialect;
 import com.dlz.db.exception.DbException;
@@ -252,8 +253,10 @@ public class DBDynamic {
             );
             // 简单校验连接可用
             try (java.sql.Statement st = conn.createStatement()) {
-                st.execute(properties.getTestQuery() != null ? properties.getTestQuery() : "SELECT 1");
+                st.execute(NativeSqlUtil.requireSafeConnectionTestQuery(properties.getTestQuery()));
             }
+        } catch (IllegalArgumentException e) {
+            throw new SystemException(e.getMessage());
         } catch (Exception e) {
             throw new DbException("数据源连接测试失败: " + e.getMessage(), 1005, e);
         } finally {

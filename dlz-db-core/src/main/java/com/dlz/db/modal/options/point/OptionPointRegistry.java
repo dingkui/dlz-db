@@ -3,13 +3,7 @@ package com.dlz.db.modal.options.point;
 import com.dlz.db.modal.options.DbOperation;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** Immutable registry of stable option points and their processing modes. */
 public final class OptionPointRegistry implements Serializable {

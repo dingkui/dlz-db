@@ -2,11 +2,11 @@ package com.dlz.db.dialect;
 
 import com.dlz.db.exception.DbParameterException;
 
+import java.sql.DatabaseMetaData;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.sql.DatabaseMetaData;
 
 /** 全局方言注册中心。 */
 public final class DialectRegistry {

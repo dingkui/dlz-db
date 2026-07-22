@@ -4,13 +4,12 @@ import com.dlz.db.annotation.IdType;
 import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.mapper.dbtype.TableColumnMapper;
-import com.dlz.db.modal.para.AParaTable;
-import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.modal.options.DbOperation;
 import com.dlz.db.modal.options.point.SelectLockPoint;
 import com.dlz.db.modal.options.point.context.CrudContext;
 import com.dlz.db.modal.options.point.context.SelectLockMode;
-
+import com.dlz.db.modal.para.AParaTable;
+import com.dlz.db.modal.para.AQuery;
 import com.dlz.db.support.DBHolder;
 import com.dlz.db.support.PojoCache;
 import com.dlz.db.support.bean.IdInfo;

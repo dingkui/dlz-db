@@ -4,7 +4,6 @@ import com.dlz.db.support.PojoCache;
 import com.dlz.kit.util.ValUtil;
 
 import java.sql.Types;
-import java.util.Map;
 
 @SuppressWarnings("unused") // sqlExecutor 保留供未来扩展使用
 public class TableColumnMapper implements ITableColumnMapper {

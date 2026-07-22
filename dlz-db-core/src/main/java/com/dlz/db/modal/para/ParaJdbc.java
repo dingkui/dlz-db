@@ -6,7 +6,6 @@ import com.dlz.db.modal.items.JdbcItem;
 import com.dlz.db.modal.items.SqlItem;
 import com.dlz.db.util.SqlUtil;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 

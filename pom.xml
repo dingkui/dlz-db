@@ -13,7 +13,7 @@
     <properties>
         <java.version>1.8</java.version>
         <dlz-spring.version>6.6.5</dlz-spring.version>
-        <dlz-kit.version>6.6.5</dlz-kit.version>
+        <dlz-kit.version>6.6.5.2</dlz-kit.version>
         <dlz-db.version>8.0.0</dlz-db.version>
 
         <!-- 代码质量工具版本 -->
@@ -182,7 +182,7 @@
                     <htmlOutput>true</htmlOutput>
                     <failOnError>true</failOnError>
                     <outputDirectory>${project.build.directory}/reports/spotbugs</outputDirectory>
-                    <excludeFilterFile>${project.basedir}/../spotbugs-exclude.xml</excludeFilterFile>
+                    <excludeFilterFile>${project.basedir}/../reports/spotbugs-exclude.xml</excludeFilterFile>
                     <plugins>
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>

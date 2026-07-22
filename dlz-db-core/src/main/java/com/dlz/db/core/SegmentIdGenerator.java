@@ -24,6 +24,7 @@ public class SegmentIdGenerator {
     }
 
     public long nextId(String tableName, long count) {
+        NativeSqlUtil.requireSafeTableName(tableName);
         if (count <= 0) count = 1;
         String key = DB.ds.getCurrentConfig().getName() + ":" + tableName;
         SegmentBuffer buffer = bufferMap.computeIfAbsent(key, k -> new SegmentBuffer(tableName, defaultStep));

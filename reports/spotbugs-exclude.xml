@@ -31,4 +31,30 @@
         <Method name="queryLastInsertIdByDialect"/>
         <Bug pattern="SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
     </Match>
+
+    <!-- Core raw-SQL API: callers supply statement structure while values are bound with PreparedStatement. -->
+    <Match>
+        <Class name="com.dlz.db.core.ISqlExecutor"/>
+        <Bug pattern="SQL_INJECTION_JDBC"/>
+    </Match>
+
+    <!-- The dialect registry supplies fixed last-insert-id SQL, never request data. -->
+    <Match>
+        <Class name="com.dlz.db.core.NativeSqlUtil"/>
+        <Method name="queryLastInsertIdByDialect"/>
+        <Bug pattern="SQL_INJECTION_JDBC,SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+    </Match>
+
+    <!-- SegmentIdGenerator validates table names and binds all runtime values. -->
+    <Match>
+        <Class name="com.dlz.db.core.SegmentIdGenerator$SegmentBuffer"/>
+        <Bug pattern="SQL_INJECTION_JDBC"/>
+    </Match>
+
+    <!-- testQuery is validated as a single read-only statement before execution. -->
+    <Match>
+        <Class name="com.dlz.db.ds.DBDynamic"/>
+        <Method name="testConnection"/>
+        <Bug pattern="SQL_INJECTION_JDBC,SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
+    </Match>
 </FindBugsFilter>

@@ -117,8 +117,10 @@ public interface ISqlExecutor {
 
 
     default HashMap<String, Integer> getTableColumnsInfo(String tableName) {
-        if (tableName == null || !NativeSqlUtil.TABLE_NAME_PATTERN.matcher(tableName).matches()) {
-            throw new ValidateException("非法表名: " + tableName);
+        try {
+            NativeSqlUtil.requireSafeTableName(tableName);
+        } catch (IllegalArgumentException e) {
+            throw new ValidateException(e.getMessage());
         }
         // 使用 WHERE 1=0 而非 LIMIT 0，确保跨数据库兼容性（Oracle不支持LIMIT语法）
         String sql = "SELECT * FROM " + tableName + " WHERE 1=0";

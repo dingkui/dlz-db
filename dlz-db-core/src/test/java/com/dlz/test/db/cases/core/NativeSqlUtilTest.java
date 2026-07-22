@@ -34,6 +34,25 @@ class NativeSqlUtilTest extends BaseDBTest {
     }
 
     @Test
+    @DisplayName("表名校验拒绝 SQL 注入字符")
+    void requireSafeTableNameRejectsInjection() {
+        assertDoesNotThrow(() -> NativeSqlUtil.requireSafeTableName("schema.user_1"));
+        assertThrows(IllegalArgumentException.class,
+                () -> NativeSqlUtil.requireSafeTableName("user` WHERE 1=1 --"));
+    }
+
+    @Test
+    @DisplayName("连接测试 SQL 仅允许单条只读查询")
+    void requireSafeConnectionTestQueryRejectsStatementChaining() {
+        assertEquals("SELECT 1", NativeSqlUtil.requireSafeConnectionTestQuery(null));
+        assertEquals("SELECT 1", NativeSqlUtil.requireSafeConnectionTestQuery(" SELECT 1 "));
+        assertThrows(IllegalArgumentException.class,
+                () -> NativeSqlUtil.requireSafeConnectionTestQuery("SELECT 1; DROP TABLE users"));
+        assertThrows(IllegalArgumentException.class,
+                () -> NativeSqlUtil.requireSafeConnectionTestQuery("UPDATE users SET role = 'admin'"));
+    }
+
+    @Test
     @DisplayName("queryLastInsertIdByDialect - SQLite方言")
     void testQueryLastInsertIdSqlite() throws Exception {
         Connection conn = DriverManager.getConnection("jdbc:sqlite::memory:");

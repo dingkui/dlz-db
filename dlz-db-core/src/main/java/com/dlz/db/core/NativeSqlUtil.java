@@ -1,8 +1,8 @@
 package com.dlz.db.core;
 
-import lombok.extern.slf4j.Slf4j;
 import com.dlz.db.dialect.DbDialect;
 import com.dlz.db.dialect.DialectRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.regex.Pattern;
@@ -22,6 +22,27 @@ import java.util.regex.Pattern;
 public class NativeSqlUtil {
 
     public static final Pattern TABLE_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_.]+$");
+    private static final Pattern CONNECTION_TEST_QUERY_PATTERN = Pattern.compile("(?is)^\\s*(?:SELECT|VALUES)\\b.*$");
+    private static final Pattern SQL_COMMENT_OR_STATEMENT_SEPARATOR_PATTERN = Pattern.compile(";|--|/\\*|\\*/");
+
+    public static void requireSafeTableName(String tableName) {
+        if (tableName == null || !TABLE_NAME_PATTERN.matcher(tableName).matches()) {
+            throw new IllegalArgumentException("非法表名: " + tableName);
+        }
+    }
+
+    /**
+     * Restricts connection probes to one read-only statement. This value can be
+     * supplied from datasource configuration and must not permit statement chaining.
+     */
+    public static String requireSafeConnectionTestQuery(String testQuery) {
+        String query = testQuery == null ? "SELECT 1" : testQuery.trim();
+        if (!CONNECTION_TEST_QUERY_PATTERN.matcher(query).matches()
+                || SQL_COMMENT_OR_STATEMENT_SEPARATOR_PATTERN.matcher(query).find()) {
+            throw new IllegalArgumentException("数据源测试 SQL 仅支持单条 SELECT 或 VALUES 查询");
+        }
+        return query;
+    }
 
     /**
      * 根据连接所属数据库的方言返回最后插入的自增 id。

@@ -5,24 +5,24 @@ import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.DbConfig;
-import com.dlz.db.modal.dto.PageRequest;
-import com.dlz.db.modal.dto.BatchResult;
 import com.dlz.db.modal.RequireUtil;
+import com.dlz.db.modal.dto.BatchResult;
+import com.dlz.db.modal.dto.PageRequest;
 import com.dlz.db.modal.options.DeleteOption;
 import com.dlz.db.modal.options.InsertOption;
 import com.dlz.db.modal.options.UpdateOption;
 import com.dlz.kit.json.JSONMap;
-import com.dlz.test.db.entity.TestUser;
 import com.dlz.test.db.config.BaseDBTest;
+import com.dlz.test.db.entity.TestUser;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 

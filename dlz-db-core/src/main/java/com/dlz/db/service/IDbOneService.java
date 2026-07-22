@@ -3,8 +3,6 @@ package com.dlz.db.service;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.modal.dto.ResultMap;
 import com.dlz.db.modal.wrapper.PojoQuery;
-import com.dlz.kit.exception.ValidateException;
-import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.system.ConvertUtil;
 
 /**
