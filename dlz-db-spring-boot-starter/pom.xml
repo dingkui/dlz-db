@@ -7,9 +7,32 @@
     </parent>
     <name>dlz-db-spring-boot-starter</name>
 	<artifactId>dlz-db-spring-boot-starter</artifactId>
-    <version>8.0.0</version>
 	<packaging>jar</packaging>
     <description>DLZ-DB Spring Boot Starter，基于 Spring JDBC 和 @Transactional</description>
+    <properties>
+        <spring.boot.version>2.6.12</spring.boot.version>
+
+
+        <!-- 代码质量工具版本 -->
+        <jacoco.version>0.8.11</jacoco.version>
+        <spotbugs.version>4.8.6</spotbugs.version>
+        <spotbugs.maven.version>4.8.6.6</spotbugs.maven.version>
+        <findsecbugs.version>1.12.0</findsecbugs.version>
+        <checkstyle.version>9.3</checkstyle.version>
+        <pmd.version>3.21.2</pmd.version>
+
+        <solon.version>3.0.6</solon.version>
+        <jedis.version>4.4.3</jedis.version>
+        <sqlite.version>3.43.0.0</sqlite.version>
+        <redis.version>3.5.3</redis.version>
+        <redisson.version>3.21.1</redisson.version>
+        <jedis.version>3.7.1</jedis.version>
+        <mysql.version>8.0.32</mysql.version>
+
+        <!-- 质量阈值 -->
+        <jacoco.line.coverage>0.70</jacoco.line.coverage>
+        <jacoco.branch.coverage>0.60</jacoco.branch.coverage>
+    </properties>
 	<dependencies>
         <!-- 核心模块 -->
         <dependency>
@@ -18,22 +41,17 @@
             <version>${dlz-db.version}</version>
         </dependency>
 
-        <!-- dlz-spring (Spring 依赖) -->
-<!--        <dependency>-->
-<!--            <groupId>top.dlzio</groupId>-->
-<!--            <artifactId>dlz-spring</artifactId>-->
-<!--            <version>${dlz-spring.version}</version>-->
-<!--        </dependency>-->
-
         <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${spring.boot.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${spring.boot.version}</version>
         </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -62,6 +80,10 @@
                 <exclusion>
                     <artifactId>assertj-core</artifactId>
                     <groupId>org.assertj</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>junit-jupiter</artifactId>
+                    <groupId>org.junit.jupiter</groupId>
                 </exclusion>
             </exclusions>
             <version>2.6.12</version>

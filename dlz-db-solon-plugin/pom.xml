@@ -7,13 +7,15 @@
     </parent>
     <name>dlz-db-solon-plugin</name>
 	<artifactId>dlz-db-solon-plugin</artifactId>
-    <version>8.0.0</version>
 	<packaging>jar</packaging>
     <description>DLZ-DB Solon Plugin，自研 SimpleJdbc 和事务管理</description>
-	<properties>
+    <properties>
         <!-- Adapter baseline; raise these as Solon integration coverage grows. -->
         <jacoco.line.coverage>0.80</jacoco.line.coverage>
         <jacoco.branch.coverage>0.60</jacoco.branch.coverage>
+
+        <solon.version>3.0.6</solon.version>
+        <hikari.version>4.0.3</hikari.version>
     </properties>
 	<dependencies>
         <!-- 核心模块 -->
@@ -62,6 +64,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
+            <version>${hikari.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- SpotBugs annotations for @SuppressFBWarnings -->

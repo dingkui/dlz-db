@@ -1,19 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>top.dlzio</groupId>
-        <artifactId>dlz.parent</artifactId>
-        <version>6.6.4</version>
-    </parent>
+    <groupId>top.dlzio</groupId>
+    <artifactId>dlz-db</artifactId>
     <name>dlz-db</name>
-	<artifactId>dlz-db</artifactId>
     <version>8.0.0</version>
 	<packaging>pom</packaging>
-    <description>DLZ-DB v8.0.0: 多模块数据库框架，支持 Spring 和 Solon</description>
+    <description>DLZ-DB v8.0: 多模块数据库框架，支持 Spring 和 Solon</description>
     <properties>
         <java.version>1.8</java.version>
-        <dlz-spring.version>6.6.5</dlz-spring.version>
-        <dlz-kit.version>6.6.5.2</dlz-kit.version>
+        <dlz-kit.version>6.7.3</dlz-kit.version>
         <dlz-db.version>8.0.0</dlz-db.version>
 
         <!-- 代码质量工具版本 -->
@@ -25,10 +20,11 @@
         <checkstyle.version>9.3</checkstyle.version>
         <pmd.version>3.21.2</pmd.version>
 
-        <solon.version>3.0.6</solon.version>
         <jedis.version>4.4.3</jedis.version>
         <sqlite.version>3.43.0.0</sqlite.version>
-        
+        <redisson.version>3.21.1</redisson.version>
+        <mysql.version>8.0.32</mysql.version>
+
         <!-- 质量阈值 -->
         <jacoco.line.coverage>0.70</jacoco.line.coverage>
         <jacoco.branch.coverage>0.60</jacoco.branch.coverage>
@@ -39,13 +35,34 @@
 <!--        <module>spring-test-demo</module>-->
         <module>dlz-db-solon-plugin</module>
     </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>${sqlite.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <!-- Spring Boot -->
         <!-- 测试 -->
+<!--        <dependency>-->
+<!--            <groupId>c3p0</groupId>-->
+<!--            <artifactId>c3p0</artifactId>-->
+<!--            <version></version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <scope>test</scope>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -57,8 +74,6 @@
             <artifactId>sqlite-jdbc</artifactId>
             <scope>test</scope>
         </dependency>
-
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -71,22 +86,23 @@
             <version>5.9.3</version>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>junit</groupId>-->
-<!--            <artifactId>junit</artifactId>-->
-<!--            <version>4.13.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.24.2</version>
+            <version>3.27.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.12</version>
+            <version>1.5.32</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     

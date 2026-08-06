@@ -7,7 +7,6 @@
     </parent>
     <name>dlz-db-core</name>
 	<artifactId>dlz-db-core</artifactId>
-    <version>8.0.0</version>
 	<packaging>jar</packaging>
     <description>DLZ-DB 核心模块，零 Spring 依赖</description>
 	<dependencies>
