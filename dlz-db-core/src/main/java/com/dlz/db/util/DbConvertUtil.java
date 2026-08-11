@@ -54,7 +54,7 @@ public class DbConvertUtil {
         if (mapper == null) {
             return value;
         }
-        return mapper.converObj4Db(tableName, columnName, value);
+        return mapper.convertObj4Db(tableName, columnName, value);
     }
 
     public static <T> List<T> getColumnList(List<ResultMap> r, Class<T> tClass) {
