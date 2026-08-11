@@ -6,7 +6,6 @@ import com.dlz.db.modal.dto.Order;
 import com.dlz.db.modal.dto.Page;
 import com.dlz.db.modal.wrapper.JdbcSelect;
 import com.dlz.test.db.config.BaseDBTest;
-import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -116,12 +115,12 @@ class DbJdbcTest extends BaseDBTest {
     @Test
     public void jdbcExecute() {
         final int execute = DB.jdbc.execute("DELETE FROM user");
-        Assert.assertNotNull("Jdbc 执行并返回影响行数", execute);
+        assertNotNull(execute, "Jdbc 执行并返回影响行数");
     }
 
     @Test
     public void jdbcDelete() {
         final int execute = DB.jdbc.execute("DELETE FROM user where id=?",1);
-        Assert.assertNotNull("Jdbc 执行并返回影响行数", execute);
+        assertNotNull(execute, "Jdbc 执行并返回影响行数");
     }
 }

@@ -14,10 +14,10 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * ICondAddByLamda 接口测试 - 基于Lambda字段引用的条件构造
+ * ICondAddByLambda 接口测试 - 基于Lambda字段引用的条件构造
  */
-@DisplayName("ICondAddByLamda Lambda条件测试")
-class ICondAddByLamdaTest {
+@DisplayName("ICondAddByLambda Lambda条件测试")
+class ICondAddByLambdaTest {
 
     private Condition condition;
 

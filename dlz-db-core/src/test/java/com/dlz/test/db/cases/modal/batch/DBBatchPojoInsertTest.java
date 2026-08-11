@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -110,9 +110,9 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
 
         DB.batch.insert(Arrays.asList(o1, o2), 100);
 
-        assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o1.getId());
-        assertNotNull("batch 后 bean 应被回填 ASSIGN_ID", o2.getId());
-        assertNotEquals("两个 bean 的 ASSIGN_ID 应不同", o1.getId(), o2.getId());
+        assertNotNull(o1.getId(), "batch 后 bean 应被回填 ASSIGN_ID");
+        assertNotNull(o2.getId(), "batch 后 bean 应被回填 ASSIGN_ID");
+        assertNotEquals(o1.getId(), o2.getId(), "两个 bean 的 ASSIGN_ID 应不同");
     }
 
     @Test
@@ -125,6 +125,6 @@ public class DBBatchPojoInsertTest extends BaseDBTest {
 
         DB.batch.insert(Arrays.asList(m1, m2), 100);
 
-        assertNull("AUTO 类型 batch 后不应回填主键（驱动限制）", m1.getId());
+        assertNull(m1.getId(), "AUTO 类型 batch 后不应回填主键（驱动限制）");
     }
 }

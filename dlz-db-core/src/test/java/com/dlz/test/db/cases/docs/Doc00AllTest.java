@@ -5,14 +5,14 @@ import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import com.dlz.test.db.entity.User;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class Doc00AllTest extends BaseDBTest {
-    @Before
+    @BeforeEach
     public void addSql() {
         SysSql SysSql = new SysSql();
         SysSql.setSqlKey("test");

@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * DbEntityUtil 测试类
@@ -67,7 +67,7 @@ class DbEntityUtilTest extends BaseDBTest {
     public void getIdInfo_cacheConsistency() {
         IdInfo idInfo1 = PojoCache.getIdInfo(Menu.class);
         IdInfo idInfo2 = PojoCache.getIdInfo(Menu.class);
-        assertSame("Field 实例应来自缓存", idInfo1.getField(), idInfo2.getField());
+        assertSame(idInfo1.getField(), idInfo2.getField(), "Field 实例应来自缓存");
         assertEquals(idInfo1.getDbName(), idInfo2.getDbName());
     }
 }

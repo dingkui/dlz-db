@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanInfoHolderTest extends BaseDBTest {
 
@@ -46,6 +46,6 @@ public class BeanInfoHolderTest extends BaseDBTest {
     public void getIdField_cacheReturnsSameInstance() {
         Field f1 = PojoCache.getIdField(Goods.class);
         Field f2 = PojoCache.getIdField(Goods.class);
-        assertSame("getIdField 应缓存并返回同一 Field 实例", f1, f2);
+        assertSame(f1, f2, "getIdField 应缓存并返回同一 Field 实例");
     }
 }

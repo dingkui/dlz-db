@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.condition;
 
 import com.dlz.db.enums.DbOperateEnum;
-import com.dlz.db.inf.ICondAddByLamda;
+import com.dlz.db.inf.ICondAddByLambda;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.test.db.entity.User;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ICondAddByLamdaCoverageTest {
+class ICondAddByLambdaCoverageTest {
     @Test
     void allLambdaConditionOverloadsAndDynamicSwitches() {
         Probe probe = new Probe();
@@ -81,7 +81,7 @@ class ICondAddByLamdaCoverageTest {
         assertFalse(probe.conditions.isEmpty());
     }
 
-    private static final class Probe implements ICondAddByLamda<Probe, User> {
+    private static final class Probe implements ICondAddByLambda<Probe, User> {
         private final List<Condition> conditions = new ArrayList<>();
 
         @Override

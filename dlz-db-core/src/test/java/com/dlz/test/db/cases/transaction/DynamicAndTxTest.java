@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 测试 {@link DBDynamic#use} 与 {@link DBTx#run} 的拆分语义：
@@ -75,8 +75,9 @@ public class DynamicAndTxTest extends BaseDBTest {
             fail("应抛出异常：数据源不存在");
         } catch (Exception e) {
             String msg = e.getMessage();
-            assertTrue("异常信息应包含'数据源不存在'，实际: " + msg,
-                    msg.contains("数据源不存在") || (e.getCause() != null && e.getCause().getMessage().contains("数据源不存在")));
+            assertTrue(
+                    msg.contains("数据源不存在") || (e.getCause() != null && e.getCause().getMessage().contains("数据源不存在")),
+                    "异常信息应包含'数据源不存在'，实际: " + msg);
         }
     }
 
@@ -106,7 +107,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         long count = DB.ds.use(TEST_DS_NAME, () ->
                 DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 100).count()
         );
-        assertEquals("事务提交后应能查到数据", 1, count);
+        assertEquals(1, count, "事务提交后应能查到数据");
     }
 
     @Test
@@ -114,7 +115,7 @@ public class DynamicAndTxTest extends BaseDBTest {
         long count1 = DB.ds.use(TEST_DS_NAME, () ->
                 DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
-        assertEquals("异常应触发回滚，数据不应持久化",0, count1);
+        assertEquals(0, count1, "异常应触发回滚，数据不应持久化");
         try {
             DB.tx.run(TEST_DS_NAME, () -> {
                 DB.jdbc.execute("INSERT INTO tx_user (id, name) VALUES (?, ?)", 200, "rollback");
@@ -123,14 +124,15 @@ public class DynamicAndTxTest extends BaseDBTest {
             fail("应抛出异常");
         } catch (Exception e) {
             // 框架会包装为 DbException，原始消息保留在 message 中
-            assertTrue("异常应包含 '模拟业务异常'，实际: " + e.getMessage(),
-                    e.getMessage().contains("模拟业务异常"));
+            assertTrue(
+                    e.getMessage().contains("模拟业务异常"),
+                    "异常应包含 '模拟业务异常'，实际: " + e.getMessage());
         }
 
         long count2 = DB.ds.use(TEST_DS_NAME, () ->
             DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id = ?", 200).count()
         );
-        assertEquals("异常应触发回滚，数据不应持久化", 0, count2);
+        assertEquals(0, count2, "异常应触发回滚，数据不应持久化");
     }
 
     @Test
@@ -185,7 +187,7 @@ public class DynamicAndTxTest extends BaseDBTest {
             }
             start.countDown();
             executor.shutdown();
-            assertTrue("并发事务应在超时前完成", executor.awaitTermination(30, TimeUnit.SECONDS));
+            assertTrue(executor.awaitTermination(30, TimeUnit.SECONDS), "并发事务应在超时前完成");
             assertEquals(taskCount, completed.get());
             long count = DB.ds.use(TEST_DS_NAME, () ->
                     DB.jdbc.selectWrapper("SELECT COUNT(*) FROM tx_user WHERE id >= ?", 600).count());

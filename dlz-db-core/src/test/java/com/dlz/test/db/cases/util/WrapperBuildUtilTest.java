@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WrapperBuildUtilTest extends BaseDBTest {
 
@@ -17,8 +17,8 @@ public class WrapperBuildUtilTest extends BaseDBTest {
     public void buildUpdateSql_withCustomIdName() {
         List<Field> fields = PojoCache.getBeanFields(SysSql.class);
         String sql = WrapperBuildUtil.buildUpdateSql("sys_sql", fields, "id");
-        assertTrue("动态 idName 应出现在 WHERE 条件", sql.contains("WHERE id = ?"));
-        assertFalse("SET 中不应包含主键", sql.contains("SET id="));
+        assertTrue(sql.contains("WHERE id = ?"), "动态 idName 应出现在 WHERE 条件");
+        assertFalse(sql.contains("SET id="), "SET 中不应包含主键");
     }
 
     @Test
@@ -28,8 +28,8 @@ public class WrapperBuildUtilTest extends BaseDBTest {
         dict.setName("test_update");
         List<Field> fields = PojoCache.getBeanFields(SysSql.class);
         Object[] params = WrapperBuildUtil.buildUpdateParams(dict, fields, PojoCache.getIdField(SysSql.class));
-        assertTrue("参数数组长度应大于 0", params.length > 0);
-        assertEquals("最后一个参数应是主键值", 123L, params[params.length - 1]);
+        assertTrue(params.length > 0, "参数数组长度应大于 0");
+        assertEquals(123L, params[params.length - 1], "最后一个参数应是主键值");
     }
 
     @Test
@@ -40,6 +40,6 @@ public class WrapperBuildUtilTest extends BaseDBTest {
         List<Field> fields = PojoCache.getBeanFields(SysSql.class);
         Object[] params = WrapperBuildUtil.buildInsertParams(dict, fields);
         assertNotNull(params);
-        assertTrue("参数数组应包含主键值", java.util.Arrays.asList(params).contains(456L));
+        assertTrue(java.util.Arrays.asList(params).contains(456L), "参数数组应包含主键值");
     }
 }

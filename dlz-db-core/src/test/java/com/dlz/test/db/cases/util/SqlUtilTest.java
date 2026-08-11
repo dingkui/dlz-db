@@ -7,8 +7,8 @@ import com.dlz.db.modal.para.ParaJdbc;
 import com.dlz.db.modal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.util.DateUtil;
 import com.dlz.test.db.config.BaseDBTest;
-import org.assertj.core.util.DateUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +60,7 @@ class SqlUtilTest extends BaseDBTest {
     @Test
     @DisplayName("getRunSqlByJdbc - Date 参数（覆盖 Date 分支）")
     void testGetRunSqlByJdbc_Date() {
-        Date now = DateUtil.parse("2026-07-01");
+        Date now = DateUtil.DATE.parse("2026-07-01");
         String sql = SqlUtil.getRunSqlByJdbc("SELECT * FROM user WHERE t = ?", now);
         assertNotNull(sql);
         assertEquals("SELECT * FROM user WHERE t = '2026-07-01 00:00:00'", sql);

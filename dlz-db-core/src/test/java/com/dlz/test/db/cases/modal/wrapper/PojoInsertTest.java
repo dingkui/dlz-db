@@ -6,7 +6,7 @@ import com.dlz.test.db.entity.SysSql;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * PojoInsert SQL 生成测试（仅验证 SQL，不执行）

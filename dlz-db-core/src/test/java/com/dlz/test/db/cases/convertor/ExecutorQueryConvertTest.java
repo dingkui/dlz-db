@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * IExecutorQuery 转换器方法测试
@@ -46,16 +46,16 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .convert(new NameConvertCamel())
                 .queryList();
         
-        assertNotNull("查询结果不应为 null", results);
-        assertFalse("查询结果不应为空", results.isEmpty());
+        assertNotNull(results, "查询结果不应为 null");
+        assertFalse(results.isEmpty(), "查询结果不应为空");
         
         // 验证字段名已转换为驼峰格式
         ResultMap firstResult = results.get(0);
         log.info("转换后的字段名: {}", firstResult.keySet());
         
         // 驼峰转换器应该将 SQL_KEY 转换为 sqlKey
-        assertTrue("应该包含驼峰格式的字段名 sqlKey", 
-                firstResult.containsKey("sqlKey") || firstResult.containsKey("SQL_KEY"));
+        assertTrue(firstResult.containsKey("sqlKey") || firstResult.containsKey("SQL_KEY"),
+                "应该包含驼峰格式的字段名 sqlKey");
     }
 
     /**
@@ -72,16 +72,16 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .convertNative()
                 .queryList();
         
-        assertNotNull("查询结果不应为 null", results);
-        assertFalse("查询结果不应为空", results.isEmpty());
+        assertNotNull(results, "查询结果不应为 null");
+        assertFalse(results.isEmpty(), "查询结果不应为空");
         
         // 验证字段名保持数据库原始格式（大写）
         ResultMap firstResult = results.get(0);
         log.info("原生字段名: {}", firstResult.keySet());
         
         // 原生转换器应该保持 SQL_KEY 不变
-        assertTrue("应该包含原始字段名 SQL_KEY",
-                firstResult.containsKey("SQL_KEY"));
+        assertTrue(firstResult.containsKey("SQL_KEY"),
+                "应该包含原始字段名 SQL_KEY");
     }
 
     /**
@@ -99,15 +99,15 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .convert(new NameConvertCamel())  // 第二次覆盖
                 .queryList();
         
-        assertNotNull("查询结果不应为 null", results);
-        assertFalse("查询结果不应为空", results.isEmpty());
+        assertNotNull(results, "查询结果不应为 null");
+        assertFalse(results.isEmpty(), "查询结果不应为空");
         
         ResultMap firstResult = results.get(0);
         log.info("最终字段名: {}", firstResult.keySet());
         
         // 最后一次转换应该生效（驼峰）
-        assertTrue("应该使用最后一次的转换器（驼峰）", 
-                firstResult.containsKey("sqlKey") || firstResult.containsKey("SQL_KEY"));
+        assertTrue(firstResult.containsKey("sqlKey") || firstResult.containsKey("SQL_KEY"),
+                "应该使用最后一次的转换器（驼峰）");
     }
 
     /**
@@ -127,8 +127,8 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
         if (result != null) {
             log.info("单条记录字段名: {}", result.keySet());
             // 验证字段名保持原始格式
-            assertTrue("应该包含原始字段名", 
-                    result.containsKey("SQL_KEY") || result.containsKey("id"));
+            assertTrue(result.containsKey("SQL_KEY") || result.containsKey("id"),
+                    "应该包含原始字段名");
         }
     }
 
@@ -146,8 +146,8 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .convert(new NameConvertCamel())
                 .queryPage();
         
-        assertNotNull("分页结果不应为 null", page);
-        assertNotNull("分页数据不应为 null", page.getRecords());
+        assertNotNull(page, "分页结果不应为 null");
+        assertNotNull(page.getRecords(), "分页数据不应为 null");
         log.info("分页查询返回 {} 条记录", page.getRecords().size());
         
         if (!page.getRecords().isEmpty()) {
@@ -177,8 +177,8 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .convert(new NameConvertCamel())
                 .queryList();
         
-        assertNotNull("原生转换器结果不应为 null", nativeResults);
-        assertNotNull("驼峰转换器结果不应为 null", camelResults);
+        assertNotNull(nativeResults, "原生转换器结果不应为 null");
+        assertNotNull(camelResults, "驼峰转换器结果不应为 null");
 
         if (!nativeResults.isEmpty() && !camelResults.isEmpty() ) {
             log.info("原生字段名: {}", nativeResults.get(0).keySet());
@@ -208,8 +208,8 @@ public class ExecutorQueryConvertTest extends BaseDBTest {
                 .limit(1)
                 .queryList();
         
-        assertNotNull("第一次查询结果不应为 null", results1);
-        assertNotNull("第二次查询结果不应为 null", results2);
+        assertNotNull(results1, "第一次查询结果不应为 null");
+        assertNotNull(results2, "第二次查询结果不应为 null");
         
         log.info("第一次查询字段名（原生）: {}", results1.get(0).keySet());
         log.info("第二次查询字段名（默认）: {}", results2.get(0).keySet());

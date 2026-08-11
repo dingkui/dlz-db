@@ -4,7 +4,7 @@ import com.dlz.db.enums.ParaTypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * ParaTypeEnum 测试类

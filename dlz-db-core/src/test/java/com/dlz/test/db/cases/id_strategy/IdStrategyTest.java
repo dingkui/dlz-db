@@ -4,13 +4,13 @@ import com.dlz.db.modal.DB;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.User;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 主键策略专题测试
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class IdStrategyTest extends BaseDBTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         DB.jdbc.execute("DELETE FROM user");
         // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
@@ -26,7 +26,7 @@ public class IdStrategyTest extends BaseDBTest {
         // DB.Jdbc.execute("CREATE TABLE test_auto_id (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         DB.jdbc.execute("DELETE FROM user");
         DB.jdbc.execute("DELETE FROM test_auto_id");
@@ -61,8 +61,8 @@ public class IdStrategyTest extends BaseDBTest {
         AutoIdEntity m2 = new AutoIdEntity();
         m2.setName("ba2");
         DB.batch.insert(Arrays.asList(m1, m2), 100);
-        assertNull("AUTO batch 不应回填", m1.getId());
-        assertNull("AUTO batch 不应回填", m2.getId());
+        assertNull(m1.getId(), "AUTO batch 不应回填");
+        assertNull(m2.getId(), "AUTO batch 不应回填");
     }
 
     @Test

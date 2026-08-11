@@ -23,7 +23,6 @@ public class BaseEntity implements Serializable {
 	/**
 	 * 主键
 	 */
-	@JsonSerialize(using = ToStringSerializer.class)
 	@ApiModelProperty(value = "主键")
 	@TableId(value = "id")
 	private Long id;

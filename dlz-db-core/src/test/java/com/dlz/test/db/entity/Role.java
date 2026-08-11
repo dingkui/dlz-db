@@ -1,8 +1,6 @@
 package com.dlz.test.db.entity;
 
 import com.dlz.db.annotation.TableName;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -21,7 +19,6 @@ public class Role extends BaseEntity {
 	/**
 	 * 父主键
 	 */
-	@JsonSerialize(using = ToStringSerializer.class)
 	@ApiModelProperty(value = "父主键")
 	private Long parentId;
 
