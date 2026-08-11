@@ -1,4 +1,4 @@
-package com.dlz.db.support.resouce;
+package com.dlz.db.support.resource;
 
 import lombok.extern.slf4j.Slf4j;
 
