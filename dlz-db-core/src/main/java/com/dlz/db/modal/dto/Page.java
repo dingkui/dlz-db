@@ -1,7 +1,7 @@
 package com.dlz.db.modal.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.dlz.db.annotation.Schema;
+import com.dlz.db.annotation.SchemaField;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,20 +16,20 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@ApiModel(value = "分页对象")
+@Schema("分页对象")
 public class Page<T> extends Sort<Page> implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_PAGE_SIZE = 20;
 
-    @ApiModelProperty(value = "当前页码，从1开始", position = 1)
+    @SchemaField("当前页码，从1开始")
     private long current = 0;
-    @ApiModelProperty(value = "每页条数", position = 2)
+    @SchemaField("每页条数")
     private long size = DEFAULT_PAGE_SIZE;
-    @ApiModelProperty(value = "数据总条数", position = 3)
+    @SchemaField("数据总条数")
     private long total;
-    @ApiModelProperty(value = "总页数", position = 4)
+    @SchemaField("总页数")
     private long pages;
-    @ApiModelProperty(value = "数据集合", position = 5)
+    @SchemaField("数据集合")
     private List<T> records;
 
     public static <T> Page<T> build(long current, long size, Order... order) {

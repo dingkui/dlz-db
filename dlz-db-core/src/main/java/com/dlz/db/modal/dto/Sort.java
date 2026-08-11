@@ -1,10 +1,9 @@
 package com.dlz.db.modal.dto;
 
+import com.dlz.db.annotation.Schema;
+import com.dlz.db.annotation.SchemaField;
 import com.dlz.db.inf.IChained;
 import com.dlz.db.util.DbConvertUtil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,10 +16,10 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@ApiModel(value = "排序对象")
+@Schema("排序对象")
 public class Sort<T extends Sort> implements Serializable, IChained<T> {
     private static final long serialVersionUID = 1L;
-    @ApiModelProperty(value = "排序")
+    @SchemaField("排序")
     private List<Order> orders=new ArrayList<>();
 
     public Sort(Order... order){
@@ -29,7 +28,6 @@ public class Sort<T extends Sort> implements Serializable, IChained<T> {
     public Sort(List<Order> orders){
         this.orders.addAll(orders);
     }
-    @JsonIgnore
     public String getSortSql() {
         if (orders == null || orders.isEmpty()) {
             return null;

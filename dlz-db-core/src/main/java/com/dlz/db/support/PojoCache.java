@@ -1,9 +1,11 @@
 package com.dlz.db.support;
 
-import com.dlz.db.annotation.TableField;
+import com.dlz.db.annotation.Schema;
+import com.dlz.db.annotation.SchemaField;
 import com.dlz.db.annotation.TableId;
 import com.dlz.db.annotation.TableName;
 import com.dlz.db.annotation.proxy.AnnoProxies;
+import com.dlz.db.annotation.proxy.TableFieldMeta;
 import com.dlz.db.modal.DB;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.support.bean.TableInfo;
@@ -15,8 +17,6 @@ import com.dlz.kit.fn.DlzFn;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -66,18 +66,20 @@ public class PojoCache {
             }
 
             if (StringUtils.isEmpty(columnName)) {
-                TableField name = field.getAnnotation(TableField.class);
-                if (name != null) {
-                    if (name.exist() && StringUtils.isNotEmpty(name.value())) {
-                        columnName = name.value();
-                    } else if (!name.exist()) {
+                // 本项目 @TableField（直接标注或自定义元注解扩展）
+                final String ourValue = TableFieldMeta.value(field);
+                final Boolean ourExist = TableFieldMeta.exist(field);
+                if (ourExist != null) {
+                    if (ourExist && StringUtils.isNotEmpty(ourValue)) {
+                        columnName = ourValue;
+                    } else if (!ourExist) {
                         // exist=false 表示该字段不对应数据库列，返回空串让上层过滤
                         columnName = "";
                     }
-                } else {
-                    if (ValUtil.toBoolean(AnnoProxies.MybatisPlusTableField.exist(field), true)) {
-                        columnName = AnnoProxies.MybatisPlusTableField.value(field);
-                    }
+                } else if (StringUtils.isNotEmpty(ourValue)) {
+                    columnName = ourValue;
+                } else if (ValUtil.toBoolean(AnnoProxies.MybatisPlusTableField.exist(field), true)) {
+                    columnName = AnnoProxies.MybatisPlusTableField.value(field);
                 }
             }
             if (StringUtils.isEmpty(columnName)) {
@@ -136,9 +138,20 @@ public class PojoCache {
      * @param clazz
      */
     public static String getTableComment(Class<?> clazz) {
-        ApiModel name = clazz.getAnnotation(ApiModel.class);
-        if (name != null && StringUtils.isNotEmpty(name.value())) {
-            return name.value().replaceAll("[\\\"'`]", "");
+        // 1) 本项目 @TableName（直接标注或自定义元注解扩展）的 comment
+        final String ourComment = TableFieldMeta.comment(clazz);
+        if (StringUtils.isNotEmpty(ourComment)) {
+            return ourComment.replaceAll("[\\\"'`]", "");
+        }
+        // 2) 本项目 @Schema（类级描述）
+        final Schema schema = clazz.getAnnotation(Schema.class);
+        if (schema != null && StringUtils.isNotEmpty(schema.value())) {
+            return schema.value().replaceAll("[\\\"'`]", "");
+        }
+        // 3) 兼容 io.swagger 的 @ApiModel（未引入 swagger 时返回 null）
+        final String swagger = AnnoProxies.SwaggerApiModel.value(clazz);
+        if (StringUtils.isNotEmpty(swagger)) {
+            return swagger.replaceAll("[\\\"'`]", "");
         }
         return null;
     }
@@ -149,9 +162,20 @@ public class PojoCache {
      * @param field
      */
     public static String getColumnComment(Field field) {
-        ApiModelProperty name = field.getAnnotation(ApiModelProperty.class);
-        if (name != null && StringUtils.isNotEmpty(name.value())) {
-            return name.value().replaceAll("[\\\"\\\n'`]", "");
+        // 1) 本项目 @TableField（直接标注或自定义元注解扩展）的 comment
+        final String ourComment = TableFieldMeta.comment(field);
+        if (StringUtils.isNotEmpty(ourComment)) {
+            return ourComment.replaceAll("[\\\"\n'`]", "");
+        }
+        // 2) 本项目 @SchemaField（字段级描述）
+        final SchemaField schemaField = field.getAnnotation(SchemaField.class);
+        if (schemaField != null && StringUtils.isNotEmpty(schemaField.value())) {
+            return schemaField.value().replaceAll("[\\\"\n'`]", "");
+        }
+        // 3) 兼容 io.swagger 的 @ApiModelProperty（未引入 swagger 时返回 null）
+        final String swagger = AnnoProxies.SwaggerModelProp.value(field);
+        if (StringUtils.isNotEmpty(swagger)) {
+            return swagger.replaceAll("[\\\"\n'`]", "");
         }
         return null;
     }

@@ -4,14 +4,19 @@ import com.dlz.db.dialect.DialectRegistry;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.modal.DB;
 import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.db.support.resouce.DlzResourceLoader;
+import com.dlz.db.support.resource.DlzResourceLoader;
 import com.dlz.kit.util.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -40,13 +45,27 @@ public class SqlHolder {
 
     private static void readSqlXml(InputStream is) {
         try {
-            SAXReader reader = new SAXReader();
-            Document doc = reader.read(is);
-            for (Element sql : doc.getRootElement().elements()) {
-                addSqlSetting(sql.attributeValue("sqlId"),sql.getData().toString(),false);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            // 禁用外部实体，防 XXE
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(is);
+            Element root = doc.getDocumentElement();
+            NodeList children = root.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node node = children.item(i);
+                if (node.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+                Element sql = (Element) node;
+                addSqlSetting(sql.getAttribute("sqlId"), node.getTextContent(), false);
             }
-        } catch (DocumentException e) {
-            log.error(ExceptionUtils.getStackTrace(" 文件读取异常！",e));
+        } catch (ParserConfigurationException | SAXException e) {
+            log.error(ExceptionUtils.getStackTrace(" 文件读取异常！", e));
+        } catch (IOException e) {
+            log.error(ExceptionUtils.getStackTrace(" 文件读取异常！", e));
         } finally {
             if (is != null) {
                 try {
