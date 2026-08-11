@@ -259,13 +259,13 @@ public class PojoCache {
             HashMap<String, Integer> tableColumnsInfo = getTableColumnsInfo(tableName);
             if (tableColumnsInfo == null) {
                 // 仅失败分支注入调用方，MdcContext 自动恢复 MDC，避免残留
-                try (final MdcContext ignore = DlzCaller.caller(1)) {
+                try (MdcContext ignore = DlzCaller.caller(1)) {
                     log.warn("get tableColumnsInfo fail：" + tableName);
                 }
                 return null;
             }
             if (tableColumnsInfo.isEmpty()) {
-                try (final MdcContext ignore = DlzCaller.caller(1)) {
+                try (MdcContext ignore = DlzCaller.caller(1)) {
                     throw new SystemException("get tableColumnsInfo fail：" + beanClass.getName());
                 }
             }

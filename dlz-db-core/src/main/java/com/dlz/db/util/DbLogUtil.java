@@ -55,7 +55,7 @@ public class DbLogUtil {
             final long l = System.currentTimeMillis() - t;
             // showCaller 为 true 时才解析调用方并写入 MDC；MdcContext 为 null 时 try-with-resources 自动跳过。
             // try 结束 MdcContext.close() 自动恢复 MDC，无需手动 clearCaller。
-            try (final MdcContext ignore = showCaller ? DlzCaller.caller() : null) {
+            try (MdcContext ignore = showCaller ? DlzCaller.caller() : null) {
                 if (error != null) {
                     log.error(ExceptionUtils.getStackTrace(error));
                     log.error(msg.apply(l, result));
@@ -72,7 +72,7 @@ public class DbLogUtil {
 
     public static void warn(String msg, Exception error) {
         if (log.isWarnEnabled() || error != null) {
-            try (final MdcContext ignore = showCaller ? DlzCaller.caller() : null) {
+            try (MdcContext ignore = showCaller ? DlzCaller.caller() : null) {
                 if (error != null) {
                     log.warn(ExceptionUtils.getStackTrace(error));
                 }
@@ -82,7 +82,7 @@ public class DbLogUtil {
     }
     public static void debug(String msg, Exception error) {
         if (log.isDebugEnabled() || error != null) {
-            try (final MdcContext ignore = showCaller ? DlzCaller.caller() : null) {
+            try (MdcContext ignore = showCaller ? DlzCaller.caller() : null) {
                 if (error != null) {
                     log.debug(ExceptionUtils.getStackTrace(error));
                 }
