@@ -2,15 +2,11 @@ package com.dlz.db.mapper.dbtype;
 
 public interface ITableColumnMapper {
     /**
-     * 取得字段对应的类型
+     * 取得字段对应的类型的值
      *
-     * @param @param  tableName
-     * @param @param  columnName
-     * @param @param  value
-     * @param @return 设定文件
-     * @return Object    返回类型
-     * @throws
-     * @Title: converObj4Db
+     * @param  tableName 表名
+     * @param  columnName 字段名
+     * @param  value  字段值
      */
-     Object converObj4Db(String tableName, String columnName, Object value);
+     Object convertObj4Db(String tableName, String columnName, Object value);
 }

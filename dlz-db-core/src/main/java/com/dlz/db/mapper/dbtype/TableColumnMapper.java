@@ -8,7 +8,7 @@ import java.sql.Types;
 @SuppressWarnings("unused") // sqlExecutor 保留供未来扩展使用
 public class TableColumnMapper implements ITableColumnMapper {
     @Override
-    public Object converObj4Db(String tableName, String columnName, Object value) {
+    public Object convertObj4Db(String tableName, String columnName, Object value) {
         Integer dbClass = PojoCache.getTableColumnsInfo(tableName).get(columnName);
         if(dbClass==null){
             return value;
