@@ -77,7 +77,7 @@ public class SqlUtil {
         while (mat.find()) {
             String _startStr = sqlRun.substring(beginIndex, mat.start());
             String group = mat.group(1);
-            Object jdbcParaItem = JacksonUtil.at(para, group);
+            Object jdbcParaItem = JsonUtil.at(para, group);
             beginIndex = mat.end();
 
             sb.append(_startStr);
@@ -321,7 +321,7 @@ public class SqlUtil {
         StringBuilder sb = new StringBuilder();
         while (mat.find()) {
             String key = mat.group(1);
-            Object o = JacksonUtil.at(m, key);
+            Object o = JsonUtil.at(m, key);
             if (o == null && key.startsWith("key.")) {
                 o = getConditionStr(SqlHolder.getSql(key), m);
             }
@@ -390,7 +390,7 @@ public class SqlUtil {
     }
 
     private static boolean isNotEmpty(Map<String, Object> m, String key) {
-        Object o = JacksonUtil.at(m, key);
+        Object o = JsonUtil.at(m, key);
         return o != null && !"".equals(o);
     }
 
