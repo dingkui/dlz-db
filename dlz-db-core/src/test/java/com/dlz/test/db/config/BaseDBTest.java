@@ -1,5 +1,6 @@
 package com.dlz.test.db.config;
 
+import com.dlz.caller.DlzCaller;
 import com.dlz.db.core.DlzDbProperties;
 import com.dlz.db.core.jdbc.JdbcSqlExecutor;
 import com.dlz.db.core.jdbc.JdbcTxExecutor;
@@ -57,6 +58,8 @@ public abstract class BaseDBTest {
                                 JdbcTxExecutor::new);
 
                         DBHolder.getSqlExecutor();
+
+                        DlzCaller.getProperties().setIgnoreCallerPackages(java.util.Arrays.asList("org.junit"));
 
                         log.info("---------------------------------------------------------");
                         init = true;

@@ -1,5 +1,6 @@
 package com.dlz.db.support;
 
+import com.dlz.caller.DlzCaller;
 import com.dlz.db.annotation.Schema;
 import com.dlz.db.annotation.SchemaField;
 import com.dlz.db.annotation.TableId;
@@ -10,10 +11,10 @@ import com.dlz.db.modal.DB;
 import com.dlz.db.support.bean.IdInfo;
 import com.dlz.db.support.bean.TableInfo;
 import com.dlz.db.util.DbConvertUtil;
-import com.dlz.db.util.DbLogUtil;
 import com.dlz.kit.cache.CacheMap;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.mdc.MdcContext;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;
@@ -257,13 +258,16 @@ public class PojoCache {
         return tableFieldCache.getAndSet(tableName, () -> {
             HashMap<String, Integer> tableColumnsInfo = getTableColumnsInfo(tableName);
             if (tableColumnsInfo == null) {
-                DbLogUtil.setCaller(1);
-                log.warn("get tableColumnsInfo fail：" + tableName);
+                // 仅失败分支注入调用方，MdcContext 自动恢复 MDC，避免残留
+                try (final MdcContext ignore = DlzCaller.caller(1)) {
+                    log.warn("get tableColumnsInfo fail：" + tableName);
+                }
                 return null;
             }
             if (tableColumnsInfo.isEmpty()) {
-                DbLogUtil.setCaller(1);
-                throw new SystemException("get tableColumnsInfo fail：" + beanClass.getName());
+                try (final MdcContext ignore = DlzCaller.caller(1)) {
+                    throw new SystemException("get tableColumnsInfo fail：" + beanClass.getName());
+                }
             }
             return FieldReflections.getFields(beanClass).stream()
                     .filter(field -> tableColumnsInfo.containsKey(getDbName(field.getName())))

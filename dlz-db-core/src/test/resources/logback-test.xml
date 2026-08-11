@@ -12,7 +12,7 @@
 <!--    </root>-->
 
     <property name="CONSOLE_LOG_PATTERN_COLOR"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %cyan([%X{traceId}-%thread]) %logger{32}:%line%X{caller} %yellow(%m) %n" />
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %cyan([%X{traceId}-%thread]) %logger{32}:%line%X{dlz-caller} %yellow(%m) %n" />
     <property name="CONSOLE_LOG_PATTERN_NO_COLOR"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %level [%X{traceId}-%thread] %logger:%line %m%n" />
     <!-- 控制台日志 -->

@@ -27,11 +27,11 @@
 <!--    <property name="CONSOLE_LOG_PATTERN"-->
 <!--              value="%clr(%d{HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%X{traceId}]){yellow}%clr(%logger{32}){cyan}[%line] %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />-->
     <property name="CONSOLE_LOG_PATTERN"
-              value="%clr(%d{HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%X{traceId:-trace-Id}]){yellow}%clr(%logger{32}){cyan}[%line] %m%clr([%thread]){yellow}%n" />
+              value="%clr(%d{HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%X{dlz-traceId:-trace-Id}]){yellow}%clr(%logger{32}){cyan}[%line] %m%clr([%thread]){yellow}%n" />
     <property name="CONSOLE_LOG_PATTERN_NO_COLOR"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{traceId}-%thread] %logger[%method:%line] %m%n" />
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{dlz-trace}-%thread] %logger[%method:%line] %m%n" />
     <property name="CONSOLE_LOG_PATTERN_NO_COLOR2"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{traceId}-%thread] %m%n" />
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{dlz-trace}-%thread] %m%n" />
     <!-- 控制台日志 -->
     <appender name="StdoutAppender" class="ch.qos.logback.core.ConsoleAppender">
         <withJansi>true</withJansi>

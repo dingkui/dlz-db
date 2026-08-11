@@ -42,12 +42,6 @@ class DbLogUtilTest {
         assertDoesNotThrow(() -> DbLogUtil.init(new DlzDbProperties()));
     }
 
-    @Test
-    @DisplayName("setCaller / clearCaller - 设置与清除调用者")
-    void testSetAndClearCaller() {
-        assertDoesNotThrow(() -> DbLogUtil.setCaller(1));
-        assertDoesNotThrow(DbLogUtil::clearCaller);
-    }
 
     @Test
     @DisplayName("generateSqlMessage - 单次执行（showResult=false）")
@@ -147,15 +141,5 @@ class DbLogUtilTest {
     void testDebug_WithError() {
         assertDoesNotThrow(() -> DbLogUtil.debug("debug with error",
                 new RuntimeException("debug error")));
-    }
-
-    @Test
-    @DisplayName("getTraceCaller - level 小于 1 时自动修正（覆盖边界分支）")
-    void testGetTraceCaller_LevelZero() {
-        // level < 1 应修正为 1
-        String caller0 = DbLogUtil.getTraceCaller(0);
-        String caller1 = DbLogUtil.getTraceCaller(1);
-        assertNotNull(caller0);
-        assertNotNull(caller1);
     }
 }
