@@ -1,6 +1,6 @@
 package com.dlz.db.modal.para;
 
-import com.dlz.db.inf.ICondAddByLamda;
+import com.dlz.db.inf.ICondAddByLambda;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.condition.Condition;
 import com.dlz.db.support.PojoCache;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public abstract class APojoQuery<ME extends APojoQuery, T, PM extends AQuery>
         extends AParaPojo<T, PM>
-        implements ISqlQuery<ME>, ICondAddByLamda<ME, T> {
+        implements ISqlQuery<ME>, ICondAddByLambda<ME, T> {
     private DlzFn2<String, Object,Boolean> queryIgnore = (name, value) -> value==null;
     protected APojoQuery(Class<T> beanClass) {
         super(beanClass);

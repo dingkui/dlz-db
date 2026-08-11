@@ -1,6 +1,6 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.inf.ICondAddByLamda;
+import com.dlz.db.inf.ICondAddByLambda;
 import com.dlz.db.inf.IExecutorDelete;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.para.APojoQuery;
@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class PojoDelete<T> extends APojoQuery<PojoDelete<T>,T, TableDelete> implements
         ISqlQuery<PojoDelete<T>>,
-        ICondAddByLamda<PojoDelete<T>, T>,
+        ICondAddByLambda<PojoDelete<T>, T>,
         IExecutorDelete<PojoDelete<T>> {
     public PojoDelete(Class<T> beanClass) {
         super(beanClass);

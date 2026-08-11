@@ -1,6 +1,6 @@
 package com.dlz.db.modal.wrapper;
 
-import com.dlz.db.inf.ICondAddByLamda;
+import com.dlz.db.inf.ICondAddByLambda;
 import com.dlz.db.inf.IExecutorQuery;
 import com.dlz.db.inf.ISqlPage;
 import com.dlz.db.inf.ISqlQuery;
@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class PojoQuery<T> extends APojoQuery<PojoQuery<T>, T, TableQuery> implements
         ISqlQuery<PojoQuery<T>>,
-        ICondAddByLamda<PojoQuery<T>, T>,
+        ICondAddByLambda<PojoQuery<T>, T>,
         ISqlPage<PojoQuery<T>>,
         IExecutorQuery<PojoQuery<T>> {
     public PojoQuery(Class<T> beanClass) {

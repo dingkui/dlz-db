@@ -1,7 +1,7 @@
 package com.dlz.db.modal.wrapper;
 
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.inf.ICondAddByLamda;
+import com.dlz.db.inf.ICondAddByLambda;
 import com.dlz.db.inf.IExecutorUDI;
 import com.dlz.db.inf.ISqlQuery;
 import com.dlz.db.modal.dto.BatchResult;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  */
 public class PojoUpdate<T> extends APojoQuery<PojoUpdate<T>, T, TableUpdate> implements
         ISqlQuery<PojoUpdate<T>>,
-        ICondAddByLamda<PojoUpdate<T>, T>,
+        ICondAddByLambda<PojoUpdate<T>, T>,
         IExecutorUDI {
     IdInfo idInfo;
     private DlzFn2<String, Object,Boolean> ignore = (name, value) -> value==null || idInfo!=null && name.equals(idInfo.getDbName());
