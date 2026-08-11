@@ -1,8 +1,6 @@
 package com.dlz.db.util;
 
 import com.dlz.caller.DlzCaller;
-import com.dlz.caller.DlzCallerProperties;
-import com.dlz.caller.DlzCallerResolver;
 import com.dlz.db.core.DlzDbProperties;
 import com.dlz.db.modal.DB;
 import com.dlz.kit.fn.DlzFn2;
@@ -10,7 +8,6 @@ import com.dlz.kit.mdc.MdcContext;
 import com.dlz.kit.util.ExceptionUtils;
 import com.dlz.kit.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 
 import java.util.List;
 
@@ -27,10 +24,8 @@ public class DbLogUtil {
         showResult = properties.getLog().isShowResult();
         slowSqlThreshold = properties.getLog().getSlowSqlThreshold();
         if(showCaller){
-            final DlzCallerProperties dlzCallerProperties = new DlzCallerProperties();
-            dlzCallerProperties.setInjectCallerMdc(true);
-            dlzCallerProperties.addIgnoreCallerPackage("com.dlz.db.", "com.dlz.kit.", "com.dlz.spring.");
-            DlzCaller.setProperties(dlzCallerProperties);
+            DlzCaller.getProperties().setInjectCallerMdc(true);
+            DlzCaller.getProperties().addIgnoreCallerPackage("com.dlz.db.", "com.dlz.kit.", "com.dlz.spring.");
         }
     }
 
