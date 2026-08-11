@@ -12,7 +12,6 @@
     <properties>
         <spring.boot.version>2.6.12</spring.boot.version>
 
-
         <!-- 代码质量工具版本 -->
         <jacoco.version>0.8.11</jacoco.version>
         <spotbugs.version>4.8.6</spotbugs.version>
@@ -89,12 +88,7 @@
             </exclusions>
             <version>2.6.12</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>c3p0</groupId>-->
-<!--            <artifactId>c3p0</artifactId>-->
-<!--            <version></version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -105,19 +99,13 @@
             <artifactId>sqlite-jdbc</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Logback: 锁定 core 与 classic 同版本，避免 mvn test 下 OptionHelper.isNotEmtpy NoSuchMethodError -->
-<!--        <dependency>-->
-<!--            <groupId>ch.qos.logback</groupId>-->
-<!--            <artifactId>logback-core</artifactId>-->
-<!--            <version>1.2.12</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <!-- SpotBugs annotations for @SuppressFBWarnings -->
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
             <version>4.8.6</version>
             <optional>true</optional>
+            <scope>test</scope>
         </dependency>
 	</dependencies>
     

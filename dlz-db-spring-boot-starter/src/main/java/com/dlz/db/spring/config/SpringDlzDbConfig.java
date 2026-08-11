@@ -5,7 +5,6 @@ import com.dlz.db.spring.SpringSqlExecutorAdapter;
 import com.dlz.db.spring.SpringTxExecutorAdapter;
 import com.dlz.db.support.DBHolder;
 import com.dlz.spring.holder.SpringHolder;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,7 +49,6 @@ public class SpringDlzDbConfig{
     @Bean(name = "JdbcTemplate")
     @Lazy
     @ConditionalOnMissingBean(name = "JdbcTemplate")
-    @SuppressFBWarnings(value = "NM_METHOD_NAMING_CONVENTION", justification = "Bean名称与类名一致，方法名故意匹配类名")
     public JdbcTemplate JdbcTemplate(DataSource dataSource) {
         if (log.isInfoEnabled()) {
             log.info("init JdbcTemplate:" + DynamicJdbcTemplate.class.getName());

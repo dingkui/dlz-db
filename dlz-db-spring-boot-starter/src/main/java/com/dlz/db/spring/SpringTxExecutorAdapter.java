@@ -1,7 +1,6 @@
 package com.dlz.db.spring;
 
 import com.dlz.db.core.ITxExecutor;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -22,7 +21,6 @@ public class SpringTxExecutorAdapter implements ITxExecutor {
 
     private final DataSource dataSource;
 
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "DataSourceConfig由容器注入，视为不可变")
     public SpringTxExecutorAdapter(DataSource config) {
         this.dataSource = config;
     }
