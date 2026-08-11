@@ -10,7 +10,7 @@ import static com.dlz.db.enums.DbOperateEnum.*;
  * <p><b>设计约定</b>：所有条件方法统一签名 <b>{@code (boolean is, String column, Object value)}</b>；
  * 省略 {@code is} 的重载等价于 {@code is=true}；{@code is=false} 时整条条件跳过，适合动态条件。
  *
- * <p><b>与 {@link ICondAddByLamda} 的差异</b>：
+ * <p><b>与 {@link ICondAddByLambda} 的差异</b>：
  * <ul>
  *   <li>列名为手写字符串（如 {@code "user_name"}），不做类型安全校验；</li>
  *   <li>适用于列名在运行时决定、或 Bean 中无对应属性、或拼接同表多列的场景；</li>
@@ -22,7 +22,7 @@ import static com.dlz.db.enums.DbOperateEnum.*;
  * String sortCol = userInput.getSortField();  // e.g. "create_time"
  * .eq("status", 1).gt(sortCol, someValue)
  *
- * // 同 {@link ICondAddByLamda} 等价
+ * // 同 {@link ICondAddByLambda} 等价
  * .eq("user_id", 42)    // 等价于 .eq(User::getUserId, 42)
  * </pre>
  *
@@ -356,7 +356,7 @@ public interface ICondAddByKey<ME extends ICondAddByKey> extends ICondBase<ME> {
 
     /**
      * 以自定义操作符添加条件。适用于上述枚举未覆盖的场景。
-     * <pre>.op("name", DbOprateEnum.eq, "admin")</pre>
+     * <pre>.op("name", DboperateEnum.eq, "admin")</pre>
      *
      * @param op 操作符枚举；实际调用 {@code op.mk(column, value)}，语义由枚举决定。
      */

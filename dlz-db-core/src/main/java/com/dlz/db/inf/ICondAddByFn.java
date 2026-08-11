@@ -8,14 +8,14 @@ import static com.dlz.db.enums.DbOperateEnum.*;
 /**
  * 基于 Lambda 字段引用（{@link DlzFn}）的条件构造接口 —— <b>与具体 Bean 解绑</b> 版本。
  *
- * <p><b>与 {@link ICondAddByLamda} 的差异</b>：{@link ICondAddByLamda} 在接口层绑定了泛型 {@code T}
+ * <p><b>与 {@link ICondAddByLambda} 的差异</b>：{@link ICondAddByLambda} 在接口层绑定了泛型 {@code T}
  * （代表整个构造器操作的 Bean 类型），所有 Lambda 必须来自同一个 Bean；本接口把 Lambda 的 Bean 类型
  * 提升到<b>方法级泛型 {@code <T1>}</b>，因此同一构造器里可以混用来自不同 Bean 的 Lambda 引用。
  *
  * <p>典型用途：{@link com.dlz.db.modal.para.AParaTable} 这类"面向参数集合、不绑定单一 Bean"的构造器。
- * 业务代码如果知道自己操作的是单一 Bean，优先使用 {@link ICondAddByLamda}。
+ * 业务代码如果知道自己操作的是单一 Bean，优先使用 {@link ICondAddByLambda}。
  *
- * <p><b>设计约定</b>：方法签名、行为、命名与 {@link ICondAddByLamda} 完全一致，可直接参考：
+ * <p><b>设计约定</b>：方法签名、行为、命名与 {@link ICondAddByLambda} 完全一致，可直接参考：
  * <ul>
  *   <li>统一 {@code (boolean is, DlzFn<T1,?> column, Object value)} 三参形式，{@code is=false} 跳过；</li>
  *   <li>{@code column} 通过 SerializedLambda 提取属性名，按驼峰→下划线约定转为 DB 列名；</li>
@@ -313,7 +313,7 @@ public interface ICondAddByFn<ME extends ICondAddByFn> extends ICondBase<ME> {
 
     /**
      * 以自定义操作符添加条件。适用于上述枚举未覆盖的场景。
-     * <pre>.op(User::getName, DbOprateEnum.eq, "admin")</pre>
+     * <pre>.op(User::getName, DboperateEnum.eq, "admin")</pre>
      */
     default <T1> ME op(DlzFn<T1, ?> column, DbOperateEnum op, Object value) {
         addChildren(op.mk(column, value, getTableName()));

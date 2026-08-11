@@ -44,13 +44,13 @@ public interface ICondAuto<ME extends ICondAuto> extends ICondBase<ME> {
      * <pre>.auto(req, col -> !"password".equals(col));   // 排除 password</pre>
      *
      * @param req     key=列名（可带 {@code _op_} 前缀），value=值
-     * @param fillter 接收"去前缀后的列名"，返回 true 表示接受该条件；null 表示全部接受
+     * @param filter 接收"去前缀后的列名"，返回 true 表示接受该条件；null 表示全部接受
      */
-    default ME auto(Map<String, Object> req, Function<String, Boolean> fillter) {
+    default ME auto(Map<String, Object> req, Function<String, Boolean> filter) {
         if (req != null) {
             for (String key : req.keySet()) {
                 Object o = req.get(key);
-                DbOperateEnum oprate = DbOperateEnum.eq;
+                DbOperateEnum operate = DbOperateEnum.eq;
                 if (key.startsWith("_")) {
                     int keyIndex = key.substring(1).indexOf("_");
                     if (keyIndex == -1) {
@@ -62,15 +62,15 @@ public interface ICondAuto<ME extends ICondAuto> extends ICondBase<ME> {
                         continue;
                     }
                     try {
-                        oprate = DbOperateEnum.valueOf(op);
+                        operate = DbOperateEnum.valueOf(op);
                     } catch (Exception e) {
                         throw new ValidateException("无效的操作符：" + op + " key="+key);
                     }
                 }
-                if (fillter != null && !fillter.apply(key)) {
+                if (filter != null && !filter.apply(key)) {
                     continue;
                 }
-                addChildren(oprate.mk(key, o, getTableName()));
+                addChildren(operate.mk(key, o, getTableName()));
             }
         }
         return me();

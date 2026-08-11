@@ -38,7 +38,7 @@ import static com.dlz.db.enums.DbOperateEnum.*;
  * @param <ME> 链式返回类型（子类自身，便于 fluent 风格）
  * @param <T>  条件所针对的 Bean 类型
  */
-public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBase<ME> {
+public interface ICondAddByLambda<ME extends ICondAddByLambda, T> extends ICondBase<ME> {
 
     // ========== BETWEEN / NOT BETWEEN ==========
 
@@ -397,7 +397,7 @@ public interface ICondAddByLamda<ME extends ICondAddByLamda, T> extends ICondBas
 
     /**
      * 以自定义操作符添加条件。适用于上述枚举未覆盖的场景。
-     * <pre>.op(User::getName, DbOprateEnum.eq, "admin")</pre>
+     * <pre>.op(User::getName, DboperateEnum.eq, "admin")</pre>
      *
      * @param op 操作符枚举；<b>注意</b>：实际使用的是此枚举自身的 {@code mk(column, value)}，
      *           参数 {@code column}/{@code value} 的含义与该枚举语义一致。

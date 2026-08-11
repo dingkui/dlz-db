@@ -11,7 +11,7 @@ import com.dlz.db.modal.condition.Condition;
  *   <li>{@link ICondAddByKey}：以<b>字符串列名</b>添加 eq/gt/like/in/... 等条件；</li>
  *   <li>{@link ICondAuto}：按 Map 自动批量生成条件。</li>
  * </ul>
- * <p>Lambda 版本（{@link ICondAddByLamda}）通常由具体 Pojo 构造器按需额外混入，不在本接口默认包含。
+ * <p>Lambda 版本（{@link ICondAddByLambda}）通常由具体 Pojo 构造器按需额外混入，不在本接口默认包含。
  *
  * @param <T> 链式返回类型
  */
