@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.mapper.dbtype.TableColumnMapper;
+import com.dlz.db.internal.mapper.dbtype.TableColumnMapper;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.Test;
 

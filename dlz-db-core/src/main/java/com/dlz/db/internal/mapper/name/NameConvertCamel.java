@@ -1,4 +1,4 @@
-package com.dlz.db.mapper.name;
+package com.dlz.db.internal.mapper.name;
 
 import java.util.Locale;
 

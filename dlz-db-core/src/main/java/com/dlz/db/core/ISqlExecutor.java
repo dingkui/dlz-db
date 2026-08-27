@@ -1,7 +1,7 @@
 package com.dlz.db.core;
 
-import com.dlz.db.core.anno.ConnectionSupplier;
-import com.dlz.db.core.anno.SqlAction;
+import com.dlz.db.internal.anno.ConnectionSupplier;
+import com.dlz.db.internal.anno.SqlAction;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.exception.NonUniqueResultException;
 import com.dlz.db.dialect.rowMapper.IRowMapper;

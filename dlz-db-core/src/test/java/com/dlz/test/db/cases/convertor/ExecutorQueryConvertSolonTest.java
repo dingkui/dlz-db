@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.mapper.name.NameConvertCamel;
+import com.dlz.db.internal.mapper.name.NameConvertCamel;
 import com.dlz.db.DB;
 import com.dlz.db.model.Page;
 import com.dlz.db.model.ResultMap;

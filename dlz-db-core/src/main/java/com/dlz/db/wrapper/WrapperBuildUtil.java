@@ -3,7 +3,7 @@ package com.dlz.db.wrapper;
 import com.dlz.db.core.anno.IdType;
 import com.dlz.db.interceptor.DbPlugin;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
-import com.dlz.db.mapper.dbtype.TableColumnMapper;
+import com.dlz.db.internal.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.option.DbOperation;
 import com.dlz.db.option.point.SelectLockPoint;
 import com.dlz.db.option.point.context.CrudContext;

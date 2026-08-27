@@ -1,4 +1,4 @@
-package com.dlz.db.core.anno;
+package com.dlz.db.internal.anno;
 
 import java.sql.Connection;
 

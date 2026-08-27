@@ -1,4 +1,4 @@
-package com.dlz.db.core.anno.proxy;
+package com.dlz.db.internal.anno.proxy;
 
 public class AnnoProxies {
     public static final MybatisPlusIdType MybatisPlusIdType = new MybatisPlusIdType();

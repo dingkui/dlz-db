@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.core;
 
 import com.dlz.db.core.ISqlExecutor;
-import com.dlz.db.core.anno.SqlAction;
+import com.dlz.db.internal.anno.SqlAction;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.model.ResultMap;
 import com.dlz.db.internal.holder.DBHolder;

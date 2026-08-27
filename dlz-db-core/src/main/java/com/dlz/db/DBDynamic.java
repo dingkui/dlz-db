@@ -160,10 +160,14 @@ public class DBDynamic {
                 } else {
                     connection = dataSource.getConnection();
                     DatabaseMetaData metaData = connection.getMetaData();
-                    defaultProperties.setDriverClassName(metaData.getDriverName());
-                    defaultProperties.setUrl(metaData.getURL());
-                    defaultProperties.setUsername(metaData.getUserName());
-                    defaultProperties.setDbProductName(metaData.getDatabaseProductName());// 如 "MySQL", "Oracle", "PostgreSQL"
+                    if (metaData == null) {
+                        log.debug("数据源 [{}] 元数据不可用，跳过驱动信息探测", name);
+                    } else {
+                        defaultProperties.setDriverClassName(metaData.getDriverName());
+                        defaultProperties.setUrl(metaData.getURL());
+                        defaultProperties.setUsername(metaData.getUserName());
+                        defaultProperties.setDbProductName(metaData.getDatabaseProductName());// 如 "MySQL", "Oracle", "PostgreSQL"
+                    }
                 }
             } catch (Exception e) {
                 log.error("获取数据库类型失败: {}", name, e);

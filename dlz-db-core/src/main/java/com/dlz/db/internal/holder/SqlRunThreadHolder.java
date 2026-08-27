@@ -1,9 +1,9 @@
 package com.dlz.db.internal.holder;
 
 import com.dlz.db.core.ds.DataSourceConfig;
-import com.dlz.db.mapper.dbtype.ITableColumnMapper;
-import com.dlz.db.mapper.name.IConvertorToFieldName;
-import com.dlz.db.mapper.name.INameConverter;
+import com.dlz.db.internal.mapper.dbtype.ITableColumnMapper;
+import com.dlz.db.internal.mapper.name.IConvertorToFieldName;
+import com.dlz.db.internal.mapper.name.INameConverter;
 import lombok.extern.slf4j.Slf4j;
 
 /**

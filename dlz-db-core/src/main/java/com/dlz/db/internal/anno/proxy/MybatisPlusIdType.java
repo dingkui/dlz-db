@@ -1,39 +1,42 @@
-package com.dlz.db.core.anno.proxy;
+package com.dlz.db.internal.anno.proxy;
+
+import com.dlz.db.core.anno.IdType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class MybatisPlusTableField {
+public class MybatisPlusIdType {
     private final Class<Annotation> idTypeAnnotation;
     private final Method valueMethod;
-    private final Method existMethod;
-    protected MybatisPlusTableField() {
+    private final Method typeMethod;
+
+    protected MybatisPlusIdType() {
         Class<Annotation> idType1;
         Method valueMethodTmp;
-        Method existMethodTmp;
+        Method typeMethodTmp;
         try {
-            idType1 = (Class<Annotation>) Class.forName("com.baomidou.mybatisplus.annotation.TableField");
+            idType1 = (Class<Annotation>) Class.forName("com.baomidou.mybatisplus.annotation.TableId");
             valueMethodTmp = idType1.getMethod("value");
-            existMethodTmp = idType1.getMethod("exist");
+            typeMethodTmp = idType1.getMethod("type");
         } catch (ClassNotFoundException ex) {
             // MyBatis-Plus 未引入，设为 null
             idType1 = null;
             valueMethodTmp = null;
-            existMethodTmp = null;
+            typeMethodTmp = null;
         } catch (NoSuchMethodException ex) {
             // 方法不存在
             idType1 = null;
             valueMethodTmp = null;
-            existMethodTmp = null;
+            typeMethodTmp = null;
         }
         idTypeAnnotation = idType1;
         valueMethod = valueMethodTmp;
-        existMethod = existMethodTmp;
+        typeMethod = typeMethodTmp;
     }
 
-    public String value(Field field){
-        if (field == null || idTypeAnnotation==null){
+    public String value(Field field) {
+        if (field == null || idTypeAnnotation == null) {
             return null;
         }
         if (field.isAnnotationPresent(idTypeAnnotation)) {
@@ -50,23 +53,30 @@ public class MybatisPlusTableField {
         return null;
     }
 
-
-    public Boolean exist(Field field) {
+    public IdType type(Field field) {
         if (field == null || idTypeAnnotation == null) {
-            return Boolean.TRUE;
+            return null;
         }
         if (field.isAnnotationPresent(idTypeAnnotation)) {
             Annotation mpAnnotation = field.getAnnotation(idTypeAnnotation);
             try {
-                Object result = existMethod.invoke(mpAnnotation);
-                if (result instanceof Boolean) {
-                    return (Boolean) result;
+                String value = typeMethod.invoke(mpAnnotation).toString();
+                switch (value) {
+                    case "AUTO":
+                        return IdType.AUTO;
+                    case "INPUT":
+                        return IdType.INPUT;
+                    case "NONE":
+                        return IdType.SEQ;
+                    case "ASSIGN_ID":
+                        return IdType.ASSIGN_ID;
+                    case "ASSIGN_UUID":
+                        return IdType.ASSIGN_UUID;
                 }
-                return Boolean.TRUE;
             } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
-                return Boolean.TRUE;
+                return null;
             }
         }
-        return Boolean.TRUE;
+        return null;
     }
 }

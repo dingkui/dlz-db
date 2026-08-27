@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.mapper.name.INameConverter;
-import com.dlz.db.mapper.name.NameConvertNative;
+import com.dlz.db.internal.mapper.name.INameConverter;
+import com.dlz.db.internal.mapper.name.NameConvertNative;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

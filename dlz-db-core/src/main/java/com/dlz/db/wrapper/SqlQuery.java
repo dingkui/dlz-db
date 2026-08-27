@@ -2,7 +2,7 @@ package com.dlz.db.wrapper;
 
 import com.dlz.db.internal.inf.IExecutorQuery;
 import com.dlz.db.internal.inf.ISqlPage;
-import com.dlz.db.mapper.name.IConvertorToFieldName;
+import com.dlz.db.internal.mapper.name.IConvertorToFieldName;
 import com.dlz.db.model.Page;
 import com.dlz.db.internal.para.ParaMap;
 import com.dlz.db.internal.holder.SqlRunThreadHolder;

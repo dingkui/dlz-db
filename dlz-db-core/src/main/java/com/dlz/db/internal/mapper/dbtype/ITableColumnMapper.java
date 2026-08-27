@@ -1,4 +1,4 @@
-package com.dlz.db.mapper.dbtype;
+package com.dlz.db.internal.mapper.dbtype;
 
 public interface ITableColumnMapper {
     /**

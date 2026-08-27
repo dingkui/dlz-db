@@ -1,5 +1,7 @@
 package com.dlz.db.core.anno;
 
+import com.dlz.db.internal.anno.proxy.TableFieldMeta;
+
 import java.lang.annotation.*;
 /**
  * 表字段标识
@@ -31,7 +33,7 @@ public @interface TableField {
      * 字段中文注释（字段描述）。
      * <p>用于 DDL 生成时的 COMMENT，或映射结果的字段描述。
      * <p>可通过自定义注解扩展本注解（{@code @TableField} 标注到自定义注解上），
-     * 从而在不依赖 io.swagger 的情况下提供中文注释，详见 {@link com.dlz.db.core.anno.proxy.TableFieldMeta}。
+     * 从而在不依赖 io.swagger 的情况下提供中文注释，详见 {@link TableFieldMeta}。
      */
     String comment() default "";
 }

@@ -1,4 +1,4 @@
-package com.dlz.db.core.anno.proxy;
+package com.dlz.db.internal.anno.proxy;
 
 import java.lang.annotation.Annotation;
 

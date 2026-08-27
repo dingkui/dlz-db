@@ -1,5 +1,6 @@
 package com.dlz.db.core.anno;
 
+import com.dlz.db.util.SnowFlakeUtil;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.id.UuidUtil;
 import lombok.Getter;

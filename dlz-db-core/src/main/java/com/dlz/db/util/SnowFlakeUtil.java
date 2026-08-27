@@ -1,8 +1,8 @@
-package com.dlz.db.core.anno;
+package com.dlz.db.util;
 
 import com.dlz.kit.exception.ValidateException;
 
-class SnowFlakeUtil {
+public class SnowFlakeUtil {
     //起始的时间戳
     private final static long START_STAMP = 1480166465631L;
   

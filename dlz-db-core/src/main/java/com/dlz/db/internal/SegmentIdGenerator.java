@@ -1,6 +1,6 @@
 package com.dlz.db.internal;
 
-import com.dlz.db.core.anno.SqlAction;
+import com.dlz.db.internal.anno.SqlAction;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.DB;
 import com.dlz.db.util.DbLogUtil;
