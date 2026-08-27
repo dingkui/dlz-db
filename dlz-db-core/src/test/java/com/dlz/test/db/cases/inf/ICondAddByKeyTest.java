@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.enums.DbOperateEnum;
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.internal.enums.DbOperateEnum;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.internal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.ValidateException;
 import org.junit.jupiter.api.BeforeEach;

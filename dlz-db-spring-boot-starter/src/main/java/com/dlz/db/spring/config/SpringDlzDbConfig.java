@@ -3,7 +3,7 @@ package com.dlz.db.spring.config;
 import com.dlz.db.core.DlzDbAdapter;
 import com.dlz.db.spring.SpringSqlExecutorAdapter;
 import com.dlz.db.spring.SpringTxExecutorAdapter;
-import com.dlz.db.support.DBHolder;
+import com.dlz.db.internal.holder.DBHolder;
 import com.dlz.spring.holder.SpringHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

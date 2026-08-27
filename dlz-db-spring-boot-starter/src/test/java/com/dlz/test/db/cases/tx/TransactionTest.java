@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.tx;
 
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.test.config.BaseDBTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

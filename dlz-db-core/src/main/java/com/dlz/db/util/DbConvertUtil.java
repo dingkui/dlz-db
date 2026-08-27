@@ -5,8 +5,8 @@ import com.dlz.db.mapper.dbtype.ITableColumnMapper;
 import com.dlz.db.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.mapper.name.INameConverter;
 import com.dlz.db.mapper.name.NameConvertCamel;
-import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.db.support.SqlRunThreadHolder;
+import com.dlz.db.model.ResultMap;
+import com.dlz.db.internal.holder.SqlRunThreadHolder;
 import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.util.ValUtil;
 

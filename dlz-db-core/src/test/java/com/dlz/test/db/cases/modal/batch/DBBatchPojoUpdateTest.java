@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.TestUser;
 import com.dlz.test.db.entity.User;

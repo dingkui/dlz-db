@@ -1,6 +1,6 @@
 package com.dlz.test.db.performance;
 
-import com.dlz.db.support.PojoCache;
+import com.dlz.db.internal.holder.PojoCache;
 import com.dlz.kit.util.system.FieldReflections;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Dict;

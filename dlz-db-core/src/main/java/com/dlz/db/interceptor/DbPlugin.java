@@ -1,9 +1,10 @@
 package com.dlz.db.interceptor;
 
-import com.dlz.db.inf.IExecutorDelete;
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.options.DbOptionAware;
-import com.dlz.db.modal.options.DbOptions;
+import com.dlz.db.internal.inf.IExecutorDelete;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.option.DbOptionAware;
+import com.dlz.db.option.DbOptions;
+import com.dlz.db.wrapper.WrapperBuildUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -14,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * SQL 构建拦截器。
  *
- * <p>在 {@link com.dlz.db.modal.wrapper.WrapperBuildUtil} 的关键节点被调用，
+ * <p>在 {@link WrapperBuildUtil} 的关键节点被调用，
  * 用于自动注入 WHERE 条件、插入字段值、或改写删除操作。
  *
  * <p>内置实现：
@@ -74,7 +75,7 @@ public class DbPlugin {
 
     /**
      * 获取已注册的拦截器列表（只读视图）。
-     * <p>供 {@link com.dlz.db.inf.IExecutorDelete#execute()} 等处遍历调用。
+     * <p>供 {@link IExecutorDelete#execute()} 等处遍历调用。
      */
     public static List<SqlBuildInterceptor> getInterceptors() {
         return interceptors;

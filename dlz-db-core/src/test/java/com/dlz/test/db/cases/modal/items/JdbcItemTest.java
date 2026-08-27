@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.modal.items;
 
-import com.dlz.db.modal.items.JdbcItem;
+import com.dlz.db.internal.items.JdbcItem;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

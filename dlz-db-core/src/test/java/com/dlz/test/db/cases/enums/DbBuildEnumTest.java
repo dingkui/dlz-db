@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.enums;
 
-import com.dlz.db.enums.DbBuildEnum;
-import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.internal.enums.DbBuildEnum;
+import com.dlz.db.internal.condition.Condition;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;

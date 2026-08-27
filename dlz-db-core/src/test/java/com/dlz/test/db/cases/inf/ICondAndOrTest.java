@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.internal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.core;
 
-import com.dlz.db.annotation.TableName;
-import com.dlz.db.support.resource.DlzResourceLoader;
+import com.dlz.db.core.anno.TableName;
+import com.dlz.db.util.DlzResourceLoader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

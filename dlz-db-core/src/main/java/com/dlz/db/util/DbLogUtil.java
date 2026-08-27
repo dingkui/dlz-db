@@ -2,7 +2,7 @@ package com.dlz.db.util;
 
 import com.dlz.caller.DlzCaller;
 import com.dlz.db.core.DlzDbProperties;
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.kit.fn.DlzFn2;
 import com.dlz.kit.mdc.MdcContext;
 import com.dlz.kit.util.ExceptionUtils;

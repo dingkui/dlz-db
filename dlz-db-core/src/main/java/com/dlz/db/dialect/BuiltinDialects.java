@@ -4,9 +4,9 @@ import com.dlz.db.dialect.schemas.SchamaPostgresql;
 import com.dlz.db.dialect.schemas.SchemaDm8;
 import com.dlz.db.dialect.schemas.SchemaMysql;
 import com.dlz.db.dialect.schemas.SchemaSqlite;
-import com.dlz.db.mapper.rowMapper.MySqlColumnMapRowMapper;
-import com.dlz.db.mapper.rowMapper.OracleColumnMapRowMapper;
-import com.dlz.db.mapper.rowMapper.ResultMapRowMapper;
+import com.dlz.db.dialect.rowMapper.MySqlColumnMapRowMapper;
+import com.dlz.db.dialect.rowMapper.OracleColumnMapRowMapper;
+import com.dlz.db.dialect.rowMapper.ResultMapRowMapper;
 
 import java.util.Locale;
 import java.util.Map;

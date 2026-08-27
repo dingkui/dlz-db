@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.modal.dto;
 
-import com.dlz.db.modal.dto.Order;
-import com.dlz.db.modal.dto.Page;
+import com.dlz.db.model.Order;
+import com.dlz.db.model.Page;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

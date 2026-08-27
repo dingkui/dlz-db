@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.multi_ds;
 
-import com.dlz.db.ds.DBDynamic;
-import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.DBDynamic;
+import com.dlz.db.core.ds.DataSourceProperty;
 import com.dlz.db.exception.DbException;
 import com.dlz.kit.exception.SystemException;
 import org.junit.jupiter.api.Test;

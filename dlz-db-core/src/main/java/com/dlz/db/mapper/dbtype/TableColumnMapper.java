@@ -1,6 +1,6 @@
 package com.dlz.db.mapper.dbtype;
 
-import com.dlz.db.support.PojoCache;
+import com.dlz.db.internal.holder.PojoCache;
 import com.dlz.kit.util.ValUtil;
 
 import java.sql.Types;

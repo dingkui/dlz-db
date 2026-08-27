@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.modal.options;
 
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.options.*;
-import com.dlz.db.modal.options.point.*;
-import com.dlz.db.modal.options.point.context.*;
+import com.dlz.db.option.*;
+import com.dlz.db.option.point.*;
+import com.dlz.db.option.point.context.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

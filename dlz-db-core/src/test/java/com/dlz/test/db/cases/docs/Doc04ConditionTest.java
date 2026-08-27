@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.docs;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.db.modal.wrapper.PojoQuery;
+import com.dlz.db.DB;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.model.ResultMap;
+import com.dlz.db.wrapper.PojoQuery;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.kit.util.DateUtil;
 import com.dlz.kit.util.ValUtil;

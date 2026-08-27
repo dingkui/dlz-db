@@ -2,10 +2,10 @@ package com.dlz.test.db.cases.modal;
 
 import com.dlz.db.exception.DbException;
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.Order;
-import com.dlz.db.modal.dto.Page;
-import com.dlz.db.modal.wrapper.SqlQuery;
+import com.dlz.db.DB;
+import com.dlz.db.model.Order;
+import com.dlz.db.model.Page;
+import com.dlz.db.wrapper.SqlQuery;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;

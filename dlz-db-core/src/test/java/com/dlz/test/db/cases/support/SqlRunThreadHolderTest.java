@@ -1,11 +1,11 @@
 package com.dlz.test.db.cases.support;
 
-import com.dlz.db.ds.DataSourceConfig;
-import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.core.ds.DataSourceConfig;
+import com.dlz.db.core.ds.DataSourceProperty;
 import com.dlz.db.mapper.dbtype.ITableColumnMapper;
 import com.dlz.db.mapper.name.IConvertorToFieldName;
 import com.dlz.db.mapper.name.INameConverter;
-import com.dlz.db.support.SqlRunThreadHolder;
+import com.dlz.db.internal.holder.SqlRunThreadHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

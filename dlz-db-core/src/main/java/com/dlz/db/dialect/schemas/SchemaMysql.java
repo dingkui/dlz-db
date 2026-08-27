@@ -1,12 +1,12 @@
 package com.dlz.db.dialect.schemas;
 
-import com.dlz.db.annotation.IdType;
-import com.dlz.db.annotation.TableId;
-import com.dlz.db.modal.DB;
-import com.dlz.db.support.DBHolder;
-import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.bean.ColumnInfo;
-import com.dlz.db.support.bean.TableInfo;
+import com.dlz.db.core.anno.IdType;
+import com.dlz.db.core.anno.TableId;
+import com.dlz.db.DB;
+import com.dlz.db.internal.holder.DBHolder;
+import com.dlz.db.internal.holder.PojoCache;
+import com.dlz.db.internal.bean.ColumnInfo;
+import com.dlz.db.internal.bean.TableInfo;
 import com.dlz.kit.util.StringUtils;
 import com.dlz.kit.util.VAL;
 import com.dlz.kit.util.ValUtil;

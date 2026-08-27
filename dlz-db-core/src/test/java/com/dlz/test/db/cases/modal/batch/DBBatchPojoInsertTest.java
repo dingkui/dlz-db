@@ -1,10 +1,10 @@
 package com.dlz.test.db.cases.modal.batch;
 
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.BatchResult;
-import com.dlz.db.modal.dto.BatchStatus;
-import com.dlz.db.modal.wrapper.PojoInsert;
+import com.dlz.db.DB;
+import com.dlz.db.model.BatchResult;
+import com.dlz.db.model.BatchStatus;
+import com.dlz.db.wrapper.PojoInsert;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.Orders;

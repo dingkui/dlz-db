@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.modal.dto;
 
-import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.model.ResultMap;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -4,11 +4,12 @@ import com.dlz.db.core.anno.ConnectionSupplier;
 import com.dlz.db.core.anno.SqlAction;
 import com.dlz.db.exception.DbException;
 import com.dlz.db.exception.NonUniqueResultException;
-import com.dlz.db.mapper.rowMapper.IRowMapper;
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.dialect.rowMapper.IRowMapper;
+import com.dlz.db.DB;
+import com.dlz.db.model.ResultMap;
 import com.dlz.db.util.DbConvertUtil;
 import com.dlz.db.util.DbLogUtil;
+import com.dlz.db.util.NativeSqlUtil;
 import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.fn.DlzFn2;
 

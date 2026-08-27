@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.enums;
 
-import com.dlz.db.enums.DbOperateEnum;
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.internal.enums.DbOperateEnum;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.internal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.SystemException;
 import org.junit.jupiter.api.DisplayName;

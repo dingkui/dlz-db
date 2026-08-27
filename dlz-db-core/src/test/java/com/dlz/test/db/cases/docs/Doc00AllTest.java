@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.docs;
 
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;

@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.core;
 
-import com.dlz.db.core.NativeSqlUtil;
+import com.dlz.db.util.NativeSqlUtil;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

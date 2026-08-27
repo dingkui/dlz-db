@@ -1,6 +1,6 @@
 package com.dlz.test.config;
 
-import com.dlz.db.support.DBHolder;
+import com.dlz.db.internal.holder.DBHolder;
 import com.dlz.test.db.Starter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,6 @@
 package com.dlz.test.db.service;
 
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.test.db.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.noear.solon.annotation.Component;

@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.inf;
 
-import com.dlz.db.inf.ICondAuto;
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.internal.inf.ICondAuto;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.internal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.ValidateException;
 import com.dlz.kit.json.JSONMap;
@@ -390,7 +390,7 @@ class ICondAutoTest {
         final Condition condition = Condition.where();
 
         @Override
-        public void addChildren(com.dlz.db.modal.condition.Condition child) {
+        public void addChildren(Condition child) {
             condition.addChildren(child);
         }
 

@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.helper;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.support.bean.TableInfo;
-import com.dlz.db.support.helper.HelperScan;
+import com.dlz.db.DB;
+import com.dlz.db.internal.bean.TableInfo;
+import com.dlz.db.core.helper.HelperScan;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.kit.util.ValUtil;
 import com.dlz.kit.util.system.FieldReflections;

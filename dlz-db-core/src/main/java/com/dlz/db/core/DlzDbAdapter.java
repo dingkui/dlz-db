@@ -1,9 +1,9 @@
 package com.dlz.db.core;
 
-import com.dlz.db.ds.DataSourceConfig;
-import com.dlz.db.modal.DB;
-import com.dlz.db.support.SqlHolder;
-import com.dlz.db.support.helper.HelperScan;
+import com.dlz.db.core.ds.DataSourceConfig;
+import com.dlz.db.DB;
+import com.dlz.db.core.helper.HelperScan;
+import com.dlz.db.internal.holder.SqlHolder;
 import com.dlz.db.util.DbLogUtil;
 import lombok.extern.slf4j.Slf4j;
 

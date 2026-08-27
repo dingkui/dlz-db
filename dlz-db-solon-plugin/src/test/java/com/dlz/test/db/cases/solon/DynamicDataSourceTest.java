@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.solon;
 
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.db.solon.DynamicDataSource;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.preset_sql;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.DB;
+import com.dlz.db.model.ResultMap;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

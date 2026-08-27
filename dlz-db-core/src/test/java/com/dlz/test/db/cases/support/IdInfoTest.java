@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.support;
 
-import com.dlz.db.annotation.IdType;
-import com.dlz.db.support.bean.IdInfo;
+import com.dlz.db.core.anno.IdType;
+import com.dlz.db.internal.bean.IdInfo;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

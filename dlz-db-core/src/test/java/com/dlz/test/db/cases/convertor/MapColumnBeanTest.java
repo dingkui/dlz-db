@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.convertor;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.ResultMap;
-import com.dlz.db.support.PojoCache;
+import com.dlz.db.DB;
+import com.dlz.db.model.ResultMap;
+import com.dlz.db.internal.holder.PojoCache;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.MapColumnBean;

@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.ds;
 
-import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.core.ds.DataSourceProperty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

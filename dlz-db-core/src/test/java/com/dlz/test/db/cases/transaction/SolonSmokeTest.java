@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.transaction;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.Page;
-import com.dlz.db.support.DBHolder;
+import com.dlz.db.DB;
+import com.dlz.db.model.Page;
+import com.dlz.db.internal.holder.DBHolder;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.User;
 import lombok.extern.slf4j.Slf4j;

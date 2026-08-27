@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.modal;
 
-import com.dlz.db.ds.DBDynamic;
-import com.dlz.db.ds.DBTx;
-import com.dlz.db.modal.*;
+import com.dlz.db.*;
+import com.dlz.db.DBDynamic;
+import com.dlz.db.DBTx;
 import com.dlz.test.db.config.BaseDBTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

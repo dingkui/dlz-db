@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.service;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.wrapper.PojoQuery;
-import com.dlz.db.support.PojoCache;
+import com.dlz.db.DB;
+import com.dlz.db.wrapper.PojoQuery;
+import com.dlz.db.internal.holder.PojoCache;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.TestAutoEntity;
 import org.junit.jupiter.api.BeforeAll;

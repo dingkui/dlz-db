@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.modal.options.context;
 
-import com.dlz.db.mapper.rowMapper.IRowMapper;
-import com.dlz.db.modal.options.DbOperation;
-import com.dlz.db.modal.options.DbOptions;
-import com.dlz.db.modal.options.point.context.*;
+import com.dlz.db.dialect.rowMapper.IRowMapper;
+import com.dlz.db.option.DbOperation;
+import com.dlz.db.option.DbOptions;
+import com.dlz.db.option.point.context.*;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;

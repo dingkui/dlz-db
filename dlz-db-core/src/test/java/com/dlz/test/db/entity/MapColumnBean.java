@@ -1,7 +1,7 @@
 package com.dlz.test.db.entity;
 
-import com.dlz.db.annotation.TableId;
-import com.dlz.db.annotation.TableName;
+import com.dlz.db.core.anno.TableId;
+import com.dlz.db.core.anno.TableName;
 import com.dlz.kit.json.JSONMap;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

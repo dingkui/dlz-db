@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.helper;
 
-import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.model.ResultMap;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.kit.util.system.ConvertUtil;
 import com.dlz.test.db.entity.Dict;

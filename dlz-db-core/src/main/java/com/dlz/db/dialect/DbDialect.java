@@ -1,6 +1,6 @@
 package com.dlz.db.dialect;
 
-import com.dlz.db.mapper.rowMapper.ResultMapRowMapper;
+import com.dlz.db.dialect.rowMapper.ResultMapRowMapper;
 
 /**
  * 数据库方言注册描述。

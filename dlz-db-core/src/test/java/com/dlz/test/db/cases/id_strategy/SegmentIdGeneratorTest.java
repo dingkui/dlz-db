@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.id_strategy;
 
-import com.dlz.db.ds.DataSourceProperty;
+import com.dlz.db.core.ds.DataSourceProperty;
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.DB;
-import com.dlz.db.support.DBHolder;
+import com.dlz.db.DB;
+import com.dlz.db.internal.holder.DBHolder;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.NoIdEntity;

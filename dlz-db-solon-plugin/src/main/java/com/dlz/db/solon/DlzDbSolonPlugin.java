@@ -1,9 +1,9 @@
 package com.dlz.db.solon;
 
 import com.dlz.db.core.DlzDbProperties;
-import com.dlz.db.modal.DB;
-import com.dlz.db.support.DBHolder;
-import com.dlz.db.support.SqlHolder;
+import com.dlz.db.DB;
+import com.dlz.db.internal.holder.DBHolder;
+import com.dlz.db.internal.holder.SqlHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.noear.solon.Solon;
 import org.noear.solon.core.AppContext;

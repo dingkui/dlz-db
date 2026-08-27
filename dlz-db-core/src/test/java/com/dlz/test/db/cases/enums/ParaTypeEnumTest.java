@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.enums;
 
-import com.dlz.db.enums.ParaTypeEnum;
+import com.dlz.db.internal.enums.ParaTypeEnum;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

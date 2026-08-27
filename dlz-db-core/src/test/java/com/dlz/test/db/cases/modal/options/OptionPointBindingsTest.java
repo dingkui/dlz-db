@@ -1,10 +1,10 @@
 package com.dlz.test.db.cases.modal.options;
 
 import com.dlz.db.exception.DbParameterException;
-import com.dlz.db.modal.options.DbOperation;
-import com.dlz.db.modal.options.DbOption;
-import com.dlz.db.modal.options.DbOptions;
-import com.dlz.db.modal.options.point.*;
+import com.dlz.db.option.DbOperation;
+import com.dlz.db.option.DbOption;
+import com.dlz.db.option.DbOptions;
+import com.dlz.db.option.point.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

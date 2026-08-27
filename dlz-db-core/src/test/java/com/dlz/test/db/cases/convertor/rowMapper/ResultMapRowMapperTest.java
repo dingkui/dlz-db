@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.convertor.rowMapper;
 
-import com.dlz.db.mapper.rowMapper.ResultMapRowMapper;
+import com.dlz.db.dialect.rowMapper.ResultMapRowMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

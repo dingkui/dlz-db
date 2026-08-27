@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.holder;
 
-import com.dlz.db.support.PojoCache;
+import com.dlz.db.internal.holder.PojoCache;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.*;
 import org.junit.jupiter.api.Test;

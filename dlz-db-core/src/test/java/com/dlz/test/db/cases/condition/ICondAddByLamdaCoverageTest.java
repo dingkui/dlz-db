@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.condition;
 
-import com.dlz.db.enums.DbOperateEnum;
-import com.dlz.db.inf.ICondAddByLambda;
-import com.dlz.db.modal.condition.Condition;
+import com.dlz.db.internal.enums.DbOperateEnum;
+import com.dlz.db.internal.inf.ICondAddByLambda;
+import com.dlz.db.internal.condition.Condition;
 import com.dlz.test.db.entity.User;
 import org.junit.jupiter.api.Test;
 

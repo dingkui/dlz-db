@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.modal.wrapper;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.wrapper.TableInsert;
+import com.dlz.db.DB;
+import com.dlz.db.wrapper.TableInsert;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;

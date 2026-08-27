@@ -1,6 +1,6 @@
 package com.dlz.test.db.service;
 
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

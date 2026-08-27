@@ -1,10 +1,10 @@
 package com.dlz.test.db.cases.util;
 
 import com.dlz.db.exception.DbException;
-import com.dlz.db.modal.dto.Page;
-import com.dlz.db.modal.items.JdbcItem;
-import com.dlz.db.modal.para.ParaJdbc;
-import com.dlz.db.modal.para.ParaMap;
+import com.dlz.db.model.Page;
+import com.dlz.db.internal.items.JdbcItem;
+import com.dlz.db.internal.para.ParaJdbc;
+import com.dlz.db.internal.para.ParaMap;
 import com.dlz.db.util.SqlUtil;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.kit.util.DateUtil;

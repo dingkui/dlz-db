@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.annotation;
 
-import com.dlz.db.annotation.TableField;
-import com.dlz.db.annotation.TableName;
-import com.dlz.db.annotation.proxy.AnnoProxies;
-import com.dlz.db.annotation.proxy.TableFieldMeta;
+import com.dlz.db.core.anno.TableField;
+import com.dlz.db.core.anno.TableName;
+import com.dlz.db.core.anno.proxy.AnnoProxies;
+import com.dlz.db.core.anno.proxy.TableFieldMeta;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

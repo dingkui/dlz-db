@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.util;
 
-import com.dlz.db.support.PojoCache;
-import com.dlz.db.support.bean.IdInfo;
+import com.dlz.db.internal.holder.PojoCache;
+import com.dlz.db.internal.bean.IdInfo;
 import com.dlz.kit.exception.SystemException;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.*;

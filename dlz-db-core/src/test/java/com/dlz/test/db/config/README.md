@@ -48,7 +48,7 @@ public class MyTest extends BaseDBTest {
 
 ```java
 import com.dlz.test.db.config.BaseDBTest;
-import com.dlz.db.modal.wrapper.JdbcSelect;
+import com.dlz.db.wrapper.JdbcSelect;
 import org.junit.jupiter.api.Test;
 
 public class MyDatabaseTest extends BaseDBTest {

@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.id_strategy;
 
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.AutoIdEntity;
 import com.dlz.test.db.entity.User;

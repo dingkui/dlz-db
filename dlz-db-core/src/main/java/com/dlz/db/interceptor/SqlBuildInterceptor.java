@@ -1,19 +1,20 @@
 package com.dlz.db.interceptor;
 
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.options.DbOptions;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.option.DbOptions;
+import com.dlz.db.wrapper.WrapperBuildUtil;
 
 import java.util.Map;
 
 /**
  * SQL 构建拦截器。
  *
- * <p>在 {@link com.dlz.db.modal.wrapper.WrapperBuildUtil} 的关键节点被调用，
+ * <p>在 {@link WrapperBuildUtil} 的关键节点被调用，
  * 用于自动注入 WHERE 条件、插入字段值、或改写删除操作。
  *
  * <p>内置实现：
  * <ul>
- *   <li>{@link com.dlz.db.interceptor.LogicDeleteInterceptor} — 逻辑删除</li>
+ *   <li>{@link LogicDeleteInterceptor} — 逻辑删除</li>
  * </ul>
  * 后续可扩展：租户隔离、数据权限等。
  *

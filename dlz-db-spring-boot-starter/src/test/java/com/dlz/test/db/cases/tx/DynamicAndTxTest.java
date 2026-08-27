@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.tx;
 
-import com.dlz.db.ds.DBDynamic;
-import com.dlz.db.ds.DBTx;
-import com.dlz.db.ds.DataSourceProperty;
-import com.dlz.db.modal.DB;
+import com.dlz.db.DBDynamic;
+import com.dlz.db.DBTx;
+import com.dlz.db.core.ds.DataSourceProperty;
+import com.dlz.db.DB;
 import com.dlz.test.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;

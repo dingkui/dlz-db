@@ -1,6 +1,6 @@
 package com.dlz.test.db.service;
 
-import com.dlz.db.modal.DB;
+import com.dlz.db.DB;
 import com.dlz.test.db.entity.User;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.data.annotation.Tran;

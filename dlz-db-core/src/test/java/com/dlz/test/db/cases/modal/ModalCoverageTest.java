@@ -1,16 +1,17 @@
 package com.dlz.test.db.cases.modal;
 
+import com.dlz.db.DB;
+import com.dlz.db.DbConfig;
 import com.dlz.db.dialect.DbDialect;
 import com.dlz.db.exception.DbParameterException;
 import com.dlz.db.interceptor.SqlBuildInterceptor;
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.DbConfig;
-import com.dlz.db.modal.RequireUtil;
-import com.dlz.db.modal.dto.BatchResult;
-import com.dlz.db.modal.dto.PageRequest;
-import com.dlz.db.modal.options.DeleteOption;
-import com.dlz.db.modal.options.InsertOption;
-import com.dlz.db.modal.options.UpdateOption;
+import com.dlz.db.internal.holder.DBHolder;
+import com.dlz.db.model.BatchResult;
+import com.dlz.db.model.PageRequest;
+import com.dlz.db.option.DeleteOption;
+import com.dlz.db.option.InsertOption;
+import com.dlz.db.option.UpdateOption;
+import com.dlz.db.util.RequireUtil;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.TestUser;
@@ -92,8 +93,8 @@ class ModalCoverageTest extends BaseDBTest {
         assertThrows(DbParameterException.class, config::init);
         DataSource dataSource = (DataSource) Proxy.newProxyInstance(DataSource.class.getClassLoader(), new Class<?>[]{DataSource.class}, (proxy, method, args) -> null);
         assertSame(config, config.dataSource(dataSource));
-        assertSame(config, config.sqlExecutor(com.dlz.db.support.DBHolder.getSqlExecutor()));
-        assertSame(config, config.txExecutor(source -> com.dlz.db.support.DBHolder.getTxExecutor(null)));
+        assertSame(config, config.sqlExecutor(DBHolder.getSqlExecutor()));
+        assertSame(config, config.txExecutor(source -> DBHolder.getTxExecutor(null)));
         assertSame(config, config.init());
         assertSame(config, config.init());
         assertThrows(DbParameterException.class, () -> config.logicDeleteField("deleted2"));

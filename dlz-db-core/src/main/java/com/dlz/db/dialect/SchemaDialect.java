@@ -1,7 +1,7 @@
 package com.dlz.db.dialect;
 
-import com.dlz.db.support.DBHolder;
-import com.dlz.db.support.bean.TableInfo;
+import com.dlz.db.internal.holder.DBHolder;
+import com.dlz.db.internal.bean.TableInfo;
 import com.dlz.kit.util.VAL;
 
 import java.lang.reflect.Field;

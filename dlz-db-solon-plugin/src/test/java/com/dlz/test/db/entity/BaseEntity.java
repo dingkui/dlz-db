@@ -1,6 +1,6 @@
 package com.dlz.test.db.entity;
 
-import com.dlz.db.annotation.TableId;
+import com.dlz.db.core.anno.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -40,7 +40,7 @@
 
     <!-- The dialect registry supplies fixed last-insert-id SQL, never request data. -->
     <Match>
-        <Class name="com.dlz.db.core.NativeSqlUtil"/>
+        <Class name="com.dlz.db.util.NativeSqlUtil"/>
         <Method name="queryLastInsertIdByDialect"/>
         <Bug pattern="SQL_INJECTION_JDBC,SQL_NONCONSTANT_STRING_PASSED_TO_EXECUTE"/>
     </Match>

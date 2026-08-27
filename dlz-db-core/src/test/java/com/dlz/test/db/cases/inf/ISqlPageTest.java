@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.inf;
 
 import com.dlz.db.mapper.name.NameConvertCamel;
-import com.dlz.db.modal.dto.Order;
-import com.dlz.db.modal.dto.Page;
-import com.dlz.db.modal.wrapper.JdbcSelect;
+import com.dlz.db.model.Order;
+import com.dlz.db.model.Page;
+import com.dlz.db.wrapper.JdbcSelect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

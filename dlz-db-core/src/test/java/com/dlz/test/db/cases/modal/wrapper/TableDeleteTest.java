@@ -1,8 +1,8 @@
 package com.dlz.test.db.cases.modal.wrapper;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.condition.Condition;
-import com.dlz.db.modal.wrapper.TableDelete;
+import com.dlz.db.DB;
+import com.dlz.db.internal.condition.Condition;
+import com.dlz.db.wrapper.TableDelete;
 import com.dlz.kit.json.JSONMap;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.Dict;

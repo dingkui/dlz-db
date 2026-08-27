@@ -1,6 +1,6 @@
 package com.dlz.test.db.cases.modal.wrapper;
 
-import com.dlz.db.modal.wrapper.PojoInsert;
+import com.dlz.db.wrapper.PojoInsert;
 import com.dlz.test.db.config.BaseDBTest;
 import com.dlz.test.db.entity.SysSql;
 import lombok.extern.slf4j.Slf4j;

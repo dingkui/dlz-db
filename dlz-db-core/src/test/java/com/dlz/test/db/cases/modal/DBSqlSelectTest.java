@@ -1,9 +1,9 @@
 package com.dlz.test.db.cases.modal;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.Order;
-import com.dlz.db.modal.dto.Page;
-import com.dlz.db.modal.wrapper.SqlQuery;
+import com.dlz.db.DB;
+import com.dlz.db.model.Order;
+import com.dlz.db.model.Page;
+import com.dlz.db.wrapper.SqlQuery;
 import com.dlz.test.db.config.BaseDBTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

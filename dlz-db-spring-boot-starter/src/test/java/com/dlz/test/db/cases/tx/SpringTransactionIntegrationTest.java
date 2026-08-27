@@ -1,7 +1,7 @@
 package com.dlz.test.db.cases.tx;
 
-import com.dlz.db.modal.DB;
-import com.dlz.db.modal.dto.ResultMap;
+import com.dlz.db.DB;
+import com.dlz.db.model.ResultMap;
 import com.dlz.test.config.BaseDBTest;
 import com.dlz.test.db.service.TransactionTestService;
 import lombok.extern.slf4j.Slf4j;

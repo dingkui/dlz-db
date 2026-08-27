@@ -1,0 +1,387 @@
+package com.dlz.db.internal.holder;
+
+import com.dlz.caller.DlzCaller;
+import com.dlz.db.core.anno.Schema;
+import com.dlz.db.core.anno.SchemaField;
+import com.dlz.db.core.anno.TableId;
+import com.dlz.db.core.anno.TableName;
+import com.dlz.db.core.anno.proxy.AnnoProxies;
+import com.dlz.db.core.anno.proxy.TableFieldMeta;
+import com.dlz.db.DB;
+import com.dlz.db.core.ds.DataSourceConfig;
+import com.dlz.db.internal.bean.IdInfo;
+import com.dlz.db.internal.bean.TableInfo;
+import com.dlz.db.util.DbConvertUtil;
+import com.dlz.kit.cache.CacheMap;
+import com.dlz.kit.exception.SystemException;
+import com.dlz.kit.fn.DlzFn;
+import com.dlz.kit.mdc.MdcContext;
+import com.dlz.kit.util.StringUtils;
+import com.dlz.kit.util.ValUtil;
+import com.dlz.kit.util.system.FieldReflections;
+import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * bean与数据库表信息保持器
+ *
+ * @author dk
+ */
+@Slf4j
+public class PojoCache {
+    private static final CacheMap<Class<?>, String> tableNameCache = new CacheMap<>();
+    private static final CacheMap<Field, String> dbNameCache = new CacheMap<>();
+    private static final CacheMap<String, List<Field>> tableFieldCache = new CacheMap<>();
+    private static final CacheMap<String, TableInfo> tableInfoCache = new CacheMap<>();
+    private static final CacheMap<String, HashMap<String, Integer>> tableColumnsInfoCache = new CacheMap<>();
+    private static final CacheMap<Class<?>, IdInfo> idFieldCache = new CacheMap<>();
+    private static final CacheMap<Class<?>, Field> deletedFieldCache = new CacheMap<>();
+
+    public static void clearAll() {
+        tableInfoCache.clear();
+        tableColumnsInfoCache.clear();
+        tableFieldCache.clear();
+        idFieldCache.clear();
+        deletedFieldCache.clear();
+    }
+
+    /**
+     * （带缓存）取得字段对应的数据库字段名
+     *
+     * @param field
+     */
+    public static String getDbName(Field field) {
+        return dbNameCache.getAndSet(field, () -> {
+            String columnName;
+            String fieldName = field.getName();
+            // 检查我们自己的 @TableId 注解
+            final TableId annotation = field.getAnnotation(TableId.class);
+            if (annotation != null) {
+                columnName = annotation.value();
+            } else {
+                columnName = AnnoProxies.MybatisPlusIdType.value(field);
+            }
+
+            if (StringUtils.isEmpty(columnName)) {
+                // 本项目 @TableField（直接标注或自定义元注解扩展）
+                final String ourValue = TableFieldMeta.value(field);
+                final Boolean ourExist = TableFieldMeta.exist(field);
+                if (ourExist != null) {
+                    if (ourExist && StringUtils.isNotEmpty(ourValue)) {
+                        columnName = ourValue;
+                    } else if (!ourExist) {
+                        // exist=false 表示该字段不对应数据库列，返回空串让上层过滤
+                        columnName = "";
+                    }
+                } else if (StringUtils.isNotEmpty(ourValue)) {
+                    columnName = ourValue;
+                } else if (ValUtil.toBoolean(AnnoProxies.MybatisPlusTableField.exist(field), true)) {
+                    columnName = AnnoProxies.MybatisPlusTableField.value(field);
+                }
+            }
+            if (StringUtils.isEmpty(columnName)) {
+                columnName = fieldName;
+            }
+            columnName = getDbName(columnName);
+            if (log.isDebugEnabled()) {
+                log.debug("字段：{} 对应数据库字段：{}", field.getDeclaringClass().getName() + "." + fieldName, columnName);
+            }
+            return columnName;
+        });
+    }
+
+    /**
+     * 判断字段是否存在
+     *
+     * @param tableName  表名
+     * @param columnName 字段名：支持bean字段名，数据库字段名
+     * @author dk 2018-09-28
+     */
+    public static boolean isColumnExists(String tableName, String columnName) {
+        Map<String, Integer> map = getTableColumnsInfo(tableName);
+        if (map == null) {
+            return false;
+        }
+        return map.containsKey(DbConvertUtil.toDbName(columnName.replaceAll("`", "")));
+    }
+    /**
+     * 判断字段是否存在
+     *
+     * @param tableName  表名
+     * @param columnName 字段名：支持bean字段名，数据库字段名
+     * @author dk 2018-09-28
+     */
+    public static Integer getTableColumnType(String tableName, String columnName) {
+        Map<String, Integer> map = getTableColumnsInfo(tableName);
+        if (map == null) {
+            return null;
+        }
+        return map.get(columnName.replaceAll("`", ""));
+    }
+
+
+    /**
+     * bean字段名转换成数据库字段名
+     *
+     * @param field
+     */
+    public static String getDbName(String field) {
+        return DbConvertUtil.toDbName(field);
+    }
+
+    /**
+     * 根据bean取得表注释
+     *
+     * @param clazz
+     */
+    public static String getTableComment(Class<?> clazz) {
+        // 1) 本项目 @TableName（直接标注或自定义元注解扩展）的 comment
+        final String ourComment = TableFieldMeta.comment(clazz);
+        if (StringUtils.isNotEmpty(ourComment)) {
+            return ourComment.replaceAll("[\\\"'`]", "");
+        }
+        // 2) 本项目 @Schema（类级描述）
+        final Schema schema = clazz.getAnnotation(Schema.class);
+        if (schema != null && StringUtils.isNotEmpty(schema.value())) {
+            return schema.value().replaceAll("[\\\"'`]", "");
+        }
+        // 3) 兼容 io.swagger 的 @ApiModel（未引入 swagger 时返回 null）
+        final String swagger = AnnoProxies.SwaggerApiModel.value(clazz);
+        if (StringUtils.isNotEmpty(swagger)) {
+            return swagger.replaceAll("[\\\"'`]", "");
+        }
+        return null;
+    }
+
+    /**
+     * 根据bean字段取得字段注释
+     *
+     * @param field
+     */
+    public static String getColumnComment(Field field) {
+        // 1) 本项目 @TableField（直接标注或自定义元注解扩展）的 comment
+        final String ourComment = TableFieldMeta.comment(field);
+        if (StringUtils.isNotEmpty(ourComment)) {
+            return ourComment.replaceAll("[\\\"\n'`]", "");
+        }
+        // 2) 本项目 @SchemaField（字段级描述）
+        final SchemaField schemaField = field.getAnnotation(SchemaField.class);
+        if (schemaField != null && StringUtils.isNotEmpty(schemaField.value())) {
+            return schemaField.value().replaceAll("[\\\"\n'`]", "");
+        }
+        // 3) 兼容 io.swagger 的 @ApiModelProperty（未引入 swagger 时返回 null）
+        final String swagger = AnnoProxies.SwaggerModelProp.value(field);
+        if (StringUtils.isNotEmpty(swagger)) {
+            return swagger.replaceAll("[\\\"\n'`]", "");
+        }
+        return null;
+    }
+
+    /**
+     * 根据bean字段判断是否pk
+     *
+     * @param field
+     */
+    public static boolean isColumnPk(Field field) {
+        TableId name = field.getAnnotation(TableId.class);
+        if (name != null) {
+            return true;
+        }
+        return field.getName().equals("id");
+    }
+
+    /**
+     * （带缓存）根据bean取得表名
+     *
+     * @param clazz
+     */
+    public static String getTableName(Class<?> clazz) {
+        return tableNameCache.getAndSet(clazz, () -> {
+            TableName name = clazz.getAnnotation(TableName.class);
+            String tName;
+            if (name != null) {
+                tName = name.value();
+            } else {
+                tName = AnnoProxies.MybatisPlusTableName.value(clazz);
+            }
+
+            if (StringUtils.isEmpty(tName)) {
+                tName = clazz.getSimpleName();
+            }
+
+            tName = getDbName(tName).replaceAll("^_", "");
+            return tName;
+        });
+    }
+
+    /**
+     * （带缓存）取得当前数据源下的完整表元数据快照。
+     */
+    public static TableInfo getTableInfo(String tableName) {
+        final String cacheKey = getTableInfoCacheKey(tableName);
+        return tableInfoCache.getAndSet(cacheKey, () ->
+                DB.ds.getSchemaDialect().getTableInfo(tableName).snapshot()
+        );
+    }
+
+    private static String getTableInfoCacheKey(String tableName) {
+        final DataSourceConfig config = DB.ds.getCurrentConfig();
+        final String schema = config.getSchema() == null ? "" : config.getSchema();
+        return config.getName() + "@" + System.identityHashCode(config.getDataSource())
+                + ":" + schema + ":" + tableName;
+    }
+
+    /**
+     * （带缓存）取得数据库表字段信息。
+     * 兼容旧 API：key 为数据库列名，value 为 JDBC 类型。
+     *
+     * @param tableName 表名
+     */
+    public static HashMap<String, Integer> getTableColumnsInfo(String tableName) {
+        final String cacheKey = getTableInfoCacheKey(tableName);
+        return tableColumnsInfoCache.getAndSet(cacheKey, () ->
+                DBHolder.getSqlExecutor().getTableColumnsInfo(tableName)
+        );
+    }
+
+    /**
+     * （带缓存）根据bean取得数据库对应的字段信息，如果字段在表中不存在，则不返回
+     *
+     * @param beanClass
+     */
+    public static List<Field> getBeanFields(Class<?> beanClass) {
+        String tableName = getTableName(beanClass);
+        return tableFieldCache.getAndSet(tableName, () -> {
+            HashMap<String, Integer> tableColumnsInfo = getTableColumnsInfo(tableName);
+            if (tableColumnsInfo == null) {
+                // 仅失败分支注入调用方，MdcContext 自动恢复 MDC，避免残留
+                try (MdcContext ignore = DlzCaller.caller(1)) {
+                    log.warn("get tableColumnsInfo fail：" + tableName);
+                }
+                return null;
+            }
+            if (tableColumnsInfo.isEmpty()) {
+                try (MdcContext ignore = DlzCaller.caller(1)) {
+                    throw new SystemException("get tableColumnsInfo fail：" + beanClass.getName());
+                }
+            }
+            return FieldReflections.getFields(beanClass).stream()
+                    .filter(field -> tableColumnsInfo.containsKey(getDbName(field.getName())))
+                    .collect(Collectors.toList());
+        });
+    }
+
+    /**
+     * （带缓存）取得 bean 的主键字段。
+     * <p>优先级：{@code @TableId} 注解 → MyBatis-Plus 的 {@code @TableId} → 名为 {@code "id"} 的字段 → null。
+     * <p>仅在 {@link #getBeanFields(Class)} 返回的表内字段中查找，避免命中 transient 字段。
+     *
+     * @param beanClass bean 类
+     * @return 主键 Field；若不存在返回 null
+     */
+    public static Field getIdField(Class<?> beanClass) {
+        final IdInfo idInfo = getIdInfo(beanClass);
+        return idInfo == null ? null : idInfo.getField();
+    }
+
+
+    /**
+     * 获取实体的主键信息
+     *
+     * @param clazz 实体类
+     * @return 主键信息
+     * @throws SystemException 如果未设置可辨识的主键
+     */
+    public static String getIdFieldName(Class<?> clazz) {
+        final IdInfo idInfo = getIdInfo(clazz);
+        if (idInfo == null) {
+            throw new SystemException(clazz.getSimpleName() + "未设置可辨识的主键");
+        }
+        return idInfo.getField().getName();
+    }
+
+    /**
+     * （带缓存）取得 bean 的主键字段。
+     * <p>优先级：{@code @TableId} 注解 → MyBatis-Plus 的 {@code @TableId} → 名为 {@code "id"} 的字段 → null。
+     * <p>仅在 {@link #getBeanFields(Class)} 返回的表内字段中查找，避免命中 transient 字段。
+     *
+     * @param beanClass bean 类
+     * @return 主键 Field；若不存在返回 null
+     */
+    public static IdInfo getIdInfo(Class<?> beanClass) {
+        return idFieldCache.getAndSet(beanClass, () -> {
+            List<Field> fields = getBeanFields(beanClass);
+            if (fields == null) {
+                return null;
+            }
+            // 1) @TableId（本项目注解）
+            for (Field f : fields) {
+                final TableId annotation = f.getAnnotation(TableId.class);
+                if (annotation != null) {
+                    final IdInfo idInfo = new IdInfo(f, getDbName(f));
+                    idInfo.setType(annotation.type());
+                    return idInfo;
+                }
+            }
+            // 2) MyBatis-Plus @TableId（代理调用，未引入 MP 时返回空）
+            for (Field f : fields) {
+                if (StringUtils.isNotEmpty(AnnoProxies.MybatisPlusIdType.value(f))) {
+                    final IdInfo idInfo = new IdInfo(f, getDbName(f));
+                    idInfo.setType(AnnoProxies.MybatisPlusIdType.type(f));
+                    return idInfo;
+                }
+            }
+            // 3) 名为 id 的字段
+            for (Field f : fields) {
+                if ("id".equals(f.getName())) {
+                    return new IdInfo(f, getDbName(f));
+                }
+            }
+            return null;
+        });
+    }
+
+
+    /**
+     * （带缓存）取得 bean 的主键字段。
+     * <p>优先级：{@code @TableId} 注解 → MyBatis-Plus 的 {@code @TableId} → 名为 {@code "id"} 的字段 → null。
+     * <p>仅在 {@link #getBeanFields(Class)} 返回的表内字段中查找，避免命中 transient 字段。
+     *
+     * @param tableName bean 类
+     * @return 主键 Field；若不存在返回 null
+     */
+    public static String getIdFieldName(String tableName) {
+        return getTableInfo(tableName).requireSinglePrimaryKey().getFieldName();
+    }
+
+    public static Field getLogicDeleteInfo(Class<?> beanClass,String logicDeleteFileName) {
+        final Field field = deletedFieldCache.computeIfAbsent(beanClass,k -> {
+            List<Field> fields = getBeanFields(beanClass);
+            if (fields == null) {
+                return null;
+            }
+            for (Field f : fields) {
+                if (logicDeleteFileName.equalsIgnoreCase(getDbName(f))) {
+                    return f;
+                }
+            }
+            return null;
+        });
+        return field;
+    }
+
+    /**
+     * 根据 lambda 表达式取得数据库字段名
+     *
+     * @param column
+     * @param <T>
+     */
+    public static <T> String fnName(DlzFn<T, ?> column) {
+        return getDbName(FieldReflections.getFn(column).v2);
+    }
+}
