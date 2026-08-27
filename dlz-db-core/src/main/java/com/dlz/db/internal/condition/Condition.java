@@ -122,4 +122,18 @@ public class Condition implements ICondAndOr<Condition>, ICondAddByKey<Condition
     public boolean isContainCondition(String column) {
         return children.stream().anyMatch(item -> item.runSql.startsWith(column + " "));
     }
+
+    /** 顶层条件中已声明的列名集合（供桩点避免重复注入）。 */
+    public java.util.Set<String> getColumns() {
+        java.util.Set<String> columns = new java.util.HashSet<>();
+        for (Condition child : children) {
+            if (child.runSql != null) {
+                int spaceIndex = child.runSql.indexOf(' ');
+                if (spaceIndex > 0) {
+                    columns.add(child.runSql.substring(0, spaceIndex));
+                }
+            }
+        }
+        return columns;
+    }
 }

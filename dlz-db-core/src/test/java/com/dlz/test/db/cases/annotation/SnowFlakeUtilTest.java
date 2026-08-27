@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SnowFlakeUtilTest extends BaseDBTest {
 
     private Object newInstance(long dataCenterId, long machineId) throws Exception {
-        Class<?> clazz = Class.forName("com.dlz.db.core.anno.SnowFlakeUtil");
+        Class<?> clazz = Class.forName("com.dlz.db.util.SnowFlakeUtil");
         Constructor<?> ctor = clazz.getDeclaredConstructor(long.class, long.class);
         ctor.setAccessible(true);
         return ctor.newInstance(dataCenterId, machineId);
@@ -28,7 +28,7 @@ class SnowFlakeUtilTest extends BaseDBTest {
     }
 
     private String callStaticId() throws Exception {
-        Class<?> clazz = Class.forName("com.dlz.db.core.anno.SnowFlakeUtil");
+        Class<?> clazz = Class.forName("com.dlz.db.util.SnowFlakeUtil");
         Method m = clazz.getDeclaredMethod("id");
         m.setAccessible(true);
         return (String) m.invoke(null);

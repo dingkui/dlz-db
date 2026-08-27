@@ -76,7 +76,7 @@ class ModalCoverageTest extends BaseDBTest {
     @Test
     void configValidationAndInitialization() {
         DbConfig config = new DbConfig();
-        SqlBuildInterceptor interceptor = () -> true;
+        SqlBuildInterceptor interceptor = (operation, tableName) -> Collections.emptyList();
         assertSame(config, config.plugin(interceptor));
         assertSame(config, config.registerDialect((DbDialect) () -> "coverage"));
         assertSame(config, config.sql("coverage", "SELECT 1"));

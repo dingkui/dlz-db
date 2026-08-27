@@ -1,38 +1,24 @@
 package com.dlz.db.interceptor;
 
-import com.dlz.db.internal.inf.IExecutorDelete;
-import com.dlz.db.internal.condition.Condition;
-import com.dlz.db.option.DbOptionAware;
+import com.dlz.db.option.DbOption;
+import com.dlz.db.option.DbOperation;
 import com.dlz.db.option.DbOptions;
-import com.dlz.db.wrapper.WrapperBuildUtil;
+import com.dlz.db.option.LogicDeleteOption;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * SQL 构建拦截器。
+ * SQL 构建拦截器注册中心，同时是"默认 Option 合并"的唯一入口。
  *
- * <p>在 {@link WrapperBuildUtil} 的关键节点被调用，
- * 用于自动注入 WHERE 条件、插入字段值、或改写删除操作。
- *
- * <p>内置实现：
- * <ul>
- *   <li>{@link LogicDeleteInterceptor} — 逻辑删除</li>
- * </ul>
- * 后续可扩展：租户隔离、数据权限等。
- *
- * <h3>使用示例</h3>
- * <pre>
- * // 注册插件（启动时一次）
- * WrapperBuildUtil.registerInterceptor(new LogicDeleteInterceptor());
- *
- * // 后续所有 DB.table 操作自动经过插件链
- * DB.table.selectWrapper("user").eq("id", 1).queryOne();
- * // ↑ LogicDeleteInterceptor.onBuildWhere 自动追加 deleted=0
- * </pre>
+ * <p>SQL 注入不再由拦截器直接完成：每次构建前调用
+ * {@link #effectiveOptions} 合并"拦截器供给的默认 Option"与"调用点 Option"
+ * （同 key 调用点优先），再由 Option 实现的桩点统一执行，
+ * 因此 SQL 注入路径只有 option.point 一条。
  *
  * @author dingkui
  * @since 8.0.0
@@ -40,26 +26,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Slf4j
 public class DbPlugin {
 
-    // ==================== 插件机制 ====================
-
     /**
      * 已注册的 SQL 构建拦截器列表。
      * 使用 CopyOnWriteArrayList 保证遍历时不加锁（注册频率低，遍历频率高）。
      */
     private static final List<SqlBuildInterceptor> interceptors = new CopyOnWriteArrayList<>();
-    private static LogicDeleteInterceptor logicDeleteInterceptor;
 
     /**
      * 注册一个 SQL 构建拦截器。
-     * <p>通常在应用启动时调用（如 Spring @PostConstruct）。
+     * <p>通常在应用启动时调用（如 Spring @PostConstruct 或 DB.config.plugin(...)）。
      *
      * @param interceptor 拦截器实例
      */
     public static void registerInterceptor(SqlBuildInterceptor interceptor) {
         if (interceptor != null && interceptor.isEnabled()) {
-            if(interceptor instanceof LogicDeleteInterceptor){
-                logicDeleteInterceptor = (LogicDeleteInterceptor) interceptor;
-            }
             interceptors.add(interceptor);
             log.info("Registered SqlBuildInterceptor: {}", interceptor.getClass().getName());
         }
@@ -70,12 +50,10 @@ public class DbPlugin {
      */
     public static void clearInterceptors() {
         interceptors.clear();
-        logicDeleteInterceptor = null;
     }
 
     /**
      * 获取已注册的拦截器列表（只读视图）。
-     * <p>供 {@link IExecutorDelete#execute()} 等处遍历调用。
      */
     public static List<SqlBuildInterceptor> getInterceptors() {
         return interceptors;
@@ -88,71 +66,86 @@ public class DbPlugin {
         return interceptors.size();
     }
 
-    // ==================== SQL 构建 ====================
     /**
-     * 生成查询条件sql
-     * <p>先调用所有启用的插件的 {@link SqlBuildInterceptor#onBuildWhere}，
-     * 再生成最终 WHERE 子句。
+     * 合并拦截器供给的默认 Option 与调用点 Option。
+     *
+     * <ul>
+     *   <li>无拦截器时直接返回调用点 Option（零开销）；</li>
+     *   <li>同 {@link DbOption#key()} 时调用点优先（覆盖全局默认）；</li>
+     *   <li>不适配当前操作的 Option 不参与合并（不抛错，供跨操作复用的 Option 使用）。</li>
+     * </ul>
+     *
+     * @param operation 当前操作类型
+     * @param tableName 目标表名
+     * @param userOptions 调用点传入的 Option 集合（可为 null）
+     * @return 合并后的 Option 集合
      */
-    public static void onBuildWhere(String tableName, Condition where) {
-        onBuildWhere(tableName, where, DbOptions.EMPTY);
+    public static DbOptions effectiveOptions(DbOperation operation, String tableName, DbOptions userOptions) {
+        final DbOptions base = userOptions == null ? DbOptions.EMPTY : userOptions;
+        if (interceptors.isEmpty()) {
+            return base;
+        }
+        Map<String, DbOption> merged = new LinkedHashMap<>();
+        for (SqlBuildInterceptor interceptor : interceptors) {
+            if (!interceptor.isEnabled()) {
+                continue;
+            }
+            List<DbOption> supplied = interceptor.supplyOptions(operation, tableName);
+            if (supplied == null) {
+                continue;
+            }
+            for (DbOption option : supplied) {
+                if (option != null && option.supports(operation)) {
+                    merged.putIfAbsent(option.key(), option);
+                }
+            }
+        }
+        if (merged.isEmpty()) {
+            return base;
+        }
+        for (DbOption option : base.asList()) {
+            merged.put(option.key(), option); // 调用点优先
+        }
+        for (DbOption option : merged.values().toArray(new DbOption[0])) {
+            if (!option.supports(operation)) {
+                merged.remove(option.key());
+            }
+        }
+        if (merged.isEmpty()) {
+            return base;
+        }
+        return DbOptions.resolve(operation, merged.values().toArray(new DbOption[0]));
     }
 
-    public static void onBuildWhere(String tableName, Condition where, DbOptions options) {
-        // 调用插件链：逻辑删除/租户/权限 等自动注入 WHERE 条件
-        for (SqlBuildInterceptor interceptor : interceptors) {
-            interceptor.onBuildWhere(tableName, where, options);
-        }
-    }
+    // ==================== 逻辑删除辅助（供批量等旁路路径使用） ====================
+
     /**
-     * 构建插入语句
-     * <p>先调用所有启用的插件的 {@link SqlBuildInterceptor#onBuildInsert}，
-     * 再生成最终 INSERT 子句。
+     * 获取已注册的逻辑删除选项（未注册返回 null）。
      */
-    public static void onBuildInsert(String tableName, Map<String, Object> insertValues) {
-        onBuildInsert(tableName, insertValues, DbOptions.EMPTY);
+    public static LogicDeleteOption getLogicDeleteOption() {
+        for (SqlBuildInterceptor interceptor : interceptors) {
+            if (interceptor instanceof LogicDeleteInterceptor) {
+                return ((LogicDeleteInterceptor) interceptor).getOption();
+            }
+        }
+        return null;
     }
 
-    public static void onBuildInsert(String tableName, Map<String, Object> insertValues, DbOptions options) {
-        // 调用插件链：逻辑删除/租户 等自动注入插入字段
-        for (SqlBuildInterceptor interceptor : interceptors) {
-             interceptor.onBuildInsert(tableName, insertValues, options);
-        }
-    }
-    /**
-     * 逻辑删除处理，逻辑删除插件生效则进行逻辑删除拦截
-     * @param maker
-     * @return 逻辑删除结果 -1 放行物理 DELETE, 其他 逻辑删除条数
-     */
-    public static int doLogicDelete(IExecutorDelete maker) {
-        // 调用插件：逻辑删除/租户 等自动注入插入字段
-        // 调用插件链：逻辑删除插件会在此将 DELETE 改写为 UPDATE deleted=1
-        if(logicDeleteInterceptor == null){
-            return -1;
-        }
-        DbOptions options = maker instanceof DbOptionAware
-                ? ((DbOptionAware) maker).getDbOptions()
-                : DbOptions.EMPTY;
-        return logicDeleteInterceptor.doLogicDelete(maker, options);
-    }
     /**
      * 获取指定表的逻辑删除字段（Bean Field 形式）。
-     * <p>若未注册 {@link LogicDeleteInterceptor} 或表不含逻辑删除字段，则返回 null。
+     * <p>若未注册逻辑删除或表不含逻辑删除字段，则返回 null。
      */
     public static Field getLogicDeleteField(String tableName, Class<?> beanClass) {
-        if(logicDeleteInterceptor == null){
-            return null;
-        }
-        return logicDeleteInterceptor.getLogicDeleteField(tableName, beanClass);
+        LogicDeleteOption option = getLogicDeleteOption();
+        return option == null ? null : option.getLogicDeleteField(tableName, beanClass);
     }
+
     /**
      * 获取指定表的逻辑删除字段名（字符串形式）。
-     * <p>若未注册 {@link LogicDeleteInterceptor} 或表不含逻辑删除字段，则返回 null。
+     * <p>若未注册逻辑删除或表不含逻辑删除字段，则返回 null。
      */
     public static String getLogicDeleteField(String tableName) {
-        if(logicDeleteInterceptor == null){
-            return null;
-        }
-        return logicDeleteInterceptor.getLogicDeleteField(tableName);
+        LogicDeleteOption option = getLogicDeleteOption();
+        return option == null ? null : option.getLogicDeleteField(tableName);
     }
 }

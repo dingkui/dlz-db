@@ -34,16 +34,14 @@ public final class OptionPointBindings implements Serializable {
         Map<Class<? extends OptionPoint>, List<DbOption>> classified = new LinkedHashMap<>();
         for (OptionPointDefinition<?> definition : registry.asList()) {
             List<DbOption> matches = match(options, definition.getPointType());
-            if (!matches.isEmpty() && !definition.supports(options.getOperation())) {
-                throw new DbParameterException("Option point " + definition.getPointType().getName()
-                        + " is not applicable to " + options.getOperation());
-            }
+            // 桩点未注册到当前操作时，Option 只是"不参与该桩点"，不视为错误：
+            // 跨操作复用的 Option（如逻辑删除同时实现查询/插入/删除桩点）依赖此语义。
             if (definition.supports(options.getOperation())) {
                 validateAndSort(definition, matches);
                 classified.put(definition.getPointType(),
                         Collections.unmodifiableList(new ArrayList<>(matches)));
             } else {
-                classified.put(definition.getPointType(), Collections.emptyList());
+                classified.put(definition.getPointType(), Collections.<DbOption>emptyList());
             }
         }
         return new OptionPointBindings(registry, Collections.unmodifiableMap(classified));

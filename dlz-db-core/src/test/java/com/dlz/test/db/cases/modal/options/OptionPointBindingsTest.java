@@ -62,35 +62,19 @@ class OptionPointBindingsTest {
     void shouldRegisterCompleteStandardPointMatrix() {
         OptionPointRegistry registry = StandardOptionPoints.REGISTRY;
 
-        assertEquals(32, registry.asList().size());
-        assertPoints(registry, OptionPointMode.SINGLE, allOperations(),
-                DataSourceRoutePoint.class, TableRoutePoint.class, ColumnNamePoint.class,
-                JdbcParameterPoint.class);
-        assertPoints(registry, OptionPointMode.CHAIN, allOperations(),
-                SqlBuildPoint.class, BeforeExecutionPoint.class, AfterExecutionPoint.class,
-                ExecutionErrorPoint.class);
+        // 只登记已接线的 8 个桩点；未接线设计见 option/point/FUTURE-POINTS.md
+        assertEquals(8, registry.asList().size());
         assertPoints(registry, OptionPointMode.SINGLE, operations(DbOperation.INSERT),
-                GeneratedKeyPoint.class, InsertConflictPoint.class, InsertNullFieldPoint.class);
+                InsertNullFieldPoint.class);
         assertPoints(registry, OptionPointMode.MERGE, operations(DbOperation.INSERT),
                 InsertFieldPoint.class);
-        assertPoints(registry, OptionPointMode.CHAIN, operations(DbOperation.INSERT),
-                InsertValuePoint.class);
         assertPoints(registry, OptionPointMode.SINGLE, operations(DbOperation.UPDATE),
-                UpdateSafetyPoint.class, UpdateNullFieldPoint.class);
-        assertPoints(registry, OptionPointMode.MERGE, operations(DbOperation.UPDATE),
-                UpdateFieldPoint.class, OptimisticLockPoint.class);
-        assertPoints(registry, OptionPointMode.CHAIN, operations(DbOperation.UPDATE),
-                UpdateValuePoint.class);
+                UpdateNullFieldPoint.class);
         assertPoints(registry, OptionPointMode.SINGLE, operations(DbOperation.DELETE),
-                DeleteModePoint.class, DeleteSafetyPoint.class, LogicDeleteValuePoint.class);
+                DeleteModePoint.class, LogicDeleteValuePoint.class);
         assertPoints(registry, OptionPointMode.MERGE, readWriteOperations(), WherePoint.class);
-        assertPoints(registry, OptionPointMode.CHAIN, readWriteOperations(), ConditionValuePoint.class);
-        assertPoints(registry, OptionPointMode.SINGLE, readWriteOperations(), ConditionSafetyPoint.class);
-        assertPoints(registry, OptionPointMode.MERGE, operations(DbOperation.SELECT), SelectFieldPoint.class);
         assertPoints(registry, OptionPointMode.SINGLE, operations(DbOperation.SELECT),
-                DeletedDataPoint.class, SelectLockPoint.class, PaginationPoint.class, CountPoint.class,
-                RowMapperPoint.class, ResultMapperPoint.class);
-        assertPoints(registry, OptionPointMode.CHAIN, operations(DbOperation.SELECT), ReadValuePoint.class);
+                DeletedDataPoint.class, SelectLockPoint.class);
     }
 
     private static void assertPoints(OptionPointRegistry registry, OptionPointMode mode,
@@ -103,10 +87,6 @@ class OptionPointBindingsTest {
                         pointType.getSimpleName() + " / " + operation);
             }
         }
-    }
-
-    private static List<DbOperation> allOperations() {
-        return operations(DbOperation.values());
     }
 
     private static List<DbOperation> readWriteOperations() {

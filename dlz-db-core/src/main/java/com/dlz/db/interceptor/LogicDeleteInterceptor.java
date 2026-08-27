@@ -1,49 +1,27 @@
 package com.dlz.db.interceptor;
 
-import com.dlz.db.internal.inf.IExecutorDelete;
-import com.dlz.db.internal.condition.Condition;
-import com.dlz.db.option.DbOptions;
-import com.dlz.db.option.point.DeleteModePoint;
-import com.dlz.db.option.point.DeletedDataPoint;
-import com.dlz.db.option.point.context.CrudContext;
-import com.dlz.db.option.point.context.DeleteMode;
-import com.dlz.db.option.point.context.DeletedDataMode;
-import com.dlz.db.internal.para.ParaMap;
-import com.dlz.db.wrapper.PojoUpdate;
-import com.dlz.db.wrapper.TableDelete;
-import com.dlz.db.wrapper.TableUpdate;
-import com.dlz.db.internal.holder.DBHolder;
-import com.dlz.db.internal.holder.PojoCache;
-import com.dlz.db.internal.holder.SqlRunThreadHolder;
-import com.dlz.db.util.DbConvertUtil;
-import lombok.extern.slf4j.Slf4j;
+import com.dlz.db.option.DbOption;
+import com.dlz.db.option.DbOperation;
+import com.dlz.db.option.LogicDeleteOption;
 
-import java.lang.reflect.Field;
-import java.util.Locale;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * 逻辑删除拦截器。
+ * 逻辑删除拦截器：为所有操作供给 {@link LogicDeleteOption}。
  *
- * <p>将原来散落在 {@code WrapperBuildUtil.buildWhere}、{@code IExecutorDelete.execute}、
- * {@code IDbExecuteService} 里的逻辑删除代码统一收拢为单个插件。
- *
- * <h3>行为</h3>
- * <table border="1">
- * <tr><th>操作</th><th>自动行为</th><th>注入位置</th></tr>
- * <tr><td>查询/更新</td><td>WHERE 追加 {@code deleted = 0}</td><td>{@link #onBuildWhere}</td></tr>
- * <tr><td>插入</td><td>VALUES 追加 {@code deleted = 0}</td><td>{@link #onBuildInsert}</td></tr>
- * <tr><td>删除</td><td>DELETE → UPDATE {@code deleted = 1}</td><td>{@link #doLogicDelete}</td></tr>
- * </table>
+ * <p>本身不包含任何 SQL 改写逻辑——WHERE 追加、INSERT 默认值、DELETE 改写
+ * 全部由 LogicDeleteOption 实现的桩点（WherePoint / InsertFieldPoint /
+ * LogicDeleteValuePoint）统一完成。
  *
  * <h3>开关控制</h3>
  * <ul>
- *   <li>全局开关：{@code DlzDbProperties.logicDeleteField} 为空则禁用</li>
- *   <li>线程级开关：{@link SqlRunThreadHolder#isIgnoreLogicDelete()} 为 true 则跳过（单次强制物理删除）</li>
+ *   <li>全局开关：{@code DlzDbProperties.logicDeleteField} 为空则不注册</li>
+ *   <li>线程级开关：{@code ignoreLogicDelete(true)} 单次强制物理删除</li>
  * </ul>
  *
  * <pre>
- * // 默认：逻辑删除
+ * // 默认（DB.config.logicDeleteField 自动注册）：逻辑删除
  * DB.table.deleteWrapper("user").eq("id", 1).execute();
  *
  * // 本次强制物理删除
@@ -53,134 +31,25 @@ import java.util.Map;
  * @author dingkui
  * @since 8.0.0
  */
-@Slf4j
 public class LogicDeleteInterceptor implements SqlBuildInterceptor {
 
-    private final String dbColumnName;
-    private final String fieldName;
+    private final LogicDeleteOption option;
 
     public LogicDeleteInterceptor(String fieldName) {
-        fieldName = fieldName.toLowerCase(Locale.ROOT);
-        this.fieldName = DbConvertUtil.toFieldName(fieldName);
-        this.dbColumnName = DbConvertUtil.toDbName(fieldName);
+        this.option = new LogicDeleteOption(fieldName);
+    }
+
+    public LogicDeleteOption getOption() {
+        return option;
     }
 
     @Override
     public boolean isEnabled() {
-        // 全局开关：字段名未配置则禁用
-        // 线程级开关：SqlRunThreadHolder.isIgnoreLogicDelete() 为 true 时本次跳过
-        return dbColumnName != null && !dbColumnName.isEmpty();
-    }
-
-    /**
-     * 拦截逻辑查询
-     * @param tableName 表名
-     * @param where 查询条件
-     */
-    @Override
-    public void onBuildWhere(String tableName, Condition where) {
-        onBuildWhere(tableName, where, DbOptions.EMPTY);
+        return option.isEnabled();
     }
 
     @Override
-    public void onBuildWhere(String tableName, Condition where, DbOptions options) {
-        if (includesDeletedData(tableName, options)
-                || usesPhysicalDelete(tableName, options)
-                || SqlRunThreadHolder.isIgnoreLogicDelete()) {
-            return;
-        }
-        if (!PojoCache.isColumnExists(tableName, dbColumnName)) {
-            return;
-        }
-        if (where.isContainCondition(dbColumnName)) {
-            return;
-        }
-        where.eq(dbColumnName, 0);
-    }
-
-    private boolean includesDeletedData(String tableName, DbOptions options) {
-        DeletedDataPoint point = options.getPointBindings().single(DeletedDataPoint.class);
-        return point != null && point.chooseDeletedData(new CrudContext(
-                options.getOperation(), tableName, null, options)) == DeletedDataMode.INCLUDE;
-    }
-
-    private boolean usesPhysicalDelete(String tableName, DbOptions options) {
-        DeleteModePoint point = options.getPointBindings().single(DeleteModePoint.class);
-        return point != null && point.chooseDeleteMode(new CrudContext(
-                options.getOperation(), tableName, null, options)) == DeleteMode.PHYSICAL;
-    }
-
-    /**
-     * 拦截逻辑插入
-     * @param tableName 表名
-     * @param insertValues 插入字段
-     */
-    @Override
-    public void onBuildInsert(String tableName, Map<String, Object> insertValues) {
-        if (SqlRunThreadHolder.isIgnoreLogicDelete()) {
-            return;
-        }
-        if (insertValues.containsKey(dbColumnName)) {
-            return;
-        }
-        if (!PojoCache.isColumnExists(tableName, dbColumnName)) {
-            return;
-        }
-        insertValues.put(dbColumnName, 0);
-    }
-
-    /**
-     * 逻辑删除执行
-     * @param executor
-     * @return
-     */
-    public int doLogicDelete(IExecutorDelete executor, DbOptions options) {
-        if (usesPhysicalDelete(executor.getTableName(), options)
-                || SqlRunThreadHolder.isIgnoreLogicDelete()) {
-            return -1; // 放行物理 DELETE
-        }
-        if (!PojoCache.isColumnExists(executor.getTableName(), dbColumnName)) {
-            return -1; // 表无逻辑删除字段，放行物理 DELETE
-        }
-
-        // DELETE → UPDATE deleted=1
-        final TableUpdate update = new TableUpdate(executor.getTableName())
-                .options(options)
-                .set(dbColumnName, 1)
-                .where(executor.where());
-        if (executor instanceof TableDelete) {
-            update.getPara().putAll(((TableDelete) executor).getPara());
-        } else if (executor instanceof PojoUpdate) {
-            final ParaMap pm = ((PojoUpdate) executor).getPm();
-            update.getPara().putAll(pm.getPara());
-        }
-        return DBHolder.doDb(s -> s.execute(update));
-    }
-    /**
-     * 逻辑删除执行
-     * @return
-     */
-    public Field getLogicDeleteField(String tableName, Class<?> beanClass) {
-        if (SqlRunThreadHolder.isIgnoreLogicDelete()) {
-            return null; // 忽略不做逻辑删除处理
-        }
-        if (!PojoCache.isColumnExists(tableName, dbColumnName)) {
-            return null; // 表无逻辑删除字段
-        }
-        return PojoCache.getLogicDeleteInfo(beanClass, fieldName);
-    }
-
-    /**
-     * 逻辑删除执行
-     * @return
-     */
-    public String getLogicDeleteField(String tableName) {
-        if (SqlRunThreadHolder.isIgnoreLogicDelete()) {
-            return null; // 忽略不做逻辑删除处理
-        }
-        if (!PojoCache.isColumnExists(tableName, dbColumnName)) {
-            return null; // 表无逻辑删除字段
-        }
-        return fieldName;
+    public List<DbOption> supplyOptions(DbOperation operation, String tableName) {
+        return Collections.singletonList(option);
     }
 }

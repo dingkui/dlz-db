@@ -96,63 +96,49 @@ class DbOptionsTest {
 
     @Test
     void shouldPreClassifyStandardPointBindings() {
-        InsertValueOption option = new InsertValueOption();
+        InsertFieldOption option = new InsertFieldOption();
 
         DbOptions options = DbOptions.resolve(DbOperation.INSERT, option);
 
         assertEquals(DbOperation.INSERT, options.getOperation());
-        assertEquals(option, options.getPointBindings().chain(InsertValuePoint.class).get(0));
+        assertEquals(option, options.getPointBindings().merge(InsertFieldPoint.class).get(0));
     }
 
     @Test
-    void shouldRejectPointOutsideOperationMetadata() {
-        DbOption option = new DbOption() {
-            @Override
-            public String key() {
-                return "invalid-update-safety";
-            }
-        };
-        UpdateSafetyPoint point = new UpdateSafetyPoint() {
-            @Override
-            public boolean allowUnsafeUpdate(CrudContext context) {
-                return false;
-            }
-        };
-        DbOption invalid = new UpdateSafetyDbOption(option, point);
+    void shouldSkipPointOutsideOperationMetadata() {
+        DbOption crossOperation = new InsertNullOption();
 
-        assertThrows(DbParameterException.class,
-                () -> DbOptions.resolve(DbOperation.SELECT, invalid));
+        // 跨操作 Option 实现了不属于当前操作的桩点时跳过而非报错
+        DbOptions options = DbOptions.resolve(DbOperation.SELECT, crossOperation);
+        assertNull(options.getPointBindings().single(InsertNullFieldPoint.class));
+        assertTrue(options.getPointBindings().isEmpty(InsertNullFieldPoint.class));
+
+        // 同一 Option 在匹配的操作下正常绑定
+        DbOptions insert = DbOptions.resolve(DbOperation.INSERT, crossOperation);
+        assertNotNull(insert.getPointBindings().single(InsertNullFieldPoint.class));
     }
 
-    private static final class InsertValueOption implements DbOption, InsertValuePoint {
+    private static final class InsertFieldOption implements DbOption, InsertFieldPoint {
         @Override
         public String key() {
-            return "insert-value-test";
+            return "insert-field-test";
         }
 
         @Override
-        public Object convertInsertValue(ValueContext context) {
-            return context.getValue();
+        public FieldContribution contributeInsertFields(FieldContext context) {
+            return FieldContribution.EMPTY;
         }
     }
 
-    private static final class UpdateSafetyDbOption implements DbOption, UpdateSafetyPoint {
-        private final DbOption option;
-        private final UpdateSafetyPoint point;
-
-        private UpdateSafetyDbOption(DbOption option, UpdateSafetyPoint point) {
-            this.option = option;
-            this.point = point;
-        }
-
+    private static final class InsertNullOption implements DbOption, InsertNullFieldPoint {
         @Override
         public String key() {
-            return option.key();
+            return "insert-null-test";
         }
 
         @Override
-        public boolean allowUnsafeUpdate(CrudContext context) {
-            return point.allowUnsafeUpdate(context);
+        public NullFieldMode chooseInsertNullFields(CrudContext context) {
+            return NullFieldMode.IGNORE;
         }
     }
 }

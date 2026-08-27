@@ -2,12 +2,19 @@ package com.dlz.db.wrapper;
 
 import com.dlz.db.core.anno.IdType;
 import com.dlz.db.interceptor.DbPlugin;
-import com.dlz.db.interceptor.SqlBuildInterceptor;
+import com.dlz.db.internal.condition.Condition;
 import com.dlz.db.internal.mapper.dbtype.TableColumnMapper;
 import com.dlz.db.option.DbOperation;
+import com.dlz.db.option.DbOptions;
+import com.dlz.db.option.point.InsertFieldPoint;
 import com.dlz.db.option.point.SelectLockPoint;
+import com.dlz.db.option.point.WherePoint;
 import com.dlz.db.option.point.context.CrudContext;
+import com.dlz.db.option.point.context.FieldContribution;
+import com.dlz.db.option.point.context.FieldContext;
+import com.dlz.db.option.point.context.FieldValue;
 import com.dlz.db.option.point.context.SelectLockMode;
+import com.dlz.db.sql.SqlFragment;
 import com.dlz.db.internal.para.AParaTable;
 import com.dlz.db.internal.para.AQuery;
 import com.dlz.db.internal.holder.DBHolder;
@@ -97,13 +104,12 @@ public class WrapperBuildUtil {
 
     /**
      * 生成查询条件sql
-     * <p>先调用所有启用的插件的 {@link SqlBuildInterceptor#onBuildWhere}，
-
+     * <p>先应用拦截器供给的默认 Option 中实现的 {@link WherePoint} 桩点，
      * 再生成最终 WHERE 子句。
      */
     public static void buildWhere(AQuery maker) {
-        // 调用插件链：逻辑删除/租户/权限 等自动注入 WHERE 条件
-        DbPlugin.onBuildWhere(maker.getTableName(), maker.where(), maker.getDbOptions());
+        // 应用桩点：逻辑删除/租户/权限 等自动注入 WHERE 条件
+        applyWherePoints(maker);
         String where = maker.where().getRunsql(maker);
         if (!maker.isAllowFullQuery() && StringUtils.isEmpty(where)) {
             where = "WHERE false";
@@ -112,8 +118,41 @@ public class WrapperBuildUtil {
     }
 
     /**
+     * 应用 WherePoint 桩点：合并拦截器供给的默认 Option 与调用点 Option，
+     * 将各桩点返回的 SQL 片段并入 WHERE 条件树。
+     */
+    private static void applyWherePoints(AQuery maker) {
+        final DbOperation operation = maker instanceof TableUpdate ? DbOperation.UPDATE
+                : maker instanceof TableDelete ? DbOperation.DELETE
+                : DbOperation.SELECT;
+        final DbOptions effective = DbPlugin.effectiveOptions(operation, maker.getTableName(), maker.getDbOptions());
+        final List<WherePoint> points = effective.getPointBindings().merge(WherePoint.class);
+        if (points.isEmpty()) {
+            return;
+        }
+        final CrudContext context = new CrudContext(operation, maker.getTableName(), null, effective,
+                maker.where().getColumns());
+        for (WherePoint point : points) {
+            SqlFragment fragment = point.contributeWhere(context);
+            if (fragment != null) {
+                appendWhereFragment(maker.where(), fragment);
+            }
+        }
+    }
+
+    /** 将桩点片段作为独立子条件并入 WHERE（参数一并注册）。 */
+    private static void appendWhereFragment(Condition where, SqlFragment fragment) {
+        final Condition child = new Condition(where.getTableName());
+        child.setRunSql(fragment.sql());
+        if (fragment.getParas() != null && !fragment.getParas().isEmpty()) {
+            child.addParas(fragment.getParas());
+        }
+        where.addChildren(child);
+    }
+
+    /**
      * 生成掺入sql
-     * <p>先调用所有启用的插件的 {@link SqlBuildInterceptor#onBuildInsert}，
+     * <p>先应用拦截器供给的默认 Option 中实现的 {@link InsertFieldPoint} 桩点，
      * 再生成最终 INSERT 语句。
      */
     public static void buildInsertSql(TableInsert maker) {
@@ -123,9 +162,9 @@ public class WrapperBuildUtil {
         if (insertValues.isEmpty()) {
             throw new SystemException("插入字段信息未设置");
         }
-        // 调用插件链：逻辑删除/租户 等自动注入插入字段
+        // 应用桩点：逻辑删除/租户 等自动注入插入字段
         final String tableName = maker.getTableName();
-        DbPlugin.onBuildInsert(tableName, insertValues, maker.getDbOptions());
+        applyInsertFieldPoints(maker, tableName, insertValues);
         for (Map.Entry<String, Object> entry : insertValues.entrySet()) {
             String paraName = entry.getKey();
             Object value = entry.getValue();
@@ -144,6 +183,26 @@ public class WrapperBuildUtil {
         maker.addPara(MAKER_COLUMNS, sbColumns.toString());
         maker.addPara(MAKER_VALUES, sbValues.toString());
         maker.addPara(MAKER_TABLE_NAME, tableName);
+    }
+
+    /**
+     * 应用 InsertFieldPoint 桩点：合并拦截器供给的默认 Option 与调用点 Option，
+     * 将各桩点贡献的字段值并入插入字段（调用点已设置的同名字段优先）。
+     */
+    private static void applyInsertFieldPoints(TableInsert maker, String tableName, Map<String, Object> insertValues) {
+        final DbOptions effective = DbPlugin.effectiveOptions(DbOperation.INSERT, tableName, maker.getDbOptions());
+        final List<InsertFieldPoint> points = effective.getPointBindings().merge(InsertFieldPoint.class);
+        if (points.isEmpty()) {
+            return;
+        }
+        final FieldContext context = new FieldContext(DbOperation.INSERT, tableName, null,
+                new ArrayList<>(insertValues.keySet()));
+        for (InsertFieldPoint point : points) {
+            FieldContribution contribution = point.contributeInsertFields(context);
+            for (FieldValue value : contribution.getWriteValues()) {
+                insertValues.putIfAbsent(value.getFieldName(), value.getValue());
+            }
+        }
     }
 
     /**

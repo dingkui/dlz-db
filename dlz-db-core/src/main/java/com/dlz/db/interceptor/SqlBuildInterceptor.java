@@ -1,31 +1,30 @@
 package com.dlz.db.interceptor;
 
-import com.dlz.db.internal.condition.Condition;
-import com.dlz.db.option.DbOptions;
-import com.dlz.db.wrapper.WrapperBuildUtil;
+import com.dlz.db.option.DbOperation;
+import com.dlz.db.option.DbOption;
 
-import java.util.Map;
+import java.util.List;
 
 /**
- * SQL 构建拦截器。
+ * SQL 构建拦截器：以"供给默认 Option"的方式参与 SQL 构建。
  *
- * <p>在 {@link WrapperBuildUtil} 的关键节点被调用，
- * 用于自动注入 WHERE 条件、插入字段值、或改写删除操作。
+ * <p>拦截器不再直接改写 SQL，而是为每次操作供给一组默认 {@link DbOption}；
+ * 这些 Option 通过实现 option.point 包中的桩点（如 WherePoint、InsertFieldPoint）
+ * 参与构建。调用点显式传入的同 key Option 优先于拦截器供给的默认值，
+ * 因此应用侧可随时用单次 Option 覆盖全局默认行为。
  *
- * <p>内置实现：
- * <ul>
- *   <li>{@link LogicDeleteInterceptor} — 逻辑删除</li>
- * </ul>
- * 后续可扩展：租户隔离、数据权限等。
+ * <p>内置实现：{@link LogicDeleteInterceptor}（逻辑删除）。
+ * 典型扩展场景：租户隔离、数据权限、审计字段。
  *
- * <h3>使用示例</h3>
  * <pre>
- * // 注册插件（启动时一次）
- * WrapperBuildUtil.registerInterceptor(new LogicDeleteInterceptor());
- *
- * // 后续所有 DB.table 操作自动经过插件链
- * DB.table.selectWrapper("user").eq("id", 1).queryOne();
- * // ↑ LogicDeleteInterceptor.onBuildWhere 自动追加 deleted=0
+ * // 租户隔离：按表动态供给（只对含 tenant_id 的表生效）
+ * public class TenantInterceptor implements SqlBuildInterceptor {
+ *     public List&lt;DbOption&gt; supplyOptions(DbOperation operation, String tableName) {
+ *         return tenantTables.contains(tableName)
+ *                 ? Collections.singletonList(new TenantOption())
+ *                 : Collections.emptyList();
+ *     }
+ * }
  * </pre>
  *
  * @author dingkui
@@ -34,57 +33,24 @@ import java.util.Map;
 public interface SqlBuildInterceptor {
 
     /**
-     * 插件是否启用。
-     *
-     * <p>每次调用点都会检查，返回 false 则跳过该插件的所有逻辑。
-     * 可用于运行时动态开关（如按配置、按租户模式决定是否启用）。
-     *
-     * @return true 启用，false 跳过
+     * 拦截器是否启用。
+     * <p>返回 false 时 {@link #supplyOptions} 不会被调用，等价于未注册。
+     * 可用于运行时动态开关。
      */
-    boolean isEnabled();
-
-    /**
-     * 查询/更新/删除的 WHERE 子句构建时调用。
-     *
-     * <p>用于追加自动条件，例如：
-     * <ul>
-     *   <li>逻辑删除：{@code deleted = 0}</li>
-     *   <li>租户隔离：{@code tenant_id = ?}</li>
-     *   <li>数据权限：{@code owner_id = ?}</li>
-     * </ul>
-     *
-     * <p>实现方应先检查表是否存在目标字段、WHERE 是否已包含该条件，避免重复注入。
-     *
-     * @param maker 当前查询/更新/删除构造器
-     */
-    default void onBuildWhere(String tableName, Condition where) {
-        // 默认空实现，子类按需覆盖
-    }
-
-    default void onBuildWhere(String tableName, Condition where, DbOptions options) {
-        onBuildWhere(tableName, where);
+    default boolean isEnabled() {
+        return true;
     }
 
     /**
-     * 插入的字段构建时调用。
+     * 为指定操作供给默认 Option。
      *
-     * <p>用于自动追加字段值，例如：
-     * <ul>
-     *   <li>逻辑删除：{@code deleted = 0}</li>
-     *   <li>租户隔离：{@code tenant_id = ?}（覆盖调用方传入的值）</li>
-     *   <li>通用信息添加：{@code owner_id = ?，create_time = ? ...}（覆盖调用方传入的值）</li>
-     * </ul>
+     * <p>供给的 Option 与调用点传入的 Option 按 {@link DbOption#key()} 合并：
+     * 同 key 时调用点优先。Option 是否真正参与构建由其实现的桩点决定
+     * （桩点未注册到当前操作类型时自动不参与）。
      *
-     * <p>实现方应先检查表是否存在目标字段，避免无效注入。
-     *
-     * @param tableName 表名
-     * @param insertValues 插入字段值
+     * @param operation 当前操作类型
+     * @param tableName 目标表名
+     * @return 供给的默认 Option；返回 null 或空列表表示本次不供给
      */
-    default void onBuildInsert(String tableName, Map<String, Object> insertValues) {
-        // 默认空实现，子类按需覆盖
-    }
-
-    default void onBuildInsert(String tableName, Map<String, Object> insertValues, DbOptions options) {
-        onBuildInsert(tableName, insertValues);
-    }
+    List<DbOption> supplyOptions(DbOperation operation, String tableName);
 }
