@@ -14,7 +14,7 @@ public class SolonWebApplication {
         Solon.start(SolonWebApplication.class, args);
         System.out.println("========================================");
         System.out.println("  DLZ-DB Solon Demo 启动成功！");
-        System.out.println("  接口地址: http://localhost:8080/user");
+        System.out.println("  接口地址: http://localhost:8081/user");
         System.out.println("========================================");
     }
 }

@@ -16,7 +16,7 @@ public class SpringBoot2WebApplication {
         SpringApplication.run(SpringBoot2WebApplication.class, args);
         System.out.println("========================================");
         System.out.println("  DLZ-DB Spring Boot 2 Demo 启动成功！");
-        System.out.println("  接口地址: http://localhost:8080/user");
+        System.out.println("  接口地址: http://localhost:8082/user");
         System.out.println("========================================");
     }
 }
