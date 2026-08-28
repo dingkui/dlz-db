@@ -50,6 +50,7 @@
         <module>dlz-db-core</module>
         <module>dlz-db-spring-boot-starter</module>
         <module>dlz-db-solon-plugin</module>
+        <module>dlz-db-web-demos</module>
     </modules>
     <dependencyManagement>
         <dependencies>

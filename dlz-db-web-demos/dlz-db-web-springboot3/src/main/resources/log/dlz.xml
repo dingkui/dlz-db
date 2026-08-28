@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <springProperty name="DLZ_LOG_LEVEL" scope="context" source="dlz.admin.log.level" defaultValue="INFO"/>
+    <springProperty name="SQL_LOG_LEVEL" scope="context" source="dlz.admin.log.sql" defaultValue="INFO"/>
+
+    <!-- DLZ Admin 自身 -->
+    <logger name="com.example.demo" level="${DLZ_LOG_LEVEL}"/>
+
+    <!-- SQL 日志 -->
+    <logger name="org.springframework.jdbc" level="${SQL_LOG_LEVEL}"/>
+
+    <!-- 框架噪音降低 -->
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.boot" level="WARN"/>
+    <logger name="org.thymeleaf" level="WARN"/>
+    <logger name="org.apache.catalina" level="WARN"/>
+</included>

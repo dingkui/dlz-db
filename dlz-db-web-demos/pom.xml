@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>top.dlzio</groupId>
+    <artifactId>dlz-db-demos</artifactId>
+    <version>8.0.0</version>
+    <packaging>pom</packaging>
+    <name>dlz-db-web-demos</name>
+    <description>DLZ-DB 可运行示例集合（独立工程，不参与 dlz-db 发布与测试）</description>
+
+    <modules>
+        <module>dlz-db-web-springboot2</module>
+        <module>dlz-db-web-springboot3</module>
+        <module>dlz-db-web-solon3</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dlz-db.version>8.0.0</dlz-db.version>
+        <sqlite.version>3.45.1.0</sqlite.version>
+        <lombok.version>1.18.30</lombok.version>
+        <!-- 示例工程不参与发布与测试：跳过测试执行 -->
+        <skipTests>true</skipTests>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+solon:
+  app:
+    name: dlz-db-web-solon3
+
+dlz:
+  db:
+    # 逻辑删除字段名（实体类含该字段时自动启用逻辑删除）
+    logic-delete-field: deleted
+    # 表结构缓存时间（秒，-1 表示不过期）
+    table-cache-time: -1
+    helper:
+      # 扫描哪些包下的实体类，用于自动建表/同步字段
+      package-name: com.example.demo.entity
+      # 是否自动建表/加字段：开发环境 true，生产环境建议 false
+      auto-update: true
+    log:
+      # 是否打印执行的 SQL
+      show-run-sql: true
+      # 是否打印 SQL 调用位置（方便定位代码）
+      show-caller: true
+      # 是否打印查询结果（调试时开启，数据量大时建议关闭）
+      show-result: false
