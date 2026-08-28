@@ -15,9 +15,5 @@ public class SpringBoot3WebApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBoot3WebApplication.class, args);
-        System.out.println("========================================");
-        System.out.println("  DLZ-DB Spring Boot 3 Demo 启动成功！");
-        System.out.println("  接口地址: http://localhost:8083/user");
-        System.out.println("========================================");
     }
 }

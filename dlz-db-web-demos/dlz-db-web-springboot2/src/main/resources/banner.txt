@@ -1,0 +1,5 @@
+========================================
+${AnsiColor.BRIGHT_RED}APP  ：${spring.application.name}(${spring.profiles.active:default}) Spring Boot: ${spring-boot.version}
+${AnsiColor.BRIGHT_GREEN}URL  : http://127.0.0.1:${server.port}${server.servlet.context-path:/userr}
+DB   : ${spring.datasource.username:}/******@${spring.datasource.url}
+========================================
