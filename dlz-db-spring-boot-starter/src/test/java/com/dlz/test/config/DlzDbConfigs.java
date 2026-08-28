@@ -20,7 +20,7 @@ public class DlzDbConfigs {
      */
     @Bean
     public static BeanFactoryPostProcessor myBeanFactory1() {
-        log.info("init DlzDbConfigs111111111");
+        log.info("init test db folder");
         return beanFactory -> {
             File dir = new File("./test");
             if (!dir.exists()) {
@@ -29,3 +29,4 @@ public class DlzDbConfigs {
         };
     }
 }
+
