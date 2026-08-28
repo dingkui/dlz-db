@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!-- DLZ 应用自身 -->
+    <logger name="com.example.demo" level="INFO"/>
+
+    <!-- Solon 框架日志降噪 -->
+    <logger name="org.noear" level="INFO"/>
+</included>

@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
-    <springProperty name="APP_NAME" scope="context" source="spring.application.name" defaultValue="dlz-db-web-demo"/>
-    <springProperty name="LOG_PATH" scope="context" source="dlz.admin.log.path" defaultValue="logs"/>
+    <property name="APP_NAME" value="dlz-db-web-solon3"/>
+    <property name="LOG_PATH" value="logs"/>
 
-    <!-- 格式（trace_id 统一命名，与 TraceFilter.MDC.put("traceId") 一致） -->
+    <!-- %X{dlz-caller} 输出 DLZ-DB show-caller 注入的调用方，如 (UserController.java:24) -->
     <property name="CONSOLE_PATTERN"
-              value="%clr(%d{HH:mm:ss.SSS}){faint} %highlight(%-5level) %clr([%X{traceId:-} %thread]){yellow}%X{dlz-caller} %clr(%logger{32}:%line){cyan} %m%n"/>
+              value="%d{HH:mm:ss.SSS} %-5level [%thread]%X{dlz-caller} %logger{32}:%line - %m%n"/>
     <property name="FILE_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{traceId:-}-%thread]%X{dlz-caller} %logger{32}:%line %m%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]%X{dlz-caller} %logger{32}:%line - %m%n"/>
     <property name="ERROR_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%X{traceId:-}-%thread]%X{dlz-caller} %m%n"/>
-
-    <!-- 彩色日志依赖 -->
-    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
-    <conversionRule conversionWord="highlight"
-                    converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]%X{dlz-caller} - %m%n"/>
 
     <!-- Appender: 控制台 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -62,4 +57,3 @@
         <appender-ref ref="FILE"/>
     </appender>
 </included>
-

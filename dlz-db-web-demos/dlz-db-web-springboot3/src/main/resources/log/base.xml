@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <included>
-    <springProperty name="APP_NAME" scope="context" source="spring.application.name" defaultValue="dlz-admin"/>
+    <springProperty name="APP_NAME" scope="context" source="spring.application.name" defaultValue="dlz-db-web-demo"/>
     <springProperty name="LOG_PATH" scope="context" source="dlz.admin.log.path" defaultValue="logs"/>
 
     <!-- 格式（trace_id 统一命名，与 TraceFilter.MDC.put("traceId") 一致） -->
