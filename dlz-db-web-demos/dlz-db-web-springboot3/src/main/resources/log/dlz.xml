@@ -14,4 +14,5 @@
     <logger name="org.springframework.boot" level="WARN"/>
     <logger name="org.thymeleaf" level="WARN"/>
     <logger name="org.apache.catalina" level="WARN"/>
+    <logger name="ch.qos.logback" level="WARN"/>
 </included>
