@@ -45,9 +45,10 @@
         <spotbugs.skip>true</spotbugs.skip>
     </properties>
     <modules>
+        <!-- 注意：dlz-db-web-demos 是独立可运行示例工程，不在本反应堆内，
+             构建方式：cd dlz-db-web-demos && mvn package，不参与发布与测试 -->
         <module>dlz-db-core</module>
         <module>dlz-db-spring-boot-starter</module>
-        <!--        <module>spring-test-demo</module>-->
         <module>dlz-db-solon-plugin</module>
     </modules>
     <dependencyManagement>
