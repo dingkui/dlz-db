@@ -2,11 +2,11 @@
 
 三个独立可运行的 Web 示例，演示 DLZ-DB 在不同框架下的接入方式。均使用 SQLite 零配置，`java -jar` 即可运行，无需外部数据库。
 
-> 本目录是独立 Maven 工程（`top.dlzio:dlz-db-demos`），**不参与 dlz-db 的发布与测试**：不在 `dlz-db` 父 POM 的 `<modules>` 中（根目录构建不会打包它），聚合 POM 已配置 `skipTests=true`，且每个示例都配置了 `maven-deploy-plugin` 跳过（即使单独 `mvn deploy` 也不会上传）。
+> 本目录既可作为 Maven 聚合工程独立构建，也已加入 `dlz-db` 的 `<modules>` 参与编译和测试。示例模块设置了 `jacoco.skip=true`，不纳入覆盖率统计；同时跳过 `install` 和 `deploy`，不会写入本地 Maven 仓库或上传到远程仓库。
 
 ## 前置条件
 
-- JDK 8+（dlz-db-web-solon3 / dlz-db-web-springboot2 用 JDK 8，dlz-db-web-springboot3 需要 JDK 17）
+- 聚合构建使用 JDK 17+；dlz-db-web-solon3 / dlz-db-web-springboot2 的产物兼容 Java 8，dlz-db-web-springboot3 需要 Java 17
 - 本地 Maven 仓库已安装 `dlz-db` 8.0.0（在 `dlz-db` 目录执行 `mvn install -DskipTests=true`）
 
 ## 构建
@@ -18,13 +18,13 @@ mvn package
 
 ## 运行与接口
 
-三个示例共用 8080 端口与同一套 REST 接口（`/user`），每次只能运行一个。
+三个示例共用同一套 REST 接口（`/user`）。
 
-| 示例 | 框架 | 启动命令 | 接口地址 |
-| ---- | ---- | ---- | ---- |
-| dlz-db-web-springboot2 | Spring Boot 2.6.12 | `java -jar dlz-db-web-springboot2/target/dlz-db-web-springboot2-8.0.0.jar` | http://localhost:8080/user |
-| dlz-db-web-springboot3 | Spring Boot 3.3.5 | `java -jar dlz-db-web-springboot3/target/dlz-db-web-springboot3-8.0.0.jar` | http://localhost:8080/user |
-| dlz-db-web-solon3 | Solon 3.0.6 | `java -jar dlz-db-web-solon3/target/dlz-db-web-solon3-8.0.0.jar` | http://localhost:8080/user |
+| 示例 | 框架 | 启动命令 | 接口地址                       |
+| ---- | ---- | ---- |----------------------------|
+| dlz-db-web-solon3 | Solon 3.0.6 | `java -jar dlz-db-web-solon3/target/dlz-db-web-solon3-8.0.0.jar` | http://localhost:8081/user |
+| dlz-db-web-springboot2 | Spring Boot 2.6.12 | `java -jar dlz-db-web-springboot2/target/dlz-db-web-springboot2-8.0.0.jar` | http://localhost:8082/user |
+| dlz-db-web-springboot3 | Spring Boot 3.3.5 | `java -jar dlz-db-web-springboot3/target/dlz-db-web-springboot3-8.0.0.jar` | http://localhost:8083/user |
 
 ### 接口一览
 
@@ -42,13 +42,13 @@ mvn package
 
 ```bash
 # 新增
-curl -X POST http://localhost:8080/user -H "Content-Type: application/json" -d '{"name":"张三","age":25}'
+curl -X POST http://localhost:8081/user -H "Content-Type: application/json" -d '{"name":"张三","age":25}'
 # 列表
-curl http://localhost:8080/user
+curl http://localhost:8081/user
 # 分页
-curl "http://localhost:8080/user/page?pageNum=1&pageSize=10"
+curl "http://localhost:8081/user/page?pageNum=1&pageSize=10"
 # 删除（逻辑删除）
-curl -X DELETE http://localhost:8080/user/1
+curl -X DELETE http://localhost:8081/user/1
 ```
 
 ## 接入方式对比
@@ -67,13 +67,12 @@ curl -X DELETE http://localhost:8080/user/1
 dlz:
   db:
     logic-delete-field: deleted   # 逻辑删除字段
-    table-cache-time: -1          # 表结构缓存时间（-1 不过期）
     helper:
       package-name: com.example.demo.entity   # 实体扫描包
       auto-update: true           # 自动建表/加字段（生产建议 false）
     log:
       show-run-sql: true          # 打印执行 SQL
-      show-caller: true           # 打印 SQL 调用位置
+      show-caller: true           # 将 SQL 调用位置写入 MDC；需由日志 pattern 显示
       show-result: false          # 打印查询结果
 ```
 

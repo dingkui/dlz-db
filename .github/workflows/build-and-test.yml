@@ -7,12 +7,12 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build:
+  full-build:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        java: [ '8','17','21' ]
+        java: [ '17', '21' ]
 
     steps:
       - uses: actions/checkout@v4
@@ -24,10 +24,11 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build, Test and Force Generate JaCoCo Report
-        run: mvn -B clean verify jacoco:report --file pom.xml
+      - name: Build, test and generate JaCoCo reports
+        run: mvn -B clean verify --file pom.xml -Djacoco.skip=false
 
       - name: Upload coverage to Codecov
+        if: matrix.java == '17'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -35,3 +36,25 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
+
+  java8-compatibility:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Verify Java 8 compatible library modules
+        run: >-
+          mvn -B clean test --file pom.xml
+          -pl dlz-db-core,dlz-db-spring-boot-starter,dlz-db-solon-plugin
+          -am
+          -Denforcer.skip=true
+          -Djacoco.skip=true
+          -Dspotbugs.skip=true

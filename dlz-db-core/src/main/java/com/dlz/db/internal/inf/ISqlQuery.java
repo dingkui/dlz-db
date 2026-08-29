@@ -31,8 +31,11 @@ public interface ISqlQuery<T extends ISqlQuery> extends
     T where(Condition cond);
 
     /**
-     * 允许/禁止"无条件的全表查询或更新"。
-     * <p>默认 false：当条件为空时执行会抛异常，防止误操作全表。设为 true 明确承担风险。
+     * 允许/禁止"最终 WHERE 为空的全表查询或更新"。
+     * <p>为 false 且所有用户条件及 Option 条件均为空时，构建器会生成
+     * {@code WHERE false}，不会抛异常。逻辑删除等 Option 注入的条件也会使
+     * WHERE 非空，因此该开关不能代替业务侧的 UPDATE/DELETE 条件校验。
+     * 设为 true 表示明确允许空 WHERE。
      */
     T setAllowFullQuery(boolean allowFullQuery);
 

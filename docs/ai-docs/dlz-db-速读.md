@@ -1,154 +1,142 @@
-# DLZ-DB AI 速读
+# DLZ-DB 8.0 AI 速读
 
-适用：top.dlzio:dlz-db-spring-boot-starter:V8.0.0  top.dlzio:dlz-db-solon-plugin:V8.0.0
+适用依赖：
 
-> 静态入口 `DB.`，链式 API，无 Mapper/XML。Spring Boot 和 Solon 下完全一致。
+- `top.dlzio:dlz-db-spring-boot-starter:8.0.0`
+- `top.dlzio:dlz-db-solon-plugin:8.0.0`
 
----
+> 静态入口 `DB.*`，无需自写 Mapper/DAO。Spring Boot 和 Solon 共用核心 CRUD API。
 
-## 一、入口
+## 1. 入口选择
 
-| 入口           | 场景                | 占位符      |
-|--------------|-------------------|----------|
-| `DB.pojo`    | 有 Bean 的 CRUD（首选） | 条件构造器    |
-| `DB.table`   | 动态表名              | 条件构造器    |
-| `DB.jdbc`    | 一次性 SQL           | `?`      |
-| `DB.sql`     | 预设/复杂 SQL         | `#{key}` |
-| `DB.tx`      | 编程式事务             | —        |
-| `DB.batch`   | 批量写入              | —        |
-| `DB.ds` | 数据源切换             | —        |
+| 入口 | 场景 | 参数形式 |
+|---|---|---|
+| `DB.pojo` | 有实体类的 CRUD，首选 | Lambda 条件 |
+| `DB.table` | 动态表名 | 字段名 + `JSONMap` |
+| `DB.jdbc` | 一次性 SQL | `?` |
+| `DB.sql` | 预设 SQL/Key-SQL | `#{key}` |
+| `DB.batch` | 批量写入 | Pojo/表数据/SQL 参数 |
+| `DB.ds` | 数据源注册和切换 | 数据源名 |
+| `DB.tx` | 编程式事务 | lambda |
 
-## 二、条件方法
+## 2. 条件与分页
 
-所有方法支持三参 `eq(boolean, field, value)`，false 时跳过。
-
-| 方法                                      | SQL                                                  |
-|-----------------------------------------|------------------------------------------------------|
-| `eq / ne / gt / ge / lt / le`           | `= / <> / > / >= / < / <=`                           |
-| `isNull / isNotNull`                    | `IS NULL / IS NOT NULL`                              |
-| `in / notIn`                            | `IN / NOT IN`                                        |
-| `between / notBetween`                  | `BETWEEN / NOT BETWEEN`                              |
-| `like / likeLeft / likeRight / notLike` | `like '%key%' / 'key%' / '%key' / NOT LIKE '%key%'` |
-
-### 复合条件
-
-| 方法    | 用法                             | 效果                  |
-|-------|--------------------------------|---------------------|
-| `or`  | `.or(o -> o.eq(a,1).eq(a,2))`  | `and (a=1 or a=2)`  |
-| `and` | `.and(a -> a.eq(a,1).eq(b,2))` | `and (a=1 AND b=2)` |
-| `sql` | `.sql("col = #{k}", map)`      | `and (col = #{k})`  |
-
-## 三、执行返回
-
-| 方法                                                | 返回                                              |
-|---------------------------------------------------|-------------------------------------------------|
-| `queryBean() / queryBeanList() / queryBeanPage()` | `T / List<T> / Page<T>`                         |
-| `queryOne() / queryList() / queryPage()`          | `ResultMap / List<ResultMap> / Page<ResultMap>` |
-| `queryOne(C) / queryList(C) / queryPage(C)`       | 指定类型 `C`                                        |
-| `queryStr() / queryStrList()`                     | 取单列（第一列）, `String / List<String>`               |
-| `queryXx() / queryXxList()`                       | 同上,Xx支持 `Str/Int/Long/Double`                   |
-| `count()`                                         | `long`                                          |
-| `execute()`                                       | `int`                                           |
-
-规则：带 `Bean` → Bean；不带 → `ResultMap`；带 `(Class)` → 指定类型。
-
-写操作（update/delete）必须以 `.execute()` 结尾。
-
-## 四、多数据源
+| 方法 | SQL 语义 |
+|---|---|
+| `eq/ne/gt/ge/lt/le` | `= / <> / > / >= / < / <=` |
+| `isNull/isNotNull` | `IS NULL / IS NOT NULL` |
+| `in/notIn` | `IN / NOT IN` |
+| `between/notBetween` | `BETWEEN / NOT BETWEEN` |
+| `like` | `LIKE '%key%'` |
+| `likeLeft` | `LIKE '%key'` |
+| `likeRight` | `LIKE 'key%'` |
+| `notLike` | `NOT LIKE '%key%'` |
+| `ands(a -> ...)` | lambda 内部使用 AND |
+| `ors(o -> ...)` | lambda 内部使用 OR |
+| `sql(text, JSONMap)` | 自定义 `#{key}` 条件片段 |
 
 ```java
-DB.ds.setDataSource(prop);  // 动态注册
-DB.ds.use("slave",() ->DB.pojo.selectWrapper(...).queryBean()); // 动态切换，带返回值
+Page<User> page = DB.pojo.selectWrapper(User.class)
+    .select(User::getId, User::getName)
+    .eq(status != null, User::getStatus, status)
+    .ors(o -> o.like(User::getName, keyword)
+               .like(User::getMobile, keyword))
+    .orderByDesc(User::getCreateTime)
+    .page(1, 20)
+    .queryBeanPage();
 ```
 
-## 五、事务
+## 3. 返回类型规则
 
-声明式事务：Spring Boot `@Transactional`，Solon `@Tran`。
+| 方法 | 返回值 |
+|---|---|
+| `queryBean/queryBeanList/queryBeanPage` | `T / List<T> / Page<T>` |
+| `queryOne/queryList/queryPage` | `ResultMap / List<ResultMap> / Page<ResultMap>` |
+| `queryOne(C)/queryList(C)/queryPage(C)` | 指定类型 `C` |
+| `queryFirst/queryFirstBean` | 非严格地取第一条 |
+| `queryStr/Long/Int/Double` 及 List 版 | 第一列标量 |
+| `count()` | `long` |
+| 写 Wrapper 的 `execute()` | 影响行数 `int` |
 
-```java
-DB.tx.run(() ->{...});                   // 与声明式事务兼容, 由最外层控制事务
-DB.tx.run("slave",() ->{...});           // 指定数据源事务,不可与声明式事务混用
-```
+`queryOne/queryBean` 在结果多于一条时抛出异常；不确定唯一性时用 `queryFirst/queryFirstBean`。
 
-## 六、硬约束
-
-1. 无 Mapper/DAO/Wrapper 类，直接 `DB.pojo.*`
-2. 占位符不混用：`DB.jdbc` 用 `?`；`DB.sql` / `sql()` 用 `#{key}`
-3. `queryOne/List/Page` 返回 `ResultMap`，要 Bean 用 `queryBean` 系列
-4. 查询列用 `columns()` 不是 `select()`（`.columns(User::getId, User::getName)`）
-5. `DB.pojo.insert(entity)` 直接执行并返回 entity（含自动填充主键），无需 `.execute()`
-6. 物理删除 / 查询绕过逻辑删除：`.ignoreLogicDelete(true)`
-7. 预设 SQL key 以 `"key."` 开头
-8. `in()` 仅支持 `List` / CSV / `"sql:子查询"`，不可传单值
-9. 批量操作用 `DB.batch.insert(users)`，不是 `insertBatch()`
-10. #{key} 与 ${key} 不可混用， ${key}使用时不应该作为画面输入值
-
-## 七、Entity 约定
-
-- 表名：驼峰转下划线（`User.class` → `user`）。自定义：`@TableName("t_user")`
-- 字段：`User::getUserName` → `user_name`。自定义：`@TableField("email_address")`
-- 主键：`@TableId`
-- 逻辑删除：Bean 含 `deleted` 自动启用（查询加 `deleted = 0`，DELETE 转 UPDATE）
-
-## 八、代码模板
+## 4. CRUD 模板
 
 ```java
-// CRUD
-User u = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryBean();
-List<User> list = DB.pojo.selectWrapper(User.class).like(User::getName, "张").queryBeanList();
-Page<User> page = DB.pojo.selectWrapper(User.class).eq(User::getStatus, 1).page(1, 10).queryBeanPage();
-DB.pojo.insert(user);  // 直接返回插入后的 entity（含自增 ID）
+// 查询
+User user = DB.pojo.selectById(User.class, id);
+List<User> users = DB.pojo.selectWrapper(User.class)
+    .eq(User::getStatus, 1)
+    .queryBeanList();
+
+// 插入/更新/删除的直接 API 会立即执行
+DB.pojo.insert(user);
 DB.pojo.updateById(user);
-DB.pojo.deleteWrapper(User.class).eq(User::getId, 1).execute();
+DB.pojo.deleteById(User.class, id);
 
-// 批量
-DB.batch.insert(users);
+// Wrapper 写操作以 execute() 结束
+DB.pojo.updateWrapper(User.class)
+    .set(User::getStatus, 2)
+    .eq(User::getId, id)
+    .execute();
 
-// 原生 SQL
-List<ResultMap> rows = DB.jdbc.selectWrapper("SELECT * FROM user WHERE id = ?", 1).queryList();
+DB.pojo.deleteWrapper(User.class)
+    .eq(User::getId, id)
+    .execute();
+```
 
-// 事务
-DB.tx.run(() ->{
-    DB.pojo.insert(order); 
-    DB.pojo.insert(orderItem); 
+## 5. JDBC、预设 SQL 与批量
+
+```java
+List<ResultMap> rows = DB.jdbc.list(
+    "SELECT * FROM user WHERE status = ?", 1);
+
+Page<User> page = DB.jdbc.page(
+    "SELECT * FROM user WHERE status = ?",
+    PageRequest.of(1, 20), User.class, 1);
+
+List<User> presetRows = DB.sql.selectWrapper("key.user.findActive")
+    .addPara("status", 1)
+    .queryList(User.class);
+
+BatchResult result = DB.batch.insert(users, 500);
+if (!result.isSuccess()) {
+    // result.status() / failedPositions() / cause()
+}
+```
+
+预设 SQL 文件路径为 `resources/sql/**/*.sql`，文件内使用 `<sqlList>` XML 结构。调用时 key 以 `key.` 开头。`${key}` 是直接 SQL 替换，只用于经过白名单校验的列名、排序和片段，不用于普通用户输入。
+
+## 6. 事务与多数据源
+
+```java
+DB.ds.use("slave", () -> DB.pojo.selectById(User.class, id));
+
+DB.tx.run(() -> {
+    DB.pojo.insert(order);
+    DB.pojo.insert(orderItem);
 });
 
-// 预设 SQL
-List<User> r = DB.sql.selectWrapper("key.demo.user.find").addPara("status", "1,2,3".split(",")).queryList(User.class);
+DB.tx.run("slave", () -> {
+    // 指定数据源上的事务
+});
 ```
 
-## 九、预设 SQL
+`DB.ds.use` 只切换数据源，不开启事务；多数据源也不等于分布式事务。Spring 中可用 `@Transactional`，Solon 中可用 `@Tran`。
 
-### SQL 语法及参数说明
+## 7. Entity 约定
 
-- 动态 SQL：`[]` 内使用的参数为空（null/空字符串/空集合）时，该片段自动忽略
-- `#{key}` 为参数占位，转换为 `?`
-- `${key}` 为 SQL 拼接替换，支持 `${key.xxx}`，自动拼接其他预设 SQL 片段。仅适用于列名/排序/SQL 片段等场景，不可用于用户输入值
-- param 为集合类型，自动生成 in SQL，已做防 SQL 注入处理
-- 以上语法适用 `DB.pojo.selectWrapper(Bean.class).sql(" [a=#{a}]", new JSONMap("a", 1))`
+- 表名：默认驼峰转下划线，自定义用 `@TableName`。
+- 字段：自定义用 `@TableField`，主键用 `@TableId`。
+- 注解包：`com.dlz.db.core.anno`。
+- 逻辑删除字段默认为 `deleted`，可通过 `dlz.db.logic-delete-field` 修改。
+- 支持 `DbOption...` 的直接查询（如 `selectById`）可传 `SelectOption.INCLUDE_DELETED`查询已删除数据；当前 Pojo 查询 Wrapper 没有对称的稳定便捷方法。物理删除使用 `DeleteOption.PHYSICAL` 或 PojoDelete `.physical()`。
 
-### 配置方式 1：配置文件
+## 8. 硬约束
 
-- 配置路径：`src/main/resources/sql/demo/user.sql`
-- 路径说明：demo、user 可根据业务自行配置，支持多文件
-- sqlId：必须以 `key.` 开头，建议 `key.app.module.功能` 形式
-
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-<sqlList>
-    <sql sqlId="key.demo.user.find"><![CDATA[
-      SELECT * FROM user 
-      WHERE 1=1
-       [and name LIKE concat('%',#{name},'%')]  --支持注释 name为空时，该条件自动忽略
-       [and status IN (${status})]  --status 支持是集合时自动拼接：(1,2,3)/('ok','ng')。
-    ]]></sql>
-</sqlList>
-```
-
-### 配置方式 2：数据库
-
-- sql_key：必须以 `key.` 开头，建议 `key.app.module.功能` 形式
-
-```sql
-select sql_key as k, sql_value as s from sys_sql
-```
+1. 查询列用 `.select(...)`，不是 `.columns(...)`。
+2. 复合条件用 `.ands(...)` / `.ors(...)`，不是 `.and(...)` / `.or(...)`。
+3. `DB.jdbc` 用 `?`；`DB.sql` 和条件 `sql()` 用 `#{key}`。
+4. 批量入口是 `DB.batch.insert(...)`，返回 `BatchResult`，不是 boolean。
+5. 业务代码不依赖 `com.dlz.db.internal.*`。
+6. Spring Boot Starter 自动装配，不要生成继承框架配置类的代码。

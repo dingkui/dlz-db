@@ -39,6 +39,8 @@ DB.pojo.existsById(User.class, id)
 
 `add` 和 `save` 仍存在但已废弃，不应在新文档中作为推荐 API。
 
+Pojo/Table 查询 Wrapper 的查询列方法是 `.select(...)`；复合条件是 `.ands(...)` 和 `.ors(...)`。
+
 ### `DB.table`
 
 ```java
@@ -127,3 +129,16 @@ DB.sql.executeWrapper(sqlKey, params)
 - `docs/第08章-升级计划/` 只描述未来设计，文档中的新门面和新方法不得当作当前 API 使用。
 - 旧版本迁移文档可以保留旧写法，但必须标明“旧 API”并给出当前替代写法。
 - 用户无需自行编写 Mapper、DAO 或 XML；框架提供的 Wrapper 是当前公开的链式 API，可以直接使用。
+
+## 七、公共 API、SPI 和 internal 边界
+
+- 业务 API：`com.dlz.db`、`com.dlz.db.wrapper`、`com.dlz.db.model`、`com.dlz.db.option`、`com.dlz.db.core.anno`。
+- 框架扩展 SPI：`com.dlz.db.core.ISqlExecutor`、`ITxExecutor`、`DlzDbAdapter`、`com.dlz.db.dialect.DbDialect`、`DialectRegistry` 和 `SqlBuildInterceptor`。
+- 实现详情：`com.dlz.db.internal.*`，新业务代码和教程不应依赖。
+- 当前 Wrapper 的类继承与部分签名仍会暴露 internal 类型，这是现存代码边界，不应通过用户文档继续扩大。特别是 `Condition` 目前位于 `com.dlz.db.internal.condition`，教程只展示 Wrapper 上的条件方法。
+
+## 八、框架集成基线
+
+- Spring Boot 当前自动装配入口是 `SpringDlzDbAutoConfiguration`，应用无需继承配置类。
+- Solon 当前 SPI 入口是 `DlzDbSolonPlugin`，必须从容器获取 `DataSource` Bean 后才能完成初始化。
+- 库主体目标 Java 8，Spring Boot 3 Demo 需要 JDK 17；聚合构建所有 Demo 时使用 JDK 17+。

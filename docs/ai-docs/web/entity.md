@@ -7,7 +7,7 @@
 | 注解 | 作用 | 示例 |
 |------|------|------|
 | `@TableName` | 自定义表名 | `@TableName("t_user")` |
-| `@TableId` | 标记主键字段 | `@TableId` |
+| `@TableId` | 标记主键字段和生成策略 | `@TableId(type = IdType.AUTO)` |
 | `@TableField` | 自定义列名 | `@TableField("email_address")` |
 
 ## 命名映射（自动）
@@ -31,13 +31,17 @@
 package com.example.{package}.entity;
 
 import io.swagger.annotations.ApiModelProperty;
+import com.dlz.db.core.anno.IdType;
+import com.dlz.db.core.anno.TableField;
+import com.dlz.db.core.anno.TableId;
+import com.dlz.db.core.anno.TableName;
 import java.util.Date;
 
 @Data
 @TableName("t_user")  // 可选，不写自动转
 public class User {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     @ApiModelProperty(value = "主键")
     private Long id;
 
@@ -62,4 +66,4 @@ Entity 里只要有 `deleted` 字段（`Boolean` 或 `Integer`），DLZ-DB 自�
 
 - 查询自动加 `WHERE deleted = 0`
 - DELETE 语句自动转换为 `UPDATE SET deleted = 1`
-- 需要物理删除时加 `.ignoreLogicDelete(true)`
+- 需要物理删除时，PojoDelete 用 `.physical()`，或在直接 API 中传 `DeleteOption.PHYSICAL`

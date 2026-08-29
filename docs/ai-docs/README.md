@@ -11,8 +11,8 @@
 
 | 组件 | 一句话 | 坐标 |
 |------|--------|------|
-| **DLZ-DB** | 轻量 Java ORM（<7000 行），无 Mapper/XML，静态入口 `DB.` + Lambda 链式 API | `top.dlzio:dlz-db-spring-boot-starter:7.1.0` |
-| **DLZ-KIT** | JSON 工具库，JSONMap 路径取值 + 自动类型转换 + `@SetValue` 注解映射 | `top.dlzio:dlz-kit:6.6.4` |
+| **DLZ-DB** | 轻量 Java 数据库访问框架，无需自写 Mapper，静态入口 `DB.` + Lambda 链式 API | `top.dlzio:dlz-db-spring-boot-starter:8.0.0` |
+| **DLZ-KIT** | JSON 工具库，JSONMap 路径取值 + 自动类型转换 + `@SetValue` 注解映射 | `top.dlzio:dlz-kit:6.7.4` |
 
 **设计哲学**：显式 > 隐式。用 Lambda 链式调用替代注解代理，控制流写在代码里才是可靠的控制流。
 
@@ -52,7 +52,7 @@ Step 6  验证测试
 - **输出**：ER 图 / 表结构 DDL、模块职责、API 接口清单
 - **注意**：
   - Entity 命名遵循驼峰自动映射规则（详见 `web/entity.md`）
-  - 简单 CRUD 不需要 Service 层，Controller 直接写
+  - 小型示例或无业务编排的简单 CRUD 可以直接写在 Controller；存在事务、复用或业务规则时使用 Service
   - 涉及 JSON 嵌套数据时，先读 `dlz-kit-速读.md` 了解 JSONMap 能力
 
 ### Step 4：工具选型
@@ -76,9 +76,9 @@ Step 6  验证测试
 
 - **做什么**：运行项目、检查 SQL 日志、验证功能
 - **注意**：
-  - DLZ-DB 日志会显示调用位置（如 `UserController.java:42`），方便定位
-  - 写操作检查 `.execute()` 是否遗漏
-  - 分页检查返回的 `total` 和 `record` 是否正确
+  - `show-caller` 会把调用位置写入 MDC；日志 pattern 包含相应 MDC 字段时才会显示
+  - update/delete Wrapper 检查 `.execute()` 是否遗漏；直接 CRUD 会立即执行
+  - 分页检查返回的 `total` 和 `records` 是否正确
 
 ---
 
@@ -118,9 +118,9 @@ Step 6  验证测试
 > 这 5 条覆盖 90% 的场景，剩下的查路由表。
 
 1. **无 Mapper/DAO/XML**，直接用 `DB.pojo.xxx`
-2. **简单 CRUD → Controller 里直接写**，不建 Service
+2. **简单 CRUD → 可直接写在 Controller**；存在事务、复用或业务规则时使用 Service
 3. **复杂多表 / 可复用逻辑 → 才建 Service**
-4. **写操作必须 `.execute()` 结尾**（`insert` 除外，它直接执行）
+4. **update/delete Wrapper 必须 `.execute()` 结尾**；`insert/updateById/deleteById` 等直接 API 立即执行
 5. **事务**：Spring 用 `@Transactional`，Solon 用 `@Tran`，通用用 `DB.tx.run()`
 
 ---
@@ -134,7 +134,7 @@ Step 6  验证测试
 - [ ] 我读了目标框架的搭建文档（如果是搭建新项目）
 - [ ] 我读了 `web/entity.md`（如果要定义 Entity）
 - [ ] 我读了 `web/controller.md`（如果要写 Controller）
-- [ ] 我确认了 10 条硬约束（不确定时查 `web/constraints.md`）
+- [ ] 我确认了 11 条硬约束（不确定时查 `web/constraints.md`）
 
 ---
 
@@ -150,7 +150,7 @@ docs/ai-docs/
 │   ├── entity.md          ← Entity 注解 + 命名映射 + 逻辑删除
 │   ├── controller.md      ← Controller 规范 + 模板代码
 │   ├── service.md         ← Service 规范 + 事务 + 批量 + 多数据源
-│   └── constraints.md     ← 10 条硬约束
+│   └── constraints.md     ← 11 条硬约束
 ├── spring-boot/
 │   └── README.md          ← Spring Boot 集成（依赖 + 配置 + yml）
 └── solon/

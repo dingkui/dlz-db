@@ -36,13 +36,12 @@ public class UserController {
     }
 
     @GetMapping("/page")
-    public Map<String, Object> page(
+    public Page<User> page(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize) {
-        IPage<User> p = DB.pojo.selectWrapper(User.class)
+        return DB.pojo.selectWrapper(User.class)
                 .page(pageNum, pageSize)
                 .queryBeanPage();
-        return Map.of("total", p.getTotal(), "list", p.getRows());
     }
 
     // ===== 写操作 =====
@@ -50,9 +49,7 @@ public class UserController {
     @Transactional
     public User create(@RequestBody User user) {
         user.setCreateTime(new Date());
-        DB.pojo.insert(user); // 执行插入并将生成的主键回填到 user
-        user.setId(id);
-        return user;
+        return DB.pojo.insert(user); // 执行插入；生成的主键会回填到 user
     }
 
     @PutMapping("/{id}")
@@ -95,5 +92,5 @@ public class OrderController {
 |------|------|
 | 条件参数 | 用三参形式 `eq(condition, field, value)`，condition=false 自动跳过 |
 | 查询返回 | Bean 用 `queryBean/queryBeanList/queryBeanPage`；ResultMap 用 `queryOne/queryList/queryPage` |
-| 插入自增 | `.insertWithAutoKey()` 返回自增 ID |
-| 更新方式 | 全量更新用 `updateById()`；部分更新用 `.update().set().eq().execute()` |
+| 插入回填 | `DB.pojo.insert(entity)` 返回实体，自增主键回填到原对象 |
+| 更新方式 | 按主键更新用 `updateById()`；部分更新用 `.updateWrapper().set().eq().execute()` |

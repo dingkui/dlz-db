@@ -1,9 +1,10 @@
 # DLZ-DB
 
-> **A Java database framework with <7000 lines of code, making SQL as direct as writing local code.**
+> **A lightweight Java database framework that makes SQL as direct as writing local code.**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
+[![Runtime](https://img.shields.io/badge/Runtime-Java%208+-green.svg)](https://www.oracle.com/java/)
+[![Build JDK](https://img.shields.io/badge/Build%20JDK-17+-blue.svg)](https://www.oracle.com/java/)
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-8.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 
 ```java
@@ -14,7 +15,7 @@ List<User> users = DB.pojo.selectWrapper(User.class)
         .queryBeanList();
 ```
 
-No Mapper interfaces, no Service layer, no XML.
+No required Mapper interfaces or XML, and no mandatory Service layer. Use a Service when transactions, reuse, or business orchestration require one.
 
 ---
 
@@ -46,15 +47,13 @@ DLZ-DB aims to solve not "the lack of a framework," but **"the framework growing
 
 ## Four Differences You'll Immediately Feel
 
-### 1. SQL Logs Jump Directly to the Line That Wrote Them
+### 1. SQL Logs Can Carry the Business Call Site
 
 ```
-caller:(UserController.java:42) getList 15ms sql:SELECT * FROM user WHERE id = 1
-        ↑                                    ↑                 ↑
-   Click here in IDE to jump      Actual elapsed time    Parameters filled, copy to execute
+getList 15ms sql:SELECT * FROM user WHERE id = 1
 ```
 
-MyBatis logs tell you "a SQL ran," DLZ-DB tells you **"it was your UserController line 42 that ran it."** In production troubleshooting, this one feature alone is worth the price.
+Enable `show-run-sql` to log SQL with parameters expanded. With `show-caller`, DLZ-DB adds caller information to MDC. Whether that location is displayed or clickable in an IDE depends on the application's logging pattern and console support.
 
 ---
 
@@ -79,7 +78,7 @@ User user = DB.ds.use(dsName, () ->
 
 ---
 
-### 3. Core Code Under 7000 Lines, Readable in 2 Days
+### 3. Lightweight Core, Designed to Be Readable
 
 This isn't "few features," it's **"not doing what you don't need":**
 
@@ -94,7 +93,7 @@ Actual benefits you get:
 - **Short exception stack**: Query exceptions directly tell you where the SQL is, no need to traverse 10 layers of proxies
 - **Light deployment**: Small jar size, fast startup, low memory footprint, suitable for microservices and tool projects
 
-> Single query performance at runtime is similar to MyBatis—the database is the bottleneck, framework layer differences are negligible. We don't compete in this dimension.
+> The design keeps the JDBC path small, but this repository currently provides no reproducible cross-framework benchmark. Measure performance with your SQL, driver, database, and workload.
 
 ---
 
@@ -121,7 +120,7 @@ DLZ-DB's entire framework aesthetic is consistent: **use explicit lambda and cha
 .eq(name != null, "name", name)
 
 // Nested logic: lambda expression in place
-.or(o -> o.like(User::getName, "keyword").like(User::getAddress, "keyword"))
+.ors(o -> o.like(User::getName, "keyword").like(User::getAddress, "keyword"))
 
 // Datascope scope: lambda wrapped
 DB.ds.use("other_db", () -> { ... });
@@ -136,7 +135,7 @@ DB.ds.use("other_db", () -> { ... });
 
 ## Quick Start in 30 Seconds
 
-DLZ-DB v7 adopts a multi-module architecture, choose dependencies based on runtime environment:
+DLZ-DB v8 adopts a multi-module architecture; choose dependencies based on the runtime environment:
 
 | Module | Description | Use Case |
 |--------|-------------|----------|
@@ -174,15 +173,9 @@ dlz:
       show-caller: true
 ```
 
-#### 3. Enable DLZ-DB
+#### 3. Auto-configuration
 
-```java
-@Configuration
-@EnableConfigurationProperties(SpringDlzDbProperties.class)
-public class DlzDbConfigs extends SpringDlzDbConfig {}
-```
-
-> Package path: `com.dlz.db.spring.config.SpringDlzDbConfig`, `com.dlz.db.spring.config.SpringDlzDbProperties`
+After adding the starter and configuring `spring.datasource`, DLZ-DB is ready to use. The starter binds `dlz.db.*` automatically; no configuration subclass or `@EnableConfigurationProperties` is required.
 
 #### 4. Start Using
 
@@ -261,14 +254,10 @@ Solon transactions use `@Tran` annotation:
 ```java
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
-    DB.pojo.updateWrapper(Account.class)
-        .setSql("balance = balance - #{amount}", new JSONMap("amount", amount))
-        .eq(Account::getId, fromId)
-        .execute();
-    DB.pojo.updateWrapper(Account.class)
-        .setSql("balance = balance + #{amount}", new JSONMap("amount", amount))
-        .eq(Account::getId, toId)
-        .execute();
+    DB.jdbc.execute(
+        "UPDATE account SET balance = balance - ? WHERE id = ?", amount, fromId);
+    DB.jdbc.execute(
+        "UPDATE account SET balance = balance + ? WHERE id = ?", amount, toId);
 }
 ```
 
@@ -281,7 +270,7 @@ public void transfer(Long fromId, Long toId, BigDecimal amount) {
 User u     = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryBean();
 List<User> list = DB.pojo.selectWrapper(User.class).eq(User::getStatus, 1).queryBeanList();
 Page<User> page = DB.pojo.selectWrapper(User.class)
-        .setPage(Page.build(1, 10, Order.desc("create_time")))
+        .page(Page.build(1, 10, Order.desc("create_time")))
         .queryBeanPage();
 
 // Insert
@@ -357,15 +346,21 @@ Turn on `dlz.db.log.show-run-sql=true`, logs will directly show:
 
 **Q: How about performance?**
 
-Underlying direct to JDBC, no additional reflection/proxy overhead. Similar to MyBatis at runtime, not our main selling point—**we sell simplicity and controllability, not performance.**
+DLZ-DB is JDBC-based, but wrapper construction, entity mapping, and logging still have costs. End-to-end performance depends on the SQL, data volume, database, connection pool, and logging configuration; benchmark with the real workload. **The primary goal is simplicity and control, not an unverified performance multiplier.**
 
 **Q: Can it coexist with existing MyBatis / MP projects?**
 
-Yes. DLZ-DB doesn't depend on the MyBatis ecosystem, both use their own datasources and connections. Migration can be gradual—new modules use DLZ-DB, old modules stay unchanged.
+Yes. DLZ-DB does not depend on the MyBatis ecosystem, so migration can be gradual. If both must participate in the same Spring transaction, verify that they use the same `DataSource` and transaction-bound connection with integration tests.
 
 **Q: Is v7 API compatible with v6?**
 
-`DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` and other core APIs are fully compatible. But Maven coordinates, configuration class package paths have changed, see [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md) for details.
+Do not assume full compatibility. The overall static-facade style remains, but Maven coordinates, auto-configuration, packages, and some wrapper signatures changed. Migrate with compiler feedback and regression tests; see [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md).
+
+---
+
+## Verification
+
+On 2026-08-28, the complete reactor passed on JDK 17 and 21 with JaCoCo enabled: 1,281 tests, 0 failures, 0 errors, and all coverage gates met. The three published library modules also passed the same 1,281 tests on JDK 8. See [TESTING.md](./TESTING.md) for the exact commands and module boundaries.
 
 ---
 

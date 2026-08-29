@@ -31,7 +31,10 @@ public final class DbConfig {
         return this;
     }
 
-    /** 注册应用可用的数据库方言。 */
+    /**
+     * 注册应用可用的数据库方言。
+     * <p>配置在框架初始化完成后不可变，本方法必须在 {@link #init()} 前调用。
+     */
     public synchronized DbConfig registerDialect(DbDialect dialect) {
         ensureMutable();
         if (dialect == null) throw new DbParameterException("dialect must not be null");

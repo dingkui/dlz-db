@@ -1,14 +1,14 @@
 # DLZ-DB
 
-DLZ-DB is a lightweight Java database framework with <7000 lines of code, designed for type-safe Lambda API and runtime dynamic multi-datasource management.
+DLZ-DB is a lightweight Java database framework designed for type-safe Lambda APIs and runtime dynamic multi-datasource management.
 
 ## Project Overview
 
-- **Version**: 7.0.0
+- **Version**: 8.0.0
 - **License**: Apache License 2.0
 - **Repository**: https://github.com/dingkui/dlz-db
 - **Maven Central**: top.dlzio:dlz-db-core, dlz-db-spring-boot-starter, dlz-db-solon-plugin
-- **Java Version**: 8+
+- **Java Version**: core/Spring Boot 2/Solon artifacts target Java 8; Spring Boot 3 demo requires Java 17+
 
 ## Core Features
 
@@ -37,7 +37,7 @@ DLZ-DB is a lightweight Java database framework with <7000 lines of code, design
 All methods support three-parameter form: `eq(boolean condition, field, value)`
 - `eq / ne / gt / ge / lt / le` - Comparison operators
 - `isNull / isNotNull` - Null checks
-- `in / notIn` - IN operators (value must be List, CSV string, or "sql:subquery")
+- `in / notIn` - IN operators (value must be an array/Collection, CSV string, or "sql:subquery")
 - `between / notBetween` - Range operators
 - `like / likeLeft / likeRight / notLike` - LIKE variants
 
@@ -51,7 +51,7 @@ All methods support three-parameter form: `eq(boolean condition, field, value)`
 - `queryList()` → List<ResultMap>
 - `queryOne(Class)` → strict single specified type
 - `queryFirst(Class)` → first specified type
-- Write operations must end with `.execute()`
+- Update/delete Wrapper operations must end with `.execute()`; direct CRUD methods execute immediately
 
 ### Code Examples
 
@@ -99,11 +99,11 @@ DB.ds.use("slave", () ->
 
 1. No need to write your own Mapper/DAO/XML; framework-provided Wrapper classes are public chain APIs
 2. Placeholder separation: `DB.jdbc` uses `?`, `DB.sql` uses `#{key}`
-3. Query columns use `columns()` not `select()`
+3. Query columns use `.select(...)` on the query wrapper, for example `DB.pojo.selectWrapper(User.class).select(User::getId)`
 4. LIKE uses `like()`/`likeLeft()`/`likeRight()`/`notLike()`
-5. Insert with auto-increment key: `.insertWithAutoKey()` not `.execute()`
-6. Physical delete/bypass logical delete: `.ignoreLogicDelete(true)`
-7. `in()` cannot accept single value, must be List, CSV string, or "sql:subquery"
+5. `DB.pojo.insert(entity)` executes immediately and returns the entity with generated key populated; Table insert can use `insertWithAutoKey()`
+6. Physical delete: use PojoDelete `.physical()` or pass `DeleteOption.PHYSICAL` to a direct delete API
+7. `in()` cannot accept a scalar value; use an array/Collection, CSV string, or "sql:subquery"
 8. Batch operations use `DB.batch.insert(list)`, not `insertBatch()`
 
 ## Entity Conventions
@@ -115,7 +115,7 @@ DB.ds.use("slave", () ->
 
 ## Documentation
 
-- **AI Quick Reference**: docs/第05章-AI辅助/5.1-AI速读.md (Chinese, <1000 tokens)
+- **AI Quick Reference**: docs/第05章-AI辅助/5.1-AI速读.md (Chinese)
 - **AI Tool Configuration**: docs/第05章-AI辅助/5.2-AI工具配置指南.md
 - **Full Documentation**: docs/ directory (Chinese)
 - **README**: README.md (Chinese)
@@ -123,11 +123,11 @@ DB.ds.use("slave", () ->
 ## Testing
 
 - Multi-module testing: core, spring-boot-starter, solon-plugin
-- 100% test pass rate
+- See `TESTING.md` for the dated local verification result and current CI caveats
 
 ## Build and Release
 
-- Published to Maven Central with GPG signing
+- Maven coordinates: `top.dlzio:dlz-db-core`, `top.dlzio:dlz-db-spring-boot-starter`, and `top.dlzio:dlz-db-solon-plugin`
 - Multi-module architecture: dlz-db-core, dlz-db-spring-boot-starter, dlz-db-solon-plugin
 - Zero Spring dependency in core module
 

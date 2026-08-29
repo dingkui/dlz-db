@@ -1,235 +1,82 @@
-# DLZ-DB 测试文档索引
+# DLZ-DB 8.0 测试与构建指南
 
-**项目**: dlz-db  
-**版本**: 8.0.0
-**最后更新**: 2026-07-13
+**当前版本**：8.0.0
+**最后核对**：2026-08-28
 
----
+## 建议的验证命令
 
-## 📋 快速导航
+### 库模块
 
-### 🎯 测试报告
-- **[快速汇总](reports/2026-05-17/TEST_SUMMARY.md)** - 一页纸了解测试结果（推荐先看这个）
-- **[详细报告](reports/2026-05-17/TEST_REPORT.md)** - 完整的测试分析和数据
+只验证 core、Spring Boot Starter 和 Solon Plugin：
 
-### 📊 代码统计
-- 代码统计报告暂未随当前仓库提供，报告中的统计数据以各测试报告正文为准。
-
----
-
-## 历史测试结果（2026-05-17，记录版本 7.0.0）
-
-```
-dlz-db 历史测试记录（记录版本 7.0.0）
-━━━━━━━━━━━━━━━━━━━━━
-总测试数: 605
-通过率:   100% ✅
-失败数:   0
-错误数:   0
-耗时:     34.375秒
-
-子模块状态:
-  ✅ dlz-db-core (255+ tests)
-  ✅ dlz-db-spring-boot-starter (~100 tests)
-  ✅ dlz-db-solon-plugin (~250 tests)
-```
-
----
-
-## 📁 文档说明
-
-### 1. TEST_SUMMARY.md
-**适合人群**: 项目经理、技术负责人、快速了解项目状态的人
-
-**内容包含**:
-- 核心数据一览
-- 各子模块测试结果
-- 本次修复说明
-- 代码质量指标
-- 发布建议
-
-**阅读时间**: 2分钟
-
-### 2. TEST_REPORT.md
-**适合人群**: 开发人员、测试人员、需要深入了解测试细节的人
-
-**内容包含**:
-- 详细的测试执行摘要
-- 各子模块完整测试结果
-- 关键测试场景分析
-- 代码质量指标（JaCoCo）
-- 已知问题与修复详情
-- 测试亮点和建议
-- 构建环境信息
-
-**阅读时间**: 10分钟
-
-### 3. 代码统计
-**适合人群**: 架构师、代码审查人员、关注代码质量的人
-
-**内容包含**:
-- 核心代码统计（9,046行）
-- 测试代码统计（7,992行）
-- 注释率分析（7.8%）
-- 测试密度（46.9%）
-- 文件规模分布
-- 代码可维护性评估
-
-**阅读时间**: 5分钟
-
----
-
-## 🧪 如何运行测试
-
-### 运行 dlz-db 完整测试
 ```bash
-cd D:\gits\dlz\dlzio\dlz-db
-mvn clean test
+mvn -B -pl dlz-db-core,dlz-db-spring-boot-starter,dlz-db-solon-plugin -am clean verify -Denforcer.skip=true
 ```
 
-### 运行单个子模块测试
+这三个库模块通过 `maven.compiler.release=8` 生成 Java 8 兼容产物。JDK 8 兼容任务只验证这些库模块，并跳过面向完整 reactor 的 JDK 17 Enforcer 规则。
+
+### 根聚合项目与 Demo
+
+根 POM 包含 `dlz-db-web-demos`，其中 Spring Boot 3 Demo 需要 JDK 17。因此聚合验证使用 JDK 17 或更高版本：
+
 ```bash
-# 核心模块
-mvn clean test -pl dlz-db-core
-
-# Spring Boot Starter
-mvn clean test -pl dlz-db-spring-boot-starter
-
-# Solon Plugin
-mvn clean test -pl dlz-db-solon-plugin
+mvn -B clean verify -Djacoco.skip=false
 ```
 
-### 运行特定测试类
+2026-08-28 本地复现 CI 矩阵的结果：
+
+| 环境 | 范围 | 结果 |
+|---|---|---|
+| JDK 8u66 | core、Spring Boot Starter、Solon Plugin | 1281 个测试，0 失败、0 错误 |
+| JDK 17.0.10 | 完整 reactor（含三个 Demo） | 构建成功，1281 个测试，覆盖率门槛通过 |
+| JDK 21.0.2 | 完整 reactor（含三个 Demo） | 构建成功，1281 个测试，覆盖率门槛通过 |
+
+JDK 17 覆盖率快照为：core 行 81.97% / 分支 73.64%，Spring 行 90.09% / 分支 75%，Solon 行 85% / 分支 68.18%；均高于 POM 的行 70%、分支 60% 门槛。这些结果是当前工作树的本地快照，远端 CI 仍是合并前的最终依据。
+
+### 单模块与单测试
+
 ```bash
-mvn test -Dtest=DbPojoTest
-mvn test -Dtest=TransactionTest
+mvn -B -pl dlz-db-core test
+mvn -B -pl dlz-db-spring-boot-starter test
+mvn -B -pl dlz-db-solon-plugin test
+
+mvn -B -pl dlz-db-core -Dtest=DbPojoTest test
+mvn -B -pl dlz-db-core -Dtest=TransactionTest test
 ```
 
-### 使用测试脚本
-```bash
-# Windows
-.\reports\test-all.bat
+## JDK 兼容策略
 
-# 或单独运行
-.\reports\test-core-only.bat
-.\reports\test-jacoco.bat
-```
+| 范围 | 目标/SDK | 建议验证环境 |
+|---|---|---|
+| `dlz-db-core` | Java 8 | JDK 8、17、21 |
+| `dlz-db-spring-boot-starter` | Java 8 | JDK 8、17、21 |
+| `dlz-db-solon-plugin` | Java 8 | JDK 8、17、21 |
+| Spring Boot 2 Demo | Java 8 | JDK 8 或更高 |
+| Solon 3 Demo | Java 8 | JDK 8 或更高 |
+| Spring Boot 3 Demo | Java 17 | JDK 17 或更高 |
+| 整个根聚合项目 | 包含 Boot 3 Demo | JDK 17 或更高 |
 
----
+这意味着“库支持 Java 8”和“根目录包含只能在 JDK 17+ 构建的 Demo”可以同时成立。CI 若要使用 JDK 8 验证，应只选择三个库模块；不应在 JDK 8 job 中聚合构建 Spring Boot 3 Demo。
 
-## 📈 测试覆盖情况
+## GitHub Actions 验证矩阵
 
-### dlz-db 测试覆盖范围
-- ✅ **核心功能**: CRUD操作、SQL构建、事务管理
-- ✅ **ID生成**: AUTO、ASSIGN_ID、号段模式
-- ✅ **缓存机制**: 表名缓存、字段缓存、主键缓存
-- ✅ **注解支持**: @TableName、@TableId、@TableField
-- ✅ **框架集成**: Spring Boot、Solon
-- ✅ **数据库兼容**: SQLite（测试用）、MySQL、PostgreSQL等
+`.github/workflows/build-and-test.yml` 将构建拆成两类：
 
-### 测试类型分布
-- **单元测试**: ~400个
-- **集成测试**: ~150个
-- **冒烟测试**: ~55个
+1. JDK 17/21 执行完整 reactor 的 `clean verify`，包含三个 Demo，并通过生命周期生成 JaCoCo 报告。
+2. JDK 8 仅执行 core、Spring Boot Starter 和 Solon Plugin 的测试，验证发行库的 Java 8 兼容性；不聚合构建 Spring Boot 3 Demo。
 
----
+CI 不再直接调用 `jacoco:report`，避免该目标传播到没有配置 JaCoCo 的 Demo 模块。
 
-## 🔍 测试报告解读
+## 测试资源
 
-### 关键指标说明
+- core 集成测试使用 SQLite，基类为 `BaseDBTest`。
+- Spring Boot 和 Solon 测试也已在当前本地构建中自包含运行，不要再将它们描述为“必须外部 MySQL/Redis 才能测试”。
+- Surefire 报告位于各模块 `target/surefire-reports/`。
 
-| 指标 | 当前值 | 说明 |
-|------|--------|------|
-| 通过率 | 100% | 所有测试用例都通过 |
-| 测试比例 | 46.9% | 测试代码/核心代码，优秀水平 |
-| 注释率 | 7.8% | 注释行/总行数，合理水平 |
-| 平均每文件测试数 | 9.4 | 测试覆盖充分 |
+## 覆盖率与质量脚本
 
-### JaCoCo 覆盖率
-- dlz-db-core: 106个类已分析
-- dlz-db-spring-boot-starter: 7个类已分析
-- dlz-db-solon-plugin: 9个类已分析
+`reports/` 中的 `.bat` 脚本是历史工具，部分命令与当前 POM 的默认 skip/profile 设置不一致。在这些脚本重新校验前，发行验证以上述 Maven `verify` 命令为准，不把未生成的 JaCoCo/SpotBugs 报告当成已完成检查。
 
-查看详细覆盖率报告：
-```
-dlz-db-core/target/site/jacoco/index.html
-dlz-db-spring-boot-starter/target/site/jacoco/index.html
-dlz-db-solon-plugin/target/site/jacoco/index.html
-```
+## 历史报告
 
----
-
-## ⚠️ 已知问题
-
-### 已修复问题
-1. **DbPojoTest内部类表名冲突** ✅
-   - 问题：内部类和外部实体类表名冲突
-   - 解决：添加唯一表名并手动注册缓存
-   - 影响：30个测试用例
-
----
-
-## 📝 测试最佳实践
-
-### 编写新测试的建议
-1. 继承 `BaseDBTest` 基类
-2. 使用 `@DisplayName` 描述测试目的
-3. 遵循 AAA 模式（Arrange-Act-Assert）
-4. 测试边界条件和异常情况
-5. 保持测试独立性
-
-### 测试命名规范
-```java
-@Test
-@DisplayName("测试 insert - ID为空时抛出异常")
-void testInsertWithNullId() {
-    // 测试代码
-}
-```
-
----
-
-## 🚀 CI/CD 集成
-
-### GitHub Actions 示例
-```yaml
-name: DLZ-DB Tests
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-      - name: Run tests
-        run: |
-          cd dlz-db
-          mvn clean test
-```
-
----
-
-## 📞 联系与支持
-
-如有测试相关问题，请：
-1. 查看详细测试报告
-2. 检查 Surefire 报告：`target/surefire-reports/`
-3. 查看 JaCoCo 覆盖率报告
-4. 联系开发团队
-
----
-
-## 📅 历史测试记录
-
-| 日期 | 版本 | 测试数 | 通过率 | 状态 |
-|------|------|--------|--------|------|
-| 2026-05-17 | 7.0.0 | 605 | 100% | ✅ PASS |
-
----
-
-*最后更新: 2026-07-13*  
-*dlz-db 版本: 8.0.0*  
-*维护者: DLZ-DB Team*
+`reports/2026-05-17/` 是 7.0.0 时期的历史快照，其 605 个测试、覆盖率和代码行数不代表当前 8.0.0 工作树。该目录只用于历史追溯。

@@ -8,9 +8,12 @@
     <packaging>pom</packaging>
     <description>DLZ-DB v8.0: 多模块数据库框架，支持 Spring 和 Solon</description>
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- 完整 reactor 使用 JDK 17+ 构建；主库发行产物保持 Java 8 兼容 -->
+        <java.version>8</java.version>
+        <maven.compiler.release>8</maven.compiler.release>
+        <build.java.version>17</build.java.version>
+        <maven.compiler.version>3.15.0</maven.compiler.version>
+        <maven.enforcer.version>3.6.3</maven.enforcer.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- slf4j 1.7.x + logback 1.2.x：兼容 Spring Boot 2.6（LogbackLoggingSystem 依赖 StaticLoggerBinder），
@@ -45,11 +48,10 @@
         <spotbugs.skip>true</spotbugs.skip>
     </properties>
     <modules>
-        <!-- 注意：dlz-db-web-demos 是独立可运行示例工程，不在本反应堆内，
-             构建方式：cd dlz-db-web-demos && mvn package，不参与发布与测试 -->
         <module>dlz-db-core</module>
         <module>dlz-db-spring-boot-starter</module>
         <module>dlz-db-solon-plugin</module>
+        <!-- 示例工程参与聚合构建，但不纳入 JaCoCo 覆盖率统计，也不执行 install/deploy -->
         <module>dlz-db-web-demos</module>
     </modules>
     <dependencyManagement>
@@ -140,6 +142,39 @@
 
     <build>
         <plugins>
+            <!-- 使用 JDK 17+ 构建，同时将主库编译为 Java 8 兼容字节码/API -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
+
+            <!-- 完整 reactor 包含 Spring Boot 3 Demo，因此构建环境至少需要 JDK 17 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven.enforcer.version}</version>
+                <executions>
+                    <execution>
+                        <id>require-build-jdk</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[${build.java.version},)</version>
+                                    <message>完整构建需要 JDK ${build.java.version} 或更高版本；主库发行产物仍兼容 Java 8。</message>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Maven Surefire 插件 - 覆盖父 POM 的 skip=true 配置 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

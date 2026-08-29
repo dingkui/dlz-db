@@ -1,580 +1,277 @@
-# DLZ-DB 完整功能清单
+# DLZ-DB 8.0 功能与 API 清单
 
-**版本：** v8.0.0  
-**生成日期：** 2026-05-06  
-**入口类：** `com.dlz.db.DB`
+**对齐版本**：8.0.0
+**核对日期**：2026-08-28
+**事实来源**：`dlz-db-core`、Spring Boot Starter、Solon Plugin 的当前源码
 
----
+> 本页是公共用法索引，不罗列 `com.dlz.db.internal.*` 中的实现细节。
 
-## 一、DB 入口概览
+## 1. 统一入口
 
-DLZ-DB 提供 8 个静态入口，覆盖数据库操作和运行时支持：
+| 入口 | 用途 |
+|---|---|
+| `DB.pojo` | 基于实体类和 Lambda 的 CRUD，默认首选 |
+| `DB.table` | 基于表名和 `JSONMap`/`ResultMap` 的动态表操作 |
+| `DB.jdbc` | 使用 `?` 占位符的一次性 SQL |
+| `DB.sql` | 使用 `#{key}` 参数的预设 SQL/Key-SQL |
+| `DB.batch` | Pojo、表数据或原生 SQL 批处理 |
+| `DB.ds` | 数据源注册、切换、查询和移除 |
+| `DB.tx` | 当前或指定数据源上的编程式事务 |
+| `DB.config` | 插件、方言、预设 SQL 和底层执行器配置 |
 
-| 入口 | 职责 | 适用场景 |
-|------|------|----------|
-| **DB.pojo** | 基于实体类的类型安全操作 | 推荐首选，IDE 自动补全，重构安全 |
-| **DB.table** | 基于表名的动态操作 | 无实体类或动态表名场景 |
-| **DB.jdbc** | 原生 SQL 操作（`?` 占位符） | 简单 SQL，快速执行 |
-| **DB.sql** | 预设 SQL 操作（`#{key}` 占位符） | 复杂 SQL，SQL 集中管理 |
-| **DB.batch** | 批量插入、更新和 JDBC 执行 | 批量写操作；当前不提供批量删除 |
-| **DB.ds** | 动态数据源注册、切换和删除 | 读写分离、多数据源 |
-| **DB.tx** | 事务管理 | 编程式事务 |
-| **DB.config** | 数据库配置 | 配置和运行时支持 |
+## 2. Pojo API
 
----
+### 2.1 直接 CRUD
 
-`add`、`save` 仍保留用于兼容，但已标记为 `@Deprecated`，新代码不要使用。
-
-### 2.1 查询操作
-
-#### 基础查询（→ 构建器，需调用 queryBean/List/Page 执行）
 ```java
-// 按 Class 创建查询器
-PojoQuery<T> selectWrapper(Class<T> clazz)
-
-// 选择查询列（可选）
-selectWrapper(Class<T> clazz, DlzFn<T, ?>... fields)
+User inserted = DB.pojo.insert(user);
+User saved = DB.pojo.insertOrUpdateById(user);
+User one = DB.pojo.selectById(User.class, id);
+List<User> list = DB.pojo.selectByIds(User.class, ids);
+int updated = DB.pojo.updateById(user);
+int deleted = DB.pojo.deleteById(User.class, id);
+boolean exists = DB.pojo.existsById(User.class, id);
 ```
 
-#### 快捷查询方法（直接执行）
-```java
-// 根据 ID 查询单条
-T selectById(Class<T> clazz, Object id)
+- `selectByIds` 和 `deleteByIds` 支持 `Collection<?>` 或 CSV 字符串。
+- `add(entity)` 和 `save(entity)` 为已废弃别名；新代码使用 `insert` 和 `insertOrUpdateById`。
+- 写入可传 `DbOption...`，如 `InsertOption.INCLUDE_NULL`、`UpdateOption.INCLUDE_NULL`、`DeleteOption.PHYSICAL`。
 
-// 根据 IDs 查询多条
-List<T> selectByIds(Class<T> clazz, Object ids)  // ids: "1,2,3" 或 List
+### 2.2 Pojo Wrapper
+
+```java
+PojoQuery<User> query = DB.pojo.selectWrapper(User.class);
+PojoInsert<User> insert = DB.pojo.insertWrapper(user);
+PojoUpdate<User> update = DB.pojo.updateWrapper(User.class);
+PojoDelete<User> delete = DB.pojo.deleteWrapper(User.class);
 ```
 
-### 2.2 插入操作（直接执行）
+常用查询：
 
 ```java
-// 插入单条（返回传入实体，主键按实体配置处理）
-T insert(T bean, DbOption... options)
+User one = DB.pojo.selectWrapper(User.class)
+    .select(User::getId, User::getName)
+    .eq(User::getStatus, 1)
+    .queryBean();
 
-// 批量插入请使用 DB.batch
-BatchResult DB.batch.insert(List<T> beans)
-BatchResult DB.batch.insert(List<T> beans, int batchSize)
-
-// 插入或更新（根据 ID 判断）
-T insertOrUpdateById(T obj, DbOption... options)
-
-// 根据 ID 更新（返回影响行数）
-int updateById(T obj, DbOption... options)
+Page<User> page = DB.pojo.selectWrapper(User.class)
+    .orderByDesc(User::getCreateTime)
+    .page(1, 20)
+    .queryBeanPage();
 ```
 
-### 2.3 更新操作（→ 构建器，需调用 .execute()）
+常用写操作：
 
 ```java
-// 按 Class 创建更新器
-PojoUpdate<T> updateWrapper(Class<T> clazz)
+int updated = DB.pojo.updateWrapper(User.class)
+    .set(User::getStatus, 2)
+    .eq(User::getId, id)
+    .execute();
 
-// 按对象创建更新器
-PojoUpdate<T> updateWrapper(T value)
+int deleted = DB.pojo.deleteWrapper(User.class)
+    .eq(User::getId, id)
+    .execute();
+
+int physicalDeleted = DB.pojo.deleteWrapper(User.class)
+    .eq(User::getId, id)
+    .physical();
 ```
 
-### 2.4 删除操作
+Wrapper 写操作应始终带明确业务条件。当最终 WHERE 为空时，当前构建器会生成 `WHERE false`；但逻辑删除插件注入的 `deleted = 0` 也会被视为 WHERE，所以这不是“无业务条件一定拒绝”的强安全保证。
 
-#### 链式删除（→ 构建器，需调用 .execute()）
+## 3. Table API
+
+### 3.1 直接 CRUD
+
+| 方法 | 返回值 |
+|---|---|
+| `insert(table, values, options...)` | 影响行数 `int` |
+| `insertWithAutoKey(table, values, options...)` | 自增主键 `Long` |
+| `insertOrUpdate(table, values, options...)` | 影响行数 `int` |
+| `selectById(table, id, options...)` | `ResultMap` |
+| `selectByIds(table, ids)` | `List<ResultMap>` |
+| `updateById(table, values, options...)` | 影响行数 `int` |
+| `deleteById/deleteByIds` | 影响行数 `int` |
+
+### 3.2 Table Wrapper
+
 ```java
-// 按 Class 创建删除器
-PojoDelete<T> deleteWrapper(Class<T> clazz)
+List<ResultMap> rows = DB.table.selectWrapper("user")
+    .select("id", "name")
+    .eq("status", 1)
+    .queryList();
 
-// 按主键删除
-int deleteById(Class<T> clazz, Object id, DbOption... options)
-
-// 按多个主键删除
-int deleteByIds(Class<T> clazz, Collection<?> ids)
-int deleteByIds(Class<T> clazz, String ids)
+int updated = DB.table.updateWrapper("user")
+    .set("status", 2)
+    .eq("id", id)
+    .execute();
 ```
 
-### 2.5 查询结果方法（PojoQuery）
+可用 Wrapper：`TableQuery`、`TableInsert`、`TableUpdate`、`TableDelete`。`insertWrapper/updateWrapper` 还提供 `.batch(...)` 批处理。
 
-#### Bean 结果
+## 4. JDBC 与预设 SQL
+
+### 4.1 JDBC
+
 ```java
-T queryBean()                    // 严格单条 Bean，多条抛异常
-T queryFirstBean()               // 非严格取第一条 Bean
-List<T> queryBeanList()          // Bean 列表
-Page<T> queryBeanPage()          // Bean 分页
+ResultMap one = DB.jdbc.one("SELECT * FROM user WHERE id = ?", id);
+List<User> list = DB.jdbc.list(
+    "SELECT * FROM user WHERE status = ?", User.class, 1);
+long count = DB.jdbc.count("SELECT * FROM user WHERE status = ?", 1);
+Page<User> page = DB.jdbc.page(
+    "SELECT * FROM user WHERE status = ?",
+    PageRequest.of(1, 20), User.class, 1);
+int affected = DB.jdbc.execute("UPDATE user SET status = ? WHERE id = ?", 2, id);
 ```
 
-#### ResultMap 结果
+- `one` 是严格单条，`first` 是取第一条。
+- 链式入口是 `selectWrapper(...)` 和 `executeWrapper(...)`，对应类是 `JdbcSelect` 和 `JdbcExecute`。
+- `JdbcExecute.executeAndReturnId()` 返回自增主键 `Long`。
+- `count()` 和 `page()` 会自动从 SELECT 改写 count SQL；当前原生 SQL 改写要求存在大写 ` FROM `，复杂 `GROUP BY` / `DISTINCT` / `UNION` 应使用经过验证的显式 SQL。
+
+### 4.2 预设 SQL
+
 ```java
-ResultMap queryOne()             // 严格单条 Map，多条抛异常
-ResultMap queryFirst()           // 非严格取第一条 Map
-List<ResultMap> queryList()      // Map 列表
-Page<ResultMap> queryPage()      // Map 分页
+List<User> users = DB.sql.selectWrapper("key.user.findActive")
+    .addPara("status", 1)
+    .queryList(User.class);
+
+int affected = DB.sql.execute(
+    "key.user.disable", new JSONMap("id", id));
 ```
 
-#### 指定类型结果
+- 链式入口是 `SqlQuery` 和 `SqlExecute`。
+- 直接入口提供 `one`、`first`、`list`、`count`、`execute`。
+- `DB.sql` 目前没有与 `DB.jdbc.page(...)` 对称的直接分页方法；分页时使用 `selectWrapper(...).page(...).queryPage(...)`。
+- 类路径预设 SQL 从 `classpath*:sql/<sqllist>.sql` 读取，默认 `sqllist` 为 `app/*`。文件扩展名是 `.sql`，文件内容使用 `<sqlList>` XML 结构。
+
+## 5. 条件、排序与分页
+
+### 5.1 条件
+
+常用条件包括：
+
+- `eq/ne/gt/ge/lt/le`
+- `isNull/isNotNull`
+- `in/notIn`
+- `between/notBetween`
+- `like/likeLeft/likeRight/notLike`
+- `sql(sql, JSONMap)` 自定义命名参数片段
+- `ands(consumer)` 和 `ors(consumer)` 复合条件
+
 ```java
-T queryOne(Class<T> clazz)       // 严格单条指定类型，多条抛异常
-T queryFirst(Class<T> clazz)     // 非严格取第一条指定类型
-List<T> queryList(Class<T> clazz)  // 指定类型列表
-Page<T> queryPage(Class<T> clazz)  // 指定类型分页
+List<User> rows = DB.pojo.selectWrapper(User.class)
+    .eq(User::getStatus, 1)
+    .ors(o -> o.like(User::getName, keyword)
+               .like(User::getMobile, keyword))
+    .queryBeanList();
 ```
 
-#### 标量结果
+`ors(...)` 表示 lambda 内部用 OR 连接，整组与外层仍按 AND 连接；它不等同于 MyBatis-Plus 的同名语义。
+
+### 5.2 排序与分页
+
 ```java
-String queryStr()                // 单值字符串
-List<String> queryStrList()      // 字符串列表
-
-Long queryLong()                 // 单值 Long
-List<Long> queryLongList()       // Long 列表
-
-Integer queryInt()               // 单值 Integer
-List<Integer> queryIntList()     // Integer 列表
-
-Double queryDouble()             // 单值 Double
-List<Double> queryDoubleList()   // Double 列表
+Page<User> page = DB.pojo.selectWrapper(User.class)
+    .orderByAsc(User::getName)
+    .orderByDesc(User::getCreateTime)
+    .page(1, 20)
+    .queryBeanPage();
 ```
 
-#### 统计
+- Wrapper 支持 `page(Page)`、`page(current, size, Order...)`、`limit(size)` 和 `sort(...)`。
+- `Page<T>` 字段包括 `current`、`size`、`total`、`pages`、`records`，也提供 `pageNo()`、`pageSize()`、`hasNext()` 等简洁方法。
+- 当前 `Page.setSize` 会把页大小上限限制为 5000。
+
+## 6. 查询返回类型
+
+| 方法 | 返回类型 |
+|---|---|
+| `queryOne/queryFirst` | `ResultMap` |
+| `queryList/queryPage` | `List<ResultMap>` / `Page<ResultMap>` |
+| `queryOne(Class)/queryFirst(Class)` | 指定 Bean |
+| `queryList(Class)/queryPage(Class)` | 指定 Bean 列表/分页 |
+| `queryBean/queryFirstBean` | Pojo Wrapper 绑定的实体类 |
+| `queryBeanList/queryBeanPage` | Pojo 列表/分页 |
+| `queryStr/Long/Int/Double` | 单列单值 |
+| `queryStrList/queryLongList/queryIntList/queryDoubleList` | 单列列表 |
+| `count` | `long` |
+
+`queryOne/queryBean` 在多条时抛出非唯一结果异常；`queryFirst/queryFirstBean` 只取第一条。
+
+## 7. 批量操作
+
 ```java
-int count()                      // 记录数
+BatchResult r1 = DB.batch.insert(users);
+BatchResult r2 = DB.batch.update(users, 500);
+BatchResult r3 = DB.batch.insert("user", values, 500);
+BatchResult r4 = DB.batch.execute(sql, params, 500);
+
+if (!r1.isSuccess()) {
+    log.warn("batch status={}, failed={}", r1.status(), r1.failedPositions());
+}
 ```
 
-### 2.6 条件构造方法
+`BatchResult` 对外提供 `totalItems()`、`batchSize()`、`batchCount()`、`completedBatches()`、`knownAffectedRows()`、`unknownAffectedRows()`、`failedPositions()`、`status()`、`cause()` 和 `isSuccess()`。
 
-#### 比较操作
-```java
-eq(field, value)        // = 
-ne(field, value)        // <>
-gt(field, value)        // >
-ge(field, value)        // >=
-lt(field, value)        // <
-le(field, value)        // <=
-```
-
-#### NULL 判断
-```java
-isNull(field)              // IS NULL
-isNotNull(field)             // IS NOT NULL
-```
-
-#### 范围操作
-```java
-in(field, values)       // IN (支持 List/CSV/子查询)
-notIn(field, values)       // NOT IN
-between(field, min, max)     // BETWEEN
-notBetween(field, min, max)     // NOT BETWEEN
-```
-
-#### 模糊查询
-```java
-like(field, value)        // LIKE '%value%'
-likeLeft(field, value)        // LIKE '%value'
-likeRight(field, value)        // LIKE 'value%'
-notLike(field, value)        // NOT LIKE '%value%'
-```
-
-#### 逻辑组合
-```java
-or(Consumer<Condition> consumer)   // OR 嵌套
-and(Consumer<Condition> consumer)  // AND 嵌套
-```
-
-#### 排序
-```java
-orderByAsc(field)       // 升序
-orderByDesc(field)      // 降序
-```
-
-#### 分页
-```java
-page(Page page)         // 设置分页
-```
-
-#### 字段选择
-```java
-columns(fields...)      // 指定查询字段
-```
-
-#### 自定义 SQL
-```java
-sql(sqlFragment, params)  // 自定义 SQL 片段
-```
-
-#### 条件判断
-```java
-eq(condition, field, value)  // 条件为 true 时才添加
-```
-
----
-
-## 三、DB.table - 表名操作
-
-### 3.1 基础操作（→ 构建器，需调用 .execute() 或查询方法）
+## 8. 事务与数据源
 
 ```java
-// 查询 → TableQuery，需调用 queryOne/List/Page
-TableQuery select(String tableName)
+DB.ds.use("slave", () -> DB.pojo.selectById(User.class, id));
 
-// 插入 → TableInsert，需调用 .execute()
-TableInsert insert(String tableName)
-
-// 更新 → TableUpdate，需调用 .execute()
-TableUpdate update(String tableName)
-
-// 删除 → TableDelete，需调用 .execute()
-TableDelete delete(String tableName)
-```
-
-### 3.2 查询结果方法
-
-与 DB.pojo 相同，支持：
-- `queryOne()` / `queryList()` / `queryPage()`
-- `queryOne(Class)` / `queryList(Class)` / `queryPage(Class)`
-- `queryStr()` / `queryLong()` / `queryInt()` / `queryDouble()` 及其 List 版本
-- `count()`
-
-### 3.3 条件构造方法
-
-与 DB.pojo 相同，但使用字符串字段名而非 Lambda。
-
----
-
-## 四、DB.jdbc - 原生 SQL 操作
-
-### 4.1 查询操作（→ 构建器，需调用 queryOne/List/Page）
-
-```java
-// 查询（? 占位符）
-JdbcQuery select(String sql, Object... para)
-```
-
-### 4.2 写操作（直接执行）
-
-```java
-// 插入
-int insert(String sql, Object... para)
-
-// 更新
-int update(String sql, Object... para)
-
-// 删除
-int delete(String sql, Object... para)
-
-// 通用执行
-int execute(String sql, Object... para)
-```
-
-### 4.3 查询结果方法
-
-与 DB.pojo 相同，支持所有查询方法和标量方法。
-
-### 4.4 分页支持
-
-```java
-select(sql, params).page(Page.build(1, 10)).queryList()
-```
-
----
-
-## 五、DB.sql - 预设 SQL 操作
-
-### 5.1 基础操作
-
-```java
-// 查询 → SqlQuery，需调用 queryOne/List/Page（#{key} 占位符）
-SqlQuery select(String sqlKey)
-
-// 以下返回 SqlExecute，需调用 .execute() 执行
-SqlExecute insert(String sqlKey)
-
-SqlExecute update(String sqlKey)
-
-SqlExecute delete(String sqlKey)
-
-SqlExecute executer(String sqlKey)
-
-// 直接执行（无需 .execute()）
-int execute(String sqlKey)
-```
-
-### 5.2 参数设置
-
-```java
-select("key.xxx")
-    .addPara("name", "张三")
-    .addPara("age", 25)
-    .queryList()
-```
-
-### 5.3 分页支持
-
-```java
-select("key.xxx")
-    .setPage(Page.build(1, 10))
-    .page(User.class)
-```
-
-### 5.4 查询结果方法
-
-与 DB.pojo 相同，支持所有查询方法和标量方法。
-
----
-
-## 六、DB.batch - 批量操作
-
-### 6.1 批量插入
-
-```java
-// 批量插入（默认批次大小 1000）
-boolean insert(List<T> beans)
-
-// 批量插入（指定批次大小）
-boolean insert(List<T> beans, int batchSize)
-```
-
-### 6.2 批量更新（Pojo）
-
-```java
-// 批量更新（默认批次大小 1000）
-boolean update(List<T> beans)
-
-// 批量更新（指定批次大小）
-boolean update(List<T> beans, int batchSize)
-```
-
-### 6.3 批量更新（SQL）
-
-```java
-// 批量更新（默认批次大小 1000）
-boolean update(String sql, List<Object[]> params)
-
-// 批量更新（指定批次大小）
-boolean update(String sql, List<Object[]> params, int batchSize)
-```
-
----
-
-## 七、DB.ds - 动态数据源
-
-### 7.1 数据源管理
-
-```java
-// 注册数据源
-boolean setDataSource(DataSourceProperty properties)
-
-// 设置默认数据源
-boolean setDefaultDataSource(DataSource dataSource)
-
-// 删除数据源
-boolean removeDataSource(String name)
-```
-
-### 7.2 数据源切换
-
-```java
-// 切换数据源执行（带返回值）
-T use(String name, Supplier<T> action)
-
-// 切换数据源执行（无返回值）
-void use(String name, Runnable action)
-```
-
-### 7.3 使用示例
-
-```java
-// 读写分离
-List<User> users = DB.ds.use("slave", () ->
-    DB.pojo.selectWrapper(User.class)
-        .eq(User::getStatus, 1)
-        .queryBeanList()
-);
-
-// 切换到报表库
-DB.ds.use("report", () -> {
-    DB.pojo.insert(reportData);
-});
-```
-
----
-
-## 八、DB.tx - 事务管理
-
-### 8.1 编程式事务
-
-```java
-// 默认数据源事务（无返回值）
-void run(Runnable action)
-
-// 默认数据源事务（带返回值）
-T run(Supplier<T> action)
-
-// 指定数据源事务（无返回值）
-void run(String dataSourceName, Runnable action)
-
-// 指定数据源事务（带返回值）
-T run(String dataSourceName, Supplier<T> action)
-```
-
-### 8.2 使用示例
-
-```java
-// 基本事务
 DB.tx.run(() -> {
-    DB.pojo.insert(user);
-    DB.pojo.insert(userLog);
+    DB.pojo.insert(order);
+    DB.pojo.insert(orderItem);
 });
 
-// 带返回值
-Long userId = DB.tx.run(() -> {
-    DB.pojo.insert(user);
-    return user.getId();
-});
-
-// 指定数据源
 DB.tx.run("slave", () -> {
-    DB.pojo.insert(user);
+    // 在 slave 数据源上开启事务
 });
 ```
 
-### 8.3 声明式事务
+- `DB.ds.use(...)` 只切换数据源，不自动开启事务。
+- `DB.ds` 还提供 `setDefaultDataSource`、`setDataSource`、`removeDataSource`、`testConnection`、`getAllDataSourceNames` 等方法。
+- 多数据源切换不是分布式事务。
 
-#### Spring Boot
-```java
-@Transactional
-public void createUser() {
-    DB.pojo.insert(user);
-}
-```
+## 9. 实体注解与操作选项
 
-#### Solon
-```java
-@Tran
-public void createUser() {
-    DB.pojo.insert(user);
-}
-```
+注解位于 `com.dlz.db.core.anno`：
 
----
+- `@TableName(value, comment)`
+- `@TableId(value, type)`
+- `@TableField(value, exist, select, comment)`
+- `IdType.AUTO/SEQ/INPUT/ASSIGN_ID/ASSIGN_UUID`
 
-## 九、功能对比总结
+内置操作选项：
 
-### 9.1 各入口能力矩阵
+| 操作 | 选项 |
+|---|---|
+| 插入 | `InsertOption.IGNORE_NULL` / `INCLUDE_NULL` |
+| 更新 | `UpdateOption.IGNORE_NULL` / `INCLUDE_NULL` |
+| 删除 | `DeleteOption.LOGIC` / `PHYSICAL` |
+| 查询 | `SelectOption.INCLUDE_DELETED` / `FOR_UPDATE`（用于接收 `DbOption...` 的直接查询，如 `selectById`） |
 
-| 功能 | Pojo | Table | Jdbc | Sql | Batch | Dynamic | Tx |
-|------|------|-------|------|-----|-------|---------|----|
-| 查询 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| 插入 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 更新 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 删除 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| 分页 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| 批量 | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| 数据源切换 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| 事务 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Lambda 支持 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| 类型安全 | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+## 10. 配置、日志和框架集成
 
-### 9.2 推荐使用场景
+`dlz.db` 核心配置包括：
 
-| 场景 | 推荐入口 | 原因 |
-|------|---------|------|
-| 日常 CRUD | DB.pojo | 类型安全，IDE 提示好 |
-| 动态表名 | DB.table | 无需定义实体类 |
-| 简单 SQL | DB.jdbc | 快速原型开发 |
-| 复杂 SQL | DB.sql | SQL 集中管理，易维护 |
-| 批量操作 | DB.batch | 性能好，自动分批 |
-| 读写分离 | DB.ds | 灵活切换数据源 |
-| 事务控制 | DB.tx | 编程式事务，精确控制 |
+- `db-support`、`blob-charset`
+- `sqllist`、`sql`、`use-db-sql`
+- `table-cache-time`、`logic-delete-field`
+- `helper.package-name`、`helper.auto-update`
+- `log.show-result`、`log.show-run-sql`、`log.show-caller`、`log.slow-sql-threshold`
 
----
+Spring Boot Starter 自动装配 `SpringDlzDbAutoConfiguration`，同时兼容 Spring Boot 2 与 3 的自动装配发现方式。Solon 通过 `DlzDbSolonPlugin` 加载，初始化时必须能从容器获得 `DataSource` Bean。
 
-## 十、高级特性
+`DB.config` 的插件、方言、预设 SQL 和底层执行器设置只能在框架初始化前修改；初始化完成后继续调用这些配置方法会失败。
 
-### 10.1 逻辑删除
+## 11. JDK 基线
 
-当实体类包含 `deleted` 字段时，自动启用逻辑删除：
-- 查询自动添加 `WHERE deleted = 0`
-- 删除转换为 `UPDATE deleted = 1`
-- 更新自动添加 `WHERE deleted = 0`
+- 库主体以 Java 8 为编译目标。
+- Spring Boot 2 和 Solon Demo 目标 Java 8。
+- Spring Boot 3 Demo 需要 JDK 17。
+- 要一次性聚合验证所有模块和 Demo，建议使用 JDK 17 运行 Maven。
 
-### 10.2 预设 SQL
+## 12. 公共边界
 
-支持三种方式定义预设 SQL：
-1. XML 文件：`resources/sql/app/*.xml`
-2. 数据库表：`sys_sql` 表
-3. 配置文件：`application.yml` 中的 `sqllist`
-
-### 10.3 自动建表
-
-```yaml
-dlz:
-  db:
-    helper:
-      auto-update: true
-      package-name: com.example.entity
-```
-
-启动时自动扫描实体类并创建/更新表结构。
-
-### 10.4 SQL 日志
-
-```yaml
-dlz:
-  db:
-    log:
-      show-run-sql: true      # 显示完整 SQL
-      show-caller: true       # 显示调用位置
-      show-result: false      # 显示查询结果
-      slow-sql-threshold: 1000 # 慢 SQL 阈值（毫秒），0 表示不启用
-```
-
-日志级别配置：
-```xml
-<logger name="com.dlz.db.util.DbLogUtil" level="trace" additivity="false"/>
-```
-
-- **TRACE**：调用链（框架内部执行路径）
-```
-TRACE [...] ...DbLogUtil:91 < DbLogUtil:117 < ISqlExecutor:82 < SpringSqlExecutorAdapter:43 < ... < IExecutorQuery:66
-```
-- **INFO**：`caller:` 行（**核心特色**，IDE 中可点击跳转，直接定位到调用 SQL 的业务代码位置）
-```
-INFO [...] ...DbLogUtil:128 caller:(UserController.java:15) getUser 12ms sql:SELECT * FROM user WHERE id = 1
-```
-
-**慢 SQL 监控：**
-- 当 SQL 执行时间超过 `slow-sql-threshold` 时，以 **WARN** 级别输出
-- 默认值为 0（不启用）
-- 建议生产环境设置为 500-1000ms
-
----
-
-## 十一、功能完整性
-
-### 11.1 已实现的功能
-
-✅ **全部核心功能已实现**
-
-- 基础 CRUD 操作
-- 查询方法（Bean、ResultMap、标量、分页）
-- 条件构造器（比较、范围、模糊、逻辑组合）
-- 批量操作（插入、更新）
-- 多数据源管理
-- 事务管理（编程式 + 声明式）
-- SQL 日志与慢 SQL 监控 ✅
-- 逻辑删除
-- 预设 SQL
-- 自动建表
-
----
-
-## 十二、总结
-
-DLZ-DB 提供了完整的数据库操作能力，核心特点：
-
-✅ **7 大入口** - 覆盖所有使用场景  
-✅ **链式 API** - 流畅的编码体验  
-✅ **类型安全** - Lambda 表达式支持  
-✅ **零样板代码** - 无需 Mapper/XML  
-✅ **多框架支持** - Spring Boot + Solon  
-✅ **轻量级** - 核心模块仅依赖 JDBC  
-
-**推荐使用顺序：** DB.pojo > DB.sql > DB.table > DB.jdbc
-
----
-
-**文档版本：** v1.0  
-**最后更新：** 2026-05-06
+新的业务代码不应依赖 `com.dlz.db.internal.*`。方言扩展使用 `com.dlz.db.dialect.DbDialect` 和 `DialectRegistry`，SQL 构建拦截使用 `SqlBuildInterceptor`，底层框架适配则以 `ISqlExecutor`、`ITxExecutor` 等 core 抽象为边界。未在公共包中承诺的类名不应出现在面向业务用户的教程中。

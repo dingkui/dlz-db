@@ -6,13 +6,13 @@
 
 ## 是什么
 
-JSONMap 继承 HashMap，为 JSON 嵌套数据提供路径取值、自动类型转换、链式构建能力。
+JSONMap 继承 LinkedHashMap，为 JSON 嵌套数据提供路径取值、自动类型转换、链式构建能力。
 
 ```xml
 <dependency>
     <groupId>top.dlzio</groupId>
     <artifactId>dlz-kit</artifactId>
-    <version>6.6.4</version>
+    <version>6.7.4</version>
 </dependency>
 ```
 
@@ -66,7 +66,7 @@ map.put("a.b.c", 1);    // 不解析路径，直接作为键名 → {"a.b.c":1}
 map.add("tags", "x");   // 追加到数组，自动创建数组
 ```
 
-set 是路径模式，put 是 HashMap 原语。构造嵌套结构用 set。
+`set` 是路径模式，`put` 是 Map 原语。构造嵌套结构用 `set`。
 
 ---
 
@@ -103,15 +103,16 @@ public class User {
 
 // 扁平 Bean → 嵌套 JSON
 User user = getUser();
-JSONMap target = new JSONMap();
-BeanUtil.copyAsSource(user, target, false);
+JSONMap target = ConvertUtil.convert(user, JSONMap.class);
 // → {"name":"张三","ext_info":{"phone":"138xxx","address":"上海"}}
 
 // 嵌套 JSON → 扁平 Bean
-User user = BeanUtil.copyAsTarget(source, User.class);
+JSONMap source = new JSONMap("{\"name\":\"张三\",\"ext_info\":{\"phone\":\"138xxx\"}}");
+User restored = ConvertUtil.convert(source, User.class);
 ```
 
-`copyAsSource(source, target, true)`：第三个参数 true 表示只复制有 @SetValue 的字段。
+`ConvertUtil` 位于 `com.dlz.kit.util.system`，`@SetValue` 位于
+`com.dlz.kit.util.system.annotation`。当前 API 没有旧版 `BeanUtil.copyAsSource/copyAsTarget` 方法。
 
 ---
 
@@ -132,13 +133,10 @@ list.getStr(-2);    // "b"
 2. 类型转换：源类型不重要，目标类型决定
 3. 内容不可转换：抛异常（不静默吞掉）
 4. set 解析路径，put 不解析
-5. 链式操作：每个方法返回 JSONMap 自身
+5. 链式构建：`set(...)`、`add(...)` 返回当前 JSONMap；继承的 `put(...)` 返回旧值，不参与链式调用
 
 ---
 
 ## 完整文档
 
-- [JSONMap 完整指南](第02章-核心功能/2.1-JSONMap完整指南.md)
-- [ValUtil 类型转换](第03章-工具类库/3.1-ValUtil-类型转换.md)
-- [@SetValue 注解映射](第04章-高级特性/4.1-SetValue注解映射.md)
-- [有界宽容原则](第04章-高级特性/4.4-有界宽容原则.md)
+这份文档是 DLZ-KIT 的独立速读材料。其 JSONMap、ValUtil、`@SetValue` 和“有界宽容”详细文档不在 DLZ-DB 仓库内，请到 DLZ-KIT 项目查阅，避免将本页当成 DLZ-DB API 参考。

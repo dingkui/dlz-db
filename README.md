@@ -1,9 +1,10 @@
 # DLZ-DB
 
-> **一个不到 7000 行代码的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
+> **一个轻量的 Java 数据库框架，让你写 SQL 像写本地代码一样直接。**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![JDK](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/)
+[![Runtime](https://img.shields.io/badge/Runtime-Java%208+-green.svg)](https://www.oracle.com/java/)
+[![Build JDK](https://img.shields.io/badge/Build%20JDK-17+-blue.svg)](https://www.oracle.com/java/)
 [![Build Status](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/dingkui/dlz-db/actions/workflows/build-and-test.yml)
 [![Maven Central](https://img.shields.io/badge/Maven%20Central-8.0.0-orange.svg)](https://central.sonatype.com/artifact/top.dlzio/dlz-db-core)
 [![codecov](https://codecov.io/gh/dingkui/dlz-db/graph/badge.svg?token=UDX6ZH1R0Q)](https://codecov.io/gh/dingkui/dlz-db)
@@ -16,7 +17,7 @@ List<User> users = DB.pojo.selectWrapper(User.class)
         .queryBeanList();
 ```
 
-没有 Mapper 接口，没有 Service 层，没有 XML。
+不要求 Mapper 接口或 XML，也不强制设置 Service 层；有事务、复用或业务编排时仍应使用 Service。
 
 ---
 
@@ -48,15 +49,13 @@ DLZ-DB 想解决的不是"没有框架"，而是**"框架长在了用户不想�
 
 ## 四个你会立刻感受到的不同
 
-### 1. SQL 日志能直接跳到写它的那一行
+### 1. SQL 日志可携带业务调用位置
 
 ```
-caller:(UserController.java:42) getList 15ms sql:SELECT * FROM user WHERE id = 1
-        ↑                                    ↑                 ↑
-   IDE 点这里直接跳转              真实耗时           参数已填充，复制即可执行
+getList 15ms sql:SELECT * FROM user WHERE id = 1
 ```
 
-MyBatis 日志告诉你"有一条 SQL 跑了"，DLZ-DB 告诉你**"是你的 UserController 第 42 行跑的"**。生产排查时，这一条就值回票价。
+开启 `show-run-sql` 可输出展开参数的 SQL；开启 `show-caller` 后，框架会将调用方信息注入 MDC。调用位置是否显示、能否在 IDE 中点击，取决于应用日志 pattern 和控制台支持。
 
 ---
 
@@ -81,7 +80,7 @@ User user = DB.ds.use(dsName, () ->
 
 ---
 
-### 3. 核心代码不到 7000 行，2天能通读
+### 3. 核心代码保持轻量，可通读
 
 这不是"功能少"，是**"不做你不需要的事"**：
 
@@ -96,7 +95,7 @@ User user = DB.ds.use(dsName, () ->
 - **异常栈短**：查询异常直接告诉你 SQL 在哪，不需要穿越 10 层代理。
 - **部署轻**：jar 体积小、启动快、常驻内存低，适合微服务和工具类项目。
 
-> 运行时单次查询性能与 MyBatis 相近——数据库才是瓶颈，框架层差距可以忽略。我们不在这个维度卷。
+> 项目的目标是保持 JDBC 路径简洁，但仓库当前没有提供可复现的跨框架基准数据。性能结论应以你的 SQL、驱动、数据库和工作负载实测为准。
 
 ---
 
@@ -123,7 +122,7 @@ DLZ-DB 整个框架的审美是一致的：**用显式的 lambda 和链式，对
 .eq(name != null, "name", name)
 
 // 嵌套逻辑：lambda 就地表达
-.or(o -> o.like(User::getName, "关键词").like(User::getAddress, "关键词"))
+.ors(o -> o.like(User::getName, "关键词").like(User::getAddress, "关键词"))
 
 // 数据源作用域：lambda 包起来
 DB.ds.use("other_db", () -> { ... });
@@ -138,7 +137,7 @@ DB.ds.use("other_db", () -> { ... });
 
 ## 30 秒上手
 
-DLZ-DB v7 采用多模块架构，可根据运行环境选择依赖：
+DLZ-DB v8 采用多模块架构，可根据运行环境选择依赖：
 
 | 模块 | 说明 | 适用场景 |
 |------|------|---------|
@@ -176,15 +175,9 @@ dlz:
       show-caller: true
 ```
 
-#### 3. 启用 DLZ-DB
+#### 3. 自动装配
 
-```java
-@Configuration
-@EnableConfigurationProperties(SpringDlzDbProperties.class)
-public class DlzDbConfigs extends SpringDlzDbConfig {}
-```
-
-> 包路径：`com.dlz.db.spring.config.SpringDlzDbConfig`、`com.dlz.db.spring.config.SpringDlzDbProperties`
+引入 Starter 并配置 `spring.datasource` 后即可使用。Starter 会自动绑定 `dlz.db.*`，无需继承配置类，也无需额外添加 `@EnableConfigurationProperties`。
 
 #### 4. 开始使用
 
@@ -247,7 +240,7 @@ datasource:
 
 #### 3. 使用
 
-Solon 下 API 完全一致，`DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` 接口不变：
+Solon 下核心 `DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` 调用形式与 Spring Boot 一致；数据源初始化和事务语义以各自集成章节为准：
 
 ```java
 @Component
@@ -263,14 +256,10 @@ Solon 事务使用 `@Tran` 注解：
 ```java
 @Tran
 public void transfer(Long fromId, Long toId, BigDecimal amount) {
-    DB.pojo.updateWrapper(Account.class)
-        .setSql("balance = balance - #{amount}", new JSONMap("amount", amount))
-        .eq(Account::getId, fromId)
-        .execute();
-    DB.pojo.updateWrapper(Account.class)
-        .setSql("balance = balance + #{amount}", new JSONMap("amount", amount))
-        .eq(Account::getId, toId)
-        .execute();
+    DB.jdbc.execute(
+        "UPDATE account SET balance = balance - ? WHERE id = ?", amount, fromId);
+    DB.jdbc.execute(
+        "UPDATE account SET balance = balance + ? WHERE id = ?", amount, toId);
 }
 ```
 
@@ -283,7 +272,7 @@ public void transfer(Long fromId, Long toId, BigDecimal amount) {
 User u     = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryBean();
 List<User> list = DB.pojo.selectWrapper(User.class).eq(User::getStatus, 1).queryBeanList();
 Page<User> page = DB.pojo.selectWrapper(User.class)
-        .setPage(Page.build(1, 10, Order.desc("create_time")))
+        .page(Page.build(1, 10, Order.desc("create_time")))
         .queryBeanPage();
 
 // 插入
@@ -357,21 +346,21 @@ DB.pojo.selectWrapper(User.class)
 
 **Q：性能如何？**
 
-底层直通 JDBC，无额外反射/代理损耗。与 MyBatis 运行时接近，不是我们的主要卖点——**我们卖的是简单和可控，不是性能。**
+底层基于 JDBC，Wrapper 构建、实体映射和日志仍然会产生开销。性能取决于 SQL、数据量、数据库、连接池和日志配置；如需比较，请在真实负载下做 benchmark。**框架的主要目标是简单和可控，不是未经验证的性能倍数。**
 
 **Q：能和现有 MyBatis / MP 项目共存吗？**
 
-可以。DLZ-DB 不依赖 MyBatis 体系，两者走各自的数据源和连接即可。迁移可以渐进——新模块用 DLZ-DB，老模块保持不动。
+可以。DLZ-DB 不依赖 MyBatis 体系，迁移可以渐进。如果两者要加入同一 Spring 事务，必须确认它们使用同一个 `DataSource` 和事务绑定连接，并用集成测试验证。
 
 **Q：v7 和 v6 的 API 兼容吗？**
 
-`DB.pojo`/`DB.table`/`DB.jdbc`/`DB.sql` 等核心 API 完全兼容。但 Maven 坐标、配置类包路径有变更，详见 [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md)。
+不应假定完全兼容。静态门面的整体风格延续，但 Maven 坐标、自动配置、包名和部分 Wrapper 签名均有变化，应根据编译错误和回归测试逐项迁移。详见 [6.2-v6升级到v7](./docs/第06章-迁移与升级/6.2-v6升级到v7.md)。
 
 ---
 
 ## 版本历史
 
-### v8.0.0 — 2026-07-01
+### v8.0.0 — 当前版本
 
 架构级重构：插件化逻辑删除、API 命名统一、DbTable 一步式操作、测试覆盖大幅提升。
 
@@ -380,15 +369,14 @@ DB.pojo.selectWrapper(User.class)
 - **插件化架构**：新增 `SqlBuildInterceptor` 接口 + `DbPlugin` 注册中心，`LogicDeleteInterceptor` 从核心代码抽取为可插拔插件，后续可扩展租户隔离、数据权限等。
 - **`DbTable` 一步式操作**：新增 `insert(table, map)` / `insertWithAutoKey()` / `insertOrUpdate()` / `selectById()` / `selectByIds()` / `deleteById()` / `deleteByIds()` 直接执行 API，无需 Wrapper 链式调用；其中 `insertOrUpdate()` 按主键是否为空选择 INSERT/UPDATE，不是数据库原子 Upsert。
 - **`DBDynamic.testConnection(DataSourceProperty)`**：测试数据源连接，不注册到配置池；失败时抛出异常。
-- **`SchemaDialect.listTables()`**：跨数据库通用表列表查询，走 JDBC `DatabaseMetaData.getTables()`，统一 MySQL/PostgreSQL/H2 行为。
-- **`PojoCache.getIdFieldName(String tableName)`**：按表名查询主键字段名（支持 `DB.table` 一步式操作）。
+- **Table 主键元数据**：一步式 `DB.table` 操作由框架内部解析单列主键；该内部缓存类不是稳定业务 API。
 
 #### 🔧 变更（Breaking）
 
 | 变更 | 旧 API (7.0.x) | 新 API (8.0.0) | 说明 |
 |------|----------------|----------------|------|
 | **DbPojo 方法** | `DB.pojo.selectWrapper(User.class)` | `DB.pojo.selectWrapper(User.class)` | 当前 Wrapper API 使用 `selectWrapper` / `updateWrapper` / `deleteWrapper` |
-| | `DB.pojo.selectWrapper(conditionBean)` | 移除 | 请改用 `select(Class)` + 条件链 |
+| | `DB.pojo.selectWrapper(conditionBean)` | 移除 | 请改用 `selectWrapper(Class)` + 条件链 |
 | | `DB.pojo.deleteWrapper(conditionBean)` | 移除 | 同上 |
 | | `DB.pojo.updateWrapper(Class)` | `DB.pojo.updateWrapper(Class)` | 同上 |
 | **DbTable 方法** | `DB.table.selectWrapper("user")` | `DB.table.selectWrapper("user")` | Wrapper API 使用 `selectWrapper` / `insertWrapper` / `updateWrapper` / `deleteWrapper` |
@@ -402,30 +390,25 @@ DB.pojo.selectWrapper(User.class)
 
 - **`IExecutorDelete.execute()` 插件链**：逻辑删除从硬编码改为插件调用，修复 `ignoreLogicDelete` 作用域残留问题（`finally` 块确保清理）。
 - **PojoCache.getLogicDeleteInfo**：不再从 `WrapperBuildUtil.logicDeleteField` 静态变量获取，改为由 `LogicDeleteInterceptor` 构造参数注入。
-- **`NativeJdbcSupport`**：整文件注释掉（已废弃，替换为 `NativeSqlUtil`）。
+- **JDBC 原生辅助路径**：当前主流程使用 `NativeSqlUtil`；`NativeJdbcSupport` 仍保留在源码中，不应写成已删除的公共类。
 
 #### 🗑 移除
 
-- `NativeJdbcSupport.java`（已废弃两年）
 - `DbJdbc.insert/update/delete`（统一为 `execute`）
 - `DbSql.insert/update/delete`（统一为 `execute`）
-- `DbPojo.select(conditionBean)` / `delete(conditionBean)`（重命名为 `select/delete`）
+- `DbPojo.select(conditionBean)` / `delete(conditionBean)`；当前统一使用 `selectWrapper(Class)` / `deleteWrapper(Class)`
 - `SchemaDialect.getTableIndexs()`（未使用，替代方案为 JDBC `DatabaseMetaData.getIndexInfo()`）
-- 测试用废弃实体类：`Department` / `GoodsPrice` / `Room` / `Smoke` / `Vip`
 
 #### 📦 依赖
 
 - 版本号：`7.0.1-4` → `8.0.0`
-- `dlz-kit` → `6.6.5`
-- `dlz-spring` → `6.6.5`
+- `dlz-kit` → `6.7.4`
 - `solon` → `3.0.6`
 
 #### ✅ 测试
 
-- 123 个文件变更，+4130 / −2410 行
-- 新增：`DbTableTest`（42 测试）、`ISqlExecutorTest`（15 测试）、batch 测试（5 文件）、wrapper 测试重构
-- `com.dlz.db.util` 包覆盖从 ~50% 提升至 ~90%
-- `IExecutorQuery` 默认方法覆盖达 100%
+- 2026-08-28 使用 JDK 17、21 执行完整 reactor 的 `mvn -B clean verify -Djacoco.skip=false`，均为 1281 个测试、0 失败、0 错误，且覆盖率门槛通过。
+- 同日使用 JDK 8 执行三个发行库模块的 CI 兼容命令，1281 个测试同样全部通过。命令、模块边界和覆盖率见 [TESTING.md](./TESTING.md)。
 
 ---
 

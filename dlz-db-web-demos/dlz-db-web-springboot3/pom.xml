@@ -18,9 +18,11 @@
 
     <properties>
         <java.version>17</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
         <dlz-db.version>8.0.0</dlz-db.version>
         <sqlite.version>3.45.1.0</sqlite.version>
         <lombok.version>1.18.30</lombok.version>
+        <jacoco.skip>true</jacoco.skip>
     </properties>
 
     <dependencies>
@@ -65,7 +67,7 @@
 
     <build>
         <plugins>
-            <!-- 示例工程永不发布：deploy 跳过 -->
+            <!-- 示例工程不写入本地或远程仓库：跳过 install 和 deploy -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
@@ -85,6 +87,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

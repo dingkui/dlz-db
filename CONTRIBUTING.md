@@ -74,7 +74,7 @@ feat(query): add support for nested OR conditions
 
 Add support for nested OR conditions using lambda expressions.
 This allows complex query logic like:
-.or(o -> o.like(User::getName, "keyword").like(User::getAddress, "keyword"))
+.ors(o -> o.like(User::getName, "keyword").like(User::getAddress, "keyword"))
 
 Closes #123
 ```

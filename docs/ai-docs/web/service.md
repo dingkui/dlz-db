@@ -72,7 +72,7 @@ public class OrderService {
 | 单数据源 | `@Transactional` 注解在方法上（Spring） |
 | 单数据源 | `@Tran` 注解在方法上（Solon） |
 | 编程式事务（跨框架通用） | `DB.tx.run(() -> { ... })` |
-| 事务内多数据源 | `DB.tx.run("datasourceName", () -> { ... })` |
+| 指定单个数据源的本地事务 | `DB.tx.run("datasourceName", () -> { ... })` |
 | 事务有返回值 | `Long id = DB.tx.run(() -> { insert(); return id; });` |
 
 ```java
@@ -130,5 +130,5 @@ List<User> r = DB.sql.selectWrapper("key.user.find").addPara("status", 1).queryL
 
 // 标量查询
 String name = DB.pojo.selectWrapper(User.class).eq(User::getId, 1).queryStr();
-Long count = DB.pojo.selectWrapper(User.class).queryLong();
+long count = DB.pojo.selectWrapper(User.class).count();
 ```

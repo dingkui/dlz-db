@@ -15,9 +15,9 @@
 | `QueryWrapper<T>` | 条件构造器（Lambda） | `DB.pojo.selectWrapper(...).eq(...)` |
 | `@Select` / `@Update` 注解 | `DB.jdbc` / `DB.sql` | 原生 SQL 或预设 SQL |
 | `Page<T>`（MP） | `Page<T>`（DLZ-DB） | 分页用法类似 |
-| `@TableName` | `@TableName` | **保留**，用法一致 |
-| `@TableId` | `@TableId` | **保留**，用法一致 |
-| `@TableField` | `@TableField` | **保留**，用法一致 |
+| MP `@TableName` | DLZ-DB `@TableName` | 含义接近，需替换 import |
+| MP `@TableId` | DLZ-DB `@TableId` | 需替换 import 并核对 `IdType` |
+| MP `@TableField` | DLZ-DB `@TableField` | 需替换 import，只保留 DLZ-DB 支持的属性 |
 | `@TableLogic` | 自动检测 `deleted` 字段 | 无需注解，有字段即启用 |
 
 ---
@@ -85,11 +85,11 @@ DB.pojo.deleteWrapper(User.class).eq(User::getId, 1).execute();
 
 ---
 
-## 四、保留清单
+## 四、可保留的结构
 
-以下可直接保留：
+实体类和字段可以保留，但注解 import 必须从 `com.baomidou.mybatisplus.annotation.*` 替换为 `com.dlz.db.core.anno.*`：
 
-- [ ] `@TableName`、`@TableId`、`@TableField` 注解（用法一致）
+- [ ] `@TableName`、`@TableId`、`@TableField` 的语义（替换 import 并核对属性）
 - [ ] Entity 实体类（字段不变）
 - [ ] `deleted` 字段（逻辑删除自动启用）
 - [ ] 数据库连接配置（DataSource 相关）

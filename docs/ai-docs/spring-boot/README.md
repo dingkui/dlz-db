@@ -14,14 +14,7 @@
 
 ## 配置
 
-### DlzDbConfig.java（必须）
-
-```java
-@Configuration
-@EnableConfigurationProperties({SpringDlzDbProperties.class})
-public class DlzDbConfig extends SpringDlzDbConfig {
-}
-```
+无需编写 `DlzDbConfig` 或继承框架配置类。Starter 会自动绑定 `dlz.db.*` 并使用 Spring 容器中的 `DataSource` 初始化。
 
 ### application.yml
 

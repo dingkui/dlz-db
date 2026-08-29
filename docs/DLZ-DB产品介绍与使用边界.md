@@ -110,16 +110,16 @@ DB.pojo.selectWrapper(User.class)
 
 该能力覆盖比较、模糊匹配、范围、集合和空值条件。
 
-### 3.6 选项与拦截器提供可扩展执行链
+### 3.6 选项与 SQL 构建拦截 SPI
 
-写入空值策略、删除模式、逻辑删除、字段处理、数据源路由和执行生命周期等能力通过选项点和拦截器扩展。当前典型能力包括：
+8.0 已接线的 Option Point 用于控制 INSERT/UPDATE 的 null 字段策略、补入 INSERT 字段、合并 WHERE 条件、删除模式、已删数据查询和查询锁。当前典型能力包括：
 
 - `InsertOption.INCLUDE_NULL` / `UpdateOption.INCLUDE_NULL`：写入空字段；
 - `DeleteOption.PHYSICAL`：强制物理删除；
-- `LogicDeleteInterceptor`：对删除和查询条件进行逻辑删除处理；
-- 执行前、执行后和执行失败回调点。
+- `LogicDeleteInterceptor`：通过 `WherePoint` / `InsertFieldPoint` / `LogicDeleteValuePoint` 处理逻辑删除条件、插入默认值和 DELETE 改写；
+- `SqlBuildInterceptor`：按操作和表名供给默认 `DbOption`，调用点的同 key Option 优先。
 
-这套机制适合扩展租户条件、审计字段、数据权限等横切能力，但框架不会自动替业务决定租户模型和权限规则。
+`WherePoint` 可用于实现租户或数据权限条件，`InsertFieldPoint` 可补入插入字段。当前没有对外接线数据源路由、UPDATE 字段填充、执行前/后/失败回调等 Option Point，不应将开发路线图写成已有能力。框架也不会自动替业务决定租户模型和权限规则。
 
 ### 3.7 方言采用注册机制
 
@@ -128,6 +128,8 @@ DB.pojo.selectWrapper(User.class)
 ```java
 DB.config.registerDialect(new OceanBaseDialect());
 ```
+
+`DB.config` 在完成框架初始化后会变为不可变，因此自定义方言或插件必须在初始化前注册。在自动装配环境中，需把这个时序纳入集成设计，不要在应用已启动后再调用。
 
 内置方言包括：
 
@@ -153,7 +155,7 @@ DbDialect
 
 ### 3.8 SQL、参数、结果与调用位置形成完整链路
 
-DLZ-DB 统一处理 `?` 位置参数与 `#{name}` 命名参数、Map/标量/实体/分页结果映射、执行耗时与慢 SQL 日志、调用方定位、批量执行批次与失败位置。复杂 SQL 由开发者掌握，重复的参数绑定、结果转换和排障信息由框架统一提供。
+DLZ-DB 统一处理 `?` 位置参数与 `#{name}` 命名参数、Map/标量/实体/分页结果映射、执行耗时与慢 SQL 日志、调用方信息和批量失败位置。启用 `show-caller` 时调用方信息写入 MDC，是否出现在日志中取决于应用的日志 pattern。复杂 SQL 由开发者掌握，重复的参数绑定、结果转换和排障信息由框架统一提供。
 
 ### 3.9 核心 API 与运行框架解耦
 
@@ -597,7 +599,7 @@ Page<User> page = DB.jdbc.page(
 
 `DB.sql` 当前未提供快捷 `page` 方法，分页应使用 `selectWrapper(...).page(...).queryPage()`。
 
-分页适合后台列表和中小规模数据集。复杂 JOIN、GROUP BY、DISTINCT、UNION 的 count SQL 需要单独确认；深分页和大表导出应考虑基于主键或游标的业务 SQL。
+分页适合后台列表和中小规模数据集。当前原生 SQL 的自动 count 改写会查找大写的 ` FROM `，因此 `DB.jdbc.count/page` 的 SQL 应使用大写 `FROM` 并保持简单 SELECT 形状。复杂 JOIN、GROUP BY、DISTINCT、UNION 的 count SQL 需要单独确认；深分页和大表导出应考虑基于主键或游标的业务 SQL。
 
 ## 13. 数据源管理
 
@@ -682,11 +684,7 @@ dlz:
       slow-sql-threshold: 1000
 ```
 
-```java
-@Configuration
-public class DlzDbConfig extends SpringDlzDbConfig {
-}
-```
+引入 Starter 并配置数据源后自动装配，无需编写或继承 DLZ-DB 配置类。
 
 Solon 依赖：
 
@@ -698,18 +696,24 @@ Solon 依赖：
 </dependency>
 ```
 
-Solon 数据源配置：
+Solon 数据源：
 
-```yaml
-datasource:
-  default:
-    jdbcUrl: jdbc:mysql://localhost:3306/app
-    username: root
-    password: password
-    driverClassName: com.mysql.cj.jdbc.Driver
+```java
+@Configuration
+public class DataSourceConfig {
+    @Bean
+    public DataSource dataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/app");
+        config.setUsername("root");
+        config.setPassword("password");
+        return new HikariDataSource(config);
+    }
+}
 ```
 
-插件通过 Solon SPI 加载，`DB.pojo`、`DB.table`、`DB.jdbc`、`DB.sql`、`DB.batch`、`DB.ds`、`DB.tx`、`DB.config` 等门面 API 保持一致。
+插件通过 Solon SPI 加载，但必须由应用或其他插件提供 `DataSource` Bean。`DB.pojo`、`DB.table`、`DB.jdbc`、`DB.sql`、`DB.batch`、`DB.ds`、`DB.tx`、`DB.config` 等 core 门面 API 在两种框架中保持一致。
 
 ## 16. 逻辑删除
 
@@ -793,6 +797,8 @@ String sql = "SELECT * FROM user WHERE name = '" + userName + "'";
 - `.sql(...)` 片段；
 - `in("id", "sql:...")` 子查询。
 
+Wrapper 的 UPDATE/DELETE 必须带明确的业务条件。当最终 WHERE 完全为空时，当前构建器会改成 `WHERE false`；但逻辑删除插件注入的 `deleted = 0` 也是 WHERE 条件，无业务条件的操作仍可能命中所有未删除数据。不应将这个兜底视为防误更新/误删的强保证。
+
 ## 20. 性能和资源边界
 
 DLZ-DB 底层使用 JDBC，常规单次 CRUD 的主要耗时通常来自数据库、网络和连接池，而不是 Wrapper 本身。
@@ -805,7 +811,7 @@ DLZ-DB 底层使用 JDBC，常规单次 CRUD 的主要耗时通常来自数据�
 - 深分页考虑基于主键的业务分页；
 - 复杂分页要确认 count SQL 的正确性和性能；
 - 生产环境谨慎开启结果日志；
-- `show-caller` 和完整 SQL 日志需要结合日志量评估。
+- `show-caller` 会采集调用栈并写入 MDC，完整 SQL 日志会展开参数；两者都需要结合开销、日志量和 pattern 配置评估。
 
 当前没有流式、Cursor、响应式或异步数据库 API，因此不适合作为大规模导出、ETL 或 R2DBC 访问层的直接替代品。
 
@@ -866,7 +872,7 @@ return DB.ds.use(dataSource, () ->
 ```java
 DB.tx.run(() -> {
     BatchResult result = DB.batch.insert(users, 500);
-    if (result.hasFailure()) {
+    if (!result.isSuccess()) {
         throw new IllegalStateException("批量写入失败");
     }
 });
