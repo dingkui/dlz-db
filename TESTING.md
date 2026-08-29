@@ -1,82 +1,92 @@
-# DLZ-DB 8.0 测试与构建指南
+# DLZ-DB 测试与构建指南
 
-**当前版本**：8.0.0
-**最后核对**：2026-08-28
+本文只维护可复现的验证方式。当前版本、编译目标、覆盖率门槛和 CI 矩阵分别以 POM 与 GitHub Actions 工作流为事实源，不在文档中复制某次运行的测试数量或覆盖率快照。
 
-## 建议的验证命令
+## JDK 策略
 
-### 库模块
-
-只验证 core、Spring Boot Starter 和 Solon Plugin：
-
-```bash
-mvn -B -pl dlz-db-core,dlz-db-spring-boot-starter,dlz-db-solon-plugin -am clean verify -Denforcer.skip=true
-```
-
-这三个库模块通过 `maven.compiler.release=8` 生成 Java 8 兼容产物。JDK 8 兼容任务只验证这些库模块，并跳过面向完整 reactor 的 JDK 17 Enforcer 规则。
-
-### 根聚合项目与 Demo
-
-根 POM 包含 `dlz-db-web-demos`，其中 Spring Boot 3 Demo 需要 JDK 17。因此聚合验证使用 JDK 17 或更高版本：
-
-```bash
-mvn -B clean verify -Djacoco.skip=false
-```
-
-2026-08-28 本地复现 CI 矩阵的结果：
-
-| 环境 | 范围 | 结果 |
-|---|---|---|
-| JDK 8u66 | core、Spring Boot Starter、Solon Plugin | 1281 个测试，0 失败、0 错误 |
-| JDK 17.0.10 | 完整 reactor（含三个 Demo） | 构建成功，1281 个测试，覆盖率门槛通过 |
-| JDK 21.0.2 | 完整 reactor（含三个 Demo） | 构建成功，1281 个测试，覆盖率门槛通过 |
-
-JDK 17 覆盖率快照为：core 行 81.97% / 分支 73.64%，Spring 行 90.09% / 分支 75%，Solon 行 85% / 分支 68.18%；均高于 POM 的行 70%、分支 60% 门槛。这些结果是当前工作树的本地快照，远端 CI 仍是合并前的最终依据。
-
-### 单模块与单测试
-
-```bash
-mvn -B -pl dlz-db-core test
-mvn -B -pl dlz-db-spring-boot-starter test
-mvn -B -pl dlz-db-solon-plugin test
-
-mvn -B -pl dlz-db-core -Dtest=DbPojoTest test
-mvn -B -pl dlz-db-core -Dtest=TransactionTest test
-```
-
-## JDK 兼容策略
-
-| 范围 | 目标/SDK | 建议验证环境 |
+| 范围 | 发行目标 | 构建环境 |
 |---|---|---|
 | `dlz-db-core` | Java 8 | JDK 8、17、21 |
 | `dlz-db-spring-boot-starter` | Java 8 | JDK 8、17、21 |
 | `dlz-db-solon-plugin` | Java 8 | JDK 8、17、21 |
 | Spring Boot 2 Demo | Java 8 | JDK 8 或更高 |
-| Solon 3 Demo | Java 8 | JDK 8 或更高 |
+| Solon Demo | Java 8 | JDK 8 或更高 |
 | Spring Boot 3 Demo | Java 17 | JDK 17 或更高 |
-| 整个根聚合项目 | 包含 Boot 3 Demo | JDK 17 或更高 |
+| 根聚合项目 | 包含 Spring Boot 3 Demo | JDK 17 或更高 |
 
-这意味着“库支持 Java 8”和“根目录包含只能在 JDK 17+ 构建的 Demo”可以同时成立。CI 若要使用 JDK 8 验证，应只选择三个库模块；不应在 JDK 8 job 中聚合构建 Spring Boot 3 Demo。
+“发行库兼容 Java 8”和“根聚合构建要求 JDK 17+”并不冲突：前者描述发布字节码和 API 目标，后者由聚合项目中的 Spring Boot 3 Demo 决定。
 
-## GitHub Actions 验证矩阵
+## 常用命令
 
-`.github/workflows/build-and-test.yml` 将构建拆成两类：
+### 验证单个模块
 
-1. JDK 17/21 执行完整 reactor 的 `clean verify`，包含三个 Demo，并通过生命周期生成 JaCoCo 报告。
-2. JDK 8 仅执行 core、Spring Boot Starter 和 Solon Plugin 的测试，验证发行库的 Java 8 兼容性；不聚合构建 Spring Boot 3 Demo。
+```bash
+mvn -B -pl dlz-db-core test
+mvn -B -pl dlz-db-spring-boot-starter test
+mvn -B -pl dlz-db-solon-plugin test
+```
 
-CI 不再直接调用 `jacoco:report`，避免该目标传播到没有配置 JaCoCo 的 Demo 模块。
+执行单个测试类：
 
-## 测试资源
+```bash
+mvn -B -pl dlz-db-core -Dtest=DbPojoTest test
+```
 
-- core 集成测试使用 SQLite，基类为 `BaseDBTest`。
-- Spring Boot 和 Solon 测试也已在当前本地构建中自包含运行，不要再将它们描述为“必须外部 MySQL/Redis 才能测试”。
-- Surefire 报告位于各模块 `target/surefire-reports/`。
+### 验证三个发行库模块
 
-## 覆盖率与质量脚本
+在 JDK 17 或更高版本执行：
 
-`reports/` 中的 `.bat` 脚本是历史工具，部分命令与当前 POM 的默认 skip/profile 设置不一致。在这些脚本重新校验前，发行验证以上述 Maven `verify` 命令为准，不把未生成的 JaCoCo/SpotBugs 报告当成已完成检查。
+```bash
+mvn -B -pl dlz-db-core,dlz-db-spring-boot-starter,dlz-db-solon-plugin -am clean verify
+```
 
-## 历史报告
+复现 CI 的 JDK 8 兼容任务：
 
-`reports/2026-05-17/` 是 7.0.0 时期的历史快照，其 605 个测试、覆盖率和代码行数不代表当前 8.0.0 工作树。该目录只用于历史追溯。
+```bash
+mvn -B clean test \
+  -pl dlz-db-core,dlz-db-spring-boot-starter,dlz-db-solon-plugin \
+  -am \
+  -Denforcer.skip=true \
+  -Djacoco.skip=true \
+  -Dspotbugs.skip=true
+```
+
+### 验证完整聚合项目
+
+使用 JDK 17 或更高版本：
+
+```bash
+mvn -B clean verify -Djacoco.skip=false
+```
+
+该命令构建三个发行库模块和 Demo，并在启用 JaCoCo 时生成报告、执行 POM 中配置的覆盖率检查。
+
+## CI 验证
+
+`.github/workflows/build-and-test.yml` 当前包含两类任务：
+
+1. JDK 17、21 验证完整 reactor，并生成 JaCoCo 报告。
+2. JDK 8 只验证三个发行库模块，不聚合构建 Spring Boot 3 Demo。
+
+远端 CI 是合并前的最终依据。本地构建成功不能替代其他 JDK 和干净环境中的验证。
+
+## 测试资源与报告
+
+- core 集成测试使用 SQLite，公共测试基类为 `BaseDBTest`。
+- Spring Boot 和 Solon 测试均应保持自包含，不应依赖开发者本机的 MySQL、Redis 或私有配置。
+- Surefire 报告位于各模块的 `target/surefire-reports/`。
+- JaCoCo 报告位于各发行模块的 `target/reports/jacoco/`。
+- 覆盖率最低要求读取根 POM 中的 `jacoco.line.coverage` 和 `jacoco.branch.coverage`。
+
+`reports/` 中的批处理脚本属于辅助工具。发行判断以本页列出的 Maven 命令、根 POM 和 CI 工作流为准。
+
+## 变更对应的最低验证
+
+| 修改类型 | 最低验证 |
+|---|---|
+| 文档与注释 | 链接、代码围栏和示例 API 检查 |
+| core 查询、写入或映射 | core 单元测试与相关集成测试 |
+| Spring Boot 自动配置 | Starter 测试和至少一个 Boot Demo 构建 |
+| Solon 插件 | Solon Plugin 测试和 Solon Demo 构建 |
+| 公共 API 或 SPI | 完整构建、兼容性检查和文档同步 |
+| POM、插件或 CI | JDK 8 库任务及 JDK 17/21 完整任务 |

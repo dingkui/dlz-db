@@ -1,136 +1,74 @@
 # DLZ-DB
 
-DLZ-DB is a lightweight Java database framework designed for type-safe Lambda APIs and runtime dynamic multi-datasource management.
+> 本文件只帮助 AI 快速了解项目全貌和找到正确文档，不是 API 编程手册。
 
-## Project Overview
+## 项目身份
 
-- **Version**: 8.0.0
-- **License**: Apache License 2.0
-- **Repository**: https://github.com/dingkui/dlz-db
-- **Maven Central**: top.dlzio:dlz-db-core, dlz-db-spring-boot-starter, dlz-db-solon-plugin
-- **Java Version**: core/Spring Boot 2/Solon artifacts target Java 8; Spring Boot 3 demo requires Java 17+
+- 当前源码目标版本：8.0.0
+- 定位：轻量 Java 数据库访问框架，以类型安全 Lambda、显式链式调用和运行时动态多数据源为核心
+- 许可证：Apache License 2.0
+- 仓库：https://github.com/dingkui/dlz-db
+- Maven 坐标：
+  - `top.dlzio:dlz-db-core:8.0.0`
+  - `top.dlzio:dlz-db-spring-boot-starter:8.0.0`
+  - `top.dlzio:dlz-db-solon-plugin:8.0.0`
+- 发行库产物兼容 Java 8；包含 Spring Boot 3 Demo 的完整 reactor 需要 JDK 17+
 
-## Core Features
+## 解决的问题
 
-1. **Type-safe Lambda API**: Chain-based query builder with method references
-2. **Runtime Dynamic Datasource**: Switch datasources at runtime without annotations
-3. **Zero Mapper/XML**: Direct database operations without DAO layer
-4. **SQL Logging with Caller Location**: Logs show exact code location for debugging
-5. **Multi-framework Support**: Spring Boot and Solon integration
-6. **AI-friendly**: All operations converge to `DB.` entry point with consistent patterns
+DLZ-DB 将数据库操作收敛到 `DB.*` 门面，减少 Mapper、DAO 和 XML 样板。它同时提供实体 CRUD、动态表操作、原生 SQL、预设 SQL、批量写入、运行时数据源切换和编程式事务。框架强调“显式优于隐式”：数据源作用域、条件、事务和执行终点都直接体现在代码中。
 
-## Quick API Reference
+## 模块
 
-### Main Entry Points
+| 模块 | 职责 |
+|---|---|
+| `dlz-db-core` | 核心 API、Wrapper、方言、事务和数据源能力，不依赖 Spring |
+| `dlz-db-spring-boot-starter` | Spring Boot 自动装配与配置绑定 |
+| `dlz-db-solon-plugin` | Solon SPI 插件与配置集成 |
+| `dlz-db-web-demos` | Spring Boot 2、Spring Boot 3、Solon 3 示例；不属于发行库 API |
 
-- `DB.pojo` - CRUD with Bean entities (preferred)
-- `DB.table` - Dynamic table names without Bean
-- `DB.jdbc` - Simple SQL with `?` placeholders
-- `DB.sql` - Preset/complex SQL with `#{key}` placeholders
-- `DB.batch` - Batch insert/update/JDBC execution
-- `DB.ds` - Datasource switching and management
-- `DB.tx` - Programmatic transactions
-- `DB.config` - Database configuration
+## 能力地图
 
-### Condition Methods
+| 门面 | 职责 |
+|---|---|
+| `DB.pojo` | 有实体类时的首选 CRUD |
+| `DB.table` | 无实体类或动态表名操作 |
+| `DB.jdbc` | 使用 `?` 参数的临时原生 SQL |
+| `DB.sql` | 使用命名参数的预设、复杂、可复用 SQL |
+| `DB.batch` | Pojo、表数据和 JDBC 批量写入 |
+| `DB.ds` | 数据源注册、查询、切换和移除 |
+| `DB.tx` | 单数据源本地编程式事务 |
+| `DB.config` | 初始化期数据库配置 |
 
-All methods support three-parameter form: `eq(boolean condition, field, value)`
-- `eq / ne / gt / ge / lt / le` - Comparison operators
-- `isNull / isNotNull` - Null checks
-- `in / notIn` - IN operators (value must be an array/Collection, CSV string, or "sql:subquery")
-- `between / notBetween` - Range operators
-- `like / likeLeft / likeRight / notLike` - LIKE variants
+## API 边界与兼容原则
 
-### Return Value Rules
+- 稳定业务 API 以 `docs/6.参考手册/6.4-API-SPI与实现边界.md` 列出的入口及参考手册明确展示的成员为准；主要位于 `com.dlz.db`、`com.dlz.db.wrapper`、`com.dlz.db.model`、`com.dlz.db.option` 和 `com.dlz.db.core.anno`。
+- 框架扩展 SPI 仅面向适配器、方言和插件开发；普通业务代码不需要使用。
+- `com.dlz.db.internal.*` 是实现详情，不是稳定 API，业务代码和生成代码不得依赖。
+- 8.0 业务 API 按稳定接口维护；兼容版本以新增能力为主。必须发生破坏性变化时，应通过大版本或迁移说明处理。
+- Wrapper 以及 `Sort/Page` 等模型的少量继承签名仍可能暴露 internal 类型，这不构成使用授权。
 
-- `queryBean()` → Single Bean
-- `queryBeanList()` → List<Bean>
-- `queryBeanPage()` → Page<Bean>
-- `queryOne()` → strict single ResultMap; null when absent, exception when multiple
-- `queryFirst()` → first ResultMap; null when absent
-- `queryList()` → List<ResultMap>
-- `queryOne(Class)` → strict single specified type
-- `queryFirst(Class)` → first specified type
-- Update/delete Wrapper operations must end with `.execute()`; direct CRUD methods execute immediately
+## AI 文档路由
 
-### Code Examples
+| 任务 | 读取 |
+|---|---|
+| 了解项目全貌、模块和边界 | 本文件 |
+| 生成或修改任何 DLZ-DB 代码 | `docs/5.AI辅助/dlz-db-速读.md` |
+| 判断还需加载哪些 AI 文档 | `docs/5.AI辅助/README.md` |
+| 配置 AI 工具的项目级加载规则 | `docs/5.AI辅助/5.1-AI工具配置指南.md` |
+| Spring Boot 集成 | `docs/5.AI辅助/1.框架差异/spring-boot.md` |
+| Solon 集成 | `docs/5.AI辅助/1.框架差异/solon.md` |
+| MyBatis / MyBatis-Plus 迁移 | `docs/5.AI辅助/2.任务指南/migration-mybatis.md` |
+| Web 分层方案 | `docs/5.AI辅助/2.任务指南/web-layer.md` |
+| JSONMap、ResultMap 深度取值 | `docs/5.AI辅助/3.按需能力/dlz-kit.md` |
+| 面向人的完整教程 | `docs/README.md` |
+| 当前公共 API 清单 | `docs/6.参考手册/6.1-公共API.md` |
+| 架构与源码维护 | `docs/8.维护者文档/` |
 
-```java
-// Query
-User user = DB.pojo.selectWrapper(User.class)
-    .eq(User::getId, 1)
-    .queryBean();
+AI 不应一次加载全部文档。写数据库代码时，以 `dlz-db-速读.md` 为唯一必读编程契约，再按任务加载必要的少量专题文件；单一任务通常只需 1 个，组合任务可以加载多个。
 
-List<User> users = DB.pojo.selectWrapper(User.class)
-    .eq(User::getStatus, 1)
-    .like(User::getName, "Zhang")
-    .queryBeanList();
+## 构建与验证
 
-// Insert
-DB.pojo.insert(user);
-
-// Update
-DB.pojo.updateWrapper(User.class)
-    .set(User::getName, "New Name")
-    .eq(User::getId, id)
-    .execute();
-
-// Delete
-DB.pojo.deleteWrapper(User.class)
-    .eq(User::getId, id)
-    .execute();
-
-// Batch
-DB.batch.insert(users);
-
-// Transaction
-DB.tx.run(() -> {
-    DB.pojo.insert(order);
-    DB.pojo.insert(orderItem);
-});
-
-// Dynamic Datasource
-DB.ds.use("slave", () ->
-    DB.pojo.selectWrapper(User.class).queryBeanList()
-);
-```
-
-## Hard Constraints
-
-1. No need to write your own Mapper/DAO/XML; framework-provided Wrapper classes are public chain APIs
-2. Placeholder separation: `DB.jdbc` uses `?`, `DB.sql` uses `#{key}`
-3. Query columns use `.select(...)` on the query wrapper, for example `DB.pojo.selectWrapper(User.class).select(User::getId)`
-4. LIKE uses `like()`/`likeLeft()`/`likeRight()`/`notLike()`
-5. `DB.pojo.insert(entity)` executes immediately and returns the entity with generated key populated; Table insert can use `insertWithAutoKey()`
-6. Physical delete: use PojoDelete `.physical()` or pass `DeleteOption.PHYSICAL` to a direct delete API
-7. `in()` cannot accept a scalar value; use an array/Collection, CSV string, or "sql:subquery"
-8. Batch operations use `DB.batch.insert(list)`, not `insertBatch()`
-
-## Entity Conventions
-
-- Table name: CamelCase to snake_case (User.class → user). Custom: `@TableName("t_user")`
-- Field mapping: `User::getUserName` → `user_name`. Custom: `@TableField("email_address")`
-- Primary key: `@TableId`
-- Logical delete: Bean with `deleted` field auto-enables (query adds `deleted = 0`, DELETE converts to UPDATE)
-
-## Documentation
-
-- **AI Quick Reference**: docs/第05章-AI辅助/5.1-AI速读.md (Chinese)
-- **AI Tool Configuration**: docs/第05章-AI辅助/5.2-AI工具配置指南.md
-- **Full Documentation**: docs/ directory (Chinese)
-- **README**: README.md (Chinese)
-
-## Testing
-
-- Multi-module testing: core, spring-boot-starter, solon-plugin
-- See `TESTING.md` for the dated local verification result and current CI caveats
-
-## Build and Release
-
-- Maven coordinates: `top.dlzio:dlz-db-core`, `top.dlzio:dlz-db-spring-boot-starter`, and `top.dlzio:dlz-db-solon-plugin`
-- Multi-module architecture: dlz-db-core, dlz-db-spring-boot-starter, dlz-db-solon-plugin
-- Zero Spring dependency in core module
-
-## Design Philosophy
-
-Explicit > Implicit. Use explicit lambda and chain calls against implicit annotations and proxies. Control flow visible in code is truly reliable control flow.
+- 完整 reactor：JDK 17+ 执行 `mvn -B clean verify`。
+- Java 8 兼容验证只构建三个发行库模块，复现命令和 CI 矩阵见 `TESTING.md`。
+- 当前源码与 POM 是最终事实来源；计划文档和历史报告不能作为现行 API。

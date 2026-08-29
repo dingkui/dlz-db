@@ -1,148 +1,105 @@
-# Contributing to DLZ-DB
+# 参与贡献
 
-Thank you for your interest in contributing to DLZ-DB! This document provides guidelines for contributing to the project.
+感谢你关注 DLZ-DB。本文说明提交问题、代码和文档时需要遵循的约定。
 
-## Code of Conduct
+## 沟通原则
 
-- Be respectful and constructive in all interactions
-- Focus on what is best for the community
-- Show empathy towards other community members
+- 尊重不同观点，围绕事实、代码和可复现结果讨论。
+- 提交内容尽量小而聚焦，不混入无关格式化或重构。
+- 安全问题不要公开披露利用细节，请先联系维护者。
 
-## How to Contribute
+## 提交问题
 
-### Reporting Bugs
+提交缺陷时请提供：
 
-Before creating bug reports, please check the existing issues to avoid duplicates. When creating a bug report, include:
+- DLZ-DB、Java、数据库和运行框架版本。
+- 最小复现代码、建表语句和必要配置。
+- 预期行为、实际行为及完整异常栈。
+- 是否能在最新的 `8.0.x` 版本复现。
 
-- **Title**: Clear and descriptive summary of the issue
-- **Description**: Detailed explanation of the problem
-- **Reproduction Steps**: Steps to reproduce the behavior
-- **Expected Behavior**: What you expected to happen
-- **Actual Behavior**: What actually happened
-- **Environment**: 
-  - DLZ-DB version
-  - Java version
-  - Database type and version
-  - Operating system
-- **Code Sample**: Minimal code sample that reproduces the issue
-- **Logs**: Relevant error logs or stack traces
+功能建议应说明真实使用场景、现有方案的不足以及期望的 API 形式。DLZ-DB 8.0 的稳定公共 API 原则上只做兼容新增；涉及删除、改名或修改签名的建议需要说明无法兼容演进的原因。
 
-### Suggesting Enhancements
+## 开发环境
 
-Enhancement suggestions are tracked as GitHub issues. When suggesting an enhancement:
+- 完整聚合构建需要 JDK 17 或更高版本。
+- 三个发行库模块生成 Java 8 兼容产物。
+- 使用仓库自带的 Maven 配置，不在提交中引入本机路径或私有仓库。
 
-- Use a clear and descriptive title
-- Provide a detailed description of the proposed enhancement
-- Explain the use case and why it would be useful
-- Consider including example code or mockups if applicable
+完整命令和 JDK 矩阵见 [TESTING.md](./TESTING.md)。
 
-### Pull Requests
+## 开发流程
 
-#### Development Workflow
+1. 从主分支创建独立分支。
+2. 修改代码并补充对应测试。
+3. 更新受影响的中文文档。
+4. 执行与修改范围相称的 Maven 验证。
+5. 提交 Pull Request，说明动机、方案、兼容性和验证结果。
 
-1. **Fork the repository** and create your branch from `main`
-2. **Make your changes** following the coding standards
-3. **Write tests** for your changes
-4. **Ensure all tests pass** locally
-5. **Commit your changes** with clear commit messages
-6. **Push to your fork** and submit a pull request
+推荐使用 Conventional Commits：
 
-#### Commit Message Guidelines
-
-Follow conventional commit format:
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
+```text
+feat(query): 增加新的条件操作符
+fix(batch): 修复空批次统计结果
+docs(ai): 更新 AI 编程约束
 ```
 
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting, etc.)
-- `refactor`: Code refactoring
-- `test`: Adding or updating tests
-- `chore`: Build process or auxiliary tool changes
+## 代码约定
 
-**Example:**
+- 沿用相邻源码的命名、格式和异常处理风格。
+- 新功能必须有测试；修复缺陷应先覆盖可复现场景。
+- 不为一次调用创建无必要的抽象层，也不禁止业务项目按需要使用 Service、Repository 或 DAO。
+- 条件 API 优先保持 `(condition, field, value)` 的一致形式。
+- `DB.pojo`、`DB.table` 的直接 CRUD 会立即执行；只有 Wrapper 写操作需要以 `.execute()` 终止。
+- `DB.jdbc` 使用 `?` 参数，`DB.sql` 使用 `#{name}` 参数。`${name}` 只能用于可信 SQL 片段，不能接收用户输入。
+
+## API、SPI 与实现边界
+
+- 稳定公共 API 在 `com.dlz.db` 的公开入口及参考手册列出的类型中维护。
+- SPI 是明确允许第三方实现或注册的扩展契约，新增方法必须考虑已有实现者的兼容性。
+- `com.dlz.db.internal` 是实现包，不得出现在用户文档、示例以及新的 public/protected 签名中。
+- 对 8.0 稳定 API 的修改应保持源码和二进制兼容；优先新增重载、默认方法或新类型。
+- 改动公共 API 时，同时更新公共 API 参考、AI 速读文档和迁移说明，并增加兼容性测试。
+
+详细边界以 [API、SPI 与实现边界](./docs/6.参考手册/6.4-API-SPI与实现边界.md) 为准。
+
+## 测试要求
+
+提交前至少执行受影响模块的测试：
+
+```bash
+mvn -B -pl dlz-db-core test
+mvn -B -pl dlz-db-spring-boot-starter test
+mvn -B -pl dlz-db-solon-plugin test
 ```
-feat(query): add support for nested OR conditions
 
-Add support for nested OR conditions using lambda expressions.
-This allows complex query logic like:
-.ors(o -> o.like(User::getName, "keyword").like(User::getAddress, "keyword"))
+准备合并或发布时，应在 JDK 17 或更高版本执行：
 
-Closes #123
+```bash
+mvn -B clean verify -Djacoco.skip=false
 ```
 
-#### Code Style
+新增功能不得降低 POM 中配置的覆盖率门槛。涉及 Spring Boot、Solon、事务、数据源或配置绑定的改动，需要增加相应集成测试。
 
-- Follow existing code style in the project
-- Use meaningful variable and method names
-- Add comments for complex logic
-- Keep methods focused and concise
-- Maximum line length: 120 characters
+发布前还必须在干净的本地仓库中确认所有非 reactor 依赖都能从公开发行仓库解析，尤其是 POM 锁定的 `top.dlzio:dlz-kit` 版本；依赖版本尚未发布时，必须先发布依赖，再发布 DLZ-DB。发布完成后再核对 Maven Central 中的坐标、POM 和传递依赖。
 
-#### Testing
+## 文档约定
 
-- Write unit tests for new features
-- Write integration tests for bug fixes
-- Ensure test coverage does not decrease
-- All tests must pass before submitting PR
+- 当前只维护中文文档；有明确英文用户需求后再建立英文版本。
+- [docs/README.md](./docs/README.md) 是人类文档总入口。
+- [llms.txt](./llms.txt) 只负责 AI 快速了解项目全貌和路由。
+- [dlz-db-速读.md](./docs/5.AI辅助/dlz-db-速读.md) 是唯一 AI 编程规范，其他页面不得复制整套约束。
+- 版本、依赖、Java 目标、配置项、API 签名和测试结果应回到对应事实源核对，不手工维护多份完整清单。
+- 文档移动优先使用 `git mv`；拆分或合并后必须检查全仓链接。
 
-#### Pull Request Guidelines
+更完整的维护规则见 [文档维护规范](./docs/8.维护者文档/8.3-文档维护规范.md)。
 
-- Fill out the PR template completely
-- Link related issues
-- Keep PRs focused and small if possible
-- Ensure CI checks pass
-- Respond to review feedback in a timely manner
+## Pull Request 检查清单
 
-## Coding Standards
+- [ ] 修改范围与标题一致，没有夹带无关改动。
+- [ ] 新增或修改的行为有自动化测试。
+- [ ] 相关模块测试和必要的完整构建已通过。
+- [ ] 公共 API 保持兼容，没有泄漏 `internal` 类型。
+- [ ] 中文文档、示例和链接已经同步。
+- [ ] 没有提交密钥、账号、本机配置、构建产物或历史快照。
 
-### DLZ-DB Specific Guidelines
-
-When contributing to DLZ-DB, follow these framework-specific conventions:
-
-1. **Entry Points**: All database operations should use `DB.pojo`, `DB.table`, `DB.jdbc`, or `DB.sql`
-2. **Lambda Method References**: Use method references for field names (e.g., `User::getName`)
-3. **Three-Parameter Form**: Condition methods should support `(condition, field, value)` form
-4. **Return Values**: Follow the naming convention:
-   - `queryBean()` → Single Bean
-   - `queryBeanList()` → List<Bean>
-   - `queryOne()` → ResultMap
-   - Write operations must end with `.execute()`
-5. **Placeholders**: 
-   - `DB.jdbc` uses `?` placeholders
-   - `DB.sql` uses `#{key}` placeholders
-6. **No Mapper/DAO**: Do not create Mapper interfaces or DAO classes
-
-### Java Guidelines
-
-- Use Java 8+ features appropriately
-- Prefer immutable objects where possible
-- Use Optional for nullable return values
-- Follow Java naming conventions
-
-## Documentation
-
-- Update documentation for any API changes
-- Add examples for new features
-- Keep documentation in sync with code changes
-- Documentation is in Chinese, but English documentation is welcome
-
-## Getting Help
-
-If you need help:
-
-- Check the [documentation](./docs/)
-- Search existing [issues](https://github.com/dingkui/dlz-db/issues)
-- Create a new issue with the `question` label
-
-## License
-
-By contributing to DLZ-DB, you agree that your contributions will be licensed under the Apache License 2.0.
+提交贡献即表示你同意其按 [Apache License 2.0](./LICENSE) 发布。
