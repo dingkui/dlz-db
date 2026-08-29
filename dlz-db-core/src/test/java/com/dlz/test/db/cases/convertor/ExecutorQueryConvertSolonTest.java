@@ -72,13 +72,13 @@ public class ExecutorQueryConvertSolonTest extends BaseDBTest {
         assertNotNull(results, "查询结果不应为 null");
         assertFalse(results.isEmpty(), "查询结果不应为空");
         
-        // 验证字段名保持数据库原始格式（大写）
+        // 验证字段名保持数据库原始格式；JDBC 驱动可能调整标识符大小写。
         ResultMap firstResult = results.get(0);
         log.info("原生字段名: {}", firstResult.keySet());
         
-        // 原生转换器应该保持 SQL_KEY 不变
-        assertTrue(firstResult.containsKey("SQL_KEY"),
-                "应该包含原始字段名 SQL_KEY");
+        // 原生转换器不应把 sql_key 转为 sqlKey
+        assertTrue(firstResult.keySet().stream().anyMatch("sql_key"::equalsIgnoreCase),
+                "应该包含 JDBC 驱动返回的原始字段名 sql_key");
     }
 
     @Test

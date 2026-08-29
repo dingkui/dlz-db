@@ -18,8 +18,8 @@ public class MultiDataSourceTest extends BaseDBTest {
     @BeforeEach
     public void setUp() {
         DB.jdbc.execute("DELETE FROM user");
+        DB.jdbc.execute("CREATE TABLE IF NOT EXISTS dyn_t(id INTEGER PRIMARY KEY, val TEXT)");
         DB.jdbc.execute("DELETE FROM dyn_t");
-        // DB.Jdbc.execute("CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER, status TEXT, deleted  INTEGER DEFAULT 0)");
     }
 
     @AfterEach
@@ -31,7 +31,6 @@ public class MultiDataSourceTest extends BaseDBTest {
     @Test
     public void dynamic_use() {
         String ds = DB.ds.use("default", () -> {
-             DB.jdbc.execute("CREATE TABLE IF NOT EXISTS dyn_t(id INTEGER PRIMARY KEY, val TEXT)");
             DB.jdbc.execute("INSERT INTO dyn_t(id,val) VALUES(?,?)", 1, "hello");
             return DB.ds.getUsedDataSourceName();
         });

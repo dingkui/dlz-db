@@ -4,7 +4,7 @@ import com.dlz.db.core.anno.TableName;
 import lombok.Data;
 
 @Data
-@TableName("DEPARTMENT")
+@TableName("department")
 public class Department {
     private Long id;
     private String status;

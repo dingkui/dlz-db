@@ -49,7 +49,7 @@ class MapColumnBeanTest extends BaseDBTest {
 
         // 验证核心字段存在
         assertTrue(columns.containsKey("id"), "应包含 id 字段");
-        assertTrue(columns.containsKey("T1"), "应包含 T1 字段（Bean 属性列）");
+        assertTrue(columns.containsKey("t1"), "应包含 t1 字段（Bean 属性列）");
     }
 
     // ========== 保存 + 查询验证 ==========

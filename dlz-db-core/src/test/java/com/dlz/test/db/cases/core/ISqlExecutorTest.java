@@ -30,7 +30,7 @@ class ISqlExecutorTest extends BaseDBTest {
         HashMap<String, Integer> info = getRealExecutor().getTableColumnsInfo("user");
         assertNotNull(info);
         assertTrue(info.containsKey("id"));
-        assertTrue(info.containsKey("NAME"));
+        assertTrue(info.containsKey("name"));
     }
 
     @Test
