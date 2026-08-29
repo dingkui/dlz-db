@@ -676,7 +676,6 @@ dlz:
     logic-delete-field: deleted
     sqllist: [app/*]
     use-db-sql: false
-    table-cache-time: -1 # 秒，-1 表示不过期
     log:
       show-run-sql: true
       show-caller: true

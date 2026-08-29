@@ -257,7 +257,7 @@ DB.tx.run("slave", () -> {
 
 - `db-support`、`blob-charset`
 - `sqllist`、`sql`、`use-db-sql`
-- `table-cache-time`、`logic-delete-field`
+- `logic-delete-field`
 - `helper.package-name`、`helper.auto-update`
 - `log.show-result`、`log.show-run-sql`、`log.show-caller`、`log.slow-sql-threshold`
 
